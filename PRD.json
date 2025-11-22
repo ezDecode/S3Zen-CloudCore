@@ -1,0 +1,685 @@
+{
+    "product": {
+        "name": "CloudDeck",
+        "version": "1.0.0",
+        "tagline": "Your S3 Buckets. Zero Console Hassle!",
+        "description": "A modern, user-friendly web application for managing files in AWS S3 buckets with an intuitive interface for uploading, downloading, organizing, and sharing files.",
+        "type": "Web Application (SPA)",
+        "target_users": [
+            "Developers managing S3 buckets",
+            "Content creators storing media in S3",
+            "Teams needing simple S3 file management",
+            "Anyone wanting a user-friendly alternative to AWS Console"
+        ]
+    },
+    "core_value_proposition": {
+        "primary": "Bring your own AWS credentials, connect once, and manage S3 files directly from the browser—no setup, no servers, no backend infrastructure required",
+        "differentiators": [
+            "100% client-side application - no backend server needed",
+            "Direct browser-to-S3 communication using AWS SDK",
+            "Premium UI/UX with modern design aesthetics",
+            "Secure credential storage in browser localStorage",
+            "Real-time upload progress with chunked uploads for large files",
+            "Smart upload optimization for different file types"
+        ]
+    },
+    "technical_architecture": {
+        "type": "Single Page Application (SPA)",
+        "deployment": "Static hosting (Vercel, Netlify, or S3 + CloudFront)",
+        "client_architecture": {
+            "pattern": "Component-based React architecture",
+            "state_management": "React Hooks (useState, useEffect, custom hooks)",
+            "routing": "React Router DOM for navigation",
+            "data_flow": "Direct client-to-S3 API calls via AWS SDK"
+        },
+        "security_model": {
+            "authentication": "AWS IAM credentials (Access Key ID + Secret Access Key)",
+            "credential_storage": "Browser localStorage (user-managed)",
+            "access_control": "IAM policies control S3 bucket permissions",
+            "cors_requirement": "S3 bucket must have CORS configured for browser access"
+        }
+    },
+    "tech_stack": {
+        "frontend": {
+            "framework": "React 19.1.0",
+            "build_tool": "Vite 7.0.0",
+            "language": "JavaScript (ES6+)",
+            "styling": {
+                "primary": "Tailwind CSS 3.4.17",
+                "css_framework": "Custom CSS with CSS variables",
+                "design_tokens": "CSS custom properties in index.css"
+            },
+            "ui_libraries": [
+                "Framer Motion 12.23.0 - Advanced animations and transitions",
+                "React Awesome Reveal 4.3.1 - Entrance animations",
+                "GSAP 3.13.0 - Timeline-based animations",
+                "Lottie React 2.4.1 - JSON-based animations"
+            ],
+            "routing": "React Router DOM 7.6.3",
+            "notifications": "Sonner 2.0.6 - Toast notifications",
+            "analytics": "Vercel Analytics 1.5.0"
+        },
+        "aws_sdk": {
+            "client_s3": "@aws-sdk/client-s3 3.842.0",
+            "lib_storage": "@aws-sdk/lib-storage 3.842.0 - Multipart uploads",
+            "presigner": "@aws-sdk/s3-request-presigner 3.842.0 - Shareable links"
+        },
+        "fonts": {
+            "primary": "PolySans (Custom font with multiple weights: Slim, Neutral, Median, Bulky)",
+            "fallback": "Inter (Google Fonts)",
+            "implementation": "Local font files with @font-face declarations"
+        },
+        "development": {
+            "linter": "ESLint 9.29.0",
+            "build_optimization": "Vite with automatic code splitting",
+            "css_processing": "PostCSS with Autoprefixer"
+        }
+    },
+    "design_system": {
+        "theme": "Deep Space & Electric Blue - Modern, premium aesthetic",
+        "color_palette": {
+            "primary_bg": "#f5f5f5",
+            "secondary_bg": "#e0e0e0",
+            "text_primary": "#000000",
+            "text_secondary": "#666666",
+            "text_placeholder": "#999999",
+            "neutral_white": "#ffffff",
+            "neutral_borders": "#cccccc",
+            "accent_gradient": "Animated gradient for emphasis"
+        },
+        "design_principles": [
+            "Glassmorphism - Backdrop blur effects with transparency",
+            "Minimalism - Clean, uncluttered interfaces",
+            "Animation-driven - Smooth transitions and micro-interactions",
+            "Responsive - Mobile-first design approach",
+            "Accessibility - Focus rings, ARIA labels, keyboard navigation"
+        ],
+        "typography": {
+            "scale": {
+                "h1": "64px",
+                "h2": "40px",
+                "body": "24px",
+                "label": "18px",
+                "button": "20px"
+            },
+            "weights": {
+                "light": "300 (Slim)",
+                "regular": "400 (Neutral)",
+                "medium": "500 (Median)",
+                "bold": "700 (Bulky)",
+                "black": "900"
+            }
+        },
+        "spacing_system": {
+            "xs": "8px",
+            "sm": "16px",
+            "md": "24px",
+            "lg": "32px",
+            "xl": "48px",
+            "xxl": "64px",
+            "xxxl": "96px"
+        },
+        "border_radius": {
+            "design": "12px",
+            "card": "24px",
+            "button": "32px (pill-shaped)"
+        },
+        "effects": {
+            "glass_effect": "rgba(255,255,255,0.05) + backdrop-blur(10px)",
+            "shadows": "Layered shadows for depth",
+            "animations": "Fade, slide, scale, float, pulse, gradient"
+        }
+    },
+    "core_features": {
+        "authentication_flow": {
+            "description": "Secure AWS credential management",
+            "components": [
+                "AuthModal"
+            ],
+            "workflow": [
+                "User clicks 'Add your bucket' on Hero page",
+                "Modal opens requesting AWS credentials",
+                "User enters: Region, Access Key ID, Secret Access Key, Bucket Name",
+                "Credentials validated via HeadBucket API call",
+                "On success: credentials stored in localStorage, user connected",
+                "On failure: error message shown with troubleshooting tips"
+            ],
+            "validation": {
+                "required_fields": [
+                    "region",
+                    "accessKeyId",
+                    "secretAccessKey",
+                    "bucketName"
+                ],
+                "test_method": "AWS HeadBucket command to verify access",
+                "error_handling": "Detailed error messages for common issues (CORS, permissions, etc.)"
+            },
+            "session_management": {
+                "storage": "localStorage with key 'awsCredentials'",
+                "timeout": "Configurable session timeout with useSessionTimeout hook",
+                "disconnect": "Clear credentials and navigate to Hero page"
+            }
+        },
+        "file_explorer": {
+            "description": "Main interface for S3 file management",
+            "layout": {
+                "header": "Toolbar with actions (Upload, Download, Delete, Rename, Share, New Folder)",
+                "breadcrumb": "Current path navigation",
+                "search_filter": "Real-time file search within current directory",
+                "file_list": "Grid or list view of files and folders",
+                "status_bar": "Upload progress, selection count"
+            },
+            "file_operations": {
+                "upload": {
+                    "methods": [
+                        "File input click",
+                        "Drag and drop"
+                    ],
+                    "features": [
+                        "Multiple file upload support",
+                        "Progress tracking per file",
+                        "Chunked uploads for large files (>5MB)",
+                        "Smart upload method selection based on file type/size",
+                        "Video file optimized uploads with retry logic"
+                    ],
+                    "implementation": {
+                        "small_files": "PutObjectCommand from @aws-sdk/client-s3",
+                        "large_files": "Upload from @aws-sdk/lib-storage with multipart support",
+                        "progress_callback": "Real-time progress updates via onProgress handler"
+                    }
+                },
+                "download": {
+                    "single_file": "Generate presigned URL and trigger browser download",
+                    "multiple_files": "Sequential downloads for selected files",
+                    "implementation": "GetObjectCommand + getSignedUrl for temporary URLs"
+                },
+                "delete": {
+                    "confirmation": "Modal with item list preview",
+                    "batch_delete": "DeleteObjectsCommand for multiple items",
+                    "folder_delete": "Recursive deletion of folder contents",
+                    "feedback": "Toast notifications on success/failure"
+                },
+                "rename": {
+                    "method": "Copy object to new key + delete original",
+                    "validation": "Prevent duplicate names, invalid characters",
+                    "modal": "RenameModal with real-time preview"
+                },
+                "share": {
+                    "presigned_urls": "Time-limited shareable links (1-7 days)",
+                    "link_generation": "getSignedUrl with configurable expiration",
+                    "copy_to_clipboard": "One-click link copying",
+                    "modal": "ShareModal with expiration slider and copy button"
+                },
+                "new_folder": {
+                    "implementation": "Create empty object with '/' suffix as folder marker",
+                    "naming": "Validate folder names, prevent duplicates",
+                    "modal": "NewFolderModal with input validation"
+                }
+            },
+            "navigation": {
+                "breadcrumb": "Click any folder in path to jump to that level",
+                "folder_navigation": "Double-click or click icon to enter folder",
+                "back_navigation": "Navigate up one level",
+                "refresh": "Reload current directory contents"
+            },
+            "file_preview": {
+                "images": "ImagePreview component with modal view",
+                "videos": "MediaPreview with HTML5 video player",
+                "audio": "MediaPreview with audio controls",
+                "supported_formats": [
+                    "jpg",
+                    "jpeg",
+                    "png",
+                    "gif",
+                    "webp",
+                    "mp4",
+                    "webm",
+                    "mp3",
+                    "wav"
+                ]
+            },
+            "selection_system": {
+                "single_select": "Click on file/folder",
+                "multi_select": "Cmd/Ctrl + click for multiple items",
+                "select_all": "Toolbar button to select all visible items",
+                "visual_feedback": "Highlighted background for selected items"
+            }
+        },
+        "hero_landing": {
+            "description": "Initial landing page for unauthenticated users",
+            "components": [
+                "Hero"
+            ],
+            "content": {
+                "headline": "Your S3 Buckets. Zero Console Hassle!",
+                "subheadline": "Bring your own keys, connect once, and manage files directly from the browser—no setup, no servers.",
+                "cta_buttons": [
+                    {
+                        "text": "Add your bucket",
+                        "action": "Open AuthModal",
+                        "style": "Primary (filled black)"
+                    },
+                    {
+                        "text": "Setup Guide",
+                        "action": "Navigate to /setup-guide",
+                        "style": "Secondary (outline)"
+                    }
+                ]
+            },
+            "animations": {
+                "headline": "Slide up + fade with 'Buckets' and 'Console' in animated gradient",
+                "description": "Slide up + fade with 500ms delay",
+                "buttons": "Slide up + fade with 1000ms delay",
+                "library": "React Awesome Reveal (Fade, Slide)"
+            }
+        },
+        "setup_guide": {
+            "description": "Comprehensive AWS S3 setup instructions",
+            "route": "/setup-guide",
+            "sections": [
+                "Prerequisites",
+                "Create S3 Bucket",
+                "Create IAM User with permissions",
+                "Generate Access Keys",
+                "Configure CORS policy",
+                "Connect to CloudDeck"
+            ],
+            "code_snippets": {
+                "iam_policy": "JSON policy for S3 bucket access (GetObject, PutObject, DeleteObject, ListBucket)",
+                "cors_config": "JSON CORS configuration for localhost and production"
+            },
+            "design": "Step-by-step guide with code blocks, copy buttons, visual hierarchy"
+        }
+    },
+    "state_management": {
+        "global_state": {
+            "connected": "Boolean - user authentication status",
+            "credentials": "Object stored in localStorage",
+            "current_path": "String - current S3 prefix/folder"
+        },
+        "file_explorer_state": {
+            "files": "Array of S3 objects in current directory",
+            "selected_items": "Set of selected file keys",
+            "uploading": "Boolean - upload in progress",
+            "upload_progress": "Object mapping file keys to progress percentages",
+            "loading": "Boolean - fetching files",
+            "search_query": "String - current search filter"
+        },
+        "custom_hooks": {
+            "useSessionTimeout": "Auto-disconnect after inactivity period",
+            "purpose": "Security feature to clear credentials after timeout"
+        }
+    },
+    "aws_s3_integration": {
+        "initialization": {
+            "function": "initializeS3Client(credentials)",
+            "creates": "S3Client instance with credentials and region",
+            "singleton_pattern": "Single S3Client reused for all operations"
+        },
+        "core_operations": {
+            "listObjects": {
+                "command": "ListObjectsV2Command",
+                "parameters": {
+                    "Bucket": "Bucket name",
+                    "Prefix": "Current folder path",
+                    "Delimiter": "'/' to separate folders",
+                    "ContinuationToken": "For pagination"
+                },
+                "returns": "CommonPrefixes (folders) and Contents (files)"
+            },
+            "uploadFile": {
+                "small_files": {
+                    "threshold": "< 5MB",
+                    "method": "PutObjectCommand",
+                    "single_request": true
+                },
+                "large_files": {
+                    "threshold": ">= 5MB",
+                    "method": "Upload from @aws-sdk/lib-storage",
+                    "multipart": true,
+                    "chunk_size": "5MB default",
+                    "concurrent_parts": "4 parallel uploads"
+                }
+            },
+            "downloadFile": {
+                "command": "GetObjectCommand",
+                "presigned_url": "Generated with getSignedUrl (60s expiration)",
+                "download_trigger": "window.location.href or anchor click"
+            },
+            "deleteObjects": {
+                "command": "DeleteObjectsCommand",
+                "batch_support": "Up to 1000 objects per request",
+                "folder_deletion": "Recursive list + batch delete"
+            },
+            "createFolder": {
+                "command": "PutObjectCommand",
+                "key_format": "path/to/folder/ (trailing slash)",
+                "body": "Empty string",
+                "note": "S3 doesn't have true folders, uses key prefixes"
+            },
+            "generateShareableLink": {
+                "command": "GetObjectCommand",
+                "presigner": "getSignedUrl",
+                "expiration": "Configurable (1-7 days)",
+                "returns": "Time-limited public URL"
+            }
+        },
+        "error_handling": {
+            "network_errors": "Retry with exponential backoff",
+            "permission_errors": "User-friendly messages with troubleshooting",
+            "cors_errors": "Detailed CORS configuration help",
+            "large_file_optimization": "Automatic retry for failed uploads, resume capability"
+        }
+    },
+    "file_type_detection": {
+        "method": "Extension-based detection",
+        "categories": {
+            "images": [
+                "jpg",
+                "jpeg",
+                "png",
+                "gif",
+                "svg",
+                "webp",
+                "bmp",
+                "ico"
+            ],
+            "videos": [
+                "mp4",
+                "avi",
+                "mov",
+                "wmv",
+                "flv",
+                "webm",
+                "mkv"
+            ],
+            "audio": [
+                "mp3",
+                "wav",
+                "ogg",
+                "m4a",
+                "flac",
+                "aac"
+            ],
+            "documents": [
+                "pdf",
+                "doc",
+                "docx",
+                "xls",
+                "xlsx",
+                "ppt",
+                "pptx"
+            ],
+            "code": [
+                "js",
+                "jsx",
+                "ts",
+                "tsx",
+                "py",
+                "java",
+                "cpp",
+                "html",
+                "css"
+            ],
+            "archives": [
+                "zip",
+                "rar",
+                "7z",
+                "tar",
+                "gz"
+            ],
+            "text": [
+                "txt",
+                "md",
+                "json",
+                "xml",
+                "csv",
+                "log"
+            ]
+        },
+        "icons": "Custom FileIcon component with category-specific icons"
+    },
+    "responsive_design": {
+        "breakpoints": {
+            "mobile": "< 640px",
+            "tablet": "640px - 1024px",
+            "desktop": "> 1024px"
+        },
+        "adaptations": {
+            "mobile": [
+                "Single column file list",
+                "Hamburger menu for actions",
+                "Touch-optimized buttons (larger hit areas)",
+                "Simplified breadcrumb (truncated paths)"
+            ],
+            "tablet": [
+                "Two-column file grid",
+                "Visible toolbar with icons + text",
+                "Touch and mouse support"
+            ],
+            "desktop": [
+                "Multi-column grid or list view",
+                "Full toolbar with all actions visible",
+                "Keyboard shortcuts",
+                "Drag-and-drop upload"
+            ]
+        }
+    },
+    "performance_optimizations": {
+        "chunked_uploads": "Large files split into 5MB chunks for reliability",
+        "lazy_loading": "File list virtualization for large directories (future enhancement)",
+        "debounced_search": "Search input debounced to reduce re-renders",
+        "memoization": "React.memo for expensive components (FileItem, FileList)",
+        "code_splitting": "Route-based code splitting with React Router",
+        "cdn_fonts": "Google Fonts + local PolySans for optimal loading"
+    },
+    "security_considerations": {
+        "credential_storage": {
+            "location": "Browser localStorage",
+            "risk": "XSS attacks could access credentials",
+            "mitigation": "Session timeout, user education, HTTPS only"
+        },
+        "cors_requirement": {
+            "purpose": "Allow browser requests to S3",
+            "security": "Configure AllowedOrigins to specific domains in production",
+            "recommendation": "Never use '*' in production CORS"
+        },
+        "iam_permissions": {
+            "principle": "Least privilege",
+            "recommended_actions": [
+                "s3:GetObject",
+                "s3:PutObject",
+                "s3:DeleteObject",
+                "s3:ListBucket"
+            ],
+            "bucket_resource": "arn:aws:s3:::bucket-name and arn:aws:s3:::bucket-name/*"
+        },
+        "presigned_urls": {
+            "expiration": "Time-limited (default 24 hours)",
+            "use_case": "Temporary file sharing without exposing credentials"
+        }
+    },
+    "deployment_requirements": {
+        "hosting": "Any static hosting service (Vercel, Netlify, AWS S3 + CloudFront)",
+        "environment_variables": {
+            "optional": [
+                "VITE_AWS_REGION - Default region",
+                "VITE_AWS_ACCESS_KEY_ID - Pre-filled credentials (not recommended)",
+                "VITE_AWS_SECRET_ACCESS_KEY - Pre-filled credentials (not recommended)",
+                "VITE_S3_BUCKET_NAME - Default bucket name"
+            ],
+            "note": "User-provided credentials override environment variables"
+        },
+        "build_command": "npm run build",
+        "output_directory": "dist",
+        "node_version": ">= 18",
+        "https_requirement": "Required for production (browser security)"
+    },
+    "user_workflows": {
+        "first_time_user": [
+            "1. Lands on Hero page",
+            "2. Reads about CloudDeck value proposition",
+            "3. Clicks 'Setup Guide' to learn AWS configuration",
+            "4. Sets up S3 bucket, IAM user, CORS in AWS Console",
+            "5. Returns to CloudDeck, clicks 'Add your bucket'",
+            "6. Enters credentials in AuthModal",
+            "7. Credentials validated, connected to FileExplorer",
+            "8. Browses existing files or uploads new ones"
+        ],
+        "returning_user": [
+            "1. Opens CloudDeck",
+            "2. Credentials auto-loaded from localStorage",
+            "3. Immediately connected to FileExplorer",
+            "4. Manages files as needed"
+        ],
+        "upload_workflow": [
+            "1. Click 'Upload' button or drag files into FileExplorer",
+            "2. Files queued with progress indicators",
+            "3. Upload starts automatically",
+            "4. Progress shown per file",
+            "5. Toast notification on completion",
+            "6. File list refreshes with new files"
+        ],
+        "share_workflow": [
+            "1. Select file to share",
+            "2. Click 'Share' button",
+            "3. ShareModal opens with expiration slider",
+            "4. Select expiration time (1-7 days)",
+            "5. Click 'Generate Link'",
+            "6. Presigned URL created",
+            "7. Click 'Copy' to copy to clipboard",
+            "8. Share URL with others"
+        ]
+    },
+    "edge_cases_and_error_handling": {
+        "invalid_credentials": {
+            "detection": "HeadBucket fails during validation",
+            "response": "Error message with troubleshooting steps"
+        },
+        "cors_not_configured": {
+            "symptom": "CORS error in browser console",
+            "response": "Detailed CORS configuration instructions in error message"
+        },
+        "network_interruption": {
+            "upload": "Retry with exponential backoff, resume for multipart uploads",
+            "download": "Graceful failure with retry button"
+        },
+        "large_directory": {
+            "symptom": "Slow loading with thousands of files",
+            "mitigation": "Pagination with ContinuationToken, consider virtual scrolling"
+        },
+        "permission_denied": {
+            "detection": "403 error from S3",
+            "response": "Error message suggesting IAM policy review"
+        },
+        "session_timeout": {
+            "trigger": "Inactivity period exceeded",
+            "response": "Auto-disconnect, redirect to Hero with timeout message"
+        }
+    },
+    "future_enhancements": {
+        "planned_features": [
+            "Multi-bucket support (switch between buckets)",
+            "File versioning display",
+            "Bulk operations (move, copy multiple files)",
+            "Advanced search with filters (date, size, type)",
+            "Thumbnail generation for images",
+            "File metadata editor (Content-Type, tags)",
+            "Lifecycle policy management",
+            "Download as ZIP (package multiple files)",
+            "Public bucket support (read-only mode)",
+            "Collaborative features (share folders, permissions)",
+            "Mobile app (React Native)",
+            "Offline mode with IndexedDB caching"
+        ],
+        "technical_improvements": [
+            "Virtual scrolling for large file lists",
+            "Service worker for offline support",
+            "Progressive Web App (PWA) capabilities",
+            "End-to-end encryption for file uploads",
+            "WebAssembly for faster file processing",
+            "Real-time collaboration with WebSockets"
+        ]
+    },
+    "testing_strategy": {
+        "unit_tests": [
+            "Individual component rendering",
+            "S3 service function logic",
+            "Utility functions (formatters, validators)"
+        ],
+        "integration_tests": [
+            "Complete user workflows",
+            "S3 operations with mock AWS SDK",
+            "Authentication flow"
+        ],
+        "e2e_tests": [
+            "Full app functionality with real S3 bucket",
+            "Upload, download, delete workflows",
+            "Error handling scenarios"
+        ],
+        "testing_tools": {
+            "recommended": [
+                "Vitest",
+                "React Testing Library",
+                "Playwright or Cypress"
+            ]
+        }
+    },
+    "analytics_and_monitoring": {
+        "vercel_analytics": "Page views, user sessions tracked",
+        "custom_events": {
+            "recommended": [
+                "file_uploaded",
+                "file_downloaded",
+                "file_deleted",
+                "folder_created",
+                "link_shared",
+                "authentication_success",
+                "authentication_failure"
+            ]
+        },
+        "error_tracking": {
+            "recommended_tools": [
+                "Sentry",
+                "LogRocket"
+            ],
+            "data_collected": "Error messages, stack traces, user actions leading to error"
+        }
+    },
+    "compliance_and_legal": {
+        "license": "MIT License",
+        "data_privacy": {
+            "user_data": "AWS credentials stored locally in user's browser only",
+            "no_backend": "No data transmitted to any server except AWS S3",
+            "gdpr_compliance": "No personal data collected by application itself"
+        },
+        "aws_compliance": {
+            "user_responsibility": "Users responsible for their own AWS account security",
+            "bucket_policies": "Users must configure appropriate bucket policies",
+            "cost_awareness": "Users pay for their own S3 usage per AWS pricing"
+        }
+    },
+    "documentation_requirements": {
+        "readme": {
+            "sections": [
+                "Project overview",
+                "Features list",
+                "Installation instructions",
+                "AWS setup guide",
+                "Local development",
+                "Deployment guide",
+                "Troubleshooting",
+                "Contributing guidelines"
+            ]
+        },
+        "setup_guide": {
+            "in_app": "Interactive setup guide route (/setup-guide)",
+            "external": "README.md with detailed AWS configuration steps"
+        },
+        "code_documentation": {
+            "jsdoc_comments": "For all service functions",
+            "component_proptypes": "Document expected props for components",
+            "inline_comments": "Explain complex logic, especially S3 operations"
+        }
+    }
+}
