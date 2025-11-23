@@ -3,7 +3,7 @@
  * Modal for renaming files and folders
  */
 
-import { Edit3 } from 'lucide-react';
+import { Edit02Icon } from 'hugeicons-react';
 import { useState } from 'react';
 import { useToast } from '../common/Toast';
 import { Modal } from './Modal';
@@ -72,7 +72,7 @@ export const RenameModal = ({ isOpen, onClose, item, onSuccess }) => {
             isOpen={isOpen}
             onClose={handleClose}
             title={`Rename ${item.type === 'folder' ? 'Folder' : 'File'}`}
-            icon={Edit3}
+            icon={Edit02Icon}
             iconColor="text-purple-400"
         >
             {/* Current Name Display */}

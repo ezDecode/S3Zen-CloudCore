@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { X, ChevronDown, Lock, Key, Database, MapPin } from 'lucide-react';
+import { Cancel01Icon, ArrowDown01Icon, LockIcon, Key01Icon, Database01Icon, Location01Icon } from 'hugeicons-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 const AWS_REGIONS = [
@@ -98,7 +98,7 @@ export const AuthModal = ({ isOpen, onClose, onAuthenticate }) => {
                                     className="p-2 text-white/40 hover:text-white hover:bg-white/10 transition-all rounded-lg -mr-2 -mt-1"
                                     aria-label="Close modal"
                                 >
-                                    <X className="w-5 h-5" />
+                                    <Cancel01Icon className="w-5 h-5" />
                                 </button>
                             </div>
 
@@ -111,7 +111,7 @@ export const AuthModal = ({ isOpen, onClose, onAuthenticate }) => {
                                         animate={{ opacity: 1, y: 0 }}
                                         className="flex items-center gap-3 text-sm bg-red-500/10 border border-red-500/30 text-red-200 px-4 py-3 rounded-lg"
                                     >
-                                        <Lock className="w-4 h-4 shrink-0" />
+                                        <LockIcon className="w-4 h-4 shrink-0" />
                                         {error}
                                     </motion.div>
                                 )}
@@ -119,7 +119,7 @@ export const AuthModal = ({ isOpen, onClose, onAuthenticate }) => {
                                 {/* Access Key ID */}
                                 <div className="space-y-2">
                                     <label className="flex items-center gap-2 text-xs font-medium text-white/70 uppercase tracking-wide">
-                                        <Key className="w-4 h-4 text-purple-400" />
+                                        <Key01Icon className="w-4 h-4 text-purple-400" />
                                         Access Key ID
                                     </label>
                                     <input
@@ -135,7 +135,7 @@ export const AuthModal = ({ isOpen, onClose, onAuthenticate }) => {
                                 {/* Secret Access Key */}
                                 <div className="space-y-2">
                                     <label className="flex items-center gap-2 text-xs font-medium text-white/70 uppercase tracking-wide">
-                                        <Lock className="w-4 h-4 text-pink-400" />
+                                        <LockIcon className="w-4 h-4 text-pink-400" />
                                         Secret Access Key
                                     </label>
                                     <input
@@ -152,7 +152,7 @@ export const AuthModal = ({ isOpen, onClose, onAuthenticate }) => {
                                 {/* Bucket Name */}
                                 <div className="space-y-2">
                                     <label className="flex items-center gap-2 text-xs font-medium text-white/70 uppercase tracking-wide">
-                                        <Database className="w-4 h-4 text-blue-400" />
+                                        <Database01Icon className="w-4 h-4 text-blue-400" />
                                         Bucket Name
                                     </label>
                                     <input
@@ -168,7 +168,7 @@ export const AuthModal = ({ isOpen, onClose, onAuthenticate }) => {
                                 {/* Region Select */}
                                 <div className="space-y-2">
                                     <label className="flex items-center gap-2 text-xs font-medium text-white/70 uppercase tracking-wide">
-                                        <MapPin className="w-4 h-4 text-green-400" />
+                                        <Location01Icon className="w-4 h-4 text-green-400" />
                                         AWS Region
                                     </label>
                                     <div className="relative">
@@ -191,7 +191,7 @@ export const AuthModal = ({ isOpen, onClose, onAuthenticate }) => {
                                                 </option>
                                             ))}
                                         </select>
-                                        <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 text-white/40 pointer-events-none w-5 h-5" />
+                                        <ArrowDown01Icon className="absolute right-3 top-1/2 -translate-y-1/2 text-white/40 pointer-events-none w-5 h-5" />
                                     </div>
                                 </div>
 

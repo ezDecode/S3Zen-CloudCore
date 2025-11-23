@@ -4,16 +4,16 @@
  */
 
 import {
-    File,
-    FileText,
-    FileImage,
-    FileVideo,
-    FileAudio,
-    FileArchive,
-    FileSpreadsheet,
-    FileCode,
-    Folder
-} from 'lucide-react';
+    File02Icon,
+    FileValidationIcon,
+    Image02Icon,
+    Video02Icon,
+    MusicNote01Icon,
+    FileZipIcon,
+    FileScriptIcon,
+    CodeIcon,
+    Folder02Icon
+} from 'hugeicons-react';
 
 /**
  * Format bytes to human-readable size
@@ -113,27 +113,27 @@ export const getFileType = (filename) => {
  * Get icon component for file type
  */
 export const getFileIcon = (filename, isFolder = false) => {
-    if (isFolder) return Folder;
+    if (isFolder) return Folder02Icon;
 
     const type = getFileType(filename);
 
     switch (type) {
         case 'image':
-            return FileImage;
+            return Image02Icon;
         case 'video':
-            return FileVideo;
+            return Video02Icon;
         case 'audio':
-            return FileAudio;
+            return MusicNote01Icon;
         case 'document':
-            return FileText;
+            return FileValidationIcon;
         case 'spreadsheet':
-            return FileSpreadsheet;
+            return FileScriptIcon;
         case 'archive':
-            return FileArchive;
+            return FileZipIcon;
         case 'code':
-            return FileCode;
+            return CodeIcon;
         default:
-            return File;
+            return File02Icon;
     }
 };
 

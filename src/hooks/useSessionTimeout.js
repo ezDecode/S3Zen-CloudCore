@@ -9,7 +9,7 @@ import { isSessionExpired, updateSessionTimestamp, clearAuth } from '../utils/au
 const ACTIVITY_EVENTS = ['mousedown', 'keydown', 'scroll', 'touchstart', 'click'];
 const CHECK_INTERVAL_MS = 60000; // Check every minute
 
-export const useSessionTimeout = (onTimeout) => {
+export const useSessionTimeout = (onTimeout, isEnabled = true) => {
     const timeoutCheckRef = useRef(null);
     const activityListenersRef = useRef([]);
 
@@ -17,25 +17,31 @@ export const useSessionTimeout = (onTimeout) => {
      * Handle user activity
      */
     const handleActivity = useCallback(() => {
-        updateSessionTimestamp();
-    }, []);
+        if (isEnabled) {
+            updateSessionTimestamp();
+        }
+    }, [isEnabled]);
 
     /**
      * Check session status
      */
     const checkSession = useCallback(() => {
+        if (!isEnabled) return;
+
         if (isSessionExpired()) {
             clearAuth();
             if (onTimeout) {
                 onTimeout();
             }
         }
-    }, [onTimeout]);
+    }, [onTimeout, isEnabled]);
 
     /**
      * Setup activity listeners
      */
     useEffect(() => {
+        if (!isEnabled) return;
+
         // Add activity event listeners
         ACTIVITY_EVENTS.forEach(event => {
             window.addEventListener(event, handleActivity);
@@ -59,7 +65,7 @@ export const useSessionTimeout = (onTimeout) => {
                 clearInterval(timeoutCheckRef.current);
             }
         };
-    }, [handleActivity, checkSession]);
+    }, [handleActivity, checkSession, isEnabled]);
 
     return {
         checkSession,

@@ -5,7 +5,7 @@
 
 import { motion, AnimatePresence } from 'framer-motion';
 import { FileItem } from './FileItem';
-import { FolderOpen, Sparkles } from 'lucide-react';
+import { FolderOpenIcon, SparklesIcon } from 'hugeicons-react';
 import { FileListSkeleton } from '../common/SkeletonLoader';
 
 export const FileList = ({
@@ -55,7 +55,7 @@ export const FileList = ({
 
                     {/* Icon */}
                     <div className="relative bg-gradient-to-br from-zinc-800 to-zinc-900 p-8 rounded-2xl border border-white/10">
-                        <FolderOpen className="w-20 h-20 text-zinc-600" strokeWidth={1.5} />
+                        <FolderOpenIcon className="w-20 h-20 text-zinc-600" strokeWidth={1.5} />
                     </div>
                 </motion.div>
 
@@ -79,7 +79,7 @@ export const FileList = ({
                     transition={{ delay: 0.3 }}
                     className="mt-8 flex items-center gap-2 px-4 py-2 bg-white/5 border border-white/10 rounded-lg"
                 >
-                    <Sparkles className="w-4 h-4 text-zinc-500" />
+                    <SparklesIcon className="w-4 h-4 text-zinc-500" />
                     <span className="text-sm text-zinc-500 font-medium">Drag and drop files here to upload</span>
                 </motion.div>
             </motion.div>

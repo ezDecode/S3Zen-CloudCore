@@ -3,7 +3,7 @@
  * Modal for creating new folders with validation
  */
 
-import { FolderPlus } from 'lucide-react';
+import { FolderAddIcon } from 'hugeicons-react';
 import { useState } from 'react';
 import { useToast } from '../common/Toast';
 import { createFolder } from '../../services/aws/s3Service';
@@ -64,7 +64,7 @@ export const CreateFolderModal = ({ isOpen, onClose, currentPath, onSuccess }) =
             isOpen={isOpen}
             onClose={handleClose}
             title="Create New Folder"
-            icon={FolderPlus}
+            icon={FolderAddIcon}
             iconColor="text-blue-400"
         >
             {/* Folder Name Input */}

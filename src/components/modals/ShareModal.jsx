@@ -4,7 +4,7 @@
  */
 
 import { useState } from 'react';
-import { X, Link2, Copy, Check, ChevronDown } from 'lucide-react';
+import { Cancel01Icon, Link01Icon, Copy01Icon, Tick02Icon, ArrowDown01Icon } from 'hugeicons-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useToast } from '../common/Toast';
 import { generateShareableLink } from '../../services/aws/s3Service';
@@ -62,14 +62,14 @@ export const ShareModal = ({ isOpen, onClose, item }) => {
                         {/* Header */}
                         <div className="flex items-center justify-between p-5 border-b border-white/10">
                             <div className="flex items-center gap-2">
-                                <Link2 className="w-5 h-5 text-purple-400" />
+                                <Link01Icon className="w-5 h-5 text-purple-400" />
                                 <h2 className="text-lg font-bold text-white">Share File</h2>
                             </div>
                             <button
                                 onClick={handleClose}
                                 className="p-1.5 text-white/60 hover:text-white hover:bg-white/10 rounded-lg transition-colors"
                             >
-                                <X className="w-5 h-5" />
+                                <Cancel01Icon className="w-5 h-5" />
                             </button>
                         </div>
 
@@ -100,7 +100,7 @@ export const ShareModal = ({ isOpen, onClose, item }) => {
                                         <option value={86400} className="bg-zinc-900 text-white py-2">24 hours</option>
                                         <option value={604800} className="bg-zinc-900 text-white py-2">7 days</option>
                                     </select>
-                                    <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 text-white/40 pointer-events-none w-4 h-4" />
+                                    <ArrowDown01Icon className="absolute right-3 top-1/2 -translate-y-1/2 text-white/40 pointer-events-none w-4 h-4" />
                                 </div>
                             </div>
 
@@ -134,12 +134,12 @@ export const ShareModal = ({ isOpen, onClose, item }) => {
                                         >
                                             {copied ? (
                                                 <>
-                                                    <Check className="w-4 h-4" />
+                                                    <Tick02Icon className="w-4 h-4" />
                                                     <span>Copied!</span>
                                                 </>
                                             ) : (
                                                 <>
-                                                    <Copy className="w-4 h-4" />
+                                                    <Copy01Icon className="w-4 h-4" />
                                                     <span>Copy Link</span>
                                                 </>
                                             )}

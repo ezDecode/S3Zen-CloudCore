@@ -3,7 +3,7 @@
  * Confirmation modal for file/folder deletion
  */
 
-import { X, AlertTriangle } from 'lucide-react';
+import { Cancel01Icon, Alert01Icon } from 'hugeicons-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useState } from 'react';
 import { useToast } from '../common/Toast';
@@ -69,14 +69,14 @@ export const DeleteConfirmModal = ({ isOpen, onClose, items, onSuccess }) => {
                         {/* Header */}
                         <div className="flex items-center justify-between p-5 border-b border-white/10">
                             <div className="flex items-center gap-2">
-                                <AlertTriangle className="w-5 h-5 text-red-400" />
+                                <Alert01Icon className="w-5 h-5 text-red-400" />
                                 <h2 className="text-lg font-bold text-white">Confirm Deletion</h2>
                             </div>
                             <button
                                 onClick={handleCloseModal}
                                 className="p-1.5 text-white/60 hover:text-white hover:bg-white/10 rounded-lg transition-colors"
                             >
-                                <X className="w-5 h-5" />
+                                <Cancel01Icon className="w-5 h-5" />
                             </button>
                         </div>
 

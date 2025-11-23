@@ -4,7 +4,7 @@
  */
 
 import { motion, AnimatePresence } from 'framer-motion';
-import { Download, CheckCircle, XCircle, X, Minimize2, Maximize2 } from 'lucide-react';
+import { Download01Icon, CheckmarkCircle02Icon, CancelCircleIcon, Cancel01Icon, ArrowShrink01Icon, ArrowExpand01Icon } from 'hugeicons-react';
 import { useState } from 'react';
 
 export const DownloadManager = ({ downloads, onRemove, onClear }) => {
@@ -48,7 +48,7 @@ export const DownloadManager = ({ downloads, onRemove, onClear }) => {
                             className="p-1.5 text-white/60 hover:text-white hover:bg-white/10 rounded-lg transition-all"
                             title={isMinimized ? 'Expand' : 'Minimize'}
                         >
-                            {isMinimized ? <Maximize2 className="w-4 h-4" /> : <Minimize2 className="w-4 h-4" />}
+                            {isMinimized ? <ArrowExpand01Icon className="w-4 h-4" /> : <ArrowShrink01Icon className="w-4 h-4" />}
                         </button>
                     </div>
                 </div>
@@ -73,7 +73,7 @@ export const DownloadManager = ({ downloads, onRemove, onClear }) => {
                                 >
                                     <div className="flex justify-between items-start gap-2">
                                         <div className="flex items-center gap-2 flex-1 min-w-0">
-                                            <Download className="w-4 h-4 text-blue-400 shrink-0" />
+                                            <Download01Icon className="w-4 h-4 text-blue-400 shrink-0" />
                                             <span className="text-sm font-medium text-white truncate">
                                                 {download.name}
                                             </span>
@@ -86,7 +86,7 @@ export const DownloadManager = ({ downloads, onRemove, onClear }) => {
                                                 onClick={() => onRemove(download.id)}
                                                 className="p-0.5 text-white/40 hover:text-white hover:bg-white/10 rounded transition-all"
                                             >
-                                                <X className="w-3.5 h-3.5" />
+                                                <Cancel01Icon className="w-3.5 h-3.5" />
                                             </button>
                                         </div>
                                     </div>
@@ -116,7 +116,7 @@ export const DownloadManager = ({ downloads, onRemove, onClear }) => {
                                     className="flex items-center justify-between gap-2 p-2 bg-green-500/10 border border-green-500/20 rounded-lg"
                                 >
                                     <div className="flex items-center gap-2 flex-1 min-w-0">
-                                        <CheckCircle className="w-4 h-4 text-green-400 shrink-0" />
+                                        <CheckmarkCircle02Icon className="w-4 h-4 text-green-400 shrink-0" />
                                         <span className="text-sm text-white truncate">{download.name}</span>
                                     </div>
                                     <button
@@ -138,7 +138,7 @@ export const DownloadManager = ({ downloads, onRemove, onClear }) => {
                                     className="flex items-center justify-between gap-2 p-2 bg-red-500/10 border border-red-500/20 rounded-lg"
                                 >
                                     <div className="flex items-center gap-2 flex-1 min-w-0">
-                                        <XCircle className="w-4 h-4 text-red-400 shrink-0" />
+                                        <CancelCircleIcon className="w-4 h-4 text-red-400 shrink-0" />
                                         <div className="flex-1 min-w-0">
                                             <p className="text-sm text-white truncate">{download.name}</p>
                                             <p className="text-xs text-red-400">{download.error || 'Download failed'}</p>

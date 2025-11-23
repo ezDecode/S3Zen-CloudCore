@@ -1,12 +1,12 @@
 
 import { motion } from 'framer-motion';
-import { ArrowRight, Github, Zap, Shield, Cloud } from 'lucide-react';
+import { ArrowRight01Icon, Github01Icon, ZapIcon, Shield01Icon, CloudIcon } from 'hugeicons-react';
 
 export const Hero = ({ onGetStarted }) => {
   const features = [
-    { icon: Zap, label: 'Lightning Fast' },
-    { icon: Shield, label: '100% Secure' },
-    { icon: Cloud, label: 'Zero Config' },
+    { icon: ZapIcon, label: 'Lightning Fast' },
+    { icon: Shield01Icon, label: '100% Secure' },
+    { icon: CloudIcon, label: 'Zero Config' },
   ];
 
   return (
@@ -86,7 +86,7 @@ export const Hero = ({ onGetStarted }) => {
             className="group text-base font-semibold text-white rounded-xl bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 transition-all shadow-lg hover:shadow-purple-500/30 flex items-center gap-2 px-8 py-4"
           >
             <span>Get Started</span>
-            <ArrowRight className="w-5 h-5 transition-transform group-hover:translate-x-1" />
+            <ArrowRight01Icon className="w-5 h-5 transition-transform group-hover:translate-x-1" />
           </button>
 
           <a
@@ -95,7 +95,7 @@ export const Hero = ({ onGetStarted }) => {
             rel="noopener noreferrer"
             className="text-base font-semibold text-white bg-white/10 backdrop-blur-sm border border-white/20 rounded-xl hover:bg-white/20 transition-all flex items-center gap-2 px-8 py-4"
           >
-            <Github className="w-5 h-5" />
+            <Github01Icon className="w-5 h-5" />
             <span>Star on GitHub</span>
           </a>
         </motion.div>

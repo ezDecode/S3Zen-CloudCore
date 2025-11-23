@@ -54,7 +54,7 @@ function AppContent() {
   // Session timeout handling
   useSessionTimeout(() => {
     handleLogout();
-  });
+  }, isLoggedIn);
 
   return (
     <>

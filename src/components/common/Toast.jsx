@@ -5,7 +5,7 @@
 
 import { createContext, useContext, useState, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { CheckCircle, XCircle, AlertCircle, Info, X } from 'lucide-react';
+import { CheckmarkCircle02Icon, CancelCircleIcon, Alert01Icon, InformationCircleIcon, Cancel01Icon } from 'hugeicons-react';
 
 // Toast Context
 const ToastContext = createContext();
@@ -80,28 +80,28 @@ const ToastItem = ({ toast, onRemove }) => {
 
     const config = {
         success: {
-            icon: CheckCircle,
+            icon: CheckmarkCircle02Icon,
             bgColor: 'bg-green-500/10',
             borderColor: 'border-green-500/30',
             iconColor: 'text-green-400',
             textColor: 'text-green-100'
         },
         error: {
-            icon: XCircle,
+            icon: CancelCircleIcon,
             bgColor: 'bg-red-500/10',
             borderColor: 'border-red-500/30',
             iconColor: 'text-red-400',
             textColor: 'text-red-100'
         },
         warning: {
-            icon: AlertCircle,
+            icon: Alert01Icon,
             bgColor: 'bg-yellow-500/10',
             borderColor: 'border-yellow-500/30',
             iconColor: 'text-yellow-400',
             textColor: 'text-yellow-100'
         },
         info: {
-            icon: Info,
+            icon: InformationCircleIcon,
             bgColor: 'bg-blue-500/10',
             borderColor: 'border-blue-500/30',
             iconColor: 'text-blue-400',
@@ -133,7 +133,7 @@ const ToastItem = ({ toast, onRemove }) => {
                     onClick={onRemove}
                     className="p-1 text-white/40 hover:text-white hover:bg-white/10 rounded transition-all"
                 >
-                    <X className="w-4 h-4" />
+                    <Cancel01Icon className="w-4 h-4" />
                 </button>
             </div>
         </motion.div>
