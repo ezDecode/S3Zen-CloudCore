@@ -23,7 +23,7 @@ export const DownloadManager = ({ downloads, onRemove, onClear }) => {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: 20 }}
-                className="fixed bottom-6 right-6 w-96 bg-zinc-900/95 backdrop-blur-xl border border-white/10 rounded-xl shadow-2xl overflow-hidden z-40"
+                className="fixed bottom-20 sm:bottom-6 left-4 right-4 sm:left-auto sm:right-6 w-auto sm:w-96 bg-zinc-900/95 backdrop-blur-xl border border-white/10 rounded-xl shadow-2xl overflow-hidden z-40"
             >
                 {/* Header */}
                 <div className="px-4 py-3 border-b border-white/10 flex items-center justify-between bg-zinc-950/50">

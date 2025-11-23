@@ -56,11 +56,10 @@ export const FileItem = ({
                 whileTap={{ scale: 0.98 }}
                 onHoverStart={() => setIsHovered(true)}
                 onHoverEnd={() => setIsHovered(false)}
-                className={`group relative rounded-xl border transition-all duration-200 cursor-pointer overflow-hidden ${
-                    isSelected 
-                        ? 'bg-gradient-to-br from-blue-500/20 to-purple-500/20 border-blue-500/50 shadow-lg shadow-blue-500/20' 
+                className={`group relative rounded-xl border transition-all duration-200 cursor-pointer overflow-hidden ${isSelected
+                        ? 'bg-gradient-to-br from-blue-500/20 to-purple-500/20 border-blue-500/50 shadow-lg shadow-blue-500/20'
                         : 'bg-white/5 border-white/10 hover:bg-white/10 hover:border-white/20'
-                }`}
+                    }`}
                 onClick={() => isFolder ? onOpen(item) : onSelect(item)}
                 onDoubleClick={() => !isFolder && onPreview && onPreview(item)}
             >
@@ -156,7 +155,7 @@ export const FileItem = ({
                 {/* Card Content */}
                 <div className="p-4 flex flex-col items-center text-center gap-3">
                     <motion.div
-                        animate={{ 
+                        animate={{
                             scale: isHovered ? 1.1 : 1,
                             rotate: isHovered && isFolder ? 5 : 0
                         }}
@@ -165,7 +164,7 @@ export const FileItem = ({
                     >
                         <FileIcon filename={item.name} isFolder={isFolder} className="w-14 h-14" />
                     </motion.div>
-                    
+
                     <div className="w-full min-h-10">
                         <p className="text-sm font-semibold text-white truncate leading-tight mb-1">
                             {item.name}
@@ -187,29 +186,27 @@ export const FileItem = ({
             whileTap={{ scale: 0.995 }}
             onHoverStart={() => setIsHovered(true)}
             onHoverEnd={() => setIsHovered(false)}
-            className={`group relative grid grid-cols-12 gap-4 items-center px-4 py-3 rounded-lg border transition-all duration-200 cursor-pointer ${
-                isSelected 
-                    ? 'bg-gradient-to-r from-blue-500/10 to-purple-500/10 border-blue-500/30' 
+            className={`group relative grid grid-cols-12 gap-4 items-center px-4 py-3 rounded-lg border transition-all duration-200 cursor-pointer ${isSelected
+                    ? 'bg-gradient-to-r from-blue-500/10 to-purple-500/10 border-blue-500/30'
                     : 'bg-transparent border-transparent hover:bg-white/5 hover:border-white/10'
-            }`}
+                }`}
             onClick={() => isFolder ? onOpen(item) : onSelect(item)}
             onDoubleClick={() => !isFolder && onPreview && onPreview(item)}
         >
             {/* Name Column */}
-            <div className="col-span-6 flex items-center gap-3 min-w-0">
+            <div className="col-span-8 sm:col-span-6 flex items-center gap-3 min-w-0">
                 {/* Selection Checkbox */}
-                <div 
-                    onClick={(e) => e.stopPropagation()} 
+                <div
+                    onClick={(e) => e.stopPropagation()}
                     className="flex-shrink-0"
                 >
                     <motion.div
                         whileHover={{ scale: 1.1 }}
                         whileTap={{ scale: 0.9 }}
-                        className={`w-4 h-4 rounded border-2 flex items-center justify-center transition-all ${
-                            isSelected 
-                                ? 'bg-blue-500 border-blue-500' 
+                        className={`w-4 h-4 rounded border-2 flex items-center justify-center transition-all ${isSelected
+                                ? 'bg-blue-500 border-blue-500'
                                 : 'border-zinc-600 hover:border-zinc-400'
-                        }`}
+                            }`}
                         onClick={() => onSelect(item)}
                     >
                         <AnimatePresence>
@@ -227,7 +224,7 @@ export const FileItem = ({
                 </div>
 
                 {/* Icon */}
-                <motion.div 
+                <motion.div
                     whileHover={{ scale: 1.1, rotate: isFolder ? 5 : 0 }}
                     className="flex-shrink-0"
                 >
@@ -241,17 +238,17 @@ export const FileItem = ({
             </div>
 
             {/* Size Column */}
-            <div className="col-span-2 text-sm font-medium text-zinc-400 tabular-nums">
+            <div className="col-span-2 hidden sm:block text-sm font-medium text-zinc-400 tabular-nums">
                 {isFolder ? '—' : formatFileSize(item.size)}
             </div>
 
             {/* Date Column */}
-            <div className="col-span-3 text-sm font-medium text-zinc-400">
+            <div className="col-span-3 hidden sm:block text-sm font-medium text-zinc-400">
                 {isFolder ? '—' : formatDate(item.lastModified)}
             </div>
 
             {/* Actions Column */}
-            <div className="col-span-1 flex justify-end relative" ref={menuRef}>
+            <div className="col-span-4 sm:col-span-1 flex justify-end relative" ref={menuRef}>
                 <motion.button
                     initial={{ opacity: 0 }}
                     animate={{ opacity: isHovered || showMenu || isSelected ? 1 : 0 }}

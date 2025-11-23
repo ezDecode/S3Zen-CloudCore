@@ -1,85 +1,96 @@
 /**
  * SkeletonLoader Component
- * Beautiful skeleton loading animations for file explorer
+ * Premium, polished skeleton loading animations that perfectly match the file explorer design.
  */
 
 import { motion } from 'framer-motion';
 
-// Shimmer animation effect
-export const SkeletonItem = ({ className = '', delay = 0 }) => (
+// Refined Shimmer Effect
+const Shimmer = () => (
     <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay }}
-        className={`relative overflow-hidden bg-white/5 rounded-lg ${className}`}
-    >
-        {/* Shimmer Effect */}
-        <motion.div
-            className="absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/10 to-transparent"
-            animate={{
-                translateX: ['100%', '100%', '-100%', '-100%']
-            }}
-            transition={{
-                duration: 2,
-                repeat: Infinity,
-                ease: 'linear',
-                times: [0, 0.5, 0.5, 1]
-            }}
-        />
-    </motion.div>
+        className="absolute inset-0 -translate-x-full"
+        style={{
+            background: 'linear-gradient(90deg, transparent 0%, rgba(255, 255, 255, 0.08) 50%, transparent 100%)'
+        }}
+        animate={{
+            translateX: ['100%', '-100%']
+        }}
+        transition={{
+            duration: 1.5,
+            repeat: Infinity,
+            ease: "easeInOut"
+        }}
+    />
 );
 
-// Grid View Skeleton
+// Base Skeleton Item Wrapper
+const SkeletonBase = ({ className = '', children }) => (
+    <div className={`relative overflow-hidden bg-white/5 ${className}`}>
+        {children}
+        <Shimmer />
+    </div>
+);
+
+// Grid View Skeleton Card
 export const SkeletonGridItem = ({ index = 0 }) => (
     <motion.div
-        initial={{ opacity: 0, scale: 0.9 }}
+        initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
-        transition={{ delay: index * 0.03 }}
-        className="flex flex-col gap-3 p-4 bg-white/5 border border-white/10 rounded-xl"
+        transition={{ delay: index * 0.05, duration: 0.3 }}
+        className="relative rounded-xl border border-white/5 bg-white/[0.02] overflow-hidden aspect-[4/5] flex flex-col items-center justify-center p-4 gap-4"
     >
-        {/* Icon placeholder */}
-        <SkeletonItem className="w-12 h-12 rounded-lg mx-auto" />
-        {/* Name placeholder */}
-        <SkeletonItem className="h-3 w-3/4 mx-auto" />
-        {/* Size placeholder */}
-        <SkeletonItem className="h-2 w-1/2 mx-auto" />
+        {/* Icon Placeholder */}
+        <SkeletonBase className="w-16 h-16 rounded-xl" />
+
+        {/* Text Content */}
+        <div className="w-full flex flex-col items-center gap-2">
+            <SkeletonBase className="h-4 w-3/4 rounded-md" />
+            <SkeletonBase className="h-3 w-1/3 rounded-md opacity-60" />
+        </div>
+
+        {/* Shimmer Overlay for the whole card */}
+        <Shimmer />
     </motion.div>
 );
 
-// List View Skeleton
+// List View Skeleton Row
 export const SkeletonListItem = ({ index = 0 }) => (
     <motion.div
-        initial={{ opacity: 0, x: -10 }}
-        animate={{ opacity: 1, x: 0 }}
-        transition={{ delay: index * 0.03 }}
-        className="grid grid-cols-12 gap-4 px-4 py-3 bg-white/5 border border-white/10 rounded-lg items-center"
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: index * 0.03, duration: 0.3 }}
+        className="grid grid-cols-12 gap-4 px-4 py-3 rounded-lg border border-white/5 bg-white/[0.02] items-center"
     >
-        {/* Icon + Name */}
+        {/* Name Column (Checkbox + Icon + Name) */}
         <div className="col-span-6 flex items-center gap-3">
-            <SkeletonItem className="w-10 h-10 rounded-lg shrink-0" />
-            <SkeletonItem className="h-3 flex-1" />
+            <SkeletonBase className="w-4 h-4 rounded" /> {/* Checkbox */}
+            <SkeletonBase className="w-8 h-8 rounded-lg" /> {/* Icon */}
+            <SkeletonBase className="h-4 w-48 rounded-md" /> {/* Name */}
         </div>
-        {/* Size */}
+
+        {/* Size Column */}
         <div className="col-span-2">
-            <SkeletonItem className="h-3 w-16" />
+            <SkeletonBase className="h-3 w-16 rounded-md opacity-60" />
         </div>
-        {/* Modified */}
+
+        {/* Date Column */}
         <div className="col-span-3">
-            <SkeletonItem className="h-3 w-24" />
+            <SkeletonBase className="h-3 w-24 rounded-md opacity-60" />
         </div>
-        {/* Actions */}
+
+        {/* Actions Column */}
         <div className="col-span-1 flex justify-end">
-            <SkeletonItem className="h-8 w-8 rounded-lg" />
+            <SkeletonBase className="h-8 w-8 rounded-lg opacity-40" />
         </div>
     </motion.div>
 );
 
-// Main Skeleton Loader for File Explorer
+// Main Skeleton Loader Component
 export const FileListSkeleton = ({ viewMode = 'grid', count = 12 }) => {
     return (
-        <div className="flex-1 overflow-y-auto px-6 py-6">
+        <div className="flex-1 overflow-y-auto px-6 py-6 custom-scrollbar">
             {viewMode === 'grid' ? (
-                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 2xl:grid-cols-8 gap-3">
+                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 2xl:grid-cols-8 gap-4">
                     {Array.from({ length: count }).map((_, index) => (
                         <SkeletonGridItem key={index} index={index} />
                     ))}
@@ -87,15 +98,15 @@ export const FileListSkeleton = ({ viewMode = 'grid', count = 12 }) => {
             ) : (
                 <div className="space-y-2">
                     {/* List Header Skeleton */}
-                    <div className="grid grid-cols-12 gap-4 px-4 py-3 border-b border-white/5 mb-2">
+                    <div className="grid grid-cols-12 gap-4 px-4 py-3 border-b border-white/10 mb-2 opacity-50">
                         <div className="col-span-6">
-                            <SkeletonItem className="h-2 w-12" />
+                            <SkeletonBase className="h-3 w-20 rounded" />
                         </div>
                         <div className="col-span-2">
-                            <SkeletonItem className="h-2 w-8" />
+                            <SkeletonBase className="h-3 w-12 rounded" />
                         </div>
                         <div className="col-span-3">
-                            <SkeletonItem className="h-2 w-16" />
+                            <SkeletonBase className="h-3 w-24 rounded" />
                         </div>
                         <div className="col-span-1" />
                     </div>

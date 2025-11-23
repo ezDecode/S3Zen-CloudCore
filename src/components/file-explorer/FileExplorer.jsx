@@ -38,6 +38,7 @@ export const FileExplorer = ({
     const [uploadingFiles, setUploadingFiles] = useState([]);
     const [downloads, setDownloads] = useState([]);
     const [viewMode, setViewMode] = useState('grid'); // 'list' or 'grid'
+    const [isDragging, setIsDragging] = useState(false);
 
     const bucketConfig = getBucketConfig();
 
@@ -90,8 +91,7 @@ export const FileExplorer = ({
     };
 
     // Actions
-    const handleFileUpload = async (event) => {
-        const files = Array.from(event.target.files || []);
+    const processUploads = async (files) => {
         if (files.length === 0) return;
 
         const uploadPromises = files.map(async (file) => {
@@ -128,6 +128,37 @@ export const FileExplorer = ({
 
         await Promise.all(uploadPromises);
         loadFiles();
+    };
+
+    const handleFileUpload = async (event) => {
+        const files = Array.from(event.target.files || []);
+        await processUploads(files);
+    };
+
+    // Drag and Drop Handlers
+    const handleDragOver = (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        if (!isDragging) setIsDragging(true);
+    };
+
+    const handleDragLeave = (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        // Only disable if we're leaving the main container
+        if (e.currentTarget.contains(e.relatedTarget)) return;
+        setIsDragging(false);
+    };
+
+    const handleDrop = async (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        setIsDragging(false);
+
+        const files = Array.from(e.dataTransfer.files || []);
+        if (files.length > 0) {
+            await processUploads(files);
+        }
     };
 
     const handleCreateFolder = () => {
@@ -340,22 +371,49 @@ export const FileExplorer = ({
     const pathParts = currentPath.split('/').filter(Boolean);
 
     return (
-        <div className="file-explorer-wrapper h-screen flex flex-col bg-black text-white overflow-hidden">
+        <div
+            className="file-explorer-wrapper h-screen flex flex-col bg-black text-white overflow-hidden relative"
+            onDragOver={handleDragOver}
+            onDragLeave={handleDragLeave}
+            onDrop={handleDrop}
+        >
+            {/* Drag Overlay */}
+            <AnimatePresence>
+                {isDragging && (
+                    <motion.div
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        className="absolute inset-0 z-50 bg-blue-500/20 backdrop-blur-sm flex items-center justify-center border-2 border-blue-500 border-dashed m-4 rounded-2xl pointer-events-none"
+                    >
+                        <div className="bg-zinc-900/90 p-8 rounded-2xl shadow-2xl flex flex-col items-center gap-4 border border-blue-500/30">
+                            <div className="p-4 bg-blue-500/20 rounded-full">
+                                <Upload className="w-12 h-12 text-blue-400" />
+                            </div>
+                            <div className="text-center">
+                                <h3 className="text-xl font-bold text-white">Drop files to upload</h3>
+                                <p className="text-zinc-400 mt-1">Files will be uploaded to the current folder</p>
+                            </div>
+                        </div>
+                    </motion.div>
+                )}
+            </AnimatePresence>
+
             {/* Top Navigation Bar */}
-            <nav className="flex items-center justify-between px-6 py-4 border-b border-white/5 bg-gradient-to-b from-zinc-900/50 to-transparent backdrop-blur-sm z-10">
-                <div className="flex items-center gap-6">
+            <nav className="flex flex-col sm:flex-row items-start sm:items-center justify-between px-4 sm:px-6 py-4 border-b border-white/5 bg-gradient-to-b from-zinc-900/50 to-transparent backdrop-blur-sm z-10 gap-4 sm:gap-0">
+                <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 sm:gap-6 w-full sm:w-auto">
                     {/* Logo/Brand */}
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-2 shrink-0">
                         <span className="font-bold text-lg">CloudCore</span>
                     </div>
 
                     {/* Breadcrumb */}
-                    <div className="flex items-center gap-1 text-sm">
+                    <div className="flex items-center gap-1 text-sm overflow-x-auto w-full sm:w-auto pb-2 sm:pb-0 scrollbar-hide mask-linear-fade">
                         <motion.button
                             whileHover={{ scale: 1.05 }}
                             whileTap={{ scale: 0.95 }}
                             onClick={() => handleNavigate('')}
-                            className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-md text-zinc-400 hover:text-white hover:bg-white/5 transition-all"
+                            className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-md text-zinc-400 hover:text-white hover:bg-white/5 transition-all shrink-0"
                         >
                             <Home className="w-3.5 h-3.5" />
                             <span className="font-medium">Home</span>
@@ -364,7 +422,7 @@ export const FileExplorer = ({
                         {pathParts.map((part, index) => {
                             const path = pathParts.slice(0, index + 1).join('/') + '/';
                             return (
-                                <div key={index} className="flex items-center gap-1">
+                                <div key={index} className="flex items-center gap-1 shrink-0">
                                     <span className="text-zinc-700">/</span>
                                     <motion.button
                                         whileHover={{ scale: 1.05 }}
@@ -381,16 +439,16 @@ export const FileExplorer = ({
                 </div>
 
                 {/* Right Actions */}
-                <div className="flex items-center gap-3">
+                <div className="flex items-center gap-3 w-full sm:w-auto">
                     {/* Search */}
-                    <div className="relative">
+                    <div className="relative flex-1 sm:flex-none">
                         <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-500 pointer-events-none" />
                         <input
                             type="text"
                             placeholder="Search files..."
                             value={searchQuery}
                             onChange={(e) => setSearchQuery(e.target.value)}
-                            className="w-64 pl-10 pr-4 py-2 bg-white/5 border border-white/10 rounded-lg text-sm text-white placeholder:text-zinc-500 focus:outline-none focus:border-white/20 focus:bg-white/10 transition-all"
+                            className="w-full sm:w-64 pl-10 pr-4 py-2 bg-white/5 border border-white/10 rounded-lg text-sm text-white placeholder:text-zinc-500 focus:outline-none focus:border-white/20 focus:bg-white/10 transition-all"
                         />
                     </div>
 
@@ -399,7 +457,7 @@ export const FileExplorer = ({
                         whileHover={{ scale: 1.05, rotate: 90 }}
                         whileTap={{ scale: 0.95 }}
                         onClick={loadFiles}
-                        className="p-2 rounded-lg text-zinc-400 hover:text-white hover:bg-white/5 transition-all"
+                        className="p-2 rounded-lg text-zinc-400 hover:text-white hover:bg-white/5 transition-all shrink-0"
                         title="Refresh"
                     >
                         <RefreshCw className="w-4 h-4" />
@@ -410,7 +468,7 @@ export const FileExplorer = ({
                         whileHover={{ scale: 1.05 }}
                         whileTap={{ scale: 0.95 }}
                         onClick={handleLogout}
-                        className="p-2 rounded-lg text-zinc-400 hover:text-white hover:bg-white/5 transition-all"
+                        className="p-2 rounded-lg text-zinc-400 hover:text-white hover:bg-white/5 transition-all shrink-0"
                         title="Logout"
                     >
                         <LogOut className="w-4 h-4" />
@@ -419,13 +477,13 @@ export const FileExplorer = ({
             </nav>
 
             {/* Action Bar */}
-            <div className="flex items-center justify-between px-6 py-3 border-b border-white/5 bg-zinc-950/50 z-10">
-                <div className="flex items-center gap-2">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between px-4 sm:px-6 py-3 border-b border-white/5 bg-zinc-950/50 z-10 gap-3 sm:gap-0">
+                <div className="flex items-center gap-2 w-full sm:w-auto overflow-x-auto pb-2 sm:pb-0 scrollbar-hide">
                     {/* Upload Button */}
                     <motion.label
                         whileHover={{ scale: 1.02 }}
                         whileTap={{ scale: 0.98 }}
-                        className="flex items-center gap-2 px-4 py-2 bg-white text-black rounded-lg text-sm font-semibold cursor-pointer hover:bg-zinc-200 transition-all"
+                        className="flex items-center gap-2 px-4 py-2 bg-white text-black rounded-lg text-sm font-semibold cursor-pointer hover:bg-zinc-200 transition-all shrink-0"
                     >
                         <Upload className="w-4 h-4" />
                         <span>Upload</span>
@@ -437,7 +495,7 @@ export const FileExplorer = ({
                         whileHover={{ scale: 1.02 }}
                         whileTap={{ scale: 0.98 }}
                         onClick={handleCreateFolder}
-                        className="flex items-center gap-2 px-4 py-2 bg-white/5 border border-white/10 text-white rounded-lg text-sm font-semibold hover:bg-white/10 transition-all"
+                        className="flex items-center gap-2 px-4 py-2 bg-white/5 border border-white/10 text-white rounded-lg text-sm font-semibold hover:bg-white/10 transition-all shrink-0"
                     >
                         <FolderPlus className="w-4 h-4" />
                         <span>New Folder</span>
@@ -451,16 +509,16 @@ export const FileExplorer = ({
                                     initial={{ width: 0, opacity: 0 }}
                                     animate={{ width: 'auto', opacity: 1 }}
                                     exit={{ width: 0, opacity: 0 }}
-                                    className="h-8 w-px bg-white/10 mx-1"
+                                    className="h-8 w-px bg-white/10 mx-1 shrink-0"
                                 />
 
                                 <motion.div
                                     initial={{ opacity: 0, x: -10 }}
                                     animate={{ opacity: 1, x: 0 }}
                                     exit={{ opacity: 0, x: -10 }}
-                                    className="flex items-center gap-2"
+                                    className="flex items-center gap-2 shrink-0"
                                 >
-                                    <span className="text-xs text-zinc-400 font-medium px-2">
+                                    <span className="text-xs text-zinc-400 font-medium px-2 whitespace-nowrap">
                                         {selectedItems.length} selected
                                     </span>
 
@@ -514,7 +572,7 @@ export const FileExplorer = ({
                 </div>
 
                 {/* View Mode Toggle */}
-                <div className="flex items-center gap-1 p-1 bg-white/5 rounded-lg border border-white/10">
+                <div className="flex items-center gap-1 p-1 bg-white/5 rounded-lg border border-white/10 shrink-0 self-end sm:self-auto">
                     <motion.button
                         whileTap={{ scale: 0.95 }}
                         onClick={() => setViewMode('grid')}
@@ -564,7 +622,7 @@ export const FileExplorer = ({
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
                         exit={{ opacity: 0, y: 20 }}
-                        className="fixed bottom-6 right-6 w-96 bg-zinc-900 border border-white/10 rounded-xl shadow-2xl overflow-hidden z-40"
+                        className="fixed bottom-0 sm:bottom-6 right-0 sm:right-6 w-full sm:w-96 bg-zinc-900 border-t sm:border border-white/10 rounded-t-xl sm:rounded-xl shadow-2xl overflow-hidden z-40"
                     >
                         <div className="px-4 py-3 border-b border-white/10 flex items-center justify-between bg-zinc-950/50">
                             <div className="flex items-center gap-2">
@@ -574,7 +632,7 @@ export const FileExplorer = ({
                                 </h4>
                             </div>
                         </div>
-                        <div className="p-4 space-y-3 max-h-80 overflow-y-auto custom-scrollbar">
+                        <div className="p-4 space-y-3 max-h-60 sm:max-h-80 overflow-y-auto custom-scrollbar">
                             {uploadingFiles.map((file) => (
                                 <motion.div
                                     key={file.id}

@@ -124,10 +124,10 @@ export const FileList = ({
                 <div className="space-y-1">
                     {/* List Header */}
                     <div className="grid grid-cols-12 gap-4 px-4 py-2 text-xs font-semibold uppercase tracking-wider text-zinc-600 border-b border-white/5 mb-2">
-                        <div className="col-span-6">Name</div>
-                        <div className="col-span-2">Size</div>
-                        <div className="col-span-3">Modified</div>
-                        <div className="col-span-1 text-right">Actions</div>
+                        <div className="col-span-8 sm:col-span-6">Name</div>
+                        <div className="col-span-2 hidden sm:block">Size</div>
+                        <div className="col-span-3 hidden sm:block">Modified</div>
+                        <div className="col-span-4 sm:col-span-1 text-right">Actions</div>
                     </div>
 
                     {/* List Items */}

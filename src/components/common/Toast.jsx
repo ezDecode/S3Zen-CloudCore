@@ -60,7 +60,7 @@ export const ToastProvider = ({ children }) => {
 // Toast Container Component
 const ToastContainer = ({ toasts, onRemove }) => {
     return (
-        <div className="fixed bottom-6 right-6 z-[100] flex flex-col gap-2 pointer-events-none">
+        <div className="fixed bottom-4 left-4 right-4 sm:left-auto sm:bottom-6 sm:right-6 sm:w-auto z-[100] flex flex-col gap-2 pointer-events-none">
             <AnimatePresence mode="popLayout">
                 {toasts.map((toast) => (
                     <ToastItem
@@ -120,7 +120,7 @@ const ToastItem = ({ toast, onRemove }) => {
             className="pointer-events-auto"
         >
             <div className={`
-                flex items-center gap-3 min-w-[320px] max-w-md
+                flex items-center gap-3 w-full sm:w-auto sm:min-w-[320px] max-w-md
                 px-4 py-3 rounded-lg border
                 backdrop-blur-xl shadow-2xl
                 ${bgColor} ${borderColor}
