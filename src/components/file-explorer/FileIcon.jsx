@@ -21,10 +21,14 @@ export const FileIcon = ({ filename, isFolder = false, className = "w-5 h-5" }) 
         if (['zip', 'rar', '7z', 'tar'].includes(ext)) return 'text-orange-400';
         if (['js', 'jsx', 'ts', 'tsx', 'py', 'java'].includes(ext)) return 'text-cyan-400';
 
-        return 'text-gray-400';
+        return 'text-zinc-400';
     };
 
+    // Extract size classes and color classes separately
+    const hasColorClass = className.includes('text-');
+    const iconColor = hasColorClass ? '' : getIconColor();
+
     return (
-        <IconComponent className={`${className} ${getIconColor()}`} />
+        <IconComponent className={`${className} ${iconColor}`.trim()} />
     );
 };

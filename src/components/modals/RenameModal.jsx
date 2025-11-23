@@ -1,0 +1,125 @@
+/**
+ * RenameModal Component
+ * Modal for renaming files and folders
+ */
+
+import { Edit3 } from 'lucide-react';
+import { useState } from 'react';
+import { useToast } from '../common/Toast';
+import { Modal } from './Modal';
+
+export const RenameModal = ({ isOpen, onClose, item, onSuccess }) => {
+    const toast = useToast();
+    const [newName, setNewName] = useState(item?.name || '');
+    const [isRenaming, setIsRenaming] = useState(false);
+
+    // Update newName when item changes
+    useState(() => {
+        if (item) {
+            setNewName(item.name);
+        }
+    }, [item]);
+
+    const handleRename = async () => {
+        if (!newName.trim()) {
+            toast.error('Please enter a name');
+            return;
+        }
+
+        if (newName === item.name) {
+            toast.info('Name unchanged');
+            onClose();
+            return;
+        }
+
+        // Validate name (no special characters except - _ and .)
+        if (!/^[a-zA-Z0-9-_. ]+$/.test(newName)) {
+            toast.error('Name can only contain letters, numbers, spaces, hyphens, underscores, and dots');
+            return;
+        }
+
+        setIsRenaming(true);
+        try {
+            // Call the onSuccess callback with the new name
+            // The parent component will handle the actual rename logic
+            await onSuccess(item, newName);
+            toast.success(`Renamed to "${newName}"`);
+            onClose();
+        } catch (error) {
+            toast.error(error.message || 'Failed to rename');
+        } finally {
+            setIsRenaming(false);
+        }
+    };
+
+    const handleClose = () => {
+        if (!isRenaming) {
+            setNewName(item?.name || '');
+            onClose();
+        }
+    };
+
+    const handleKeyPress = (e) => {
+        if (e.key === 'Enter' && !isRenaming) {
+            handleRename();
+        }
+    };
+
+    if (!item) return null;
+
+    return (
+        <Modal
+            isOpen={isOpen}
+            onClose={handleClose}
+            title={`Rename ${item.type === 'folder' ? 'Folder' : 'File'}`}
+            icon={Edit3}
+            iconColor="text-purple-400"
+        >
+            {/* Current Name Display */}
+            <div className="space-y-2">
+                <label className="text-xs text-white/60 font-medium">
+                    Current name: <span className="text-white">{item.name}</span>
+                </label>
+            </div>
+
+            {/* New Name Input */}
+            <div className="space-y-2">
+                <label htmlFor="new-name" className="text-sm text-white/80 font-medium">
+                    New Name
+                </label>
+                <input
+                    id="new-name"
+                    type="text"
+                    value={newName}
+                    onChange={(e) => setNewName(e.target.value)}
+                    onKeyPress={handleKeyPress}
+                    placeholder="Enter new name..."
+                    disabled={isRenaming}
+                    autoFocus
+                    className="w-full px-4 py-2.5 bg-white/5 border border-white/10 rounded-lg text-white placeholder:text-zinc-500 focus:outline-none focus:border-white/20 focus:bg-white/10 transition-all disabled:opacity-50"
+                />
+                <p className="text-xs text-white/60">
+                    {item.type === 'folder' ? 'Folder' : 'File'} will be renamed in the same location
+                </p>
+            </div>
+
+            {/* Action Buttons */}
+            <div className="flex gap-2 pt-3">
+                <button
+                    onClick={handleClose}
+                    disabled={isRenaming}
+                    className="flex-1 py-2.5 px-4 text-sm bg-white/10 hover:bg-white/20 text-white rounded-lg transition-all disabled:opacity-50"
+                >
+                    Cancel
+                </button>
+                <button
+                    onClick={handleRename}
+                    disabled={isRenaming || !newName.trim()}
+                    className="flex-1 py-2.5 px-4 text-sm bg-purple-500 hover:bg-purple-600 text-white font-semibold rounded-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                    {isRenaming ? 'Renaming...' : 'Rename'}
+                </button>
+            </div>
+        </Modal>
+    );
+};

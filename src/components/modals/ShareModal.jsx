@@ -4,12 +4,13 @@
  */
 
 import { useState } from 'react';
-import { X, Link2, Copy, Check } from 'lucide-react';
+import { X, Link2, Copy, Check, ChevronDown } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { toast } from 'sonner';
+import { useToast } from '../common/Toast';
 import { generateShareableLink } from '../../services/aws/s3Service';
 
 export const ShareModal = ({ isOpen, onClose, item }) => {
+    const toast = useToast();
     const [url, setUrl] = useState('');
     const [expiresIn, setExpiresIn] = useState(3600); // 1 hour default
     const [isLoading, setIsLoading] = useState(false);
@@ -50,12 +51,13 @@ export const ShareModal = ({ isOpen, onClose, item }) => {
     return (
         <AnimatePresence>
             {isOpen && (
-                <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
+                <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm" onClick={handleClose}>
                     <motion.div
                         initial={{ opacity: 0, scale: 0.95 }}
                         animate={{ opacity: 1, scale: 1 }}
                         exit={{ opacity: 0, scale: 0.95 }}
-                        className="bg-white/10 backdrop-blur-xl rounded-2xl shadow-2xl w-full max-w-lg border border-white/20"
+                        onClick={(e) => e.stopPropagation()}
+                        className="bg-zinc-900/95 backdrop-blur-xl rounded-2xl shadow-2xl w-full max-w-lg border border-white/20 z-50"
                     >
                         {/* Header */}
                         <div className="flex items-center justify-between p-5 border-b border-white/10">
@@ -82,18 +84,24 @@ export const ShareModal = ({ isOpen, onClose, item }) => {
                                 <label className="block text-xs font-medium text-white/70 mb-1.5">
                                     Link expires in
                                 </label>
-                                <select
-                                    value={expiresIn}
-                                    onChange={(e) => setExpiresIn(parseInt(e.target.value))}
-                                    className="w-full px-3 py-2.5 text-sm bg-white/5 border border-white/10 rounded-lg text-white focus:outline-none focus:border-purple-500/50 transition-all"
-                                >
-                                    <option value={3600}>1 hour</option>
-                                    <option value={10800}>3 hours</option>
-                                    <option value={21600}>6 hours</option>
-                                    <option value={43200}>12 hours</option>
-                                    <option value={86400}>24 hours</option>
-                                    <option value={604800}>7 days</option>
-                                </select>
+                                <div className="relative">
+                                    <select
+                                        value={expiresIn}
+                                        onChange={(e) => setExpiresIn(parseInt(e.target.value))}
+                                        className="w-full px-4 py-3 pr-10 text-sm bg-white/5 border border-white/10 rounded-lg text-white appearance-none cursor-pointer focus:outline-none focus:border-purple-500/50 focus:bg-white/10 focus:ring-2 focus:ring-purple-500/20 transition-all"
+                                        style={{
+                                            backgroundImage: 'none'
+                                        }}
+                                    >
+                                        <option value={3600} className="bg-zinc-900 text-white py-2">1 hour</option>
+                                        <option value={10800} className="bg-zinc-900 text-white py-2">3 hours</option>
+                                        <option value={21600} className="bg-zinc-900 text-white py-2">6 hours</option>
+                                        <option value={43200} className="bg-zinc-900 text-white py-2">12 hours</option>
+                                        <option value={86400} className="bg-zinc-900 text-white py-2">24 hours</option>
+                                        <option value={604800} className="bg-zinc-900 text-white py-2">7 days</option>
+                                    </select>
+                                    <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 text-white/40 pointer-events-none w-4 h-4" />
+                                </div>
                             </div>
 
                             {/* Generate Button */}
@@ -101,7 +109,7 @@ export const ShareModal = ({ isOpen, onClose, item }) => {
                                 <button
                                     onClick={handleGenerate}
                                     disabled={isLoading}
-                                    className="w-full py-2.5 px-4 text-sm bg-linear-to-r from-purple-600 to-pink-600 text-white font-semibold rounded-lg hover:from-purple-700 hover:to-pink-700 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                                    className="w-full py-2.5 px-4 text-sm bg-gradient-to-r from-purple-600 to-pink-600 text-white font-semibold rounded-lg hover:from-purple-700 hover:to-pink-700 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                                 >
                                     {isLoading ? 'Generating...' : 'Generate Link'}
                                 </button>
