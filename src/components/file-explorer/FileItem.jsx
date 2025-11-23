@@ -56,7 +56,7 @@ export const FileItem = ({
                 onHoverStart={() => setIsHovered(true)}
                 onHoverEnd={() => setIsHovered(false)}
                 className={`group relative rounded-xl border transition-all duration-200 cursor-pointer ${isSelected
-                    ? 'bg-gradient-to-br from-blue-500/20 to-purple-500/20 border-blue-500/50 shadow-lg shadow-blue-500/20'
+                    ? 'bg-blue-500/10 border-blue-500/50 shadow-[0_0_15px_rgba(59,130,246,0.15)]'
                     : 'bg-white/5 border-white/10 hover:bg-white/10 hover:border-white/20'
                     } ${showMenu ? 'z-50' : 'z-0'}`}
                 onClick={() => isFolder ? onOpen(item) : onSelect(item)}
@@ -180,12 +180,11 @@ export const FileItem = ({
     // List View
     return (
         <motion.div
-            whileHover={{ scale: 1.005, backgroundColor: 'rgba(255, 255, 255, 0.08)' }}
-            whileTap={{ scale: 0.995 }}
+            whileHover={{ backgroundColor: 'rgba(255, 255, 255, 0.08)' }}
             onHoverStart={() => setIsHovered(true)}
             onHoverEnd={() => setIsHovered(false)}
             className={`group relative grid grid-cols-12 gap-4 items-center px-4 py-3.5 rounded-lg border transition-all duration-200 cursor-pointer ${isSelected
-                ? 'bg-gradient-to-r from-blue-500/20 to-purple-500/20 border-blue-500/50 shadow-lg shadow-blue-500/10'
+                ? 'bg-blue-500/10 border-blue-500/50 shadow-[0_0_15px_rgba(59,130,246,0.15)]'
                 : 'bg-white/[0.02] border-white/[0.08] hover:border-white/20 hover:shadow-md'
                 } ${showMenu ? 'z-50' : 'z-0'}`}
             onClick={() => isFolder ? onOpen(item) : onSelect(item)}
@@ -193,33 +192,7 @@ export const FileItem = ({
         >
             {/* Name Column */}
             <div className="col-span-8 sm:col-span-6 flex items-center gap-3 min-w-0">
-                {/* Selection Checkbox */}
-                <div
-                    onClick={(e) => e.stopPropagation()}
-                    className="flex-shrink-0"
-                >
-                    <motion.div
-                        whileHover={{ scale: 1.1 }}
-                        whileTap={{ scale: 0.9 }}
-                        className={`w-5 h-5 rounded border-2 flex items-center justify-center transition-all ${isSelected
-                            ? 'bg-blue-500 border-blue-500 shadow-lg shadow-blue-500/50'
-                            : 'border-zinc-500 hover:border-zinc-300 bg-white/5'
-                            }`}
-                        onClick={() => onSelect(item)}
-                    >
-                        <AnimatePresence>
-                            {isSelected && (
-                                <motion.div
-                                    initial={{ scale: 0 }}
-                                    animate={{ scale: 1 }}
-                                    exit={{ scale: 0 }}
-                                >
-                                    <Tick02Icon className="w-3 h-3 text-white" strokeWidth={3} />
-                                </motion.div>
-                            )}
-                        </AnimatePresence>
-                    </motion.div>
-                </div>
+
 
                 {/* Icon */}
                 <motion.div
@@ -266,6 +239,14 @@ export const FileItem = ({
                             exit={{ opacity: 0, scale: 0.95, y: -5 }}
                             className="absolute right-0 top-full mt-2 w-52 bg-zinc-900/95 backdrop-blur-xl border border-white/20 rounded-xl shadow-2xl overflow-y-auto max-h-80 custom-scrollbar z-50"
                         >
+                            <button
+                                onClick={() => handleAction(() => onSelect(item))}
+                                className="w-full flex items-center gap-3 px-4 py-2.5 text-sm font-medium text-zinc-200 hover:bg-white/10 hover:text-white transition-all"
+                            >
+                                <Tick02Icon className={`w-4 h-4 ${isSelected ? 'text-blue-500' : 'text-zinc-400'}`} />
+                                <span>{isSelected ? 'Deselect' : 'Select'}</span>
+                            </button>
+                            <div className="h-px bg-white/10 my-1" />
                             {!isFolder && onPreview && (
                                 <button
                                     onClick={() => handleAction(() => onPreview(item))}

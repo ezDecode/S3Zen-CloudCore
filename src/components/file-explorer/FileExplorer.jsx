@@ -4,7 +4,7 @@
  */
 
 import { useState, useEffect, useCallback } from 'react';
-import { Upload02Icon, FolderAddIcon, Delete02Icon, Logout01Icon, Search01Icon, Loading03Icon, Home01Icon, LayoutGridIcon, ListViewIcon, Download01Icon, Share01Icon, Cancel01Icon } from 'hugeicons-react';
+import { Upload02Icon, FolderAddIcon, Delete02Icon, Logout01Icon, Search01Icon, Loading03Icon, Home01Icon, LayoutGridIcon, ListViewIcon, Download01Icon, Share01Icon, Cancel01Icon, Tick01Icon } from 'hugeicons-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useToast } from '../common/Toast';
 import { FileList } from './FileList';
@@ -408,7 +408,7 @@ export const FileExplorer = ({
                     </div>
 
                     {/* Breadcrumb */}
-                    <div className="flex items-center gap-1 text-sm overflow-x-auto w-full sm:w-auto pb-2 sm:pb-0 scrollbar-hide mask-linear-fade">
+                    <div className="flex items-center gap-1 text-sm w-full sm:w-auto pb-2 sm:pb-0 scrollbar-hide mask-linear-fade flex-wrap sm:flex-nowrap">
                         <motion.button
                             whileHover={{ scale: 1.05 }}
                             whileTap={{ scale: 0.95 }}
@@ -478,7 +478,7 @@ export const FileExplorer = ({
 
             {/* Action Bar */}
             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between px-4 sm:px-6 py-3 border-b border-white/5 bg-zinc-950/50 z-10 gap-3 sm:gap-0">
-                <div className="flex items-center gap-2 w-full sm:w-auto overflow-x-auto pb-2 sm:pb-0 scrollbar-hide">
+                <div className="flex items-center gap-2 w-full sm:w-auto flex-wrap sm:flex-nowrap">
                     {/* Upload Button */}
                     <motion.label
                         whileHover={{ scale: 1.02 }}
@@ -500,6 +500,28 @@ export const FileExplorer = ({
                         <FolderAddIcon className="w-4 h-4" />
                         <span>New Folder</span>
                     </motion.button>
+
+                    {/* Select All Button */}
+                    {items.length > 0 && (
+                        <motion.button
+                            whileHover={{ scale: 1.02 }}
+                            whileTap={{ scale: 0.98 }}
+                            onClick={() => {
+                                if (selectedItems.length === items.length) {
+                                    setSelectedItems([]);
+                                } else {
+                                    setSelectedItems(items);
+                                }
+                            }}
+                            className={`flex items-center gap-2 px-4 py-2 border rounded-lg text-sm font-semibold transition-all shrink-0 ${selectedItems.length === items.length && items.length > 0
+                                ? 'bg-blue-500 border-blue-500 text-white'
+                                : 'bg-white/5 border-white/10 text-zinc-400 hover:text-white hover:bg-white/10'
+                                }`}
+                        >
+                            <Tick01Icon className="w-4 h-4" />
+                            <span>{selectedItems.length === items.length ? 'Deselect All' : 'Select All'}</span>
+                        </motion.button>
+                    )}
 
                     {/* Selection Actions */}
                     <AnimatePresence>
