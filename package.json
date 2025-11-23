@@ -21,20 +21,14 @@
     "clsx": "^2.1.1",
     "date-fns": "^4.1.0",
     "framer-motion": "^12.23.24",
-    "gsap": "^3.13.0",
     "hugeicons-react": "^0.3.0",
-    "lottie-react": "^2.4.1",
     "lucide-react": "^0.554.0",
-    "prettier": "^3.6.2",
     "react": "^19.2.0",
-    "react-awesome-reveal": "^4.3.1",
     "react-dom": "^19.2.0",
-    "react-router-dom": "7.9",
     "sonner": "^2.0.7",
     "stream-browserify": "^3.0.0",
     "tailwind-merge": "^3.4.0",
     "tailwindcss": "^4.1.17",
-    "typescript": "^5.9.3",
     "util": "^0.12.5"
   },
   "devDependencies": {
@@ -46,6 +40,8 @@
     "eslint-plugin-react-hooks": "^7.0.1",
     "eslint-plugin-react-refresh": "^0.4.24",
     "globals": "^16.5.0",
+    "prettier": "^3.6.2",
+    "typescript": "^5.9.3",
     "vite": "^7.2.4",
     "vite-plugin-node-polyfills": "^0.24.0"
   }
