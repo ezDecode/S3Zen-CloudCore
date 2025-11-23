@@ -51,15 +51,14 @@ export const FileItem = ({
     if (viewMode === 'grid') {
         return (
             <motion.div
-                layout
                 whileHover={{ y: -2 }}
                 whileTap={{ scale: 0.98 }}
                 onHoverStart={() => setIsHovered(true)}
                 onHoverEnd={() => setIsHovered(false)}
-                className={`group relative rounded-xl border transition-all duration-200 cursor-pointer overflow-hidden ${isSelected
-                        ? 'bg-gradient-to-br from-blue-500/20 to-purple-500/20 border-blue-500/50 shadow-lg shadow-blue-500/20'
-                        : 'bg-white/5 border-white/10 hover:bg-white/10 hover:border-white/20'
-                    }`}
+                className={`group relative rounded-xl border transition-all duration-200 cursor-pointer ${isSelected
+                    ? 'bg-gradient-to-br from-blue-500/20 to-purple-500/20 border-blue-500/50 shadow-lg shadow-blue-500/20'
+                    : 'bg-white/5 border-white/10 hover:bg-white/10 hover:border-white/20'
+                    } ${showMenu ? 'z-50' : 'z-0'}`}
                 onClick={() => isFolder ? onOpen(item) : onSelect(item)}
                 onDoubleClick={() => !isFolder && onPreview && onPreview(item)}
             >
@@ -79,8 +78,8 @@ export const FileItem = ({
 
                 {/* Context Menu Button */}
                 <motion.div
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: isHovered || showMenu ? 1 : 0 }}
+                    initial={{ opacity: 0.5 }}
+                    animate={{ opacity: isHovered || showMenu ? 1 : 0.5 }}
                     className="absolute top-2 right-2 z-10"
                     ref={menuRef}
                 >
@@ -181,15 +180,14 @@ export const FileItem = ({
     // List View
     return (
         <motion.div
-            layout
-            whileHover={{ x: 2 }}
+            whileHover={{ scale: 1.005, backgroundColor: 'rgba(255, 255, 255, 0.08)' }}
             whileTap={{ scale: 0.995 }}
             onHoverStart={() => setIsHovered(true)}
             onHoverEnd={() => setIsHovered(false)}
-            className={`group relative grid grid-cols-12 gap-4 items-center px-4 py-3 rounded-lg border transition-all duration-200 cursor-pointer ${isSelected
-                    ? 'bg-gradient-to-r from-blue-500/10 to-purple-500/10 border-blue-500/30'
-                    : 'bg-transparent border-transparent hover:bg-white/5 hover:border-white/10'
-                }`}
+            className={`group relative grid grid-cols-12 gap-4 items-center px-4 py-3.5 rounded-lg border transition-all duration-200 cursor-pointer ${isSelected
+                ? 'bg-gradient-to-r from-blue-500/20 to-purple-500/20 border-blue-500/50 shadow-lg shadow-blue-500/10'
+                : 'bg-white/[0.02] border-white/[0.08] hover:border-white/20 hover:shadow-md'
+                } ${showMenu ? 'z-50' : 'z-0'}`}
             onClick={() => isFolder ? onOpen(item) : onSelect(item)}
             onDoubleClick={() => !isFolder && onPreview && onPreview(item)}
         >
@@ -203,9 +201,9 @@ export const FileItem = ({
                     <motion.div
                         whileHover={{ scale: 1.1 }}
                         whileTap={{ scale: 0.9 }}
-                        className={`w-4 h-4 rounded border-2 flex items-center justify-center transition-all ${isSelected
-                                ? 'bg-blue-500 border-blue-500'
-                                : 'border-zinc-600 hover:border-zinc-400'
+                        className={`w-5 h-5 rounded border-2 flex items-center justify-center transition-all ${isSelected
+                            ? 'bg-blue-500 border-blue-500 shadow-lg shadow-blue-500/50'
+                            : 'border-zinc-500 hover:border-zinc-300 bg-white/5'
                             }`}
                         onClick={() => onSelect(item)}
                     >
@@ -250,12 +248,12 @@ export const FileItem = ({
             {/* Actions Column */}
             <div className="col-span-4 sm:col-span-1 flex justify-end relative" ref={menuRef}>
                 <motion.button
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: isHovered || showMenu || isSelected ? 1 : 0 }}
+                    initial={{ opacity: 1 }}
+                    animate={{ opacity: 1 }}
                     whileHover={{ scale: 1.1 }}
                     whileTap={{ scale: 0.9 }}
                     onClick={handleMenuClick}
-                    className="p-1.5 rounded-lg bg-white/5 border border-white/10 text-zinc-400 hover:text-white hover:bg-white/10 transition-all"
+                    className="p-2 rounded-lg bg-white/10 border border-white/20 text-zinc-300 hover:text-white hover:bg-white/15 hover:border-white/30 transition-all shadow-sm"
                 >
                     <MoreVerticalIcon className="w-4 h-4" />
                 </motion.button>
@@ -266,12 +264,12 @@ export const FileItem = ({
                             initial={{ opacity: 0, scale: 0.95, y: -5 }}
                             animate={{ opacity: 1, scale: 1, y: 0 }}
                             exit={{ opacity: 0, scale: 0.95, y: -5 }}
-                            className="absolute right-0 top-full mt-1 w-48 bg-zinc-900 border border-white/10 rounded-lg shadow-2xl overflow-hidden z-50"
+                            className="absolute right-0 top-full mt-2 w-52 bg-zinc-900/95 backdrop-blur-xl border border-white/20 rounded-xl shadow-2xl overflow-y-auto max-h-80 custom-scrollbar z-50"
                         >
                             {!isFolder && onPreview && (
                                 <button
                                     onClick={() => handleAction(() => onPreview(item))}
-                                    className="w-full flex items-center gap-2.5 px-3 py-2 text-sm text-zinc-300 hover:bg-white/5 hover:text-white transition-colors"
+                                    className="w-full flex items-center gap-3 px-4 py-2.5 text-sm font-medium text-zinc-200 hover:bg-white/10 hover:text-white transition-all"
                                 >
                                     <ViewIcon className="w-4 h-4" />
                                     <span>Preview</span>
@@ -280,7 +278,7 @@ export const FileItem = ({
                             {!isFolder && onDownload && (
                                 <button
                                     onClick={() => handleAction(() => onDownload(item))}
-                                    className="w-full flex items-center gap-2.5 px-3 py-2 text-sm text-zinc-300 hover:bg-white/5 hover:text-white transition-colors"
+                                    className="w-full flex items-center gap-3 px-4 py-2.5 text-sm font-medium text-zinc-200 hover:bg-white/10 hover:text-white transition-all"
                                 >
                                     <Download01Icon className="w-4 h-4" />
                                     <span>Download</span>
@@ -289,7 +287,7 @@ export const FileItem = ({
                             {!isFolder && onShare && (
                                 <button
                                     onClick={() => handleAction(() => onShare(item))}
-                                    className="w-full flex items-center gap-2.5 px-3 py-2 text-sm text-zinc-300 hover:bg-white/5 hover:text-white transition-colors"
+                                    className="w-full flex items-center gap-3 px-4 py-2.5 text-sm font-medium text-zinc-200 hover:bg-white/10 hover:text-white transition-all"
                                 >
                                     <Share01Icon className="w-4 h-4" />
                                     <span>Share</span>
@@ -298,7 +296,7 @@ export const FileItem = ({
                             {onRename && (
                                 <button
                                     onClick={() => handleAction(() => onRename(item))}
-                                    className="w-full flex items-center gap-2.5 px-3 py-2 text-sm text-zinc-300 hover:bg-white/5 hover:text-white transition-colors"
+                                    className="w-full flex items-center gap-3 px-4 py-2.5 text-sm font-medium text-zinc-200 hover:bg-white/10 hover:text-white transition-all"
                                 >
                                     <Edit02Icon className="w-4 h-4" />
                                     <span>Rename</span>
@@ -306,10 +304,10 @@ export const FileItem = ({
                             )}
                             {onDelete && (
                                 <>
-                                    <div className="h-px bg-white/5 my-1" />
+                                    <div className="h-px bg-white/10 my-1" />
                                     <button
                                         onClick={() => handleAction(() => onDelete(item))}
-                                        className="w-full flex items-center gap-2.5 px-3 py-2 text-sm text-red-400 hover:bg-red-500/10 transition-colors"
+                                        className="w-full flex items-center gap-3 px-4 py-2.5 text-sm font-medium text-red-400 hover:bg-red-500/20 hover:text-red-300 transition-all"
                                     >
                                         <Delete02Icon className="w-4 h-4" />
                                         <span>Delete</span>

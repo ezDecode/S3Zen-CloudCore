@@ -4,7 +4,7 @@
  */
 
 import { useState, useEffect, useCallback } from 'react';
-import { Upload02Icon, FolderAddIcon, Delete02Icon, Logout01Icon, Search01Icon, Loading03Icon, Home01Icon, LayoutGridIcon, MenuSquareIcon, Download01Icon, Share01Icon, Cancel01Icon } from 'hugeicons-react';
+import { Upload02Icon, FolderAddIcon, Delete02Icon, Logout01Icon, Search01Icon, Loading03Icon, Home01Icon, LayoutGridIcon, ListViewIcon, Download01Icon, Share01Icon, Cancel01Icon } from 'hugeicons-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useToast } from '../common/Toast';
 import { FileList } from './FileList';
@@ -593,7 +593,7 @@ export const FileExplorer = ({
                             }`}
                         title="List View"
                     >
-                        <MenuSquareIcon className="w-4 h-4" />
+                        <ListViewIcon className="w-4 h-4" />
                     </motion.button>
                 </div>
             </div>
