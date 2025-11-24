@@ -12,7 +12,7 @@ import { ToastProvider } from './components/common/Toast';
 import { Hero } from './components/auth/Hero';
 import { AuthModal } from './components/auth/AuthModal';
 import { FileExplorer } from './components/file-explorer/FileExplorer';
-import { ShareModal, DeleteConfirmModal, CreateFolderModal, RenameModal } from './components/modals';
+import { ShareModal, DeleteConfirmModal, CreateFolderModal, RenameModal, TeamModal } from './components/modals';
 import { useAuth } from './hooks/useAuth';
 import { useModals } from './hooks/useModals';
 import { useSessionTimeout } from './hooks/useSessionTimeout';
@@ -48,7 +48,10 @@ function AppContent() {
     renameModalItem,
     handleRenameModal,
     closeRenameModal,
-    handleRenameSuccess
+    handleRenameSuccess,
+    teamModalOpen,
+    handleTeamModal,
+    closeTeamModal
   } = useModals();
 
   // Session timeout handling
@@ -77,6 +80,7 @@ function AppContent() {
           onDeleteModal={handleDeleteModal}
           onCreateFolderModal={handleCreateFolderModal}
           onRenameModal={handleRenameModal}
+          onTeamModal={handleTeamModal}
         />
       )}
 
@@ -113,6 +117,12 @@ function AppContent() {
         onClose={closeRenameModal}
         item={renameModalItem}
         onSuccess={handleRenameSuccess}
+      />
+
+      {/* Team Modal */}
+      <TeamModal
+        isOpen={teamModalOpen}
+        onClose={closeTeamModal}
       />
     </>
   );

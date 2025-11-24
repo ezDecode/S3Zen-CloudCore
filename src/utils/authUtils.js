@@ -20,6 +20,8 @@ import {
     generateSecureToken
 } from './cryptoUtils.js';
 
+export { isCryptoInitialized };
+
 const STORAGE_KEYS = {
     ENCRYPTED_CREDENTIALS: 'cc_enc_creds', // Encrypted credentials
     SESSION_TOKEN: 'cc_session_token', // Session identifier

@@ -16,7 +16,8 @@ import {
     saveBucketConfig,
     getCredentials,
     getBucketConfig,
-    clearAuth
+    clearAuth,
+    isCryptoInitialized
 } from '../utils/authUtils';
 
 export const useAuth = () => {
@@ -68,8 +69,14 @@ export const useAuth = () => {
 
     // Handle authentication
     const handleAuthenticate = useCallback(async (formData) => {
-        if (!authInitialized) {
-            throw new Error('Authentication system not ready. Please refresh the page.');
+        // Ensure auth system is initialized (re-init if needed after logout)
+        if (!authInitialized || !isCryptoInitialized()) {
+            console.log('Re-initializing auth system...');
+            const result = await initializeAuth();
+            if (!result.success) {
+                throw new Error('Failed to initialize security system. Please refresh.');
+            }
+            setAuthInitialized(true);
         }
 
         try {

@@ -8,3 +8,4 @@ export { ShareModal } from './ShareModal';
 export { DeleteConfirmModal } from './DeleteConfirmModal';
 export { CreateFolderModal } from './CreateFolderModal';
 export { RenameModal } from './RenameModal';
+export { TeamModal } from './TeamModal';
