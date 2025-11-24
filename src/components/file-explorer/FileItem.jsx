@@ -92,72 +92,76 @@ export const FileItem = ({
 
                 {/* Context Menu Button */}
                 <motion.div
-                    initial={{ opacity: 0.5 }}
-                    animate={{ opacity: isHovered || showMenu ? 1 : 0.5 }}
-                    className="absolute top-2 right-2 z-10"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: isHovered || showMenu ? 1 : 0 }}
+                    className="absolute top-2 right-2 z-20"
                     ref={menuRef}
                 >
                     <button
                         ref={buttonRef}
                         onClick={handleMenuClick}
-                        className="p-1.5 rounded-lg bg-black/50 backdrop-blur-sm border border-white/10 text-white hover:bg-black/70 transition-all"
+                        className={`p-1.5 rounded-lg transition-all duration-200 ${showMenu
+                            ? 'bg-white text-black shadow-lg shadow-white/20'
+                            : 'bg-black/40 text-white hover:bg-black/60 backdrop-blur-sm border border-white/10'
+                            }`}
                     >
-                        <MoreVerticalIcon className="w-3.5 h-3.5" />
+                        <MoreVerticalIcon className="w-4 h-4" />
                     </button>
 
                     <AnimatePresence>
                         {showMenu && (
                             <motion.div
-                                initial={{ opacity: 0, scale: 0.95, y: menuPosition === 'top' ? 5 : -5 }}
-                                animate={{ opacity: 1, scale: 1, y: 0 }}
-                                exit={{ opacity: 0, scale: 0.95, y: menuPosition === 'top' ? 5 : -5 }}
-                                className={`absolute right-0 w-48 bg-zinc-900 border border-white/10 rounded-lg shadow-2xl overflow-hidden z-50 ${menuPosition === 'top' ? 'bottom-full mb-1' : 'top-full mt-1'
+                                initial={{ opacity: 0, scale: 0.9, y: 10, filter: 'blur(10px)' }}
+                                animate={{ opacity: 1, scale: 1, y: 0, filter: 'blur(0px)' }}
+                                exit={{ opacity: 0, scale: 0.9, y: 10, filter: 'blur(10px)' }}
+                                transition={{ type: 'spring', duration: 0.3 }}
+                                className={`absolute right-0 w-56 bg-zinc-900/95 backdrop-blur-xl border border-white/10 rounded-xl shadow-2xl overflow-hidden z-50 py-1.5 ${menuPosition === 'top' ? 'bottom-full mb-2' : 'top-full mt-2'
                                     }`}
                             >
                                 {!isFolder && onPreview && (
                                     <button
                                         onClick={() => handleAction(() => onPreview(item))}
-                                        className="w-full flex items-center gap-2.5 px-3 py-2 text-sm text-zinc-300 hover:bg-white/5 hover:text-white transition-colors"
+                                        className="w-full flex items-center gap-3 px-4 py-2.5 text-sm font-medium text-zinc-300 hover:bg-white/10 hover:text-white transition-all group"
                                     >
-                                        <ViewIcon className="w-4 h-4" />
+                                        <ViewIcon className="w-4 h-4 text-zinc-500 group-hover:text-white transition-colors" />
                                         <span>Preview</span>
                                     </button>
                                 )}
                                 {!isFolder && onDownload && (
                                     <button
                                         onClick={() => handleAction(() => onDownload(item))}
-                                        className="w-full flex items-center gap-2.5 px-3 py-2 text-sm text-zinc-300 hover:bg-white/5 hover:text-white transition-colors"
+                                        className="w-full flex items-center gap-3 px-4 py-2.5 text-sm font-medium text-zinc-300 hover:bg-white/10 hover:text-white transition-all group"
                                     >
-                                        <Download01Icon className="w-4 h-4" />
+                                        <Download01Icon className="w-4 h-4 text-zinc-500 group-hover:text-white transition-colors" />
                                         <span>Download</span>
                                     </button>
                                 )}
                                 {!isFolder && onShare && (
                                     <button
                                         onClick={() => handleAction(() => onShare(item))}
-                                        className="w-full flex items-center gap-2.5 px-3 py-2 text-sm text-zinc-300 hover:bg-white/5 hover:text-white transition-colors"
+                                        className="w-full flex items-center gap-3 px-4 py-2.5 text-sm font-medium text-zinc-300 hover:bg-white/10 hover:text-white transition-all group"
                                     >
-                                        <Share01Icon className="w-4 h-4" />
+                                        <Share01Icon className="w-4 h-4 text-zinc-500 group-hover:text-white transition-colors" />
                                         <span>Share</span>
                                     </button>
                                 )}
                                 {onRename && (
                                     <button
                                         onClick={() => handleAction(() => onRename(item))}
-                                        className="w-full flex items-center gap-2.5 px-3 py-2 text-sm text-zinc-300 hover:bg-white/5 hover:text-white transition-colors"
+                                        className="w-full flex items-center gap-3 px-4 py-2.5 text-sm font-medium text-zinc-300 hover:bg-white/10 hover:text-white transition-all group"
                                     >
-                                        <Edit02Icon className="w-4 h-4" />
+                                        <Edit02Icon className="w-4 h-4 text-zinc-500 group-hover:text-white transition-colors" />
                                         <span>Rename</span>
                                     </button>
                                 )}
                                 {onDelete && (
                                     <>
-                                        <div className="h-px bg-white/5 my-1" />
+                                        <div className="h-px bg-white/10 my-1.5 mx-2" />
                                         <button
                                             onClick={() => handleAction(() => onDelete(item))}
-                                            className="w-full flex items-center gap-2.5 px-3 py-2 text-sm text-red-400 hover:bg-red-500/10 transition-colors"
+                                            className="w-full flex items-center gap-3 px-4 py-2.5 text-sm font-medium text-red-400 hover:bg-red-500/10 hover:text-red-300 transition-all group"
                                         >
-                                            <Delete02Icon className="w-4 h-4" />
+                                            <Delete02Icon className="w-4 h-4 text-red-400/70 group-hover:text-red-400 transition-colors" />
                                             <span>Delete</span>
                                         </button>
                                     </>
