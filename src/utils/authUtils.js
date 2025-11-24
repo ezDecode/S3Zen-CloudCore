@@ -42,15 +42,41 @@ let sessionToken = null;
  */
 export const initializeAuth = async () => {
     try {
-        // Initialize WebCrypto encryption key
+        // Initialize WebCrypto encryption key (restores from storage if available)
         const result = await initializeCryptoKey();
         if (!result.success) {
             throw new Error('Failed to initialize crypto');
         }
 
-        // Generate session token
+        // Try to restore existing session
+        const storedToken = localStorage.getItem(STORAGE_KEYS.SESSION_TOKEN);
+        const encryptedCreds = localStorage.getItem(STORAGE_KEYS.ENCRYPTED_CREDENTIALS);
+
+        if (storedToken && encryptedCreds && !isSessionExpired()) {
+            try {
+                // Restore session token
+                sessionToken = storedToken;
+
+                // Decrypt and restore credentials to memory cache
+                const decrypted = await decryptData(encryptedCreds);
+                if (decrypted && decrypted.accessKeyId && decrypted.secretAccessKey) {
+                    credentialCache = decrypted;
+                    console.log('✓ Session restored successfully');
+                    return { success: true };
+                }
+            } catch (e) {
+                console.warn('Failed to restore session:', e);
+            }
+        }
+
+        // Start new session if restore failed or no session exists
+        console.log('Starting new session');
         sessionToken = generateSecureToken(32);
         localStorage.setItem(STORAGE_KEYS.SESSION_TOKEN, sessionToken);
+
+        // Clear any old encrypted data since we're starting fresh
+        localStorage.removeItem(STORAGE_KEYS.ENCRYPTED_CREDENTIALS);
+        credentialCache = null;
 
         return { success: true };
     } catch (error) {
@@ -81,6 +107,10 @@ export const saveCredentials = async (credentials) => {
             sessionToken: credentials.sessionToken || null,
             expiresAt: credentials.expiresAt || null,
         };
+
+        // Persist to localStorage (encrypted)
+        const encrypted = await encryptData(credentialCache);
+        localStorage.setItem(STORAGE_KEYS.ENCRYPTED_CREDENTIALS, encrypted);
 
         // Update session timestamp
         localStorage.setItem(STORAGE_KEYS.SESSION_TIMESTAMP, Date.now().toString());

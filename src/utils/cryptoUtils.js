@@ -21,19 +21,52 @@ let masterKey = null;
  * Generate a random encryption key on app initialization
  * This key exists only in browser memory and is lost on page reload
  */
+const STORAGE_KEY_CRYPTO = 'cc_master_key';
+
+/**
+ * Initialize encryption key
+ * Tries to recover key from storage first, otherwise generates new one
+ */
 export const initializeCryptoKey = async () => {
     try {
-        // Generate a random key for this session
+        // Try to load existing key
+        const storedKey = localStorage.getItem(STORAGE_KEY_CRYPTO);
+
+        if (storedKey) {
+            try {
+                const keyData = JSON.parse(storedKey);
+                masterKey = await crypto.subtle.importKey(
+                    'jwk',
+                    keyData,
+                    {
+                        name: CRYPTO_CONFIG.ALGORITHM,
+                        length: CRYPTO_CONFIG.KEY_LENGTH,
+                    },
+                    true,
+                    ['encrypt', 'decrypt']
+                );
+                return { success: true };
+            } catch (e) {
+                console.warn('Failed to recover stored key, generating new one');
+            }
+        }
+
+        // Generate a new random key
         const keyMaterial = await crypto.subtle.generateKey(
             {
                 name: CRYPTO_CONFIG.ALGORITHM,
                 length: CRYPTO_CONFIG.KEY_LENGTH,
             },
-            true, // extractable (for export if needed)
+            true, // extractable
             ['encrypt', 'decrypt']
         );
 
         masterKey = keyMaterial;
+
+        // Export and save key
+        const exportedKey = await crypto.subtle.exportKey('jwk', keyMaterial);
+        localStorage.setItem(STORAGE_KEY_CRYPTO, JSON.stringify(exportedKey));
+
         return { success: true };
     } catch (error) {
         console.error('Failed to initialize crypto key:', error);
@@ -184,6 +217,7 @@ export const zeroMemory = (obj) => {
  */
 export const destroyCryptoKey = () => {
     masterKey = null;
+    localStorage.removeItem(STORAGE_KEY_CRYPTO);
 };
 
 /**
