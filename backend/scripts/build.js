@@ -124,16 +124,20 @@ function checkNodeModules() {
  * Validate environment variables
  */
 function checkEnvironmentVariables() {
-    require('dotenv').config({ path: path.join(__dirname, '..', '.env') });
+    // Load .env file if it exists (for local development)
+    const envPath = path.join(__dirname, '..', '.env');
+    if (fs.existsSync(envPath)) {
+        require('dotenv').config({ path: envPath });
+    }
 
     const requiredVars = {
-        'BASE_URL': 'Base URL for short links',
-        'ADMIN_API_KEY': 'Admin API key for protected endpoints'
+        'BASE_URL': 'Base URL for short links'
     };
 
     const optionalVars = {
         'PORT': 'Server port (defaults to 3000)',
-        'DB_PATH': 'Database file path (defaults to ./data/urls.db)'
+        'DB_PATH': 'Database file path (defaults to ./data/urls.db)',
+        'ADMIN_API_KEY': 'Admin API key for protected endpoints (optional)'
     };
 
     let allRequired = true;
@@ -310,7 +314,6 @@ async function runBuildChecks() {
     // 2. Check file structure
     log('📁 Checking File Structure...', 'blue');
     checkFileExists(path.join(__dirname, '..', 'package.json'), 'package.json', true);
-    checkFileExists(path.join(__dirname, '..', '.env'), '.env file', true);
     checkEnvExample();
     console.log();
 
