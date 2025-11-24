@@ -123,29 +123,29 @@ export const FileList = ({
                     {/* List Header */}
                     <div className="grid grid-cols-12 gap-4 px-4 py-3 text-xs font-bold uppercase tracking-wider text-zinc-400 bg-white/5 border border-white/10 rounded-lg mb-3 sticky top-0 backdrop-blur-sm z-10">
                         <div
-                            className="col-span-8 sm:col-span-6 cursor-pointer hover:text-white flex items-center gap-2 transition-colors group select-none"
+                            className="col-span-8 sm:col-span-6 cursor-pointer hover:text-white flex flex-row items-center gap-2 transition-colors group select-none"
                             onClick={() => onSort && onSort('name')}
                         >
                             <span>Name</span>
-                            <div className={`transition-all duration-200 ${sortBy === 'name' ? 'opacity-100 text-blue-500' : 'opacity-0 group-hover:opacity-50 text-zinc-500'}`}>
+                            <div className={`flex items-center transition-all duration-200 ${sortBy === 'name' ? 'opacity-100 text-blue-500' : 'opacity-0 group-hover:opacity-50 text-zinc-500'}`}>
                                 {sortBy === 'name' && sortOrder === 'desc' ? <ArrowDown01Icon className="w-3.5 h-3.5" /> : <ArrowUp01Icon className="w-3.5 h-3.5" />}
                             </div>
                         </div>
                         <div
-                            className="col-span-2 hidden sm:block cursor-pointer hover:text-white flex items-center gap-2 transition-colors group select-none"
+                            className="col-span-2 hidden sm:block cursor-pointer hover:text-white flex flex-row items-center gap-2 transition-colors group select-none"
                             onClick={() => onSort && onSort('size')}
                         >
                             <span>Size</span>
-                            <div className={`transition-all duration-200 ${sortBy === 'size' ? 'opacity-100 text-blue-500' : 'opacity-0 group-hover:opacity-50 text-zinc-500'}`}>
+                            <div className={`flex items-center transition-all duration-200 ${sortBy === 'size' ? 'opacity-100 text-blue-500' : 'opacity-0 group-hover:opacity-50 text-zinc-500'}`}>
                                 {sortBy === 'size' && sortOrder === 'desc' ? <ArrowDown01Icon className="w-3.5 h-3.5" /> : <ArrowUp01Icon className="w-3.5 h-3.5" />}
                             </div>
                         </div>
                         <div
-                            className="col-span-3 hidden sm:block cursor-pointer hover:text-white flex items-center gap-2 transition-colors group select-none"
+                            className="col-span-3 hidden sm:block cursor-pointer hover:text-white flex flex-row items-center gap-2 transition-colors group select-none"
                             onClick={() => onSort && onSort('date')}
                         >
                             <span>Modified</span>
-                            <div className={`transition-all duration-200 ${sortBy === 'date' ? 'opacity-100 text-blue-500' : 'opacity-0 group-hover:opacity-50 text-zinc-500'}`}>
+                            <div className={`flex items-center transition-all duration-200 ${sortBy === 'date' ? 'opacity-100 text-blue-500' : 'opacity-0 group-hover:opacity-50 text-zinc-500'}`}>
                                 {sortBy === 'date' && sortOrder === 'desc' ? <ArrowDown01Icon className="w-3.5 h-3.5" /> : <ArrowUp01Icon className="w-3.5 h-3.5" />}
                             </div>
                         </div>
