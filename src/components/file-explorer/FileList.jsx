@@ -5,7 +5,7 @@
 
 import { motion, AnimatePresence } from 'framer-motion';
 import { FileItem } from './FileItem';
-import { FolderOpenIcon, SparklesIcon } from 'hugeicons-react';
+import { FolderOpenIcon, SparklesIcon, ArrowUp01Icon, ArrowDown01Icon } from 'hugeicons-react';
 import { FileListSkeleton } from '../common/SkeletonLoader';
 
 export const FileList = ({
@@ -19,7 +19,10 @@ export const FileList = ({
     onDelete,
     onPreview,
     isLoading,
-    viewMode = 'grid'
+    viewMode = 'grid',
+    sortBy,
+    sortOrder,
+    onSort
 }) => {
     if (isLoading) {
         return <FileListSkeleton viewMode={viewMode} count={16} />;
@@ -86,17 +89,12 @@ export const FileList = ({
         );
     }
 
-    // Sort: Folders first, then files
-    const folders = items.filter(item => item.type === 'folder').sort((a, b) => a.name.localeCompare(b.name));
-    const files = items.filter(item => item.type === 'file').sort((a, b) => a.name.localeCompare(b.name));
-    const sortedItems = [...folders, ...files];
-
     return (
         <div className="flex-1 overflow-y-auto overflow-x-hidden px-3 sm:px-6 py-3 sm:py-6 custom-scrollbar">
             {viewMode === 'grid' ? (
                 <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 2xl:grid-cols-8 gap-2 sm:gap-3">
                     <AnimatePresence mode="popLayout">
-                        {sortedItems.map((item, index) => (
+                        {items.map((item, index) => (
                             <motion.div
                                 key={item.key}
                                 initial={{ opacity: 0, scale: 0.9 }}
@@ -124,15 +122,33 @@ export const FileList = ({
                 <div className="space-y-1">
                     {/* List Header */}
                     <div className="grid grid-cols-12 gap-4 px-4 py-3 text-xs font-bold uppercase tracking-wider text-zinc-400 bg-white/5 border border-white/10 rounded-lg mb-3 sticky top-0 backdrop-blur-sm z-10">
-                        <div className="col-span-8 sm:col-span-6">Name</div>
-                        <div className="col-span-2 hidden sm:block">Size</div>
-                        <div className="col-span-3 hidden sm:block">Modified</div>
+                        <div
+                            className="col-span-8 sm:col-span-6 cursor-pointer hover:text-white flex items-center gap-1 transition-colors"
+                            onClick={() => onSort && onSort('name')}
+                        >
+                            Name
+                            {sortBy === 'name' && (sortOrder === 'asc' ? <ArrowUp01Icon className="w-3 h-3" /> : <ArrowDown01Icon className="w-3 h-3" />)}
+                        </div>
+                        <div
+                            className="col-span-2 hidden sm:block cursor-pointer hover:text-white flex items-center gap-1 transition-colors"
+                            onClick={() => onSort && onSort('size')}
+                        >
+                            Size
+                            {sortBy === 'size' && (sortOrder === 'asc' ? <ArrowUp01Icon className="w-3 h-3" /> : <ArrowDown01Icon className="w-3 h-3" />)}
+                        </div>
+                        <div
+                            className="col-span-3 hidden sm:block cursor-pointer hover:text-white flex items-center gap-1 transition-colors"
+                            onClick={() => onSort && onSort('date')}
+                        >
+                            Modified
+                            {sortBy === 'date' && (sortOrder === 'asc' ? <ArrowUp01Icon className="w-3 h-3" /> : <ArrowDown01Icon className="w-3 h-3" />)}
+                        </div>
                         <div className="col-span-4 sm:col-span-1 text-right">Actions</div>
                     </div>
 
                     {/* List Items */}
                     <AnimatePresence mode="popLayout">
-                        {sortedItems.map((item, index) => (
+                        {items.map((item, index) => (
                             <motion.div
                                 key={item.key}
                                 initial={{ opacity: 0, x: -10 }}

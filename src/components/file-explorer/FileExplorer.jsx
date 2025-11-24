@@ -3,8 +3,8 @@
  * Complete UI Redesign - Modern & Sophisticated
  */
 
-import { useState, useEffect, useCallback } from 'react';
-import { Upload02Icon, FolderAddIcon, Delete02Icon, Logout01Icon, Search01Icon, Loading03Icon, Home01Icon, LayoutGridIcon, ListViewIcon, Download01Icon, Share01Icon, Cancel01Icon, Tick01Icon, UserGroupIcon } from 'hugeicons-react';
+import { useState, useEffect, useCallback, useRef } from 'react';
+import { Upload02Icon, FolderAddIcon, Delete02Icon, Logout01Icon, Search01Icon, Loading03Icon, Home01Icon, LayoutGridIcon, ListViewIcon, Download01Icon, Share01Icon, Cancel01Icon, Tick01Icon, UserGroupIcon, ArrowUp01Icon } from 'hugeicons-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useToast } from '../common/Toast';
 import { FileList } from './FileList';
@@ -43,6 +43,10 @@ export const FileExplorer = ({
         return saved || 'grid';
     });
     const [isDragging, setIsDragging] = useState(false);
+    const [sortBy, setSortBy] = useState('name'); // 'name', 'size', 'date'
+    const [sortOrder, setSortOrder] = useState('asc'); // 'asc', 'desc'
+    const [showSortMenu, setShowSortMenu] = useState(false);
+    const sortMenuRef = useRef(null);
 
     const bucketConfig = getBucketConfig();
 
@@ -71,6 +75,19 @@ export const FileExplorer = ({
     useEffect(() => {
         localStorage.setItem('cloudcore_view_mode', viewMode);
     }, [viewMode]);
+
+    // Click outside handler for sort menu
+    useEffect(() => {
+        const handleClickOutside = (event) => {
+            if (sortMenuRef.current && !sortMenuRef.current.contains(event.target)) {
+                setShowSortMenu(false);
+            }
+        };
+        if (showSortMenu) {
+            document.addEventListener('mousedown', handleClickOutside);
+            return () => document.removeEventListener('mousedown', handleClickOutside);
+        }
+    }, [showSortMenu]);
 
     // Navigation
     const handleNavigate = (path) => {
@@ -371,6 +388,39 @@ export const FileExplorer = ({
         item.name.toLowerCase().includes(searchQuery.toLowerCase())
     );
 
+    const handleSort = (field) => {
+        if (sortBy === field) {
+            setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc');
+        } else {
+            setSortBy(field);
+            setSortOrder('asc');
+        }
+    };
+
+    const sortedItems = [...filteredItems].sort((a, b) => {
+        // Always keep folders on top
+        if (a.type !== b.type) {
+            return a.type === 'folder' ? -1 : 1;
+        }
+
+        let comparison = 0;
+        switch (sortBy) {
+            case 'name':
+                comparison = a.name.localeCompare(b.name);
+                break;
+            case 'size':
+                comparison = (a.size || 0) - (b.size || 0);
+                break;
+            case 'date':
+                comparison = new Date(a.lastModified || 0) - new Date(b.lastModified || 0);
+                break;
+            default:
+                comparison = 0;
+        }
+
+        return sortOrder === 'asc' ? comparison : -comparison;
+    });
+
     const handleLogout = () => {
         clearAuth();
         onLogout();
@@ -607,6 +657,77 @@ export const FileExplorer = ({
                     </AnimatePresence>
                 </div>
 
+                {/* Sort Menu */}
+                <div className="relative" ref={sortMenuRef}>
+                    <motion.button
+                        whileHover={{ scale: 1.05 }}
+                        whileTap={{ scale: 0.95 }}
+                        onClick={() => setShowSortMenu(!showSortMenu)}
+                        className={`p-1.5 sm:p-2 rounded-lg transition-all shrink-0 ${showSortMenu ? 'text-white bg-white/10' : 'text-zinc-400 hover:text-white hover:bg-white/5'}`}
+                        title="Sort"
+                    >
+                        <ArrowUp01Icon className="w-4.5 h-4.5" />
+                    </motion.button>
+
+                    <AnimatePresence>
+                        {showSortMenu && (
+                            <motion.div
+                                initial={{ opacity: 0, scale: 0.95, y: 10 }}
+                                animate={{ opacity: 1, scale: 1, y: 0 }}
+                                exit={{ opacity: 0, scale: 0.95, y: 10 }}
+                                className="absolute right-0 top-full mt-2 w-48 bg-zinc-900 border border-white/10 rounded-xl shadow-2xl overflow-hidden z-50 py-1"
+                            >
+                                <div className="px-3 py-2 text-xs font-semibold text-zinc-500 uppercase tracking-wider">
+                                    Sort By
+                                </div>
+                                {['name', 'size', 'date'].map((field) => (
+                                    <button
+                                        key={field}
+                                        onClick={() => {
+                                            handleSort(field);
+                                            setShowSortMenu(false);
+                                        }}
+                                        className="w-full flex items-center justify-between px-3 py-2 text-sm text-zinc-300 hover:bg-white/5 hover:text-white transition-colors capitalize"
+                                    >
+                                        <span>{field}</span>
+                                        {sortBy === field && (
+                                            <Tick01Icon className="w-4 h-4 text-blue-500" />
+                                        )}
+                                    </button>
+                                ))}
+                                <div className="h-px bg-white/10 my-1" />
+                                <div className="px-3 py-2 text-xs font-semibold text-zinc-500 uppercase tracking-wider">
+                                    Order
+                                </div>
+                                <button
+                                    onClick={() => {
+                                        setSortOrder('asc');
+                                        setShowSortMenu(false);
+                                    }}
+                                    className="w-full flex items-center justify-between px-3 py-2 text-sm text-zinc-300 hover:bg-white/5 hover:text-white transition-colors"
+                                >
+                                    <span>Ascending</span>
+                                    {sortOrder === 'asc' && (
+                                        <Tick01Icon className="w-4 h-4 text-blue-500" />
+                                    )}
+                                </button>
+                                <button
+                                    onClick={() => {
+                                        setSortOrder('desc');
+                                        setShowSortMenu(false);
+                                    }}
+                                    className="w-full flex items-center justify-between px-3 py-2 text-sm text-zinc-300 hover:bg-white/5 hover:text-white transition-colors"
+                                >
+                                    <span>Descending</span>
+                                    {sortOrder === 'desc' && (
+                                        <Tick01Icon className="w-4 h-4 text-blue-500" />
+                                    )}
+                                </button>
+                            </motion.div>
+                        )}
+                    </AnimatePresence>
+                </div>
+
                 {/* View Mode Toggle */}
                 <div className="flex items-center gap-0.5 sm:gap-1 p-0.5 sm:p-1 bg-white/5 rounded-lg border border-white/10 shrink-0">
                     <motion.button
@@ -637,7 +758,10 @@ export const FileExplorer = ({
             {/* Main Content Area - Fixed scrolling */}
             <main className="flex-1 flex flex-col overflow-hidden z-0 relative">
                 <FileList
-                    items={filteredItems}
+                    items={sortedItems}
+                    sortBy={sortBy}
+                    sortOrder={sortOrder}
+                    onSort={handleSort}
                     selectedItems={selectedItems}
                     onSelectItem={handleSelectItem}
                     onOpenFolder={handleOpenFolder}

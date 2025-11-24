@@ -7,7 +7,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { MoreVerticalIcon, Download01Icon, Share01Icon, Delete02Icon, Edit02Icon, ViewIcon, Tick02Icon } from 'hugeicons-react';
 import { useState, useRef, useEffect } from 'react';
 import { FileIcon } from './FileIcon';
-import { formatFileSize, formatDate } from '../../utils/formatters';
+import { formatFileSize, formatDate, formatExactDateTime } from '../../utils/formatters';
 
 export const FileItem = ({
     item,
@@ -231,7 +231,7 @@ export const FileItem = ({
 
             {/* Date Column */}
             <div className="col-span-3 hidden sm:block text-sm font-medium text-zinc-400">
-                {isFolder ? '—' : formatDate(item.lastModified)}
+                {isFolder ? '—' : formatExactDateTime(item.lastModified)}
             </div>
 
             {/* Actions Column */}

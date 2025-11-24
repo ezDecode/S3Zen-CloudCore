@@ -64,6 +64,22 @@ export const formatDate = (date) => {
 };
 
 /**
+ * Format date to exact string with seconds
+ */
+export const formatExactDateTime = (date) => {
+    if (!date) return '—';
+    return new Date(date).toLocaleString('en-US', {
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit',
+        hour12: true
+    });
+};
+
+/**
  * Get file extension from filename
  */
 export const getFileExtension = (filename) => {
