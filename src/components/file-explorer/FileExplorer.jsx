@@ -623,7 +623,7 @@ export const FileExplorer = ({
             </div>
 
             {/* Main Content Area - Fixed scrolling */}
-            <main className="flex-1 overflow-y-auto overflow-x-hidden z-0 relative">
+            <main className="flex-1 flex flex-col overflow-hidden z-0 relative">
                 <FileList
                     items={filteredItems}
                     selectedItems={selectedItems}

@@ -23,7 +23,9 @@ export const FileItem = ({
 }) => {
     const [showMenu, setShowMenu] = useState(false);
     const [isHovered, setIsHovered] = useState(false);
+    const [menuPosition, setMenuPosition] = useState('bottom'); // 'bottom' or 'top'
     const menuRef = useRef(null);
+    const buttonRef = useRef(null);
     const isFolder = item.type === 'folder';
 
     useEffect(() => {
@@ -40,6 +42,18 @@ export const FileItem = ({
 
     const handleMenuClick = (e) => {
         e.stopPropagation();
+
+        // Calculate dropdown position
+        if (buttonRef.current && !showMenu) {
+            const rect = buttonRef.current.getBoundingClientRect();
+            const spaceBelow = window.innerHeight - rect.bottom;
+            const spaceAbove = rect.top;
+            const menuHeight = 300; // Approximate max height
+
+            // Show upward if not enough space below and more space above
+            setMenuPosition(spaceBelow < menuHeight && spaceAbove > spaceBelow ? 'top' : 'bottom');
+        }
+
         setShowMenu(!showMenu);
     };
 
@@ -84,6 +98,7 @@ export const FileItem = ({
                     ref={menuRef}
                 >
                     <button
+                        ref={buttonRef}
                         onClick={handleMenuClick}
                         className="p-1.5 rounded-lg bg-black/50 backdrop-blur-sm border border-white/10 text-white hover:bg-black/70 transition-all"
                     >
@@ -93,10 +108,11 @@ export const FileItem = ({
                     <AnimatePresence>
                         {showMenu && (
                             <motion.div
-                                initial={{ opacity: 0, scale: 0.95, y: -5 }}
+                                initial={{ opacity: 0, scale: 0.95, y: menuPosition === 'top' ? 5 : -5 }}
                                 animate={{ opacity: 1, scale: 1, y: 0 }}
-                                exit={{ opacity: 0, scale: 0.95, y: -5 }}
-                                className="absolute right-0 top-full mt-1 w-48 bg-zinc-900 border border-white/10 rounded-lg shadow-2xl overflow-hidden z-50"
+                                exit={{ opacity: 0, scale: 0.95, y: menuPosition === 'top' ? 5 : -5 }}
+                                className={`absolute right-0 w-48 bg-zinc-900 border border-white/10 rounded-lg shadow-2xl overflow-hidden z-50 ${menuPosition === 'top' ? 'bottom-full mb-1' : 'top-full mt-1'
+                                    }`}
                             >
                                 {!isFolder && onPreview && (
                                     <button
@@ -221,6 +237,7 @@ export const FileItem = ({
             {/* Actions Column */}
             <div className="col-span-4 sm:col-span-1 flex justify-end relative" ref={menuRef}>
                 <motion.button
+                    ref={buttonRef}
                     initial={{ opacity: 1 }}
                     animate={{ opacity: 1 }}
                     whileHover={{ scale: 1.1 }}
@@ -234,13 +251,17 @@ export const FileItem = ({
                 <AnimatePresence>
                     {showMenu && (
                         <motion.div
-                            initial={{ opacity: 0, scale: 0.95, y: -5 }}
+                            initial={{ opacity: 0, scale: 0.95, y: menuPosition === 'top' ? 5 : -5 }}
                             animate={{ opacity: 1, scale: 1, y: 0 }}
-                            exit={{ opacity: 0, scale: 0.95, y: -5 }}
-                            className="absolute right-0 top-full mt-2 w-52 bg-zinc-900/95 backdrop-blur-xl border border-white/20 rounded-xl shadow-2xl overflow-y-auto max-h-80 custom-scrollbar z-50"
+                            exit={{ opacity: 0, scale: 0.95, y: menuPosition === 'top' ? 5 : -5 }}
+                            className={`absolute right-0 w-52 bg-zinc-900/95 backdrop-blur-xl border border-white/20 rounded-xl shadow-2xl overflow-y-auto max-h-80 custom-scrollbar z-50 ${menuPosition === 'top' ? 'bottom-full mb-2' : 'top-full mt-2'
+                                }`}
                         >
                             <button
-                                onClick={() => handleAction(() => onSelect(item))}
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                    handleAction(() => onSelect(item));
+                                }}
                                 className="w-full flex items-center gap-3 px-4 py-2.5 text-sm font-medium text-zinc-200 hover:bg-white/10 hover:text-white transition-all"
                             >
                                 <Tick02Icon className={`w-4 h-4 ${isSelected ? 'text-blue-500' : 'text-zinc-400'}`} />
