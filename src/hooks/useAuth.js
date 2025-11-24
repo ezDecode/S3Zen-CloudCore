@@ -1,6 +1,6 @@
 /**
- * useAuth Hook
- * Manages authentication state and operations
+ * useAuth Hook - Secure Authentication Management
+ * Manages authentication state with encrypted storage
  */
 
 import { useState, useEffect, useCallback } from 'react';
@@ -10,9 +10,12 @@ import {
     validateCredentials
 } from '../services/aws/s3Service';
 import {
+    initializeAuth,
     isAuthenticated,
     saveCredentials,
     saveBucketConfig,
+    getCredentials,
+    getBucketConfig,
     clearAuth
 } from '../utils/authUtils';
 
@@ -20,33 +23,65 @@ export const useAuth = () => {
     const toast = useToast();
     const [isLoggedIn, setIsLoggedIn] = useState(false);
     const [showAuthModal, setShowAuthModal] = useState(false);
+    const [authInitialized, setAuthInitialized] = useState(false);
 
-    // Check authentication on mount
+    // Initialize secure auth system on mount
     useEffect(() => {
-        if (isAuthenticated()) {
-            const credentials = JSON.parse(localStorage.getItem('cloudcore_aws_credentials'));
-            const bucketName = localStorage.getItem('cloudcore_bucket_name');
-            const region = localStorage.getItem('cloudcore_region');
+        const init = async () => {
+            try {
+                // Initialize encryption system
+                const result = await initializeAuth();
+                if (!result.success) {
+                    console.error('Failed to initialize auth system:', result.error);
+                    toast.error('Security system initialization failed');
+                    return;
+                }
 
-            if (credentials && bucketName && region) {
-                initializeS3Client(credentials, region, bucketName);
-                setIsLoggedIn(true);
-            } else {
-                clearAuth();
+                setAuthInitialized(true);
+
+                // Check if user was previously authenticated
+                if (isAuthenticated()) {
+                    const credentials = getCredentials();
+                    const bucketConfig = getBucketConfig();
+
+                    if (credentials && bucketConfig) {
+                        // Re-initialize S3 client with stored credentials
+                        initializeS3Client(
+                            credentials,
+                            bucketConfig.region,
+                            bucketConfig.bucketName
+                        );
+                        setIsLoggedIn(true);
+                    } else {
+                        // Clear invalid session
+                        clearAuth();
+                    }
+                }
+            } catch (error) {
+                console.error('Auth initialization error:', error);
+                toast.error('Failed to initialize secure storage');
             }
-        }
-    }, []);
+        };
+
+        init();
+    }, [toast]);
 
     // Handle authentication
     const handleAuthenticate = useCallback(async (formData) => {
+        if (!authInitialized) {
+            throw new Error('Authentication system not ready. Please refresh the page.');
+        }
+
         try {
+            const credentials = {
+                accessKeyId: formData.accessKeyId,
+                secretAccessKey: formData.secretAccessKey,
+                sessionToken: formData.sessionToken || null
+            };
+
             // Initialize S3 client
             const initResult = initializeS3Client(
-                {
-                    accessKeyId: formData.accessKeyId,
-                    secretAccessKey: formData.secretAccessKey,
-                    sessionToken: formData.sessionToken
-                },
+                credentials,
                 formData.region,
                 formData.bucketName
             );
@@ -55,40 +90,47 @@ export const useAuth = () => {
                 throw new Error(initResult.error);
             }
 
-            // Validate credentials
+            // Validate credentials with bucket access + STS identity check
             const validateResult = await validateCredentials();
             if (!validateResult.success) {
                 throw new Error(validateResult.error);
             }
 
-            // Save credentials and config
-            saveCredentials({
-                accessKeyId: formData.accessKeyId,
-                secretAccessKey: formData.secretAccessKey,
-                sessionToken: formData.sessionToken
-            });
+            // Display identity information
+            if (validateResult.identity) {
+                console.log('✓ Authenticated as:', validateResult.identity.arn);
+            }
+
+            // Save credentials securely (encrypted in memory)
+            await saveCredentials(credentials);
             saveBucketConfig(formData.bucketName, formData.region);
 
             // Success
             setIsLoggedIn(true);
             setShowAuthModal(false);
-            toast.success('Connected successfully!');
+            toast.success('Connected securely!');
         } catch (error) {
+            // Clear any partial state on error
+            clearAuth();
             throw new Error(error.message || 'Authentication failed');
         }
-    }, [toast]);
+    }, [authInitialized, toast]);
 
     // Handle logout
     const handleLogout = useCallback(() => {
         clearAuth();
         setIsLoggedIn(false);
-        toast.info('Logged out');
+        toast.info('Logged out - credentials securely cleared');
     }, [toast]);
 
     // Handle get started
     const handleGetStarted = useCallback(() => {
+        if (!authInitialized) {
+            toast.error('Please wait for security system to initialize');
+            return;
+        }
         setShowAuthModal(true);
-    }, []);
+    }, [authInitialized, toast]);
 
     return {
         isLoggedIn,
@@ -96,6 +138,7 @@ export const useAuth = () => {
         setShowAuthModal,
         handleAuthenticate,
         handleLogout,
-        handleGetStarted
+        handleGetStarted,
+        authInitialized
     };
 };

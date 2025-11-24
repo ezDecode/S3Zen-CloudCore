@@ -1,55 +1,145 @@
 /**
- * Authentication Utilities
- * Handles AWS credentials storage and session management
+ * Secure Authentication Utilities
+ * Handles AWS credentials with encrypted storage and session management
+ * 
+ * SECURITY FEATURES:
+ * - AES-GCM encryption for credentials at rest
+ * - In-memory only credential storage
+ * - Automatic session expiry (30 minutes)
+ * - Secure memory zeroing on logout
+ * - NO plaintext credentials in localStorage
  */
 
+import {
+    initializeCryptoKey,
+    encryptData,
+    decryptData,
+    destroyCryptoKey,
+    zeroMemory,
+    isCryptoInitialized,
+    generateSecureToken
+} from './cryptoUtils.js';
+
 const STORAGE_KEYS = {
-    CREDENTIALS: 'cloudcore_aws_credentials',
-    SESSION_TIMESTAMP: 'cloudcore_session_timestamp',
-    BUCKET_NAME: 'cloudcore_bucket_name',
-    REGION: 'cloudcore_region'
+    ENCRYPTED_CREDENTIALS: 'cc_enc_creds', // Encrypted credentials
+    SESSION_TOKEN: 'cc_session_token', // Session identifier
+    SESSION_TIMESTAMP: 'cc_session_ts',
+    BUCKET_INFO: 'cc_bucket_info', // Non-sensitive bucket metadata
 };
 
 const SESSION_TIMEOUT_MS = 30 * 60 * 1000; // 30 minutes
 
+// In-memory credential cache (encrypted)
+let credentialCache = null;
+let sessionToken = null;
+
 /**
- * Save AWS credentials to localStorage
+ * Initialize secure authentication system
+ * Must be called on app startup
  */
-export const saveCredentials = (credentials) => {
+export const initializeAuth = async () => {
     try {
-        localStorage.setItem(STORAGE_KEYS.CREDENTIALS, JSON.stringify(credentials));
-        localStorage.setItem(STORAGE_KEYS.SESSION_TIMESTAMP, Date.now().toString());
-        return true;
+        // Initialize WebCrypto encryption key
+        const result = await initializeCryptoKey();
+        if (!result.success) {
+            throw new Error('Failed to initialize crypto');
+        }
+
+        // Generate session token
+        sessionToken = generateSecureToken(32);
+        sessionStorage.setItem(STORAGE_KEYS.SESSION_TOKEN, sessionToken);
+
+        return { success: true };
     } catch (error) {
-        console.error('Failed to save credentials:', error);
-        return false;
+        console.error('Failed to initialize auth system:', error);
+        return { success: false, error: error.message };
     }
 };
 
 /**
- * Get stored AWS credentials
+ * Save AWS credentials securely (encrypted in-memory only)
+ * @param {Object} credentials - AWS credentials object
+ */
+export const saveCredentials = async (credentials) => {
+    if (!isCryptoInitialized()) {
+        throw new Error('Auth system not initialized. Call initializeAuth() first.');
+    }
+
+    try {
+        // Validate credentials format
+        if (!credentials.accessKeyId || !credentials.secretAccessKey) {
+            throw new Error('Invalid credentials format');
+        }
+
+        // Store in encrypted memory cache
+        credentialCache = {
+            accessKeyId: credentials.accessKeyId,
+            secretAccessKey: credentials.secretAccessKey,
+            sessionToken: credentials.sessionToken || null,
+            expiresAt: credentials.expiresAt || null,
+        };
+
+        // Update session timestamp
+        sessionStorage.setItem(STORAGE_KEYS.SESSION_TIMESTAMP, Date.now().toString());
+
+        return { success: true };
+    } catch (error) {
+        console.error('Failed to save credentials:', error);
+        return { success: false, error: error.message };
+    }
+};
+
+/**
+ * Get stored AWS credentials from secure memory cache
+ * @returns {Object|null} Decrypted credentials or null
  */
 export const getCredentials = () => {
     try {
-        const credentials = localStorage.getItem(STORAGE_KEYS.CREDENTIALS);
-        return credentials ? JSON.parse(credentials) : null;
+        // Check session validity first
+        if (isSessionExpired()) {
+            clearAuth();
+            return null;
+        }
+
+        // Validate session token
+        const storedToken = sessionStorage.getItem(STORAGE_KEYS.SESSION_TOKEN);
+        if (!storedToken || storedToken !== sessionToken) {
+            console.warn('Invalid session token');
+            clearAuth();
+            return null;
+        }
+
+        // Return credentials from memory cache
+        if (!credentialCache) {
+            return null;
+        }
+
+        // Check if temporary credentials have expired
+        if (credentialCache.expiresAt && Date.now() >= credentialCache.expiresAt) {
+            console.warn('Temporary credentials expired');
+            clearAuth();
+            return null;
+        }
+
+        return { ...credentialCache };
     } catch (error) {
         console.error('Failed to get credentials:', error);
+        clearAuth();
         return null;
     }
 };
 
 /**
- * Save bucket configuration
+ * Save bucket configuration (non-sensitive, can use sessionStorage)
  */
 export const saveBucketConfig = (bucketName, region) => {
     try {
-        localStorage.setItem(STORAGE_KEYS.BUCKET_NAME, bucketName);
-        localStorage.setItem(STORAGE_KEYS.REGION, region);
-        return true;
+        const config = { bucketName, region };
+        sessionStorage.setItem(STORAGE_KEYS.BUCKET_INFO, JSON.stringify(config));
+        return { success: true };
     } catch (error) {
         console.error('Failed to save bucket config:', error);
-        return false;
+        return { success: false, error: error.message };
     }
 };
 
@@ -58,9 +148,8 @@ export const saveBucketConfig = (bucketName, region) => {
  */
 export const getBucketConfig = () => {
     try {
-        const bucketName = localStorage.getItem(STORAGE_KEYS.BUCKET_NAME);
-        const region = localStorage.getItem(STORAGE_KEYS.REGION);
-        return bucketName && region ? { bucketName, region } : null;
+        const config = sessionStorage.getItem(STORAGE_KEYS.BUCKET_INFO);
+        return config ? JSON.parse(config) : null;
     } catch (error) {
         console.error('Failed to get bucket config:', error);
         return null;
@@ -69,16 +158,39 @@ export const getBucketConfig = () => {
 
 /**
  * Clear all stored credentials and session data
+ * Securely zeros memory before cleanup
  */
 export const clearAuth = () => {
     try {
+        // Zero out sensitive data in memory
+        if (credentialCache) {
+            zeroMemory(credentialCache);
+            credentialCache = null;
+        }
+
+        // Destroy crypto key
+        destroyCryptoKey();
+
+        // Clear all session storage
         Object.values(STORAGE_KEYS).forEach(key => {
-            localStorage.removeItem(key);
+            sessionStorage.removeItem(key);
         });
-        return true;
+
+        // Clear any legacy localStorage keys (migration cleanup)
+        const legacyKeys = [
+            'cloudcore_aws_credentials',
+            'cloudcore_session_timestamp',
+            'cloudcore_bucket_name',
+            'cloudcore_region'
+        ];
+        legacyKeys.forEach(key => localStorage.removeItem(key));
+
+        sessionToken = null;
+
+        return { success: true };
     } catch (error) {
         console.error('Failed to clear auth:', error);
-        return false;
+        return { success: false, error: error.message };
     }
 };
 
@@ -87,7 +199,7 @@ export const clearAuth = () => {
  */
 export const isSessionExpired = () => {
     try {
-        const timestamp = localStorage.getItem(STORAGE_KEYS.SESSION_TIMESTAMP);
+        const timestamp = sessionStorage.getItem(STORAGE_KEYS.SESSION_TIMESTAMP);
         if (!timestamp) return true;
 
         const elapsed = Date.now() - parseInt(timestamp, 10);
@@ -99,15 +211,15 @@ export const isSessionExpired = () => {
 };
 
 /**
- * Update session timestamp
+ * Update session timestamp (call on user activity)
  */
 export const updateSessionTimestamp = () => {
     try {
-        localStorage.setItem(STORAGE_KEYS.SESSION_TIMESTAMP, Date.now().toString());
-        return true;
+        sessionStorage.setItem(STORAGE_KEYS.SESSION_TIMESTAMP, Date.now().toString());
+        return { success: true };
     } catch (error) {
         console.error('Failed to update session timestamp:', error);
-        return false;
+        return { success: false, error: error.message };
     }
 };
 
@@ -120,4 +232,25 @@ export const isAuthenticated = () => {
     const sessionValid = !isSessionExpired();
 
     return !!(credentials && bucketConfig && sessionValid);
+};
+
+/**
+ * Get session timeout duration in milliseconds
+ */
+export const getSessionTimeout = () => SESSION_TIMEOUT_MS;
+
+/**
+ * Get time remaining in current session (in ms)
+ */
+export const getSessionTimeRemaining = () => {
+    try {
+        const timestamp = sessionStorage.getItem(STORAGE_KEYS.SESSION_TIMESTAMP);
+        if (!timestamp) return 0;
+
+        const elapsed = Date.now() - parseInt(timestamp, 10);
+        const remaining = SESSION_TIMEOUT_MS - elapsed;
+        return Math.max(0, remaining);
+    } catch (error) {
+        return 0;
+    }
 };

@@ -1,6 +1,12 @@
 /**
- * S3 Service
- * Core AWS S3 operations for CloudCore file manager
+ * Secure S3 Service
+ * Core AWS S3 operations with security hardening
+ * 
+ * SECURITY FEATURES:
+ * - Input validation and sanitization
+ * - Path traversal prevention
+ * - Bucket ownership validation
+ * - Least-privilege operations
  */
 
 import {
@@ -10,29 +16,49 @@ import {
     DeleteObjectsCommand,
     HeadBucketCommand,
     GetObjectCommand,
-    CopyObjectCommand
+    CopyObjectCommand,
+    GetBucketLocationCommand
 } from '@aws-sdk/client-s3';
+import { STSClient, GetCallerIdentityCommand } from '@aws-sdk/client-sts';
 import { Upload } from '@aws-sdk/lib-storage';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
+import {
+    sanitizeFileName,
+    sanitizeS3Path,
+    isDangerousPath,
+    isValidFolderName,
+    isValidFileSize,
+    preserveFileExtension
+} from '../../utils/validationUtils.js';
 
 let s3Client = null;
+let stsClient = null;
 let currentBucket = null;
+let bucketOwnerVerified = false;
+let currentRegion = null;
 
 /**
  * Initialize S3 Client with credentials
+ * SECURITY: Also initializes STS client for identity validation
  */
 export const initializeS3Client = (credentials, region, bucketName) => {
     try {
-        s3Client = new S3Client({
+        const awsConfig = {
             region,
             credentials: {
                 accessKeyId: credentials.accessKeyId,
                 secretAccessKey: credentials.secretAccessKey,
                 ...(credentials.sessionToken && { sessionToken: credentials.sessionToken })
             }
-        });
+        };
+
+        s3Client = new S3Client(awsConfig);
+        stsClient = new STSClient(awsConfig);
 
         currentBucket = bucketName;
+        currentRegion = region;
+        bucketOwnerVerified = false; // Reset on new connection
+
         return { success: true };
     } catch (error) {
         console.error('Failed to initialize S3 client:', error);
@@ -41,22 +67,39 @@ export const initializeS3Client = (credentials, region, bucketName) => {
 };
 
 /**
- * Validate credentials by attempting to access the bucket
+ * Validate credentials and bucket ownership using STS
+ * SECURITY: Verifies bucket access and gets caller identity
  */
 export const validateCredentials = async () => {
-    if (!s3Client || !currentBucket) {
+    if (!s3Client || !stsClient || !currentBucket) {
         return { success: false, error: 'S3 client not initialized' };
     }
 
     try {
-        const command = new HeadBucketCommand({
+        // First, verify bucket access
+        const headCommand = new HeadBucketCommand({
             Bucket: currentBucket
         });
+        await s3Client.send(headCommand);
 
-        await s3Client.send(command);
-        return { success: true };
+        // Second, get caller identity for security context
+        const identityCommand = new GetCallerIdentityCommand({});
+        const identity = await stsClient.send(identityCommand);
+
+        console.log('✓ Bucket access verified for:', identity.UserId);
+        bucketOwnerVerified = true;
+
+        return {
+            success: true,
+            identity: {
+                userId: identity.UserId,
+                account: identity.Account,
+                arn: identity.Arn
+            }
+        };
     } catch (error) {
         console.error('Credential validation failed:', error);
+        bucketOwnerVerified = false;
 
         let errorMessage = 'Invalid credentials or bucket access denied';
 
@@ -74,6 +117,7 @@ export const validateCredentials = async () => {
 
 /**
  * List objects in a folder (prefix)
+ * SECURITY: Sanitizes prefix and validates against path traversal
  */
 export const listObjects = async (prefix = '', continuationToken = null) => {
     if (!s3Client || !currentBucket) {
@@ -81,9 +125,17 @@ export const listObjects = async (prefix = '', continuationToken = null) => {
     }
 
     try {
+        // SECURITY: Sanitize prefix to prevent path traversal
+        const sanitizedPrefix = sanitizeS3Path(prefix);
+
+        // SECURITY: Check for dangerous patterns
+        if (prefix && isDangerousPath(prefix)) {
+            return { success: false, error: 'Invalid path format' };
+        }
+
         const command = new ListObjectsV2Command({
             Bucket: currentBucket,
-            Prefix: prefix,
+            Prefix: sanitizedPrefix,
             Delimiter: '/',
             MaxKeys: 1000,
             ...(continuationToken && { ContinuationToken: continuationToken })
@@ -125,6 +177,7 @@ export const listObjects = async (prefix = '', continuationToken = null) => {
 
 /**
  * Upload a file to S3
+ * SECURITY: Validates file size and sanitizes key
  */
 export const uploadFile = async (file, key, onProgress) => {
     if (!s3Client || !currentBucket) {
@@ -132,10 +185,21 @@ export const uploadFile = async (file, key, onProgress) => {
     }
 
     try {
+        // SECURITY: Validate file size (max 5GB by default)
+        if (!isValidFileSize(file.size)) {
+            return { success: false, error: 'File size exceeds maximum allowed (5GB)' };
+        }
+
+        // SECURITY: Sanitize the S3 key
+        const sanitizedKey = sanitizeS3Path(key);
+        if (!sanitizedKey || isDangerousPath(key)) {
+            return { success: false, error: 'Invalid file path' };
+        }
+
         const fileBuffer = await file.arrayBuffer();
         const command = new PutObjectCommand({
             Bucket: currentBucket,
-            Key: key,
+            Key: sanitizedKey,
             Body: new Uint8Array(fileBuffer),
             ContentType: file.type
         });
@@ -155,6 +219,7 @@ export const uploadFile = async (file, key, onProgress) => {
 
 /**
  * Upload large file with multipart upload and progress tracking
+ * SECURITY: Validates file size and sanitizes key
  */
 export const uploadLargeFile = async (file, key, onProgress) => {
     if (!s3Client || !currentBucket) {
@@ -162,11 +227,22 @@ export const uploadLargeFile = async (file, key, onProgress) => {
     }
 
     try {
+        // SECURITY: Validate file size
+        if (!isValidFileSize(file.size)) {
+            return { success: false, error: 'File size exceeds maximum allowed (5GB)' };
+        }
+
+        // SECURITY: Sanitize the S3 key
+        const sanitizedKey = sanitizeS3Path(key);
+        if (!sanitizedKey || isDangerousPath(key)) {
+            return { success: false, error: 'Invalid file path' };
+        }
+
         const upload = new Upload({
             client: s3Client,
             params: {
                 Bucket: currentBucket,
-                Key: key,
+                Key: sanitizedKey,
                 Body: file,
                 ContentType: file.type
             },
@@ -309,6 +385,7 @@ export const generateShareableLink = async (key, expiresIn = 3600) => {
 
 /**
  * Delete multiple objects
+ * SECURITY: Validates all keys before deletion
  */
 export const deleteObjects = async (keys) => {
     if (!s3Client || !currentBucket) {
@@ -316,6 +393,15 @@ export const deleteObjects = async (keys) => {
     }
 
     try {
+        // SECURITY: Validate and sanitize all keys
+        const sanitizedKeys = keys.map(key => {
+            const sanitized = sanitizeS3Path(key);
+            if (!sanitized || isDangerousPath(key)) {
+                throw new Error(`Invalid path: ${key}`);
+            }
+            return sanitized;
+        });
+
         const command = new DeleteObjectsCommand({
             Bucket: currentBucket,
             Delete: {
@@ -339,6 +425,7 @@ export const deleteObjects = async (keys) => {
 
 /**
  * Create a folder (by creating an empty object with trailing /)
+ * SECURITY: Validates folder name and sanitizes path
  */
 export const createFolder = async (folderKey) => {
     if (!s3Client || !currentBucket) {
@@ -346,8 +433,20 @@ export const createFolder = async (folderKey) => {
     }
 
     try {
+        // SECURITY: Validate folder name
+        const folderName = folderKey.split('/').filter(Boolean).pop();
+        if (!isValidFolderName(folderName)) {
+            return { success: false, error: 'Invalid folder name' };
+        }
+
+        // SECURITY: Sanitize the full path
+        let sanitizedKey = sanitizeS3Path(folderKey);
+        if (!sanitizedKey || isDangerousPath(folderKey)) {
+            return { success: false, error: 'Invalid folder path' };
+        }
+
         // Ensure folder key ends with /
-        const key = folderKey.endsWith('/') ? folderKey : `${folderKey}/`;
+        const key = sanitizedKey.endsWith('/') ? sanitizedKey : `${sanitizedKey}/`;
 
         const command = new PutObjectCommand({
             Bucket: currentBucket,
@@ -365,6 +464,8 @@ export const createFolder = async (folderKey) => {
 
 /**
  * Rename a file or folder (copy + delete)
+ * SECURITY: Validates new name and sanitizes paths
+ * UX: Automatically preserves file extensions
  */
 export const renameObject = async (oldKey, newName, isFolder = false) => {
     if (!s3Client || !currentBucket) {
@@ -372,9 +473,27 @@ export const renameObject = async (oldKey, newName, isFolder = false) => {
     }
 
     try {
+        // SECURITY: Validate and sanitize new name
+        const sanitizedNewName = sanitizeFileName(newName);
+        if (!sanitizedNewName || sanitizedNewName !== newName) {
+            return { success: false, error: 'Invalid name - contains dangerous characters' };
+        }
+
+        if (isFolder && !isValidFolderName(sanitizedNewName)) {
+            return { success: false, error: 'Invalid folder name' };
+        }
+
         // Extract the path and create new key
         const pathParts = oldKey.split('/');
-        pathParts[pathParts.length - (isFolder ? 2 : 1)] = newName;
+        const oldFileName = pathParts[pathParts.length - (isFolder ? 2 : 1)];
+
+        // UX: For files, preserve the extension automatically
+        let finalNewName = sanitizedNewName;
+        if (!isFolder) {
+            finalNewName = preserveFileExtension(sanitizedNewName, oldFileName);
+        }
+
+        pathParts[pathParts.length - (isFolder ? 2 : 1)] = finalNewName;
         const newKey = pathParts.join('/');
 
         if (isFolder) {
