@@ -42,8 +42,15 @@ router.post('/shorten', (req, res) => {
     const { longUrl, url } = req.body;
     const urlToShorten = longUrl || url; // Support both 'longUrl' and 'url' field names
 
+    console.log('📝 Shorten request:', {
+        hasLongUrl: !!longUrl,
+        hasUrl: !!url,
+        urlLength: urlToShorten ? urlToShorten.length : 0
+    });
+
     // Validate URL
     if (!urlToShorten || !isSafeUrl(urlToShorten)) {
+        console.log('❌ URL validation failed for:', urlToShorten?.substring(0, 100));
         return res.status(400).json({ error: 'Invalid URL' });
     }
 
@@ -61,8 +68,11 @@ router.post('/shorten', (req, res) => {
             }
 
             const baseUrl = process.env.BASE_URL || 'http://localhost:3000';
+            const shortUrl = `${baseUrl}/s/${shortCode}`;
+            console.log('✅ Created short URL:', shortUrl);
+
             res.json({
-                shortUrl: `${baseUrl}/s/${shortCode}`,
+                shortUrl,
                 shortCode
             });
         }
@@ -83,6 +93,7 @@ router.get('/s/:code', (req, res) => {
             return res.status(404).send('Short URL not found');
         }
 
+        console.log(`🔗 Redirecting ${code} to ${row.url.substring(0, 50)}...`);
         // Redirect to the original URL
         res.redirect(302, row.url);
     });
