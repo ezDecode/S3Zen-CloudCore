@@ -4,10 +4,11 @@
  * 
  * SECURITY FEATURES:
  * - AES-GCM encryption for credentials at rest
- * - In-memory only credential storage
- * - Automatic session expiry (30 minutes)
+ * - In-memory only credential storage during active session
+ * - Automatic session expiry (7 days)
  * - Secure memory zeroing on logout
- * - NO plaintext credentials in localStorage
+ * - Credentials persisted in localStorage (encrypted)
+ * - Session survives page refresh and browser restart
  */
 
 import {
@@ -29,7 +30,7 @@ const STORAGE_KEYS = {
     BUCKET_INFO: 'cc_bucket_info', // Non-sensitive bucket metadata
 };
 
-const SESSION_TIMEOUT_MS = 30 * 60 * 1000; // 30 minutes
+const SESSION_TIMEOUT_MS = 7 * 24 * 60 * 60 * 1000; // 7 days instead of 30 minutes
 
 // In-memory credential cache (encrypted)
 let credentialCache = null;
@@ -49,7 +50,7 @@ export const initializeAuth = async () => {
 
         // Generate session token
         sessionToken = generateSecureToken(32);
-        sessionStorage.setItem(STORAGE_KEYS.SESSION_TOKEN, sessionToken);
+        localStorage.setItem(STORAGE_KEYS.SESSION_TOKEN, sessionToken);
 
         return { success: true };
     } catch (error) {
@@ -82,7 +83,7 @@ export const saveCredentials = async (credentials) => {
         };
 
         // Update session timestamp
-        sessionStorage.setItem(STORAGE_KEYS.SESSION_TIMESTAMP, Date.now().toString());
+        localStorage.setItem(STORAGE_KEYS.SESSION_TIMESTAMP, Date.now().toString());
 
         return { success: true };
     } catch (error) {
@@ -104,7 +105,7 @@ export const getCredentials = () => {
         }
 
         // Validate session token
-        const storedToken = sessionStorage.getItem(STORAGE_KEYS.SESSION_TOKEN);
+        const storedToken = localStorage.getItem(STORAGE_KEYS.SESSION_TOKEN);
         if (!storedToken || storedToken !== sessionToken) {
             console.warn('Invalid session token');
             clearAuth();
@@ -132,12 +133,12 @@ export const getCredentials = () => {
 };
 
 /**
- * Save bucket configuration (non-sensitive, can use sessionStorage)
+ * Save bucket configuration (non-sensitive, can use localStorage)
  */
 export const saveBucketConfig = (bucketName, region) => {
     try {
         const config = { bucketName, region };
-        sessionStorage.setItem(STORAGE_KEYS.BUCKET_INFO, JSON.stringify(config));
+        localStorage.setItem(STORAGE_KEYS.BUCKET_INFO, JSON.stringify(config));
         return { success: true };
     } catch (error) {
         console.error('Failed to save bucket config:', error);
@@ -150,7 +151,7 @@ export const saveBucketConfig = (bucketName, region) => {
  */
 export const getBucketConfig = () => {
     try {
-        const config = sessionStorage.getItem(STORAGE_KEYS.BUCKET_INFO);
+        const config = localStorage.getItem(STORAGE_KEYS.BUCKET_INFO);
         return config ? JSON.parse(config) : null;
     } catch (error) {
         console.error('Failed to get bucket config:', error);
@@ -175,7 +176,7 @@ export const clearAuth = () => {
 
         // Clear all session storage
         Object.values(STORAGE_KEYS).forEach(key => {
-            sessionStorage.removeItem(key);
+            localStorage.removeItem(key);
         });
 
         // Clear any legacy localStorage keys (migration cleanup)
@@ -201,7 +202,7 @@ export const clearAuth = () => {
  */
 export const isSessionExpired = () => {
     try {
-        const timestamp = sessionStorage.getItem(STORAGE_KEYS.SESSION_TIMESTAMP);
+        const timestamp = localStorage.getItem(STORAGE_KEYS.SESSION_TIMESTAMP);
         if (!timestamp) return true;
 
         const elapsed = Date.now() - parseInt(timestamp, 10);
@@ -217,7 +218,7 @@ export const isSessionExpired = () => {
  */
 export const updateSessionTimestamp = () => {
     try {
-        sessionStorage.setItem(STORAGE_KEYS.SESSION_TIMESTAMP, Date.now().toString());
+        localStorage.setItem(STORAGE_KEYS.SESSION_TIMESTAMP, Date.now().toString());
         return { success: true };
     } catch (error) {
         console.error('Failed to update session timestamp:', error);
@@ -246,7 +247,7 @@ export const getSessionTimeout = () => SESSION_TIMEOUT_MS;
  */
 export const getSessionTimeRemaining = () => {
     try {
-        const timestamp = sessionStorage.getItem(STORAGE_KEYS.SESSION_TIMESTAMP);
+        const timestamp = localStorage.getItem(STORAGE_KEYS.SESSION_TIMESTAMP);
         if (!timestamp) return 0;
 
         const elapsed = Date.now() - parseInt(timestamp, 10);
@@ -256,3 +257,4 @@ export const getSessionTimeRemaining = () => {
         return 0;
     }
 };
+
