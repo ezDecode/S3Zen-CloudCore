@@ -70,13 +70,20 @@ export const AuthModal = ({ isOpen, onClose, onAuthenticate }) => {
     return (
         <AnimatePresence>
             {isOpen && (
-                <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 bg-black/60 backdrop-blur-sm" onClick={onClose}>
+                <motion.div
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    transition={{ duration: 0.2 }}
+                    className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 bg-black/60 backdrop-blur-sm"
+                    onClick={onClose}
+                >
                     {/* Modal Container */}
                     <motion.div
                         initial={{ opacity: 0, scale: 0.95, y: 20 }}
                         animate={{ opacity: 1, scale: 1, y: 0 }}
                         exit={{ opacity: 0, scale: 0.95, y: 20 }}
-                        transition={{ type: 'spring', duration: 0.5, bounce: 0.3 }}
+                        transition={{ type: 'spring', duration: 0.3, bounce: 0.2 }}
                         onClick={(e) => e.stopPropagation()}
                         className="relative w-full max-w-md z-50"
                     >
@@ -222,7 +229,7 @@ export const AuthModal = ({ isOpen, onClose, onAuthenticate }) => {
                             </form>
                         </div>
                     </motion.div>
-                </div>
+                </motion.div>
             )}
         </AnimatePresence>
     );

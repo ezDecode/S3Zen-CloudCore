@@ -79,23 +79,23 @@ export const Hero = ({ onGetStarted }) => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.4 }}
-          className="flex flex-col sm:flex-row items-center justify-center gap-4"
+          className="flex flex-row flex-nowrap items-center justify-center gap-2 sm:gap-4"
         >
           <button
             onClick={onGetStarted}
-            className="group text-base font-semibold text-white rounded-xl bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 transition-all shadow-lg hover:shadow-purple-500/30 flex items-center gap-2 px-8 py-4"
+            className="group text-sm sm:text-base font-semibold text-white rounded-xl bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 transition-all shadow-lg hover:shadow-purple-500/30 flex items-center gap-1 sm:gap-2 px-4 sm:px-8 py-3 sm:py-4"
           >
             <span>Get Started</span>
-            <ArrowRight01Icon className="w-5 h-5 transition-transform group-hover:translate-x-1" />
+            <ArrowRight01Icon className="w-4 h-4 sm:w-5 sm:h-5 transition-transform group-hover:translate-x-1" />
           </button>
 
           <a
             href="https://github.com/ezDecode/S3Zen-CloudCore"
             target="_blank"
             rel="noopener noreferrer"
-            className="text-base font-semibold text-white bg-white/10 backdrop-blur-sm border border-white/20 rounded-xl hover:bg-white/20 transition-all flex items-center gap-2 px-8 py-4"
+            className="text-sm sm:text-base font-semibold text-white bg-white/10 backdrop-blur-sm border border-white/20 rounded-xl hover:bg-white/20 transition-all flex items-center gap-1 sm:gap-2 px-4 sm:px-8 py-3 sm:py-4"
           >
-            <Github01Icon className="w-5 h-5" />
+            <Github01Icon className="w-4 h-4 sm:w-5 sm:h-5" />
             <span>Star on GitHub</span>
           </a>
         </motion.div>
