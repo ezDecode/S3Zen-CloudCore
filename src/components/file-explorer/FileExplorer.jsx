@@ -655,7 +655,7 @@ export const FileExplorer = ({
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
                         exit={{ opacity: 0, y: 20 }}
-                        className="fixed bottom-0 sm:bottom-6 right-0 sm:right-6 w-full sm:w-96 bg-zinc-900 border-t sm:border border-white/10 rounded-t-xl sm:rounded-xl shadow-2xl overflow-hidden z-40"
+                        className="fixed bottom-0 sm:bottom-6 right-0 sm:right-6 w-full sm:w-96 bg-zinc-900/98 border-t sm:border border-white/10 rounded-t-2xl sm:rounded-2xl shadow-2xl overflow-hidden z-40 backdrop-blur-2xl"
                     >
                         <div className="px-4 py-3 border-b border-white/10 flex items-center justify-between bg-zinc-950/50">
                             <div className="flex items-center gap-2">
@@ -683,7 +683,7 @@ export const FileExplorer = ({
                                     </div>
                                     <div className="h-1.5 w-full bg-white/5 rounded-full overflow-hidden">
                                         <motion.div
-                                            className="h-full bg-gradient-to-r from-blue-500 to-cyan-500 rounded-full"
+                                            className="h-full bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 rounded-full"
                                             initial={{ width: 0 }}
                                             animate={{ width: `${file.progress}%` }}
                                             transition={{ duration: 0.3, ease: 'easeOut' }}

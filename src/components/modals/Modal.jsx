@@ -27,7 +27,7 @@ export const Modal = ({
                         animate={{ opacity: 1, scale: 1 }}
                         exit={{ opacity: 0, scale: 0.95 }}
                         onClick={(e) => e.stopPropagation()}
-                        className={`bg-zinc-900/95 backdrop-blur-xl rounded-2xl shadow-2xl w-full ${maxWidth} border border-white/20 z-50`}
+                        className={`bg-zinc-900/98 backdrop-blur-2xl rounded-2xl shadow-2xl w-full ${maxWidth} border border-white/10 z-50 overflow-hidden`}
                     >
                         {/* Header */}
                         <div className="flex items-center justify-between p-5 border-b border-white/10">
@@ -37,7 +37,7 @@ export const Modal = ({
                             </div>
                             <button
                                 onClick={onClose}
-                                className="p-1.5 text-white/60 hover:text-white hover:bg-white/10 rounded-lg transition-colors"
+                                className="p-1.5 text-zinc-400 hover:text-white hover:bg-white/5 rounded-lg transition-all"
                             >
                                 <X className="w-5 h-5" />
                             </button>

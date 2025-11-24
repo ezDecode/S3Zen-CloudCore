@@ -90,7 +90,7 @@ export const ShareModal = ({ isOpen, onClose, item }) => {
                         animate={{ opacity: 1, scale: 1 }}
                         exit={{ opacity: 0, scale: 0.95 }}
                         onClick={(e) => e.stopPropagation()}
-                        className="bg-zinc-900/95 backdrop-blur-xl rounded-2xl shadow-2xl w-full max-w-lg border border-white/20 z-50"
+                        className="bg-zinc-900/98 backdrop-blur-2xl rounded-2xl shadow-2xl w-full max-w-lg border border-white/10 z-50 overflow-hidden"
                     >
                         {/* Header */}
                         <div className="flex items-center justify-between p-5 border-b border-white/10">
@@ -100,7 +100,7 @@ export const ShareModal = ({ isOpen, onClose, item }) => {
                             </div>
                             <button
                                 onClick={handleClose}
-                                className="p-1.5 text-white/60 hover:text-white hover:bg-white/10 rounded-lg transition-colors"
+                                className="p-1.5 text-zinc-400 hover:text-white hover:bg-white/5 rounded-lg transition-all"
                             >
                                 <Cancel01Icon className="w-5 h-5" />
                             </button>
@@ -121,7 +121,7 @@ export const ShareModal = ({ isOpen, onClose, item }) => {
                                     <select
                                         value={expiresIn}
                                         onChange={(e) => setExpiresIn(parseInt(e.target.value))}
-                                        className="w-full px-4 py-3 pr-10 text-sm bg-white/5 border border-white/10 rounded-lg text-white appearance-none cursor-pointer focus:outline-none focus:border-purple-500/50 focus:bg-white/10 focus:ring-2 focus:ring-purple-500/20 transition-all"
+                                        className="w-full px-4 py-3 pr-10 text-sm bg-white/5 border border-white/10 rounded-lg text-white appearance-none cursor-pointer focus:outline-none focus:border-purple-500/50 focus:bg-white/10 focus:ring-2 focus:ring-purple-500/10 transition-all"
                                         style={{
                                             backgroundImage: 'none'
                                         }}
@@ -163,7 +163,7 @@ export const ShareModal = ({ isOpen, onClose, item }) => {
                                 <button
                                     onClick={handleGenerate}
                                     disabled={isLoading}
-                                    className="w-full py-2.5 px-4 text-sm bg-gradient-to-r from-purple-600 to-pink-600 text-white font-semibold rounded-lg hover:from-purple-700 hover:to-pink-700 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                                    className="w-full py-2.5 px-4 text-sm bg-gradient-to-r from-purple-600 to-pink-600 text-white font-semibold rounded-lg hover:from-purple-700 hover:to-pink-700 hover:shadow-lg hover:shadow-purple-500/20 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                                 >
                                     {isLoading ? 'Generating...' : 'Generate Link'}
                                 </button>
@@ -191,7 +191,7 @@ export const ShareModal = ({ isOpen, onClose, item }) => {
                                     <div className="flex gap-2">
                                         <button
                                             onClick={handleCopy}
-                                            className="flex-1 flex items-center justify-center gap-2 py-2.5 px-4 text-sm bg-white/10 hover:bg-white/20 text-white rounded-lg transition-all"
+                                            className="flex-1 flex items-center justify-center gap-2 py-2.5 px-4 text-sm bg-white/10 hover:bg-white/15 text-white rounded-lg transition-all hover:scale-[1.02] font-medium"
                                         >
                                             {copied ? (
                                                 <>
@@ -209,7 +209,7 @@ export const ShareModal = ({ isOpen, onClose, item }) => {
                                         <button
                                             onClick={handleGenerate}
                                             disabled={isLoading}
-                                            className="px-4 py-2.5 text-sm bg-white/10 hover:bg-white/20 text-white rounded-lg transition-all"
+                                            className="px-4 py-2.5 text-sm bg-white/10 hover:bg-white/15 text-white rounded-lg transition-all font-medium"
                                         >
                                             Regenerate
                                         </button>

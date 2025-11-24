@@ -22,7 +22,7 @@ export const useToast = () => {
 export const ToastProvider = ({ children }) => {
     const [toasts, setToasts] = useState([]);
 
-    const addToast = useCallback((message, type = 'info', duration = 4000) => {
+    const addToast = useCallback((message, type = 'info', duration = 2000) => {
         const id = Date.now() + Math.random();
         const toast = { id, message, type, duration };
 
@@ -60,12 +60,14 @@ export const ToastProvider = ({ children }) => {
 // Toast Container Component
 const ToastContainer = ({ toasts, onRemove }) => {
     return (
-        <div className="fixed bottom-4 left-4 right-4 sm:left-auto sm:bottom-6 sm:right-6 sm:w-auto z-[100] flex flex-col gap-2 pointer-events-none">
+        <div className="fixed bottom-4 left-4 right-4 sm:left-auto sm:bottom-6 sm:right-6 sm:w-auto z-[100] flex flex-col-reverse gap-2 pointer-events-none max-h-[80vh] overflow-hidden">
             <AnimatePresence mode="popLayout">
-                {toasts.map((toast) => (
+                {toasts.map((toast, index) => (
                     <ToastItem
                         key={toast.id}
                         toast={toast}
+                        index={index}
+                        total={toasts.length}
                         onRemove={() => onRemove(toast.id)}
                     />
                 ))}
@@ -75,8 +77,14 @@ const ToastContainer = ({ toasts, onRemove }) => {
 };
 
 // Individual Toast Item Component
-const ToastItem = ({ toast, onRemove }) => {
+const ToastItem = ({ toast, index, total, onRemove }) => {
     const { message, type } = toast;
+
+    // Calculate stacking effect
+    const isStacked = index < total - 1;
+    const stackOffset = Math.min(index * 4, 12); // Max 12px offset
+    const stackScale = 1 - Math.min(index * 0.03, 0.09); // Max 9% scale reduction
+    const stackOpacity = 1 - Math.min(index * 0.15, 0.45); // Max 45% opacity reduction
 
     const config = {
         success: {
@@ -114,27 +122,39 @@ const ToastItem = ({ toast, onRemove }) => {
     return (
         <motion.div
             layout
-            initial={{ opacity: 0, y: 20, scale: 0.95 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, scale: 0.95, transition: { duration: 0.2 } }}
+            initial={{ opacity: 0, y: 20, scale: 0.9 }}
+            animate={{
+                opacity: 1,
+                y: isStacked ? -stackOffset : 0,
+                scale: isStacked ? stackScale : 1
+            }}
+            exit={{ opacity: 0, scale: 0.9, x: 100, transition: { duration: 0.15 } }}
+            transition={{ type: 'spring', stiffness: 500, damping: 30 }}
             className="pointer-events-auto"
+            style={{
+                zIndex: 100 - index,
+                opacity: stackOpacity
+            }}
         >
             <div className={`
                 flex items-center gap-3 w-full sm:w-auto sm:min-w-[320px] max-w-md
-                px-4 py-3 rounded-lg border
-                backdrop-blur-xl shadow-2xl
+                px-4 py-3.5 rounded-xl border
+                backdrop-blur-2xl shadow-2xl
                 ${bgColor} ${borderColor}
+                ${isStacked ? 'shadow-xl' : 'shadow-2xl'}
             `}>
                 <Icon className={`w-5 h-5 shrink-0 ${iconColor}`} />
                 <p className={`text-sm font-medium flex-1 ${textColor}`}>
                     {message}
                 </p>
-                <button
-                    onClick={onRemove}
-                    className="p-1 text-white/40 hover:text-white hover:bg-white/10 rounded transition-all"
-                >
-                    <Cancel01Icon className="w-4 h-4" />
-                </button>
+                {!isStacked && (
+                    <button
+                        onClick={onRemove}
+                        className="p-1 text-white/40 hover:text-white hover:bg-white/10 rounded-md transition-all"
+                    >
+                        <Cancel01Icon className="w-4 h-4" />
+                    </button>
+                )}
             </div>
         </motion.div>
     );

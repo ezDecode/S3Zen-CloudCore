@@ -23,7 +23,7 @@ export const DownloadManager = ({ downloads, onRemove, onClear }) => {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: 20 }}
-                className="fixed bottom-20 sm:bottom-6 left-4 right-4 sm:left-auto sm:right-6 w-auto sm:w-96 bg-zinc-900/95 backdrop-blur-xl border border-white/10 rounded-xl shadow-2xl overflow-hidden z-40"
+                className="fixed bottom-20 sm:bottom-6 left-4 right-4 sm:left-auto sm:right-6 w-auto sm:w-96 bg-zinc-900/98 backdrop-blur-2xl border border-white/10 rounded-2xl shadow-2xl overflow-hidden z-40"
             >
                 {/* Header */}
                 <div className="px-4 py-3 border-b border-white/10 flex items-center justify-between bg-zinc-950/50">
@@ -37,7 +37,7 @@ export const DownloadManager = ({ downloads, onRemove, onClear }) => {
                         {downloads.length > 0 && (
                             <button
                                 onClick={onClear}
-                                className="p-1.5 text-white/60 hover:text-white hover:bg-white/10 rounded-lg transition-all text-xs"
+                                className="p-1.5 text-zinc-400 hover:text-white hover:bg-white/5 rounded-lg transition-all text-xs font-medium"
                                 title="Clear all"
                             >
                                 Clear
@@ -45,7 +45,7 @@ export const DownloadManager = ({ downloads, onRemove, onClear }) => {
                         )}
                         <button
                             onClick={() => setIsMinimized(!isMinimized)}
-                            className="p-1.5 text-white/60 hover:text-white hover:bg-white/10 rounded-lg transition-all"
+                            className="p-1.5 text-zinc-400 hover:text-white hover:bg-white/5 rounded-lg transition-all"
                             title={isMinimized ? 'Expand' : 'Minimize'}
                         >
                             {isMinimized ? <ArrowExpand01Icon className="w-4 h-4" /> : <ArrowShrink01Icon className="w-4 h-4" />}
@@ -92,7 +92,7 @@ export const DownloadManager = ({ downloads, onRemove, onClear }) => {
                                     </div>
                                     <div className="h-1.5 w-full bg-white/5 rounded-full overflow-hidden">
                                         <motion.div
-                                            className="h-full bg-gradient-to-r from-blue-500 to-cyan-500 rounded-full"
+                                            className="h-full bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 rounded-full"
                                             initial={{ width: 0 }}
                                             animate={{ width: `${download.progress}%` }}
                                             transition={{ duration: 0.3, ease: 'easeOut' }}
