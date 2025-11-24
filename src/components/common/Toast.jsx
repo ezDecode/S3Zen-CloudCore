@@ -1,10 +1,11 @@
 /**
  * Toast Notification System
- * Custom toast notifications positioned at bottom-right
+ * Inspired by BuildUI's animated toast recipe
+ * Custom implementation without Radix UI dependency
  */
 
 import { createContext, useContext, useState, useCallback, useEffect } from 'react';
-import { motion, AnimatePresence, useMotionValue, useTransform } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { CheckmarkCircle02Icon, CancelCircleIcon, Alert01Icon, InformationCircleIcon, Cancel01Icon } from 'hugeicons-react';
 
 // Toast Context
@@ -22,8 +23,8 @@ export const useToast = () => {
 export const ToastProvider = ({ children }) => {
     const [toasts, setToasts] = useState([]);
 
-    const addToast = useCallback((message, type = 'info', duration = 2000) => {
-        const id = Date.now() + Math.random();
+    const addToast = useCallback((message, type = 'info', duration = 2500) => {
+        const id = window.crypto.randomUUID?.() || Date.now() + Math.random();
         const toast = { id, message, type, duration };
 
         setToasts(prev => [...prev, toast]);
@@ -57,17 +58,15 @@ export const ToastProvider = ({ children }) => {
     );
 };
 
-// Toast Container Component
+// Toast Container Component  
 const ToastContainer = ({ toasts, onRemove }) => {
     return (
-        <div className="fixed bottom-4 left-4 right-4 sm:left-auto sm:bottom-6 sm:right-6 sm:w-auto z-[100] flex flex-col-reverse gap-2 pointer-events-none max-h-[80vh] overflow-hidden">
+        <div className="fixed bottom-4 left-4 right-4 sm:left-auto sm:bottom-6 sm:right-6 z-[100] flex w-full sm:w-80 flex-col-reverse gap-3 pointer-events-none">
             <AnimatePresence mode="popLayout">
-                {toasts.map((toast, index) => (
+                {toasts.map((toast) => (
                     <ToastItem
                         key={toast.id}
                         toast={toast}
-                        index={index}
-                        total={toasts.length}
                         onRemove={() => onRemove(toast.id)}
                     />
                 ))}
@@ -77,11 +76,12 @@ const ToastContainer = ({ toasts, onRemove }) => {
 };
 
 // Individual Toast Item Component
-const ToastItem = ({ toast, index, total, onRemove }) => {
+const ToastItem = ({ toast, onRemove }) => {
     const { message, type, duration } = toast;
     const [progress, setProgress] = useState(100);
-    const x = useMotionValue(0);
-    const opacity = useTransform(x, [0, 100, 200], [1, 0.5, 0]);
+
+    const width = 320; // 80 * 4 = 320px (w-80)
+    const margin = 16;
 
     // Progress bar countdown
     useEffect(() => {
@@ -97,16 +97,10 @@ const ToastItem = ({ toast, index, total, onRemove }) => {
         return () => clearInterval(interval);
     }, [duration]);
 
-    // Calculate stacking effect
-    const isStacked = index < total - 1;
-    const stackOffset = Math.min(index * 4, 12); // Max 12px offset
-    const stackScale = 1 - Math.min(index * 0.03, 0.09); // Max 9% scale reduction
-    const stackOpacity = 1 - Math.min(index * 0.15, 0.45); // Max 45% opacity reduction
-
     const config = {
         success: {
             icon: CheckmarkCircle02Icon,
-            bgColor: 'bg-green-500/10',
+            bgColor: 'bg-gradient-to-br from-green-500/10 to-green-600/10',
             borderColor: 'border-green-500/30',
             iconColor: 'text-green-400',
             textColor: 'text-green-100',
@@ -114,7 +108,7 @@ const ToastItem = ({ toast, index, total, onRemove }) => {
         },
         error: {
             icon: CancelCircleIcon,
-            bgColor: 'bg-red-500/10',
+            bgColor: 'bg-gradient-to-br from-red-500/10 to-red-600/10',
             borderColor: 'border-red-500/30',
             iconColor: 'text-red-400',
             textColor: 'text-red-100',
@@ -122,7 +116,7 @@ const ToastItem = ({ toast, index, total, onRemove }) => {
         },
         warning: {
             icon: Alert01Icon,
-            bgColor: 'bg-yellow-500/10',
+            bgColor: 'bg-gradient-to-br from-yellow-500/10 to-yellow-600/10',
             borderColor: 'border-yellow-500/30',
             iconColor: 'text-yellow-400',
             textColor: 'text-yellow-100',
@@ -130,7 +124,7 @@ const ToastItem = ({ toast, index, total, onRemove }) => {
         },
         info: {
             icon: InformationCircleIcon,
-            bgColor: 'bg-blue-500/10',
+            bgColor: 'bg-gradient-to-br from-blue-500/10 to-blue-600/10',
             borderColor: 'border-blue-500/30',
             iconColor: 'text-blue-400',
             textColor: 'text-blue-100',
@@ -143,56 +137,49 @@ const ToastItem = ({ toast, index, total, onRemove }) => {
     return (
         <motion.div
             layout
-            initial={{ opacity: 0, y: 20, scale: 0.9 }}
-            animate={{
-                opacity: 1,
-                y: isStacked ? -stackOffset : 0,
-                scale: isStacked ? stackScale : 1
-            }}
-            exit={{ opacity: 0, scale: 0.9, x: 100, transition: { duration: 0.15 } }}
-            transition={{ type: 'spring', stiffness: 500, damping: 30 }}
-            drag={!isStacked ? "x" : false}
-            dragConstraints={{ left: 0, right: 300 }}
-            dragElastic={0.1}
-            onDragEnd={(e, { offset }) => {
-                if (offset.x > 100) {
-                    onRemove();
+            initial={{ x: width + margin }}
+            animate={{ x: 0 }}
+            exit={{
+                opacity: 0,
+                zIndex: -1,
+                transition: {
+                    opacity: { duration: 0.2 }
                 }
             }}
-            style={{ x, opacity }}
-            className="pointer-events-auto cursor-grab active:cursor-grabbing"
+            transition={{
+                type: 'spring',
+                mass: 1,
+                damping: 30,
+                stiffness: 200
+            }}
+            style={{
+                width,
+                WebkitTapHighlightColor: 'transparent'
+            }}
+            className="pointer-events-auto"
         >
-            <div
-                className={`
-                    flex flex-col w-full sm:w-auto sm:min-w-[320px] max-w-md
-                    rounded-xl border overflow-hidden
-                    backdrop-blur-2xl shadow-2xl
-                    ${bgColor} ${borderColor}
-                    ${isStacked ? 'shadow-xl' : 'shadow-2xl'}
-                `}
-                style={{
-                    zIndex: 100 - index,
-                    opacity: stackOpacity
-                }}
-            >
+            <div className={`
+                flex flex-col overflow-hidden rounded-xl border shadow-2xl backdrop-blur-2xl
+                ${bgColor} ${borderColor}
+            `}>
                 {/* Content */}
-                <div className="flex items-center gap-3 px-4 py-3.5">
-                    <Icon className={`w-5 h-5 shrink-0 ${iconColor}`} />
-                    <p className={`text-sm font-medium flex-1 ${textColor}`}>
-                        {message}
-                    </p>
-                    {!isStacked && (
-                        <button
-                            onClick={onRemove}
-                            className="p-1 text-white/40 hover:text-white hover:bg-white/10 rounded-md transition-all"
-                        >
-                            <Cancel01Icon className="w-4 h-4" />
-                        </button>
-                    )}
+                <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-3 p-4 flex-1 min-w-0">
+                        <Icon className={`w-5 h-5 shrink-0 ${iconColor}`} />
+                        <p className={`text-sm font-medium truncate ${textColor}`}>
+                            {message}
+                        </p>
+                    </div>
+                    <button
+                        onClick={onRemove}
+                        className="border-l border-white/10 p-4 text-white/40 transition-all hover:bg-white/10 hover:text-white active:text-white"
+                    >
+                        <Cancel01Icon className="w-5 h-5" />
+                    </button>
                 </div>
 
                 {/* Progress Bar */}
-                {!isStacked && duration > 0 && (
+                {duration > 0 && (
                     <div className="h-1 w-full bg-white/5">
                         <motion.div
                             className={`h-full ${progressColor}`}
