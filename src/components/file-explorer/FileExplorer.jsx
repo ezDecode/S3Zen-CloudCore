@@ -37,7 +37,11 @@ export const FileExplorer = ({
     const [searchQuery, setSearchQuery] = useState('');
     const [uploadingFiles, setUploadingFiles] = useState([]);
     const [downloads, setDownloads] = useState([]);
-    const [viewMode, setViewMode] = useState('grid'); // 'list' or 'grid'
+    const [viewMode, setViewMode] = useState(() => {
+        // Load view mode from localStorage
+        const saved = localStorage.getItem('cloudcore_view_mode');
+        return saved || 'grid';
+    });
     const [isDragging, setIsDragging] = useState(false);
 
     const bucketConfig = getBucketConfig();
@@ -62,6 +66,11 @@ export const FileExplorer = ({
     useEffect(() => {
         loadFiles();
     }, [loadFiles]);
+
+    // Save view mode preference
+    useEffect(() => {
+        localStorage.setItem('cloudcore_view_mode', viewMode);
+    }, [viewMode]);
 
     // Navigation
     const handleNavigate = (path) => {
@@ -414,7 +423,7 @@ export const FileExplorer = ({
                         onClick={() => handleNavigate('')}
                         className="flex items-center gap-1.5 px-2 sm:px-2.5 py-1.5 rounded-md text-zinc-400 hover:text-white hover:bg-white/5 transition-all shrink-0"
                     >
-                        <Home01Icon className="w-3.5 h-3.5" />
+                        <Home01Icon className="w-4 h-4" />
                         <span className="font-medium hidden sm:inline">Home</span>
                     </motion.button>
 
@@ -440,7 +449,7 @@ export const FileExplorer = ({
                 <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
                     {/* Search */}
                     <div className="relative w-32 sm:w-48 md:w-64">
-                        <Search01Icon className="absolute left-2 sm:left-3 top-1/2 -translate-y-1/2 w-3.5 sm:w-4 h-3.5 sm:h-4 text-zinc-500 pointer-events-none" />
+                        <Search01Icon className="absolute left-2 sm:left-3 top-1/2 -translate-y-1/2 w-4 sm:w-4 h-4 sm:h-4 text-zinc-500 pointer-events-none" />
                         <input
                             type="text"
                             placeholder="Search..."
@@ -450,15 +459,15 @@ export const FileExplorer = ({
                         />
                     </div>
 
-                    {/* Refresh */}
+                    {/* Refresh - Hidden on mobile */}
                     <motion.button
                         whileHover={{ scale: 1.05, rotate: 90 }}
                         whileTap={{ scale: 0.95 }}
                         onClick={loadFiles}
-                        className="p-1.5 sm:p-2 rounded-lg text-zinc-400 hover:text-white hover:bg-white/5 transition-all shrink-0"
+                        className="hidden sm:flex p-1.5 sm:p-2 rounded-lg text-zinc-400 hover:text-white hover:bg-white/5 transition-all shrink-0"
                         title="Refresh"
                     >
-                        <Loading03Icon className="w-3.5 sm:w-4 h-3.5 sm:h-4" />
+                        <Loading03Icon className="w-4.5 h-4.5" />
                     </motion.button>
 
                     {/* Logout */}
@@ -469,7 +478,7 @@ export const FileExplorer = ({
                         className="p-1.5 sm:p-2 rounded-lg text-zinc-400 hover:text-white hover:bg-white/5 transition-all shrink-0"
                         title="Logout"
                     >
-                        <Logout01Icon className="w-3.5 sm:w-4 h-3.5 sm:h-4" />
+                        <Logout01Icon className="w-4 sm:w-4.5 h-4 sm:h-4.5" />
                     </motion.button>
                 </div>
             </nav>
@@ -484,7 +493,7 @@ export const FileExplorer = ({
                         whileTap={{ scale: 0.98 }}
                         className="flex items-center gap-1.5 sm:gap-2 px-2 sm:px-4 py-1.5 sm:py-2 bg-white text-black rounded-lg text-xs sm:text-sm font-semibold cursor-pointer hover:bg-zinc-200 transition-all shrink-0"
                     >
-                        <Upload02Icon className="w-3.5 sm:w-4 h-3.5 sm:h-4" />
+                        <Upload02Icon className="w-4 sm:w-4.5 h-4 sm:h-4.5" />
                         <span className="hidden sm:inline">Upload</span>
                         <input type="file" multiple onChange={handleFileUpload} className="hidden" />
                     </motion.label>
@@ -496,7 +505,7 @@ export const FileExplorer = ({
                         onClick={handleCreateFolder}
                         className="flex items-center gap-1.5 sm:gap-2 px-2 sm:px-4 py-1.5 sm:py-2 bg-white/5 border border-white/10 text-white rounded-lg text-xs sm:text-sm font-semibold hover:bg-white/10 transition-all shrink-0"
                     >
-                        <FolderAddIcon className="w-3.5 sm:w-4 h-3.5 sm:h-4" />
+                        <FolderAddIcon className="w-4 sm:w-4.5 h-4 sm:h-4.5" />
                         <span className="hidden sm:inline">New Folder</span>
                     </motion.button>
 
@@ -517,7 +526,7 @@ export const FileExplorer = ({
                                 : 'bg-white/5 border-white/10 text-zinc-400 hover:text-white hover:bg-white/10'
                                 }`}
                         >
-                            <Tick01Icon className="w-3.5 sm:w-4 h-3.5 sm:h-4" />
+                            <Tick01Icon className="w-4 sm:w-4.5 h-4 sm:h-4.5" />
                             <span className="hidden sm:inline">{selectedItems.length === items.length ? 'Deselect All' : 'Select All'}</span>
                         </motion.button>
                     )}
@@ -551,7 +560,7 @@ export const FileExplorer = ({
                                             className="flex items-center gap-1 sm:gap-1.5 px-2 sm:px-3 py-1 sm:py-1.5 bg-blue-500/10 border border-blue-500/20 text-blue-400 rounded-lg text-xs font-semibold hover:bg-blue-500/20 transition-all shrink-0"
                                             title="Download"
                                         >
-                                            <Download01Icon className="w-3.5 h-3.5" />
+                                            <Download01Icon className="w-4 h-4" />
                                             <span className="hidden sm:inline">Download</span>
                                         </motion.button>
                                     )}
@@ -564,7 +573,7 @@ export const FileExplorer = ({
                                             className="flex items-center gap-1 sm:gap-1.5 px-2 sm:px-3 py-1 sm:py-1.5 bg-green-500/10 border border-green-500/20 text-green-400 rounded-lg text-xs font-semibold hover:bg-green-500/20 transition-all shrink-0"
                                             title="Share"
                                         >
-                                            <Share01Icon className="w-3.5 h-3.5" />
+                                            <Share01Icon className="w-4 h-4" />
                                             <span className="hidden sm:inline">Share</span>
                                         </motion.button>
                                     )}
@@ -576,7 +585,7 @@ export const FileExplorer = ({
                                         className="flex items-center gap-1 sm:gap-1.5 px-2 sm:px-3 py-1 sm:py-1.5 bg-red-500/10 border border-red-500/20 text-red-400 rounded-lg text-xs font-semibold hover:bg-red-500/20 transition-all shrink-0"
                                         title="Delete"
                                     >
-                                        <Delete02Icon className="w-3.5 h-3.5" />
+                                        <Delete02Icon className="w-4 h-4" />
                                         <span className="hidden sm:inline">Delete</span>
                                     </motion.button>
 
@@ -587,7 +596,7 @@ export const FileExplorer = ({
                                         className="p-1 sm:p-1.5 rounded-lg text-zinc-400 hover:text-white hover:bg-white/5 transition-all shrink-0"
                                         title="Clear selection"
                                     >
-                                        <Cancel01Icon className="w-3.5 h-3.5" />
+                                        <Cancel01Icon className="w-4 h-4" />
                                     </motion.button>
                                 </motion.div>
                             </>
@@ -606,7 +615,7 @@ export const FileExplorer = ({
                             }`}
                         title="Grid View"
                     >
-                        <LayoutGridIcon className="w-3.5 sm:w-4 h-3.5 sm:h-4" />
+                        <LayoutGridIcon className="w-4 sm:w-4.5 h-4 sm:h-4.5" />
                     </motion.button>
                     <motion.button
                         whileTap={{ scale: 0.95 }}
@@ -617,7 +626,7 @@ export const FileExplorer = ({
                             }`}
                         title="List View"
                     >
-                        <ListViewIcon className="w-3.5 sm:w-4 h-3.5 sm:h-4" />
+                        <ListViewIcon className="w-4 sm:w-4.5 h-4 sm:h-4.5" />
                     </motion.button>
                 </div>
             </div>
