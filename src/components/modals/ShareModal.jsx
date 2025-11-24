@@ -8,6 +8,7 @@ import { Cancel01Icon, Link01Icon, Copy01Icon, Tick02Icon, ArrowDown01Icon } fro
 import { motion, AnimatePresence } from 'framer-motion';
 import { useToast } from '../common/Toast';
 import { generateShareableLink } from '../../services/aws/s3Service';
+import { shortenUrl } from '../../services/urlShortener';
 
 export const ShareModal = ({ isOpen, onClose, item }) => {
     const toast = useToast();
@@ -19,7 +20,7 @@ export const ShareModal = ({ isOpen, onClose, item }) => {
     const handleGenerate = async () => {
         setIsLoading(true);
         try {
-            // Generate presigned URL from S3
+            // Step 1: Generate presigned URL from S3
             const result = await generateShareableLink(item.key, expiresIn);
 
             if (!result.success) {
@@ -28,8 +29,19 @@ export const ShareModal = ({ isOpen, onClose, item }) => {
                 return;
             }
 
-            setUrl(result.url);
-            toast.success('Shareable link generated');
+            // Step 2: Shorten the long presigned URL
+            const shortenResult = await shortenUrl(result.url);
+
+            if (!shortenResult.success) {
+                // If shortener fails, show warning but still use the long URL
+                console.warn('URL shortener failed:', shortenResult.error);
+                toast.warning('Using full URL (shortener unavailable)');
+                setUrl(result.url);
+            } else {
+                // Use the shortened URL
+                setUrl(shortenResult.shortUrl);
+                toast.success('Short link generated');
+            }
         } catch (error) {
             toast.error('Failed to generate link');
             console.error('Generate link error:', error);
