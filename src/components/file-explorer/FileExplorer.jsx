@@ -509,8 +509,8 @@ export const FileExplorer = ({
                         <span className="hidden sm:inline">New Folder</span>
                     </motion.button>
 
-                    {/* Select All Button */}
-                    {items.length > 0 && (
+                    {/* Select All Button - Shows only when items are selected */}
+                    {selectedItems.length > 0 && (
                         <motion.button
                             whileHover={{ scale: 1.02 }}
                             whileTap={{ scale: 0.98 }}
