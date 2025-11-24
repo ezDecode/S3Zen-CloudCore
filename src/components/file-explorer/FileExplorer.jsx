@@ -3,8 +3,8 @@
  * Complete UI Redesign - Modern & Sophisticated
  */
 
-import { useState, useEffect, useCallback, useRef } from 'react';
-import { Upload02Icon, FolderAddIcon, Delete02Icon, Logout01Icon, Search01Icon, Loading03Icon, Home01Icon, LayoutGridIcon, ListViewIcon, Download01Icon, Share01Icon, Cancel01Icon, Tick01Icon, UserGroupIcon, ArrowUp01Icon } from 'hugeicons-react';
+import { useState, useEffect, useCallback, useRef, useMemo } from 'react';
+import { Upload02Icon, FolderAddIcon, Delete02Icon, Logout01Icon, Search01Icon, Loading03Icon, Home01Icon, LayoutGridIcon, ListViewIcon, Download01Icon, Share01Icon, Cancel01Icon, Tick01Icon, UserGroupIcon, ArrowUp01Icon, PlusSignIcon, File02Icon } from 'hugeicons-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useToast } from '../common/Toast';
 import { FileList } from './FileList';
@@ -46,7 +46,9 @@ export const FileExplorer = ({
     const [sortBy, setSortBy] = useState('name'); // 'name', 'size', 'date'
     const [sortOrder, setSortOrder] = useState('asc'); // 'asc', 'desc'
     const [showSortMenu, setShowSortMenu] = useState(false);
+    const [showNewMenu, setShowNewMenu] = useState(false);
     const sortMenuRef = useRef(null);
+    const newMenuRef = useRef(null);
 
     const bucketConfig = getBucketConfig();
 
@@ -82,12 +84,15 @@ export const FileExplorer = ({
             if (sortMenuRef.current && !sortMenuRef.current.contains(event.target)) {
                 setShowSortMenu(false);
             }
+            if (newMenuRef.current && !newMenuRef.current.contains(event.target)) {
+                setShowNewMenu(false);
+            }
         };
-        if (showSortMenu) {
+        if (showSortMenu || showNewMenu) {
             document.addEventListener('mousedown', handleClickOutside);
             return () => document.removeEventListener('mousedown', handleClickOutside);
         }
-    }, [showSortMenu]);
+    }, [showSortMenu, showNewMenu]);
 
     // Navigation
     const handleNavigate = (path) => {
@@ -384,9 +389,9 @@ export const FileExplorer = ({
         }
     };
 
-    const filteredItems = items.filter(item =>
+    const filteredItems = useMemo(() => items.filter(item =>
         item.name.toLowerCase().includes(searchQuery.toLowerCase())
-    );
+    ), [items, searchQuery]);
 
     const handleSort = (field) => {
         if (sortBy === field) {
@@ -397,7 +402,7 @@ export const FileExplorer = ({
         }
     };
 
-    const sortedItems = [...filteredItems].sort((a, b) => {
+    const sortedItems = useMemo(() => [...filteredItems].sort((a, b) => {
         // Always keep folders on top
         if (a.type !== b.type) {
             return a.type === 'folder' ? -1 : 1;
@@ -419,7 +424,7 @@ export const FileExplorer = ({
         }
 
         return sortOrder === 'asc' ? comparison : -comparison;
-    });
+    }), [filteredItems, sortBy, sortOrder]);
 
     const handleLogout = () => {
         clearAuth();
@@ -538,29 +543,51 @@ export const FileExplorer = ({
 
             {/* Action Bar */}
             <div className="flex flex-row items-center justify-between px-3 sm:px-6 py-2 sm:py-3 border-b border-white/5 bg-zinc-950/50 z-10 gap-2">
-                {/* Left Actions - Upload, New Folder, Select All */}
+                {/* Left Actions - New Button, Select All */}
                 <div className="flex items-center gap-1.5 sm:gap-2 flex-1 min-w-0">
-                    {/* Upload Button */}
-                    <motion.label
-                        whileHover={{ scale: 1.02 }}
-                        whileTap={{ scale: 0.98 }}
-                        className="flex items-center gap-1.5 sm:gap-2 px-2 sm:px-4 py-1.5 sm:py-2 bg-white text-black rounded-lg text-xs sm:text-sm font-semibold cursor-pointer hover:bg-zinc-200 transition-all shrink-0"
-                    >
-                        <Upload02Icon className="w-4 sm:w-4.5 h-4 sm:h-4.5" />
-                        <span className="hidden sm:inline">Upload</span>
-                        <input type="file" multiple onChange={handleFileUpload} className="hidden" />
-                    </motion.label>
+                    {/* New Button Dropdown */}
+                    <div className="relative" ref={newMenuRef}>
+                        <motion.button
+                            whileHover={{ scale: 1.02 }}
+                            whileTap={{ scale: 0.98 }}
+                            onClick={() => setShowNewMenu(!showNewMenu)}
+                            className="flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-1.5 sm:py-2 bg-white text-black rounded-lg text-xs sm:text-sm font-bold shadow-lg shadow-white/10 hover:bg-zinc-200 transition-all shrink-0"
+                        >
+                            <PlusSignIcon className="w-4 sm:w-4.5 h-4 sm:h-4.5" />
+                            <span className="hidden sm:inline">New</span>
+                        </motion.button>
 
-                    {/* New Folder Button */}
-                    <motion.button
-                        whileHover={{ scale: 1.02 }}
-                        whileTap={{ scale: 0.98 }}
-                        onClick={handleCreateFolder}
-                        className="flex items-center gap-1.5 sm:gap-2 px-2 sm:px-4 py-1.5 sm:py-2 bg-white/5 border border-white/10 text-white rounded-lg text-xs sm:text-sm font-semibold hover:bg-white/10 transition-all shrink-0"
-                    >
-                        <FolderAddIcon className="w-4 sm:w-4.5 h-4 sm:h-4.5" />
-                        <span className="hidden sm:inline">New Folder</span>
-                    </motion.button>
+                        <AnimatePresence>
+                            {showNewMenu && (
+                                <motion.div
+                                    initial={{ opacity: 0, scale: 0.95, y: 10 }}
+                                    animate={{ opacity: 1, scale: 1, y: 0 }}
+                                    exit={{ opacity: 0, scale: 0.95, y: 10 }}
+                                    className="absolute left-0 top-full mt-2 w-48 bg-zinc-900 border border-white/10 rounded-xl shadow-2xl overflow-hidden z-50 py-1"
+                                >
+                                    <label className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-zinc-300 hover:bg-white/5 hover:text-white transition-colors cursor-pointer">
+                                        <Upload02Icon className="w-4 h-4" />
+                                        <span>Upload File</span>
+                                        <input type="file" multiple onChange={(e) => {
+                                            handleFileUpload(e);
+                                            setShowNewMenu(false);
+                                        }} className="hidden" />
+                                    </label>
+
+                                    <button
+                                        onClick={() => {
+                                            handleCreateFolder();
+                                            setShowNewMenu(false);
+                                        }}
+                                        className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-zinc-300 hover:bg-white/5 hover:text-white transition-colors"
+                                    >
+                                        <FolderAddIcon className="w-4 h-4" />
+                                        <span>New Folder</span>
+                                    </button>
+                                </motion.div>
+                            )}
+                        </AnimatePresence>
+                    </div>
 
                     {/* Select All Button - Shows only when items are selected */}
                     {selectedItems.length > 0 && (
