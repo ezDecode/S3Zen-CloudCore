@@ -1,8 +1,8 @@
-# CloudCore
+# CloudCore URL Shortener
 
-![CloudCore Banner](https://img.shields.io/badge/CloudCore-Premium%20S3%20Manager-667eea?style=for-the-badge&logo=amazon-s3&logoColor=white)
+![CloudCore Banner](https://img.shields.io/badge/CloudCore-URL%20Shortener-667eea?style=for-the-badge&logo=link&logoColor=white)
 
-> **Your S3 Buckets. Zero Console Hassle!**
+> **Simple. Fast. No AWS Required.**
 
 [![React](https://img.shields.io/badge/React-19.2.0-61DAFB?style=flat-square&logo=react&logoColor=black)](https://react.dev/)
 [![Vite](https://img.shields.io/badge/Vite-7.2.4-646CFF?style=flat-square&logo=vite&logoColor=white)](https://vitejs.dev/)
@@ -10,34 +10,33 @@
 [![AWS SDK](https://img.shields.io/badge/AWS_SDK-v3-FF9900?style=flat-square&logo=amazon-aws&logoColor=white)](https://aws.amazon.com/sdk-for-javascript/)
 [![License](https://img.shields.io/badge/License-MIT_green?style=flat-square)](LICENSE)
 
-**CloudCore** is a modern web application for managing files in AWS S3 buckets. It offers a user-friendly alternative to the AWS Console with drag-and-drop uploads, file previews, and secure credential management.
+**CloudCore** is a minimal URL shortener with a clean backend. No AWS, no S3, no authentication - just simple URL shortening with SQLite storage.
 
 ---
 
 ## ✨ Features
 
-- **🚀 Zero Backend**: 100% client-side application connecting directly to S3 from your browser
-- **🔒 Secure**: AWS credentials are encrypted and stored locally - never sent to any server
-- **📂 File Management**:
-  - Upload files with drag & drop support
-  - Create, rename, and delete folders
-  - Download files and folders
-  - Generate presigned URLs for secure sharing
-- **🔍 Search & Navigate**: Real-time search and breadcrumb navigation
-- **🎨 Modern UI**: Clean interface with smooth animations powered by Framer Motion
+- **🔗 URL Shortening**: Convert long URLs into short, shareable links
+- **🗄️ SQLite Storage**: Lightweight database, no external services needed
+- **✅ URL Validation**: Rejects localhost and IP addresses
+- **🚀 Fast Redirects**: 302 redirects to original URLs
+- **🔒 No Auth Required**: Simple API, no user accounts or tokens
+- **📦 Zero AWS**: No S3, no credentials, no cloud dependencies
 
 ---
 
 ## 🛠️ Tech Stack
 
-- **Frontend**: [React 19](https://react.dev/) with JSX
+### Backend
+- **Runtime**: [Node.js](https://nodejs.org/)
+- **Framework**: [Express](https://expressjs.com/)
+- **Database**: [SQLite3](https://www.sqlite.org/)
+- **ID Generation**: [nanoid](https://github.com/ai/nanoid)
+
+### Frontend (Optional)
+- **Framework**: [React 19](https://react.dev/) with JSX
 - **Build Tool**: [Vite 7](https://vitejs.dev/)
 - **Styling**: [Tailwind CSS v4](https://tailwindcss.com/)
-- **Animations**: [Framer Motion](https://www.framer.com/motion/)
-- **AWS Integration**: [AWS SDK for JavaScript v3](https://aws.amazon.com/sdk-for-javascript/)
-- **Icons**: [Lucide React](https://lucide.dev/) & [HugeIcons React](https://hugeicons.com/)
-- **Notifications**: [Sonner](https://sonner.emilkowal.ski/)
-- **Date Formatting**: [date-fns](https://date-fns.org/)
 
 ---
 
@@ -46,15 +45,13 @@
 ### Prerequisites
 
 - [Node.js](https://nodejs.org/) (v18 or higher)
-- An active [AWS Account](https://aws.amazon.com/)
-- An S3 Bucket created in your AWS account
 
-### Installation
+### Backend Setup
 
 1. **Clone the repository**
    ```bash
    git clone https://github.com/ezDecode/S3Zen-CloudCore.git
-   cd S3Zen-CloudCore
+   cd S3Zen-CloudCore/backend
    ```
 
 2. **Install dependencies**
@@ -62,70 +59,67 @@
    npm install
    ```
 
-3. **Start the development server**
+3. **Configure environment**
    ```bash
-   npm run dev
+   cp .env.example .env
+   # Edit .env if needed (default: PORT=3001)
    ```
 
-4. Open your browser and navigate to `http://localhost:5173`
+4. **Start the server**
+   ```bash
+   npm start
+   ```
+
+5. Server runs at `http://localhost:3001`
+
+### Quick Test
+
+```bash
+# Create a short URL
+curl -X POST http://localhost:3001/shorten \
+  -H "Content-Type: application/json" \
+  -d '{"longUrl":"https://github.com"}'
+
+# Or run the test script
+node test.js
+```
 
 ---
 
-## ☁️ AWS Configuration
+## 📡 API Endpoints
 
-To use CloudCore, configure your AWS S3 bucket for browser access:
+### POST /shorten
+Create a short URL
 
-### 1. Create an IAM User & Policy
-
-Create an IAM user with programmatic access and attach this policy (replace `YOUR_BUCKET_NAME`):
-
+**Request:**
 ```json
 {
-  "Version": "2012-10-17",
-  "Statement": [
-    {
-      "Sid": "CloudCoreAccess",
-      "Effect": "Allow",
-      "Action": [
-        "s3:ListBucket",
-        "s3:GetObject",
-        "s3:PutObject",
-        "s3:DeleteObject"
-      ],
-      "Resource": [
-        "arn:aws:s3:::YOUR_BUCKET_NAME",
-        "arn:aws:s3:::YOUR_BUCKET_NAME/*"
-      ]
-    }
-  ]
+  "longUrl": "https://example.com/very/long/path"
 }
 ```
 
-### 2. Configure CORS
-
-Go to your S3 Bucket > Permissions > CORS and add:
-
+**Response:**
 ```json
-[
-  {
-    "AllowedHeaders": ["*"],
-    "AllowedMethods": ["GET", "PUT", "POST", "DELETE", "HEAD"],
-    "AllowedOrigins": [
-      "http://localhost:5173",
-      "https://your-production-domain.com"
-    ],
-    "ExposeHeaders": [
-      "ETag",
-      "x-amz-server-side-encryption",
-      "x-amz-request-id",
-      "x-amz-id-2"
-    ],
-    "MaxAgeSeconds": 3000
-  }
-]
+{
+  "shortUrl": "http://localhost:3001/s/abc123",
+  "shortCode": "abc123"
+}
 ```
 
-> **Security Note**: Replace the origins with your actual domain in production.
+### GET /s/:code
+Redirect to original URL
+
+**Example:** `http://localhost:3001/s/abc123` → redirects to original URL
+
+### GET /health
+Health check endpoint
+
+**Response:**
+```json
+{
+  "status": "ok"
+}
+```
 
 ---
 
@@ -133,21 +127,21 @@ Go to your S3 Bucket > Permissions > CORS and add:
 
 ```
 CloudCore/
-├── src/
-│   ├── components/
-│   │   ├── auth/              # Authentication (Hero, AuthModal)
-│   │   ├── common/            # Shared components (Toast, SkeletonLoader)
-│   │   ├── file-explorer/     # Main file management interface
-│   │   └── modals/            # Modals (Share, Delete, CreateFolder, Rename)
-│   ├── hooks/                 # Custom hooks (useAuth, useModals, useSessionTimeout)
-│   ├── services/              # AWS S3 service integration
-│   ├── utils/                 # Helper functions
-│   ├── App.jsx                # Main application component
-│   └── index.css              # Global styles
-├── public/                    # Static assets
-├── index.html                 # HTML entry point
-├── package.json               # Dependencies
-└── vite.config.js             # Vite configuration
+├── backend/
+│   ├── src/
+│   │   ├── routes/
+│   │   │   └── shortener.js   # URL shortening routes
+│   │   ├── utils/
+│   │   │   ├── idGen.js       # Short code generator
+│   │   │   └── validateUrl.js # URL validation
+│   │   ├── db/
+│   │   │   └── shortlinks.db  # SQLite database (auto-created)
+│   │   └── server.js          # Main server
+│   ├── .env                   # Environment variables
+│   ├── package.json           # Dependencies
+│   ├── test.js                # Test script
+│   └── README.md              # Backend documentation
+└── README.md                  # This file
 ```
 
 ---

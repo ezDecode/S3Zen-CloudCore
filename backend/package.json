@@ -1,0 +1,17 @@
+{
+    "name": "cloudcore-url-shortener",
+    "version": "1.0.0",
+    "description": "Minimal URL shortener backend",
+    "main": "src/server.js",
+    "scripts": {
+        "start": "node src/server.js",
+        "dev": "node src/server.js"
+    },
+    "dependencies": {
+        "cors": "^2.8.5",
+        "dotenv": "^16.0.3",
+        "express": "^4.18.2",
+        "nanoid": "^3.3.4",
+        "sqlite3": "^5.1.6"
+    }
+}
