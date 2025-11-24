@@ -8,8 +8,6 @@ import { MoreVerticalIcon, Download01Icon, Share01Icon, Delete02Icon, Edit02Icon
 import { useState, useRef, useEffect } from 'react';
 import { FileIcon } from './FileIcon';
 import { formatFileSize, formatDate } from '../../utils/formatters';
-import { useTeam } from '../../hooks/useTeam';
-import { ACTIONS } from '../../utils/permissions';
 
 export const FileItem = ({
     item,
@@ -23,7 +21,6 @@ export const FileItem = ({
     onPreview,
     viewMode = 'grid'
 }) => {
-    const { can } = useTeam();
     const [showMenu, setShowMenu] = useState(false);
     const [isHovered, setIsHovered] = useState(false);
     const [menuPosition, setMenuPosition] = useState('bottom'); // 'bottom' or 'top'
@@ -135,7 +132,7 @@ export const FileItem = ({
                                         <span>Download</span>
                                     </button>
                                 )}
-                                {!isFolder && onShare && can(ACTIONS.SHARE) && (
+                                {!isFolder && onShare && (
                                     <button
                                         onClick={() => handleAction(() => onShare(item))}
                                         className="w-full flex items-center gap-2.5 px-3 py-2 text-sm text-zinc-300 hover:bg-white/5 hover:text-white transition-colors"
@@ -144,7 +141,7 @@ export const FileItem = ({
                                         <span>Share</span>
                                     </button>
                                 )}
-                                {onRename && can(ACTIONS.WRITE) && (
+                                {onRename && (
                                     <button
                                         onClick={() => handleAction(() => onRename(item))}
                                         className="w-full flex items-center gap-2.5 px-3 py-2 text-sm text-zinc-300 hover:bg-white/5 hover:text-white transition-colors"
@@ -153,7 +150,7 @@ export const FileItem = ({
                                         <span>Rename</span>
                                     </button>
                                 )}
-                                {onDelete && can(ACTIONS.DELETE) && (
+                                {onDelete && (
                                     <>
                                         <div className="h-px bg-white/5 my-1" />
                                         <button
@@ -289,7 +286,7 @@ export const FileItem = ({
                                     <span>Download</span>
                                 </button>
                             )}
-                            {!isFolder && onShare && can(ACTIONS.SHARE) && (
+                            {!isFolder && onShare && (
                                 <button
                                     onClick={() => handleAction(() => onShare(item))}
                                     className="w-full flex items-center gap-3 px-4 py-2.5 text-sm font-medium text-zinc-200 hover:bg-white/10 hover:text-white transition-all"
@@ -298,7 +295,7 @@ export const FileItem = ({
                                     <span>Share</span>
                                 </button>
                             )}
-                            {onRename && can(ACTIONS.WRITE) && (
+                            {onRename && (
                                 <button
                                     onClick={() => handleAction(() => onRename(item))}
                                     className="w-full flex items-center gap-3 px-4 py-2.5 text-sm font-medium text-zinc-200 hover:bg-white/10 hover:text-white transition-all"
@@ -307,7 +304,7 @@ export const FileItem = ({
                                     <span>Rename</span>
                                 </button>
                             )}
-                            {onDelete && can(ACTIONS.DELETE) && (
+                            {onDelete && (
                                 <>
                                     <div className="h-px bg-white/10 my-1" />
                                     <button

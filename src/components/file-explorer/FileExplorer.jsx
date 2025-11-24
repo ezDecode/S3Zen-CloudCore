@@ -18,8 +18,6 @@ import {
     renameObject
 } from '../../services/aws/s3Service';
 import { clearAuth, getBucketConfig } from '../../utils/authUtils';
-import { useTeam } from '../../hooks/useTeam';
-import { ACTIONS } from '../../utils/permissions';
 
 const LARGE_FILE_THRESHOLD = 100 * 1024 * 1024; // 100MB
 
@@ -29,11 +27,9 @@ export const FileExplorer = ({
     onRenameModal,
     onDeleteModal,
     onPreviewModal,
-    onCreateFolderModal,
-    onTeamModal
+    onCreateFolderModal
 }) => {
     const toast = useToast();
-    const { can } = useTeam();
     const [currentPath, setCurrentPath] = useState('');
     const [items, setItems] = useState([]);
     const [selectedItems, setSelectedItems] = useState([]);
@@ -105,11 +101,6 @@ export const FileExplorer = ({
 
     // Actions
     const processUploads = async (files) => {
-        if (!can(ACTIONS.WRITE)) {
-            toast.error("You don't have permission to upload files.");
-            return;
-        }
-
         if (files.length === 0) return;
 
         const uploadPromises = files.map(async (file) => {
@@ -157,7 +148,6 @@ export const FileExplorer = ({
     const handleDragOver = (e) => {
         e.preventDefault();
         e.stopPropagation();
-        if (!can(ACTIONS.WRITE)) return;
         if (!isDragging) setIsDragging(true);
     };
 
@@ -174,11 +164,6 @@ export const FileExplorer = ({
         e.stopPropagation();
         setIsDragging(false);
 
-        if (!can(ACTIONS.WRITE)) {
-            toast.error("You don't have permission to upload files.");
-            return;
-        }
-
         const files = Array.from(e.dataTransfer.files || []);
         if (files.length > 0) {
             await processUploads(files);
@@ -186,20 +171,12 @@ export const FileExplorer = ({
     };
 
     const handleCreateFolder = () => {
-        if (!can(ACTIONS.WRITE)) {
-            toast.error("You don't have permission to create folders.");
-            return;
-        }
         if (onCreateFolderModal) {
             onCreateFolderModal(currentPath, loadFiles);
         }
     };
 
     const handleDelete = (itemsToDelete) => {
-        if (!can(ACTIONS.DELETE)) {
-            toast.error("You don't have permission to delete items.");
-            return;
-        }
         if (onDeleteModal) {
             onDeleteModal(itemsToDelete, () => {
                 // Check if we're deleting a folder that contains the current path
@@ -234,10 +211,6 @@ export const FileExplorer = ({
     };
 
     const handleRename = async (item, newName) => {
-        if (!can(ACTIONS.WRITE)) {
-            toast.error("You don't have permission to rename items.");
-            return;
-        }
         try {
             const result = await renameObject(
                 item.key,
@@ -389,10 +362,6 @@ export const FileExplorer = ({
     };
 
     const handleShareSelected = () => {
-        if (!can(ACTIONS.SHARE)) {
-            toast.error("You don't have permission to share files.");
-            return;
-        }
         if (selectedItems.length === 1 && selectedItems[0].type === 'file') {
             onShareModal(selectedItems[0]);
         }
@@ -503,16 +472,6 @@ export const FileExplorer = ({
                         <Loading03Icon className="w-4.5 h-4.5" />
                     </motion.button>
 
-                    {/* Team Management */}
-                    <motion.button
-                        whileHover={{ scale: 1.05 }}
-                        whileTap={{ scale: 0.95 }}
-                        onClick={onTeamModal}
-                        className="hidden sm:flex p-1.5 sm:p-2 rounded-lg text-zinc-400 hover:text-white hover:bg-white/5 transition-all shrink-0"
-                        title="Team"
-                    >
-                        <UserGroupIcon className="w-4.5 h-4.5" />
-                    </motion.button>
 
                     {/* Logout */}
                     <motion.button
@@ -532,30 +491,26 @@ export const FileExplorer = ({
                 {/* Left Actions - Upload, New Folder, Select All */}
                 <div className="flex items-center gap-1.5 sm:gap-2 flex-1 min-w-0">
                     {/* Upload Button */}
-                    {can(ACTIONS.WRITE) && (
-                        <motion.label
-                            whileHover={{ scale: 1.02 }}
-                            whileTap={{ scale: 0.98 }}
-                            className="flex items-center gap-1.5 sm:gap-2 px-2 sm:px-4 py-1.5 sm:py-2 bg-white text-black rounded-lg text-xs sm:text-sm font-semibold cursor-pointer hover:bg-zinc-200 transition-all shrink-0"
-                        >
-                            <Upload02Icon className="w-4 sm:w-4.5 h-4 sm:h-4.5" />
-                            <span className="hidden sm:inline">Upload</span>
-                            <input type="file" multiple onChange={handleFileUpload} className="hidden" />
-                        </motion.label>
-                    )}
+                    <motion.label
+                        whileHover={{ scale: 1.02 }}
+                        whileTap={{ scale: 0.98 }}
+                        className="flex items-center gap-1.5 sm:gap-2 px-2 sm:px-4 py-1.5 sm:py-2 bg-white text-black rounded-lg text-xs sm:text-sm font-semibold cursor-pointer hover:bg-zinc-200 transition-all shrink-0"
+                    >
+                        <Upload02Icon className="w-4 sm:w-4.5 h-4 sm:h-4.5" />
+                        <span className="hidden sm:inline">Upload</span>
+                        <input type="file" multiple onChange={handleFileUpload} className="hidden" />
+                    </motion.label>
 
                     {/* New Folder Button */}
-                    {can(ACTIONS.WRITE) && (
-                        <motion.button
-                            whileHover={{ scale: 1.02 }}
-                            whileTap={{ scale: 0.98 }}
-                            onClick={handleCreateFolder}
-                            className="flex items-center gap-1.5 sm:gap-2 px-2 sm:px-4 py-1.5 sm:py-2 bg-white/5 border border-white/10 text-white rounded-lg text-xs sm:text-sm font-semibold hover:bg-white/10 transition-all shrink-0"
-                        >
-                            <FolderAddIcon className="w-4 sm:w-4.5 h-4 sm:h-4.5" />
-                            <span className="hidden sm:inline">New Folder</span>
-                        </motion.button>
-                    )}
+                    <motion.button
+                        whileHover={{ scale: 1.02 }}
+                        whileTap={{ scale: 0.98 }}
+                        onClick={handleCreateFolder}
+                        className="flex items-center gap-1.5 sm:gap-2 px-2 sm:px-4 py-1.5 sm:py-2 bg-white/5 border border-white/10 text-white rounded-lg text-xs sm:text-sm font-semibold hover:bg-white/10 transition-all shrink-0"
+                    >
+                        <FolderAddIcon className="w-4 sm:w-4.5 h-4 sm:h-4.5" />
+                        <span className="hidden sm:inline">New Folder</span>
+                    </motion.button>
 
                     {/* Select All Button - Shows only when items are selected */}
                     {selectedItems.length > 0 && (
@@ -613,7 +568,7 @@ export const FileExplorer = ({
                                         </motion.button>
                                     )}
 
-                                    {selectedItems.length === 1 && selectedItems[0].type === 'file' && can(ACTIONS.SHARE) && (
+                                    {selectedItems.length === 1 && selectedItems[0].type === 'file' && (
                                         <motion.button
                                             whileHover={{ scale: 1.02 }}
                                             whileTap={{ scale: 0.98 }}
@@ -626,18 +581,16 @@ export const FileExplorer = ({
                                         </motion.button>
                                     )}
 
-                                    {can(ACTIONS.DELETE) && (
-                                        <motion.button
-                                            whileHover={{ scale: 1.02 }}
-                                            whileTap={{ scale: 0.98 }}
-                                            onClick={() => handleDelete(selectedItems)}
-                                            className="flex items-center gap-1 sm:gap-1.5 px-2 sm:px-3 py-1 sm:py-1.5 bg-red-500/10 border border-red-500/20 text-red-400 rounded-lg text-xs font-semibold hover:bg-red-500/20 transition-all shrink-0"
-                                            title="Delete"
-                                        >
-                                            <Delete02Icon className="w-4 h-4" />
-                                            <span className="hidden sm:inline">Delete</span>
-                                        </motion.button>
-                                    )}
+                                    <motion.button
+                                        whileHover={{ scale: 1.02 }}
+                                        whileTap={{ scale: 0.98 }}
+                                        onClick={() => handleDelete(selectedItems)}
+                                        className="flex items-center gap-1 sm:gap-1.5 px-2 sm:px-3 py-1 sm:py-1.5 bg-red-500/10 border border-red-500/20 text-red-400 rounded-lg text-xs font-semibold hover:bg-red-500/20 transition-all shrink-0"
+                                        title="Delete"
+                                    >
+                                        <Delete02Icon className="w-4 h-4" />
+                                        <span className="hidden sm:inline">Delete</span>
+                                    </motion.button>
 
                                     <motion.button
                                         whileHover={{ scale: 1.05 }}

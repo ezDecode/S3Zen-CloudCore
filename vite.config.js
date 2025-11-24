@@ -8,12 +8,18 @@ export default defineConfig({
     react(),
     tailwindcss(),
     nodePolyfills({
+      include: ['buffer', 'stream', 'util', 'process'],
       globals: {
         Buffer: true,
         global: true,
         process: true,
       },
-      protocolImports: true,
     }),
   ],
+  resolve: {
+    alias: {
+      stream: 'stream-browserify',
+      util: 'util',
+    },
+  },
 });

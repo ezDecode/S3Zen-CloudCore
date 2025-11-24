@@ -24,18 +24,6 @@ export const useModals = () => {
     const [renameModalItem, setRenameModalItem] = useState(null);
     const [renameCallback, setRenameCallback] = useState(null);
 
-    // Team Modal
-    const [teamModalOpen, setTeamModalOpen] = useState(false);
-
-    // Handlers
-    const handleTeamModal = useCallback(() => {
-        setTeamModalOpen(true);
-    }, []);
-
-    const closeTeamModal = useCallback(() => {
-        setTeamModalOpen(false);
-    }, []);
-
     const handleShareModal = useCallback((item) => {
         setShareModalItem(item);
     }, []);
@@ -115,11 +103,6 @@ export const useModals = () => {
         renameModalItem,
         handleRenameModal,
         closeRenameModal,
-        handleRenameSuccess,
-
-        // Team Modal
-        teamModalOpen,
-        handleTeamModal,
-        closeTeamModal
+        handleRenameSuccess
     };
 };
