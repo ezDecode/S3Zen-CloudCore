@@ -182,9 +182,9 @@ export const AuthModal = ({ isOpen, onClose, onAuthenticate }) => {
                                             }}
                                         >
                                             {AWS_REGIONS.map((region) => (
-                                                <option 
-                                                    key={region.value} 
-                                                    value={region.value} 
+                                                <option
+                                                    key={region.value}
+                                                    value={region.value}
                                                     className="bg-zinc-900 text-white py-2"
                                                 >
                                                     {region.label}

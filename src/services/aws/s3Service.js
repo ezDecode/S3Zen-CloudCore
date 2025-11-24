@@ -170,8 +170,8 @@ export const uploadLargeFile = async (file, key, onProgress) => {
                 Body: file,
                 ContentType: file.type
             },
-            partSize: 5 * 1024 * 1024, // 5MB parts
-            queueSize: 4 // 4 concurrent uploads
+            partSize: 10 * 1024 * 1024, // 10MB parts
+            queueSize: 8 // 8 concurrent uploads
         });
 
         // Track progress

@@ -8,26 +8,57 @@ import { Cancel01Icon, Link01Icon, Copy01Icon, Tick02Icon, ArrowDown01Icon } fro
 import { motion, AnimatePresence } from 'framer-motion';
 import { useToast } from '../common/Toast';
 import { generateShareableLink } from '../../services/aws/s3Service';
+import { createShortUrl, isShortenerAvailable } from '../../services/urlShortener';
 
 export const ShareModal = ({ isOpen, onClose, item }) => {
     const toast = useToast();
-    const [url, setUrl] = useState('');
+    const [url, setUrl] = useState(''); // Display URL (short or long)
+    const [longUrl, setLongUrl] = useState(''); // Original presigned URL
+    const [shortUrl, setShortUrl] = useState(''); // Shortened URL
     const [expiresIn, setExpiresIn] = useState(3600); // 1 hour default
     const [isLoading, setIsLoading] = useState(false);
     const [copied, setCopied] = useState(false);
+    const [useShortener, setUseShortener] = useState(true); // Toggle for URL shortening
 
     const handleGenerate = async () => {
         setIsLoading(true);
         try {
+            // Generate presigned URL from S3
             const result = await generateShareableLink(item.key, expiresIn);
-            if (result.success) {
-                setUrl(result.url);
-                toast.success('Shareable link generated');
-            } else {
+
+            if (!result.success) {
                 toast.error(`Failed to generate link: ${result.error}`);
+                setIsLoading(false);
+                return;
+            }
+
+            const presignedUrl = result.url;
+            setLongUrl(presignedUrl);
+
+            // Try to shorten the URL if enabled and shortener is available
+            if (useShortener && isShortenerAvailable()) {
+                const shortResult = await createShortUrl(presignedUrl, expiresIn);
+
+                if (shortResult.success) {
+                    setShortUrl(shortResult.shortUrl);
+                    setUrl(shortResult.shortUrl);
+                    toast.success('Short link generated');
+                } else {
+                    // Fallback to long URL if shortening fails
+                    console.warn('URL shortening failed:', shortResult.error);
+                    setUrl(presignedUrl);
+                    setShortUrl('');
+                    toast.success('Shareable link generated (shortener unavailable)');
+                }
+            } else {
+                // Use long URL directly
+                setUrl(presignedUrl);
+                setShortUrl('');
+                toast.success('Shareable link generated');
             }
         } catch (error) {
             toast.error('Failed to generate link');
+            console.error('Generate link error:', error);
         } finally {
             setIsLoading(false);
         }
@@ -42,6 +73,8 @@ export const ShareModal = ({ isOpen, onClose, item }) => {
 
     const handleClose = () => {
         setUrl('');
+        setLongUrl('');
+        setShortUrl('');
         setCopied(false);
         onClose();
     };
@@ -104,6 +137,27 @@ export const ShareModal = ({ isOpen, onClose, item }) => {
                                 </div>
                             </div>
 
+                            {/* URL Shortener Toggle */}
+                            {isShortenerAvailable() && (
+                                <div className="flex items-center justify-between p-3 bg-white/5 border border-white/10 rounded-lg">
+                                    <div>
+                                        <p className="text-sm font-medium text-white">Use Short URL</p>
+                                        <p className="text-xs text-white/60 mt-0.5">Create a shorter, more shareable link</p>
+                                    </div>
+                                    <button
+                                        type="button"
+                                        onClick={() => setUseShortener(!useShortener)}
+                                        className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${useShortener ? 'bg-purple-600' : 'bg-white/20'
+                                            }`}
+                                    >
+                                        <span
+                                            className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${useShortener ? 'translate-x-6' : 'translate-x-1'
+                                                }`}
+                                        />
+                                    </button>
+                                </div>
+                            )}
+
                             {/* Generate Button */}
                             {!url && (
                                 <button
@@ -123,7 +177,14 @@ export const ShareModal = ({ isOpen, onClose, item }) => {
                                     className="space-y-3"
                                 >
                                     <div className="p-3 bg-white/5 border border-white/10 rounded-lg">
-                                        <p className="text-xs text-white/60 mb-1.5">Shareable link:</p>
+                                        <div className="flex items-center justify-between mb-1.5">
+                                            <p className="text-xs text-white/60">Shareable link:</p>
+                                            {shortUrl && (
+                                                <span className="text-xs px-2 py-0.5 bg-purple-500/20 text-purple-300 rounded-md border border-purple-500/30">
+                                                    Short URL
+                                                </span>
+                                            )}
+                                        </div>
                                         <p className="text-xs text-white break-all font-mono">{url}</p>
                                     </div>
 
@@ -157,7 +218,10 @@ export const ShareModal = ({ isOpen, onClose, item }) => {
                             )}
 
                             <p className="text-xs text-white/50 text-center">
-                                Anyone with this link can download the file until it expires.
+                                {shortUrl
+                                    ? 'This short link will redirect to your file. Anyone with this link can download the file until it expires.'
+                                    : 'Anyone with this link can download the file until it expires.'
+                                }
                             </p>
                         </div>
                     </motion.div>

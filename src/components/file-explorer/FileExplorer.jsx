@@ -19,7 +19,7 @@ import {
 } from '../../services/aws/s3Service';
 import { clearAuth, getBucketConfig } from '../../utils/authUtils';
 
-const LARGE_FILE_THRESHOLD = 5 * 1024 * 1024; // 5MB
+const LARGE_FILE_THRESHOLD = 100 * 1024 * 1024; // 100MB
 
 export const FileExplorer = ({
     onLogout,
@@ -400,55 +400,53 @@ export const FileExplorer = ({
             </AnimatePresence>
 
             {/* Top Navigation Bar */}
-            <nav className="flex flex-col sm:flex-row items-start sm:items-center justify-between px-4 sm:px-6 py-4 border-b border-white/5 bg-gradient-to-b from-zinc-900/50 to-transparent backdrop-blur-sm z-10 gap-4 sm:gap-0">
-                <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 sm:gap-6 w-full sm:w-auto">
-                    {/* Logo/Brand */}
-                    <div className="flex items-center gap-2 shrink-0">
-                        <span className="font-bold text-lg">CloudCore</span>
-                    </div>
-
-                    {/* Breadcrumb */}
-                    <div className="flex items-center gap-1 text-sm w-full sm:w-auto pb-2 sm:pb-0 scrollbar-hide mask-linear-fade flex-wrap sm:flex-nowrap">
-                        <motion.button
-                            whileHover={{ scale: 1.05 }}
-                            whileTap={{ scale: 0.95 }}
-                            onClick={() => handleNavigate('')}
-                            className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-md text-zinc-400 hover:text-white hover:bg-white/5 transition-all shrink-0"
-                        >
-                            <Home01Icon className="w-3.5 h-3.5" />
-                            <span className="font-medium">Home</span>
-                        </motion.button>
-
-                        {pathParts.map((part, index) => {
-                            const path = pathParts.slice(0, index + 1).join('/') + '/';
-                            return (
-                                <div key={index} className="flex items-center gap-1 shrink-0">
-                                    <span className="text-zinc-700">/</span>
-                                    <motion.button
-                                        whileHover={{ scale: 1.05 }}
-                                        whileTap={{ scale: 0.95 }}
-                                        onClick={() => handleBreadcrumbClick(path)}
-                                        className="px-2.5 py-1.5 rounded-md text-zinc-400 hover:text-white hover:bg-white/5 transition-all font-medium"
-                                    >
-                                        {part}
-                                    </motion.button>
-                                </div>
-                            );
-                        })}
-                    </div>
+            <nav className="flex flex-row items-center justify-between px-3 sm:px-6 py-3 sm:py-4 border-b border-white/5 bg-gradient-to-b from-zinc-900/50 to-transparent backdrop-blur-sm z-10 gap-2 sm:gap-4">
+                {/* Logo/Brand - Hidden on mobile */}
+                <div className="hidden lg:flex items-center gap-2 shrink-0">
+                    <span className="font-bold text-lg">CloudCore</span>
                 </div>
 
-                {/* Right Actions */}
-                <div className="flex items-center gap-3 w-full sm:w-auto">
+                {/* Breadcrumb */}
+                <div className="flex items-center gap-1 text-sm min-w-0 overflow-x-auto scrollbar-hide flex-1 lg:flex-initial">
+                    <motion.button
+                        whileHover={{ scale: 1.05 }}
+                        whileTap={{ scale: 0.95 }}
+                        onClick={() => handleNavigate('')}
+                        className="flex items-center gap-1.5 px-2 sm:px-2.5 py-1.5 rounded-md text-zinc-400 hover:text-white hover:bg-white/5 transition-all shrink-0"
+                    >
+                        <Home01Icon className="w-3.5 h-3.5" />
+                        <span className="font-medium hidden sm:inline">Home</span>
+                    </motion.button>
+
+                    {pathParts.map((part, index) => {
+                        const path = pathParts.slice(0, index + 1).join('/') + '/';
+                        return (
+                            <div key={index} className="flex items-center gap-1 shrink-0">
+                                <span className="text-zinc-700">/</span>
+                                <motion.button
+                                    whileHover={{ scale: 1.05 }}
+                                    whileTap={{ scale: 0.95 }}
+                                    onClick={() => handleBreadcrumbClick(path)}
+                                    className="px-2 sm:px-2.5 py-1.5 rounded-md text-zinc-400 hover:text-white hover:bg-white/5 transition-all font-medium max-w-[80px] sm:max-w-none truncate"
+                                >
+                                    {part}
+                                </motion.button>
+                            </div>
+                        );
+                    })}
+                </div>
+
+                {/* Right Actions - All in one line */}
+                <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
                     {/* Search */}
-                    <div className="relative flex-1 sm:flex-none">
-                        <Search01Icon className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-500 pointer-events-none" />
+                    <div className="relative w-32 sm:w-48 md:w-64">
+                        <Search01Icon className="absolute left-2 sm:left-3 top-1/2 -translate-y-1/2 w-3.5 sm:w-4 h-3.5 sm:h-4 text-zinc-500 pointer-events-none" />
                         <input
                             type="text"
-                            placeholder="Search files..."
+                            placeholder="Search..."
                             value={searchQuery}
                             onChange={(e) => setSearchQuery(e.target.value)}
-                            className="w-full sm:w-64 pl-10 pr-4 py-2 bg-white/5 border border-white/10 rounded-lg text-sm text-white placeholder:text-zinc-500 focus:outline-none focus:border-white/20 focus:bg-white/10 transition-all"
+                            className="w-full pl-8 sm:pl-10 pr-2 sm:pr-4 py-1.5 sm:py-2 bg-white/5 border border-white/10 rounded-lg text-xs sm:text-sm text-white placeholder:text-zinc-500 focus:outline-none focus:border-white/20 focus:bg-white/10 transition-all"
                         />
                     </div>
 
@@ -457,10 +455,10 @@ export const FileExplorer = ({
                         whileHover={{ scale: 1.05, rotate: 90 }}
                         whileTap={{ scale: 0.95 }}
                         onClick={loadFiles}
-                        className="p-2 rounded-lg text-zinc-400 hover:text-white hover:bg-white/5 transition-all shrink-0"
+                        className="p-1.5 sm:p-2 rounded-lg text-zinc-400 hover:text-white hover:bg-white/5 transition-all shrink-0"
                         title="Refresh"
                     >
-                        <Loading03Icon className="w-4 h-4" />
+                        <Loading03Icon className="w-3.5 sm:w-4 h-3.5 sm:h-4" />
                     </motion.button>
 
                     {/* Logout */}
@@ -468,25 +466,26 @@ export const FileExplorer = ({
                         whileHover={{ scale: 1.05 }}
                         whileTap={{ scale: 0.95 }}
                         onClick={handleLogout}
-                        className="p-2 rounded-lg text-zinc-400 hover:text-white hover:bg-white/5 transition-all shrink-0"
+                        className="p-1.5 sm:p-2 rounded-lg text-zinc-400 hover:text-white hover:bg-white/5 transition-all shrink-0"
                         title="Logout"
                     >
-                        <Logout01Icon className="w-4 h-4" />
+                        <Logout01Icon className="w-3.5 sm:w-4 h-3.5 sm:h-4" />
                     </motion.button>
                 </div>
             </nav>
 
             {/* Action Bar */}
-            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between px-4 sm:px-6 py-3 border-b border-white/5 bg-zinc-950/50 z-10 gap-3 sm:gap-0">
-                <div className="flex items-center gap-2 w-full sm:w-auto flex-wrap sm:flex-nowrap">
+            <div className="flex flex-row items-center justify-between px-3 sm:px-6 py-2 sm:py-3 border-b border-white/5 bg-zinc-950/50 z-10 gap-2">
+                {/* Left Actions - Upload, New Folder, Select All */}
+                <div className="flex items-center gap-1.5 sm:gap-2 flex-1 min-w-0">
                     {/* Upload Button */}
                     <motion.label
                         whileHover={{ scale: 1.02 }}
                         whileTap={{ scale: 0.98 }}
-                        className="flex items-center gap-2 px-4 py-2 bg-white text-black rounded-lg text-sm font-semibold cursor-pointer hover:bg-zinc-200 transition-all shrink-0"
+                        className="flex items-center gap-1.5 sm:gap-2 px-2 sm:px-4 py-1.5 sm:py-2 bg-white text-black rounded-lg text-xs sm:text-sm font-semibold cursor-pointer hover:bg-zinc-200 transition-all shrink-0"
                     >
-                        <Upload02Icon className="w-4 h-4" />
-                        <span>Upload</span>
+                        <Upload02Icon className="w-3.5 sm:w-4 h-3.5 sm:h-4" />
+                        <span className="hidden sm:inline">Upload</span>
                         <input type="file" multiple onChange={handleFileUpload} className="hidden" />
                     </motion.label>
 
@@ -495,10 +494,10 @@ export const FileExplorer = ({
                         whileHover={{ scale: 1.02 }}
                         whileTap={{ scale: 0.98 }}
                         onClick={handleCreateFolder}
-                        className="flex items-center gap-2 px-4 py-2 bg-white/5 border border-white/10 text-white rounded-lg text-sm font-semibold hover:bg-white/10 transition-all shrink-0"
+                        className="flex items-center gap-1.5 sm:gap-2 px-2 sm:px-4 py-1.5 sm:py-2 bg-white/5 border border-white/10 text-white rounded-lg text-xs sm:text-sm font-semibold hover:bg-white/10 transition-all shrink-0"
                     >
-                        <FolderAddIcon className="w-4 h-4" />
-                        <span>New Folder</span>
+                        <FolderAddIcon className="w-3.5 sm:w-4 h-3.5 sm:h-4" />
+                        <span className="hidden sm:inline">New Folder</span>
                     </motion.button>
 
                     {/* Select All Button */}
@@ -513,13 +512,13 @@ export const FileExplorer = ({
                                     setSelectedItems(items);
                                 }
                             }}
-                            className={`flex items-center gap-2 px-4 py-2 border rounded-lg text-sm font-semibold transition-all shrink-0 ${selectedItems.length === items.length && items.length > 0
+                            className={`flex items-center gap-1.5 sm:gap-2 px-2 sm:px-4 py-1.5 sm:py-2 border rounded-lg text-xs sm:text-sm font-semibold transition-all shrink-0 ${selectedItems.length === items.length && items.length > 0
                                 ? 'bg-blue-500 border-blue-500 text-white'
                                 : 'bg-white/5 border-white/10 text-zinc-400 hover:text-white hover:bg-white/10'
                                 }`}
                         >
-                            <Tick01Icon className="w-4 h-4" />
-                            <span>{selectedItems.length === items.length ? 'Deselect All' : 'Select All'}</span>
+                            <Tick01Icon className="w-3.5 sm:w-4 h-3.5 sm:h-4" />
+                            <span className="hidden sm:inline">{selectedItems.length === items.length ? 'Deselect All' : 'Select All'}</span>
                         </motion.button>
                     )}
 
@@ -531,16 +530,16 @@ export const FileExplorer = ({
                                     initial={{ width: 0, opacity: 0 }}
                                     animate={{ width: 'auto', opacity: 1 }}
                                     exit={{ width: 0, opacity: 0 }}
-                                    className="h-8 w-px bg-white/10 mx-1 shrink-0"
+                                    className="hidden sm:block h-8 w-px bg-white/10 mx-1 shrink-0"
                                 />
 
                                 <motion.div
                                     initial={{ opacity: 0, x: -10 }}
                                     animate={{ opacity: 1, x: 0 }}
                                     exit={{ opacity: 0, x: -10 }}
-                                    className="flex items-center gap-2 shrink-0"
+                                    className="flex items-center gap-1.5 sm:gap-2 shrink-0 min-w-0"
                                 >
-                                    <span className="text-xs text-zinc-400 font-medium px-2 whitespace-nowrap">
+                                    <span className="hidden md:inline text-xs text-zinc-400 font-medium px-2 whitespace-nowrap">
                                         {selectedItems.length} selected
                                     </span>
 
@@ -549,10 +548,11 @@ export const FileExplorer = ({
                                             whileHover={{ scale: 1.02 }}
                                             whileTap={{ scale: 0.98 }}
                                             onClick={handleDownloadSelected}
-                                            className="flex items-center gap-1.5 px-3 py-1.5 bg-blue-500/10 border border-blue-500/20 text-blue-400 rounded-lg text-xs font-semibold hover:bg-blue-500/20 transition-all"
+                                            className="flex items-center gap-1 sm:gap-1.5 px-2 sm:px-3 py-1 sm:py-1.5 bg-blue-500/10 border border-blue-500/20 text-blue-400 rounded-lg text-xs font-semibold hover:bg-blue-500/20 transition-all shrink-0"
+                                            title="Download"
                                         >
                                             <Download01Icon className="w-3.5 h-3.5" />
-                                            <span>Download</span>
+                                            <span className="hidden sm:inline">Download</span>
                                         </motion.button>
                                     )}
 
@@ -561,10 +561,11 @@ export const FileExplorer = ({
                                             whileHover={{ scale: 1.02 }}
                                             whileTap={{ scale: 0.98 }}
                                             onClick={handleShareSelected}
-                                            className="flex items-center gap-1.5 px-3 py-1.5 bg-green-500/10 border border-green-500/20 text-green-400 rounded-lg text-xs font-semibold hover:bg-green-500/20 transition-all"
+                                            className="flex items-center gap-1 sm:gap-1.5 px-2 sm:px-3 py-1 sm:py-1.5 bg-green-500/10 border border-green-500/20 text-green-400 rounded-lg text-xs font-semibold hover:bg-green-500/20 transition-all shrink-0"
+                                            title="Share"
                                         >
                                             <Share01Icon className="w-3.5 h-3.5" />
-                                            <span>Share</span>
+                                            <span className="hidden sm:inline">Share</span>
                                         </motion.button>
                                     )}
 
@@ -572,17 +573,18 @@ export const FileExplorer = ({
                                         whileHover={{ scale: 1.02 }}
                                         whileTap={{ scale: 0.98 }}
                                         onClick={() => handleDelete(selectedItems)}
-                                        className="flex items-center gap-1.5 px-3 py-1.5 bg-red-500/10 border border-red-500/20 text-red-400 rounded-lg text-xs font-semibold hover:bg-red-500/20 transition-all"
+                                        className="flex items-center gap-1 sm:gap-1.5 px-2 sm:px-3 py-1 sm:py-1.5 bg-red-500/10 border border-red-500/20 text-red-400 rounded-lg text-xs font-semibold hover:bg-red-500/20 transition-all shrink-0"
+                                        title="Delete"
                                     >
                                         <Delete02Icon className="w-3.5 h-3.5" />
-                                        <span>Delete</span>
+                                        <span className="hidden sm:inline">Delete</span>
                                     </motion.button>
 
                                     <motion.button
                                         whileHover={{ scale: 1.05 }}
                                         whileTap={{ scale: 0.95 }}
                                         onClick={() => setSelectedItems([])}
-                                        className="p-1.5 rounded-lg text-zinc-400 hover:text-white hover:bg-white/5 transition-all"
+                                        className="p-1 sm:p-1.5 rounded-lg text-zinc-400 hover:text-white hover:bg-white/5 transition-all shrink-0"
                                         title="Clear selection"
                                     >
                                         <Cancel01Icon className="w-3.5 h-3.5" />
@@ -594,34 +596,34 @@ export const FileExplorer = ({
                 </div>
 
                 {/* View Mode Toggle */}
-                <div className="flex items-center gap-1 p-1 bg-white/5 rounded-lg border border-white/10 shrink-0 self-end sm:self-auto">
+                <div className="flex items-center gap-0.5 sm:gap-1 p-0.5 sm:p-1 bg-white/5 rounded-lg border border-white/10 shrink-0">
                     <motion.button
                         whileTap={{ scale: 0.95 }}
                         onClick={() => setViewMode('grid')}
-                        className={`p-1.5 rounded-md transition-all ${viewMode === 'grid'
+                        className={`p-1 sm:p-1.5 rounded-md transition-all ${viewMode === 'grid'
                             ? 'bg-white text-black'
                             : 'text-zinc-400 hover:text-white'
                             }`}
                         title="Grid View"
                     >
-                        <LayoutGridIcon className="w-4 h-4" />
+                        <LayoutGridIcon className="w-3.5 sm:w-4 h-3.5 sm:h-4" />
                     </motion.button>
                     <motion.button
                         whileTap={{ scale: 0.95 }}
                         onClick={() => setViewMode('list')}
-                        className={`p-1.5 rounded-md transition-all ${viewMode === 'list'
+                        className={`p-1 sm:p-1.5 rounded-md transition-all ${viewMode === 'list'
                             ? 'bg-white text-black'
                             : 'text-zinc-400 hover:text-white'
                             }`}
                         title="List View"
                     >
-                        <ListViewIcon className="w-4 h-4" />
+                        <ListViewIcon className="w-3.5 sm:w-4 h-3.5 sm:h-4" />
                     </motion.button>
                 </div>
             </div>
 
-            {/* Main Content Area */}
-            <main className="flex-1 overflow-hidden z-0 relative">
+            {/* Main Content Area - Fixed scrolling */}
+            <main className="flex-1 overflow-y-auto overflow-x-hidden z-0 relative">
                 <FileList
                     items={filteredItems}
                     selectedItems={selectedItems}

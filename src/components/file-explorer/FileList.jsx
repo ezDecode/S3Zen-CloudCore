@@ -92,9 +92,9 @@ export const FileList = ({
     const sortedItems = [...folders, ...files];
 
     return (
-        <div className="flex-1 overflow-y-auto overflow-x-hidden px-6 py-6 custom-scrollbar">
+        <div className="flex-1 overflow-y-auto overflow-x-hidden px-3 sm:px-6 py-3 sm:py-6 custom-scrollbar">
             {viewMode === 'grid' ? (
-                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 2xl:grid-cols-8 gap-3">
+                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 2xl:grid-cols-8 gap-2 sm:gap-3">
                     <AnimatePresence mode="popLayout">
                         {sortedItems.map((item, index) => (
                             <motion.div
