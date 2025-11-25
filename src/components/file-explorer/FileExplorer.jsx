@@ -73,6 +73,7 @@ export const FileExplorer = ({
     const [isDragging, setIsDragging] = useState(false);
     const [sortBy, setSortBy] = useState('name'); // 'name', 'size', 'date'
     const [sortOrder, setSortOrder] = useState('asc'); // 'asc', 'desc'
+    const [mobileDrawerOpen, setMobileDrawerOpen] = useState(false);
 
     const bucketConfig = getBucketConfig();
 
@@ -168,7 +169,7 @@ export const FileExplorer = ({
             }
         }
 
-        loadFiles();
+        await loadFiles();
     };
 
     const uploadSingleFile = async (file, fileName) => {
@@ -193,6 +194,29 @@ export const FileExplorer = ({
 
             if (result.success) {
                 toast.success(`Uploaded ${fileName}`);
+
+                // Optimistically add the file to the list without refreshing
+                const newItem = {
+                    key: key,
+                    name: fileName,
+                    type: 'file',
+                    size: file.size,
+                    lastModified: new Date().toISOString()
+                };
+
+                setItems(prev => {
+                    // Check if item already exists (in case of replace)
+                    const existingIndex = prev.findIndex(item => item.key === key);
+                    if (existingIndex !== -1) {
+                        // Replace existing item
+                        const newItems = [...prev];
+                        newItems[existingIndex] = newItem;
+                        return newItems;
+                    } else {
+                        // Add new item
+                        return [...prev, newItem];
+                    }
+                });
             } else {
                 toast.error(`Failed to upload ${fileName}`);
             }
@@ -636,7 +660,7 @@ export const FileExplorer = ({
 
                         {/* Mobile Drawer */}
                         <div className="sm:hidden">
-                            <Drawer>
+                            <Drawer open={mobileDrawerOpen} onOpenChange={setMobileDrawerOpen}>
                                 <DrawerTrigger asChild>
                                     <Button variant="default" size="icon" className="bg-white text-black hover:bg-zinc-200 rounded-lg">
                                         <PlusSignIcon className="w-4.5 h-4.5" />
@@ -661,7 +685,7 @@ export const FileExplorer = ({
                                                 multiple
                                                 onChange={(e) => {
                                                     handleFileUpload(e);
-                                                    // Close drawer logic would ideally go here if we had control over the drawer state
+                                                    setMobileDrawerOpen(false); // Close drawer when files are selected
                                                 }}
                                                 className="hidden"
                                             />

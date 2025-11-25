@@ -6,6 +6,7 @@ const Toaster = ({ ...props }) => {
             theme="dark"
             className="toaster group"
             position="top-right"
+            duration={2000}
             toastOptions={{
                 classNames: {
                     toast:
