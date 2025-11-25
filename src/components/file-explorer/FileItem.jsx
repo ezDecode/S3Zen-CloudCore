@@ -4,10 +4,17 @@
  */
 
 import { motion, AnimatePresence } from 'framer-motion';
-import { MoreVerticalIcon, Download01Icon, Share01Icon, Delete02Icon, Edit02Icon, ViewIcon, Tick02Icon } from 'hugeicons-react';
-import { useState, useRef, useEffect } from 'react';
+import { MoreVerticalIcon, Download01Icon, Share01Icon, Delete02Icon, Edit02Icon, ViewIcon, Tick02Icon, InformationCircleIcon } from 'hugeicons-react';
+import { useState } from 'react';
 import { FileIcon } from './FileIcon';
 import { formatFileSize, formatDate, formatExactDateTime } from '../../utils/formatters';
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuSeparator,
+    DropdownMenuTrigger,
+} from "../ui/dropdown-menu";
 
 export const FileItem = ({
     item,
@@ -19,48 +26,69 @@ export const FileItem = ({
     onRename,
     onDelete,
     onPreview,
+    onDetails,
     viewMode = 'grid'
 }) => {
-    const [showMenu, setShowMenu] = useState(false);
     const [isHovered, setIsHovered] = useState(false);
-    const [menuPosition, setMenuPosition] = useState('bottom'); // 'bottom' or 'top'
-    const menuRef = useRef(null);
-    const buttonRef = useRef(null);
     const isFolder = item.type === 'folder';
 
-    useEffect(() => {
-        const handleClickOutside = (event) => {
-            if (menuRef.current && !menuRef.current.contains(event.target)) {
-                setShowMenu(false);
-            }
-        };
-        if (showMenu) {
-            document.addEventListener('mousedown', handleClickOutside);
-            return () => document.removeEventListener('mousedown', handleClickOutside);
-        }
-    }, [showMenu]);
-
-    const handleMenuClick = (e) => {
-        e.stopPropagation();
-
-        // Calculate dropdown position
-        if (buttonRef.current && !showMenu) {
-            const rect = buttonRef.current.getBoundingClientRect();
-            const spaceBelow = window.innerHeight - rect.bottom;
-            const spaceAbove = rect.top;
-            const menuHeight = 300; // Approximate max height
-
-            // Show upward if not enough space below and more space above
-            setMenuPosition(spaceBelow < menuHeight && spaceAbove > spaceBelow ? 'top' : 'bottom');
-        }
-
-        setShowMenu(!showMenu);
-    };
-
-    const handleAction = (action) => {
-        setShowMenu(false);
-        action();
-    };
+    const MenuContent = () => (
+        <>
+            <DropdownMenuItem
+                onClick={(e) => {
+                    e.stopPropagation();
+                    onSelect(item);
+                }}
+                className="cursor-pointer"
+            >
+                <Tick02Icon className={`w-4 h-4 mr-2 ${isSelected ? 'text-blue-500' : 'text-zinc-400'}`} />
+                <span>{isSelected ? 'Deselect' : 'Select'}</span>
+            </DropdownMenuItem>
+            <DropdownMenuSeparator className="bg-white/10" />
+            {!isFolder && onPreview && (
+                <DropdownMenuItem onClick={() => onPreview(item)} className="cursor-pointer">
+                    <ViewIcon className="w-4 h-4 mr-2 text-zinc-500" />
+                    Preview
+                </DropdownMenuItem>
+            )}
+            {!isFolder && onDownload && (
+                <DropdownMenuItem onClick={() => onDownload(item)} className="cursor-pointer">
+                    <Download01Icon className="w-4 h-4 mr-2 text-zinc-500" />
+                    Download
+                </DropdownMenuItem>
+            )}
+            {!isFolder && onShare && (
+                <DropdownMenuItem onClick={() => onShare(item)} className="cursor-pointer">
+                    <Share01Icon className="w-4 h-4 mr-2 text-zinc-500" />
+                    Share
+                </DropdownMenuItem>
+            )}
+            {onDetails && (
+                <DropdownMenuItem onClick={() => onDetails(item)} className="cursor-pointer sm:hidden">
+                    <InformationCircleIcon className="w-4 h-4 mr-2 text-zinc-500" />
+                    Details
+                </DropdownMenuItem>
+            )}
+            {onRename && (
+                <DropdownMenuItem onClick={() => onRename(item)} className="cursor-pointer">
+                    <Edit02Icon className="w-4 h-4 mr-2 text-zinc-500" />
+                    Rename
+                </DropdownMenuItem>
+            )}
+            {onDelete && (
+                <>
+                    <DropdownMenuSeparator className="bg-white/10" />
+                    <DropdownMenuItem
+                        onClick={() => onDelete(item)}
+                        className="cursor-pointer text-red-400 focus:text-red-400 focus:bg-red-500/10"
+                    >
+                        <Delete02Icon className="w-4 h-4 mr-2" />
+                        Delete
+                    </DropdownMenuItem>
+                </>
+            )}
+        </>
+    );
 
     if (viewMode === 'grid') {
         return (
@@ -72,7 +100,7 @@ export const FileItem = ({
                 className={`group relative rounded-xl border transition-all duration-200 cursor-pointer ${isSelected
                     ? 'bg-blue-500/10 border-blue-500/50 shadow-[0_0_15px_rgba(59,130,246,0.15)]'
                     : 'bg-white/5 border-white/10 hover:bg-white/10 hover:border-white/20'
-                    } ${showMenu ? 'z-50' : 'z-0'}`}
+                    }`}
                 onClick={() => isFolder ? onOpen(item) : onSelect(item)}
                 onDoubleClick={() => !isFolder && onPreview && onPreview(item)}
             >
@@ -91,85 +119,23 @@ export const FileItem = ({
                 </AnimatePresence>
 
                 {/* Context Menu Button */}
-                <motion.div
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: isHovered || showMenu ? 1 : 0 }}
-                    className="absolute top-2 right-2 z-20"
-                    ref={menuRef}
-                >
-                    <button
-                        ref={buttonRef}
-                        onClick={handleMenuClick}
-                        className={`p-1.5 rounded-lg transition-all duration-200 ${showMenu
-                            ? 'bg-white text-black shadow-lg shadow-white/20'
-                            : 'bg-black/40 text-white hover:bg-black/60 backdrop-blur-sm border border-white/10'
-                            }`}
-                    >
-                        <MoreVerticalIcon className="w-4 h-4" />
-                    </button>
-
-                    <AnimatePresence>
-                        {showMenu && (
-                            <motion.div
-                                initial={{ opacity: 0, scale: 0.9, y: 10, filter: 'blur(10px)' }}
-                                animate={{ opacity: 1, scale: 1, y: 0, filter: 'blur(0px)' }}
-                                exit={{ opacity: 0, scale: 0.9, y: 10, filter: 'blur(10px)' }}
-                                transition={{ type: 'spring', duration: 0.3 }}
-                                className={`absolute right-0 w-56 bg-zinc-900/95 backdrop-blur-xl border border-white/10 rounded-xl shadow-2xl overflow-hidden z-50 py-1.5 ${menuPosition === 'top' ? 'bottom-full mb-2' : 'top-full mt-2'
-                                    }`}
+                <div className="absolute top-2 right-2 z-20" onClick={(e) => e.stopPropagation()}>
+                    <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                            <button
+                                className={`p-1.5 rounded-lg transition-all duration-200 ${isHovered
+                                    ? 'opacity-100'
+                                    : 'opacity-0 data-[state=open]:opacity-100'} 
+                                    bg-black/40 text-white hover:bg-black/60 backdrop-blur-sm border border-white/10 data-[state=open]:bg-white data-[state=open]:text-black`}
                             >
-                                {!isFolder && onPreview && (
-                                    <button
-                                        onClick={() => handleAction(() => onPreview(item))}
-                                        className="w-full flex items-center gap-3 px-4 py-2.5 text-sm font-medium text-zinc-300 hover:bg-white/10 hover:text-white transition-all group"
-                                    >
-                                        <ViewIcon className="w-4 h-4 text-zinc-500 group-hover:text-white transition-colors" />
-                                        <span>Preview</span>
-                                    </button>
-                                )}
-                                {!isFolder && onDownload && (
-                                    <button
-                                        onClick={() => handleAction(() => onDownload(item))}
-                                        className="w-full flex items-center gap-3 px-4 py-2.5 text-sm font-medium text-zinc-300 hover:bg-white/10 hover:text-white transition-all group"
-                                    >
-                                        <Download01Icon className="w-4 h-4 text-zinc-500 group-hover:text-white transition-colors" />
-                                        <span>Download</span>
-                                    </button>
-                                )}
-                                {!isFolder && onShare && (
-                                    <button
-                                        onClick={() => handleAction(() => onShare(item))}
-                                        className="w-full flex items-center gap-3 px-4 py-2.5 text-sm font-medium text-zinc-300 hover:bg-white/10 hover:text-white transition-all group"
-                                    >
-                                        <Share01Icon className="w-4 h-4 text-zinc-500 group-hover:text-white transition-colors" />
-                                        <span>Share</span>
-                                    </button>
-                                )}
-                                {onRename && (
-                                    <button
-                                        onClick={() => handleAction(() => onRename(item))}
-                                        className="w-full flex items-center gap-3 px-4 py-2.5 text-sm font-medium text-zinc-300 hover:bg-white/10 hover:text-white transition-all group"
-                                    >
-                                        <Edit02Icon className="w-4 h-4 text-zinc-500 group-hover:text-white transition-colors" />
-                                        <span>Rename</span>
-                                    </button>
-                                )}
-                                {onDelete && (
-                                    <>
-                                        <div className="h-px bg-white/10 my-1.5 mx-2" />
-                                        <button
-                                            onClick={() => handleAction(() => onDelete(item))}
-                                            className="w-full flex items-center gap-3 px-4 py-2.5 text-sm font-medium text-red-400 hover:bg-red-500/10 hover:text-red-300 transition-all group"
-                                        >
-                                            <Delete02Icon className="w-4 h-4 text-red-400/70 group-hover:text-red-400 transition-colors" />
-                                            <span>Delete</span>
-                                        </button>
-                                    </>
-                                )}
-                            </motion.div>
-                        )}
-                    </AnimatePresence>
-                </motion.div>
+                                <MoreVerticalIcon className="w-4 h-4" />
+                            </button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end" className="w-56 bg-zinc-900/95 backdrop-blur-xl border-white/10">
+                            <MenuContent />
+                        </DropdownMenuContent>
+                    </DropdownMenu>
+                </div>
 
                 {/* Card Content */}
                 <div className="p-4 flex flex-col items-center text-center gap-3">
@@ -206,14 +172,12 @@ export const FileItem = ({
             className={`group relative grid grid-cols-12 gap-4 items-center px-4 py-3.5 rounded-lg border transition-all duration-200 cursor-pointer ${isSelected
                 ? 'bg-blue-500/10 border-blue-500/50 shadow-[0_0_15px_rgba(59,130,246,0.15)]'
                 : 'bg-white/[0.02] border-white/[0.08] hover:border-white/20 hover:shadow-md'
-                } ${showMenu ? 'z-50' : 'z-0'}`}
+                }`}
             onClick={() => isFolder ? onOpen(item) : onSelect(item)}
             onDoubleClick={() => !isFolder && onPreview && onPreview(item)}
         >
             {/* Name Column */}
             <div className="col-span-8 sm:col-span-6 flex items-center gap-3 min-w-0">
-
-
                 {/* Icon */}
                 <motion.div
                     whileHover={{ scale: 1.1, rotate: isFolder ? 5 : 0 }}
@@ -239,90 +203,21 @@ export const FileItem = ({
             </div>
 
             {/* Actions Column */}
-            <div className="col-span-4 sm:col-span-1 flex justify-end relative" ref={menuRef}>
-                <motion.button
-                    ref={buttonRef}
-                    initial={{ opacity: 1 }}
-                    animate={{ opacity: 1 }}
-                    whileHover={{ scale: 1.1 }}
-                    whileTap={{ scale: 0.9 }}
-                    onClick={handleMenuClick}
-                    className="p-2 rounded-lg bg-white/10 border border-white/20 text-zinc-300 hover:text-white hover:bg-white/15 hover:border-white/30 transition-all shadow-sm"
-                >
-                    <MoreVerticalIcon className="w-4 h-4" />
-                </motion.button>
-
-                <AnimatePresence>
-                    {showMenu && (
-                        <motion.div
-                            initial={{ opacity: 0, scale: 0.95, y: menuPosition === 'top' ? 5 : -5 }}
-                            animate={{ opacity: 1, scale: 1, y: 0 }}
-                            exit={{ opacity: 0, scale: 0.95, y: menuPosition === 'top' ? 5 : -5 }}
-                            className={`absolute right-0 w-52 bg-zinc-900/95 backdrop-blur-xl border border-white/20 rounded-xl shadow-2xl overflow-y-auto max-h-80 custom-scrollbar z-50 ${menuPosition === 'top' ? 'bottom-full mb-2' : 'top-full mt-2'
-                                }`}
+            <div className="col-span-4 sm:col-span-1 flex justify-end relative" onClick={(e) => e.stopPropagation()}>
+                <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                        <motion.button
+                            whileHover={{ scale: 1.1 }}
+                            whileTap={{ scale: 0.9 }}
+                            className="p-2 rounded-lg bg-white/10 border border-white/20 text-zinc-300 hover:text-white hover:bg-white/15 hover:border-white/30 transition-all shadow-sm data-[state=open]:bg-white data-[state=open]:text-black"
                         >
-                            <button
-                                onClick={(e) => {
-                                    e.stopPropagation();
-                                    handleAction(() => onSelect(item));
-                                }}
-                                className="w-full flex items-center gap-3 px-4 py-2.5 text-sm font-medium text-zinc-200 hover:bg-white/10 hover:text-white transition-all"
-                            >
-                                <Tick02Icon className={`w-4 h-4 ${isSelected ? 'text-blue-500' : 'text-zinc-400'}`} />
-                                <span>{isSelected ? 'Deselect' : 'Select'}</span>
-                            </button>
-                            <div className="h-px bg-white/10 my-1" />
-                            {!isFolder && onPreview && (
-                                <button
-                                    onClick={() => handleAction(() => onPreview(item))}
-                                    className="w-full flex items-center gap-3 px-4 py-2.5 text-sm font-medium text-zinc-200 hover:bg-white/10 hover:text-white transition-all"
-                                >
-                                    <ViewIcon className="w-4 h-4" />
-                                    <span>Preview</span>
-                                </button>
-                            )}
-                            {!isFolder && onDownload && (
-                                <button
-                                    onClick={() => handleAction(() => onDownload(item))}
-                                    className="w-full flex items-center gap-3 px-4 py-2.5 text-sm font-medium text-zinc-200 hover:bg-white/10 hover:text-white transition-all"
-                                >
-                                    <Download01Icon className="w-4 h-4" />
-                                    <span>Download</span>
-                                </button>
-                            )}
-                            {!isFolder && onShare && (
-                                <button
-                                    onClick={() => handleAction(() => onShare(item))}
-                                    className="w-full flex items-center gap-3 px-4 py-2.5 text-sm font-medium text-zinc-200 hover:bg-white/10 hover:text-white transition-all"
-                                >
-                                    <Share01Icon className="w-4 h-4" />
-                                    <span>Share</span>
-                                </button>
-                            )}
-                            {onRename && (
-                                <button
-                                    onClick={() => handleAction(() => onRename(item))}
-                                    className="w-full flex items-center gap-3 px-4 py-2.5 text-sm font-medium text-zinc-200 hover:bg-white/10 hover:text-white transition-all"
-                                >
-                                    <Edit02Icon className="w-4 h-4" />
-                                    <span>Rename</span>
-                                </button>
-                            )}
-                            {onDelete && (
-                                <>
-                                    <div className="h-px bg-white/10 my-1" />
-                                    <button
-                                        onClick={() => handleAction(() => onDelete(item))}
-                                        className="w-full flex items-center gap-3 px-4 py-2.5 text-sm font-medium text-red-400 hover:bg-red-500/20 hover:text-red-300 transition-all"
-                                    >
-                                        <Delete02Icon className="w-4 h-4" />
-                                        <span>Delete</span>
-                                    </button>
-                                </>
-                            )}
-                        </motion.div>
-                    )}
-                </AnimatePresence>
+                            <MoreVerticalIcon className="w-4 h-4" />
+                        </motion.button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end" className="w-56 bg-zinc-900/95 backdrop-blur-xl border-white/10">
+                        <MenuContent />
+                    </DropdownMenuContent>
+                </DropdownMenu>
             </div>
         </motion.div>
     );

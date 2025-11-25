@@ -81,6 +81,17 @@ export const useModals = () => {
         setRenameCallback(null);
     }, [renameCallback]);
 
+    // Details Modal
+    const [detailsModalItem, setDetailsModalItem] = useState(null);
+
+    const handleDetailsModal = useCallback((item) => {
+        setDetailsModalItem(item);
+    }, []);
+
+    const closeDetailsModal = useCallback(() => {
+        setDetailsModalItem(null);
+    }, []);
+
     return {
         // Share Modal
         shareModalItem,
@@ -103,6 +114,11 @@ export const useModals = () => {
         renameModalItem,
         handleRenameModal,
         closeRenameModal,
-        handleRenameSuccess
+        handleRenameSuccess,
+
+        // Details Modal
+        detailsModalItem,
+        handleDetailsModal,
+        closeDetailsModal
     };
 };

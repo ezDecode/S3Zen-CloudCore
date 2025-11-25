@@ -18,6 +18,7 @@ export const FileList = ({
     onRename,
     onDelete,
     onPreview,
+    onDetails,
     isLoading,
     viewMode = 'grid',
     sortBy,
@@ -112,6 +113,7 @@ export const FileList = ({
                                     onRename={onRename}
                                     onDelete={onDelete}
                                     onPreview={onPreview}
+                                    onDetails={onDetails}
                                     viewMode={viewMode}
                                 />
                             </motion.div>
@@ -127,27 +129,18 @@ export const FileList = ({
                             onClick={() => onSort && onSort('name')}
                         >
                             <span>Name</span>
-                            <div className={`flex items-center transition-all duration-200 ${sortBy === 'name' ? 'opacity-100 text-blue-500' : 'opacity-0 group-hover:opacity-50 text-zinc-500'}`}>
-                                {sortBy === 'name' && sortOrder === 'desc' ? <ArrowDown01Icon className="w-3.5 h-3.5" /> : <ArrowUp01Icon className="w-3.5 h-3.5" />}
-                            </div>
                         </div>
                         <div
                             className="col-span-2 hidden sm:block cursor-pointer hover:text-white flex flex-row items-center gap-2 transition-colors group select-none"
                             onClick={() => onSort && onSort('size')}
                         >
                             <span>Size</span>
-                            <div className={`flex items-center transition-all duration-200 ${sortBy === 'size' ? 'opacity-100 text-blue-500' : 'opacity-0 group-hover:opacity-50 text-zinc-500'}`}>
-                                {sortBy === 'size' && sortOrder === 'desc' ? <ArrowDown01Icon className="w-3.5 h-3.5" /> : <ArrowUp01Icon className="w-3.5 h-3.5" />}
-                            </div>
                         </div>
                         <div
                             className="col-span-3 hidden sm:block cursor-pointer hover:text-white flex flex-row items-center gap-2 transition-colors group select-none"
                             onClick={() => onSort && onSort('date')}
                         >
                             <span>Modified</span>
-                            <div className={`flex items-center transition-all duration-200 ${sortBy === 'date' ? 'opacity-100 text-blue-500' : 'opacity-0 group-hover:opacity-50 text-zinc-500'}`}>
-                                {sortBy === 'date' && sortOrder === 'desc' ? <ArrowDown01Icon className="w-3.5 h-3.5" /> : <ArrowUp01Icon className="w-3.5 h-3.5" />}
-                            </div>
                         </div>
                         <div className="col-span-4 sm:col-span-1 text-right">Actions</div>
                     </div>
@@ -172,6 +165,7 @@ export const FileList = ({
                                     onRename={onRename}
                                     onDelete={onDelete}
                                     onPreview={onPreview}
+                                    onDetails={onDetails}
                                     viewMode={viewMode}
                                 />
                             </motion.div>

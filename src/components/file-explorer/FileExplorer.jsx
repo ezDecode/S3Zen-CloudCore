@@ -6,9 +6,37 @@
 import { useState, useEffect, useCallback, useRef, useMemo } from 'react';
 import { Upload02Icon, FolderAddIcon, Delete02Icon, Logout01Icon, Search01Icon, Loading03Icon, Home01Icon, LayoutGridIcon, ListViewIcon, Download01Icon, Share01Icon, Cancel01Icon, Tick01Icon, UserGroupIcon, ArrowUp01Icon, PlusSignIcon, File02Icon } from 'hugeicons-react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { useToast } from '../common/Toast';
+import { toast } from 'sonner';
 import { FileList } from './FileList';
 import { DownloadManager } from '../common/DownloadManager';
+import {
+    Breadcrumb,
+    BreadcrumbItem,
+    BreadcrumbLink,
+    BreadcrumbList,
+    BreadcrumbPage,
+    BreadcrumbSeparator,
+} from "../ui/breadcrumb";
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuLabel,
+    DropdownMenuSeparator,
+    DropdownMenuTrigger,
+} from "../ui/dropdown-menu";
+import {
+    Drawer,
+    DrawerClose,
+    DrawerContent,
+    DrawerDescription,
+    DrawerFooter,
+    DrawerHeader,
+    DrawerTitle,
+    DrawerTrigger,
+} from "../ui/drawer";
+import { Button } from "../ui/button";
+import { DuplicateFileModal } from '../modals/DuplicateFileModal';
 import {
     listObjects,
     uploadFile,
@@ -27,9 +55,9 @@ export const FileExplorer = ({
     onRenameModal,
     onDeleteModal,
     onPreviewModal,
-    onCreateFolderModal
+    onCreateFolderModal,
+    onDetailsModal
 }) => {
-    const toast = useToast();
     const [currentPath, setCurrentPath] = useState('');
     const [items, setItems] = useState([]);
     const [selectedItems, setSelectedItems] = useState([]);
@@ -45,10 +73,6 @@ export const FileExplorer = ({
     const [isDragging, setIsDragging] = useState(false);
     const [sortBy, setSortBy] = useState('name'); // 'name', 'size', 'date'
     const [sortOrder, setSortOrder] = useState('asc'); // 'asc', 'desc'
-    const [showSortMenu, setShowSortMenu] = useState(false);
-    const [showNewMenu, setShowNewMenu] = useState(false);
-    const sortMenuRef = useRef(null);
-    const newMenuRef = useRef(null);
 
     const bucketConfig = getBucketConfig();
 
@@ -78,22 +102,6 @@ export const FileExplorer = ({
         localStorage.setItem('cloudcore_view_mode', viewMode);
     }, [viewMode]);
 
-    // Click outside handler for sort menu
-    useEffect(() => {
-        const handleClickOutside = (event) => {
-            if (sortMenuRef.current && !sortMenuRef.current.contains(event.target)) {
-                setShowSortMenu(false);
-            }
-            if (newMenuRef.current && !newMenuRef.current.contains(event.target)) {
-                setShowNewMenu(false);
-            }
-        };
-        if (showSortMenu || showNewMenu) {
-            document.addEventListener('mousedown', handleClickOutside);
-            return () => document.removeEventListener('mousedown', handleClickOutside);
-        }
-    }, [showSortMenu, showNewMenu]);
-
     // Navigation
     const handleNavigate = (path) => {
         setCurrentPath(path);
@@ -121,49 +129,87 @@ export const FileExplorer = ({
         });
     };
 
+    // Duplicate file handling
+    const [duplicateFileInfo, setDuplicateFileInfo] = useState(null);
+
     // Actions
     const processUploads = async (files) => {
         if (files.length === 0) return;
 
-        const uploadPromises = files.map(async (file) => {
-            const key = currentPath ? `${currentPath}${file.name}` : file.name;
-            const uploadId = Date.now() + Math.random();
+        for (const file of files) {
+            // Check if file already exists
+            const fileExists = items.some(item =>
+                item.type === 'file' && item.name === file.name
+            );
 
-            setUploadingFiles(prev => [...prev, { id: uploadId, name: file.name, progress: 0 }]);
+            if (fileExists) {
+                // Show duplicate modal and wait for user decision
+                const resolution = await new Promise((resolve) => {
+                    setDuplicateFileInfo({
+                        file,
+                        onResolve: resolve
+                    });
+                });
 
-            try {
-                const onProgress = (progress) => {
-                    setUploadingFiles(prev =>
-                        prev.map(f => f.id === uploadId ? { ...f, progress: progress.percentage } : f)
-                    );
-                };
-
-                let result;
-                if (file.size > LARGE_FILE_THRESHOLD) {
-                    result = await uploadLargeFile(file, key, onProgress);
-                } else {
-                    result = await uploadFile(file, key, onProgress);
+                if (resolution.action === 'cancel') {
+                    continue; // Skip this file
                 }
 
-                if (result.success) {
-                    toast.success(`Uploaded ${file.name}`);
-                } else {
-                    toast.error(`Failed to upload ${file.name}`);
+                let finalFileName = file.name;
+                if (resolution.action === 'keepBoth' || resolution.action === 'rename') {
+                    finalFileName = resolution.newFileName;
                 }
-            } catch (error) {
-                toast.error(`Error uploading ${file.name}`);
-            } finally {
-                setUploadingFiles(prev => prev.filter(f => f.id !== uploadId));
+
+                // Upload with resolved name
+                await uploadSingleFile(file, finalFileName);
+            } else {
+                // No duplicate, upload directly
+                await uploadSingleFile(file, file.name);
             }
-        });
+        }
 
-        await Promise.all(uploadPromises);
         loadFiles();
+    };
+
+    const uploadSingleFile = async (file, fileName) => {
+        const key = currentPath ? `${currentPath}${fileName}` : fileName;
+        const uploadId = Date.now() + Math.random();
+
+        setUploadingFiles(prev => [...prev, { id: uploadId, name: fileName, progress: 0 }]);
+
+        try {
+            const onProgress = (progress) => {
+                setUploadingFiles(prev =>
+                    prev.map(f => f.id === uploadId ? { ...f, progress: progress.percentage } : f)
+                );
+            };
+
+            let result;
+            if (file.size > LARGE_FILE_THRESHOLD) {
+                result = await uploadLargeFile(file, key, onProgress);
+            } else {
+                result = await uploadFile(file, key, onProgress);
+            }
+
+            if (result.success) {
+                toast.success(`Uploaded ${fileName}`);
+            } else {
+                toast.error(`Failed to upload ${fileName}`);
+            }
+        } catch (error) {
+            toast.error(`Error uploading ${fileName}`);
+        } finally {
+            setUploadingFiles(prev => prev.filter(f => f.id !== uploadId));
+        }
     };
 
     const handleFileUpload = async (event) => {
         const files = Array.from(event.target.files || []);
-        await processUploads(files);
+        if (files.length > 0) {
+            await processUploads(files);
+            // Reset the input so the same file can be selected again
+            event.target.value = '';
+        }
     };
 
     // Drag and Drop Handlers
@@ -471,35 +517,41 @@ export const FileExplorer = ({
                 </div>
 
                 {/* Breadcrumb Area */}
-                <div className="flex items-center gap-1 text-sm min-w-0 flex-1">
-                    <motion.button
-                        whileHover={{ scale: 1.05 }}
-                        whileTap={{ scale: 0.95 }}
-                        onClick={() => handleNavigate('')}
-                        className="flex items-center gap-1.5 px-2 sm:px-2.5 py-1.5 rounded-md text-zinc-400 hover:text-white hover:bg-white/5 transition-all shrink-0"
-                    >
-                        <Home01Icon className="w-4 h-4" />
-                        <span className="font-medium hidden sm:inline">Home</span>
-                    </motion.button>
-
-                    <div className="flex items-center gap-1 overflow-x-auto scrollbar-hide min-w-0">
-                        {pathParts.map((part, index) => {
-                            const path = pathParts.slice(0, index + 1).join('/') + '/';
-                            return (
-                                <div key={index} className="flex items-center gap-1 shrink-0">
-                                    <span className="text-zinc-700">/</span>
-                                    <motion.button
-                                        whileHover={{ scale: 1.05 }}
-                                        whileTap={{ scale: 0.95 }}
-                                        onClick={() => handleBreadcrumbClick(path)}
-                                        className="px-2 sm:px-2.5 py-1.5 rounded-md text-zinc-400 hover:text-white hover:bg-white/5 transition-all font-medium max-w-[80px] sm:max-w-none truncate"
-                                    >
-                                        {part}
-                                    </motion.button>
-                                </div>
-                            );
-                        })}
-                    </div>
+                <div className="flex items-center min-w-0 flex-1">
+                    <Breadcrumb>
+                        <BreadcrumbList>
+                            <BreadcrumbItem>
+                                <BreadcrumbLink
+                                    onClick={() => handleNavigate('')}
+                                    className="flex items-center gap-1 cursor-pointer"
+                                >
+                                    <Home01Icon className="w-4 h-4" />
+                                    <span className="hidden sm:inline">Home</span>
+                                </BreadcrumbLink>
+                            </BreadcrumbItem>
+                            {pathParts.map((part, index) => {
+                                const path = pathParts.slice(0, index + 1).join('/') + '/';
+                                const isLast = index === pathParts.length - 1;
+                                return (
+                                    <div key={path} className="flex items-center">
+                                        <BreadcrumbSeparator />
+                                        <BreadcrumbItem>
+                                            {isLast ? (
+                                                <BreadcrumbPage>{part}</BreadcrumbPage>
+                                            ) : (
+                                                <BreadcrumbLink
+                                                    onClick={() => handleBreadcrumbClick(path)}
+                                                    className="cursor-pointer"
+                                                >
+                                                    {part}
+                                                </BreadcrumbLink>
+                                            )}
+                                        </BreadcrumbItem>
+                                    </div>
+                                );
+                            })}
+                        </BreadcrumbList>
+                    </Breadcrumb>
                 </div>
 
                 {/* Right Actions - All in one line */}
@@ -545,48 +597,94 @@ export const FileExplorer = ({
             <div className="flex flex-row items-center justify-between px-3 sm:px-6 py-2 sm:py-3 border-b border-white/5 bg-zinc-950/50 z-10 gap-2">
                 {/* Left Actions - New Button, Select All */}
                 <div className="flex items-center gap-1.5 sm:gap-2 flex-1 min-w-0">
-                    {/* New Button Dropdown */}
-                    <div className="relative" ref={newMenuRef}>
-                        <motion.button
-                            whileHover={{ scale: 1.02 }}
-                            whileTap={{ scale: 0.98 }}
-                            onClick={() => setShowNewMenu(!showNewMenu)}
-                            className="flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-1.5 sm:py-2 bg-white text-black rounded-lg text-xs sm:text-sm font-bold shadow-lg shadow-white/10 hover:bg-zinc-200 transition-all shrink-0"
-                        >
-                            <PlusSignIcon className="w-4 sm:w-4.5 h-4 sm:h-4.5" />
-                            <span className="hidden sm:inline">New</span>
-                        </motion.button>
-
-                        <AnimatePresence>
-                            {showNewMenu && (
-                                <motion.div
-                                    initial={{ opacity: 0, scale: 0.95, y: 10 }}
-                                    animate={{ opacity: 1, scale: 1, y: 0 }}
-                                    exit={{ opacity: 0, scale: 0.95, y: 10 }}
-                                    className="absolute left-0 top-full mt-2 w-48 bg-zinc-900 border border-white/10 rounded-xl shadow-2xl overflow-hidden z-50 py-1"
-                                >
-                                    <label className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-zinc-300 hover:bg-white/5 hover:text-white transition-colors cursor-pointer">
-                                        <Upload02Icon className="w-4 h-4" />
-                                        <span>Upload File</span>
-                                        <input type="file" multiple onChange={(e) => {
-                                            handleFileUpload(e);
-                                            setShowNewMenu(false);
-                                        }} className="hidden" />
-                                    </label>
-
-                                    <button
-                                        onClick={() => {
-                                            handleCreateFolder();
-                                            setShowNewMenu(false);
-                                        }}
-                                        className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-zinc-300 hover:bg-white/5 hover:text-white transition-colors"
+                    {/* New Button - Desktop Dropdown & Mobile Drawer */}
+                    <div className="flex items-center">
+                        {/* Desktop Dropdown */}
+                        <div className="hidden sm:block">
+                            <DropdownMenu>
+                                <DropdownMenuTrigger asChild>
+                                    <Button variant="default" className="gap-2 bg-white text-black hover:bg-zinc-200 font-bold">
+                                        <PlusSignIcon className="w-4.5 h-4.5" />
+                                        New
+                                    </Button>
+                                </DropdownMenuTrigger>
+                                <DropdownMenuContent align="start" className="w-48 bg-zinc-900 border-zinc-800">
+                                    <DropdownMenuItem
+                                        className="cursor-pointer hover:bg-zinc-800 focus:bg-zinc-800"
+                                        onSelect={() => document.getElementById('desktop-file-upload').click()}
                                     >
-                                        <FolderAddIcon className="w-4 h-4" />
-                                        <span>New Folder</span>
-                                    </button>
-                                </motion.div>
-                            )}
-                        </AnimatePresence>
+                                        <Upload02Icon className="w-4 h-4 mr-2" />
+                                        Upload File
+                                    </DropdownMenuItem>
+                                    <DropdownMenuItem
+                                        className="cursor-pointer hover:bg-zinc-800 focus:bg-zinc-800"
+                                        onSelect={handleCreateFolder}
+                                    >
+                                        <FolderAddIcon className="w-4 h-4 mr-2" />
+                                        New Folder
+                                    </DropdownMenuItem>
+                                </DropdownMenuContent>
+                            </DropdownMenu>
+                            <input
+                                id="desktop-file-upload"
+                                type="file"
+                                multiple
+                                onChange={handleFileUpload}
+                                className="hidden"
+                            />
+                        </div>
+
+                        {/* Mobile Drawer */}
+                        <div className="sm:hidden">
+                            <Drawer>
+                                <DrawerTrigger asChild>
+                                    <Button variant="default" size="icon" className="bg-white text-black hover:bg-zinc-200 rounded-lg">
+                                        <PlusSignIcon className="w-4.5 h-4.5" />
+                                    </Button>
+                                </DrawerTrigger>
+                                <DrawerContent className="bg-zinc-950 border-zinc-800">
+                                    <DrawerHeader>
+                                        <DrawerTitle>Add New</DrawerTitle>
+                                        <DrawerDescription>Upload files or create folders</DrawerDescription>
+                                    </DrawerHeader>
+                                    <div className="p-4 space-y-4">
+                                        <div
+                                            className="border-2 border-dashed border-zinc-800 rounded-xl p-8 flex flex-col items-center justify-center gap-2 text-zinc-400 active:bg-zinc-900 transition-colors cursor-pointer"
+                                            onClick={() => document.getElementById('mobile-file-upload').click()}
+                                        >
+                                            <Upload02Icon className="w-8 h-8 mb-2" />
+                                            <span className="text-sm font-medium">Tap to upload files</span>
+                                            <span className="text-xs text-zinc-500">or drag and drop here</span>
+                                            <input
+                                                id="mobile-file-upload"
+                                                type="file"
+                                                multiple
+                                                onChange={(e) => {
+                                                    handleFileUpload(e);
+                                                    // Close drawer logic would ideally go here if we had control over the drawer state
+                                                }}
+                                                className="hidden"
+                                            />
+                                        </div>
+                                        <DrawerClose asChild>
+                                            <Button
+                                                className="w-full justify-start h-12 text-base bg-zinc-900 hover:bg-zinc-800 border-zinc-800"
+                                                variant="outline"
+                                                onClick={handleCreateFolder}
+                                            >
+                                                <FolderAddIcon className="w-5 h-5 mr-3" />
+                                                Create New Folder
+                                            </Button>
+                                        </DrawerClose>
+                                    </div>
+                                    <DrawerFooter>
+                                        <DrawerClose asChild>
+                                            <Button variant="outline" className="bg-zinc-900 border-zinc-800 hover:bg-zinc-800">Cancel</Button>
+                                        </DrawerClose>
+                                    </DrawerFooter>
+                                </DrawerContent>
+                            </Drawer>
+                        </div>
                     </div>
 
                     {/* Select All Button - Shows only when items are selected */}
@@ -685,75 +783,47 @@ export const FileExplorer = ({
                 </div>
 
                 {/* Sort Menu */}
-                <div className="relative" ref={sortMenuRef}>
-                    <motion.button
-                        whileHover={{ scale: 1.05 }}
-                        whileTap={{ scale: 0.95 }}
-                        onClick={() => setShowSortMenu(!showSortMenu)}
-                        className={`p-1.5 sm:p-2 rounded-lg transition-all shrink-0 ${showSortMenu ? 'text-white bg-white/10' : 'text-zinc-400 hover:text-white hover:bg-white/5'}`}
-                        title="Sort"
-                    >
-                        <ArrowUp01Icon className="w-4.5 h-4.5" />
-                    </motion.button>
-
-                    <AnimatePresence>
-                        {showSortMenu && (
-                            <motion.div
-                                initial={{ opacity: 0, scale: 0.95, y: 10 }}
-                                animate={{ opacity: 1, scale: 1, y: 0 }}
-                                exit={{ opacity: 0, scale: 0.95, y: 10 }}
-                                className="absolute right-0 top-full mt-2 w-48 bg-zinc-900 border border-white/10 rounded-xl shadow-2xl overflow-hidden z-50 py-1"
+                <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                        <motion.button
+                            whileHover={{ scale: 1.05 }}
+                            whileTap={{ scale: 0.95 }}
+                            className="p-1.5 sm:p-2 rounded-lg transition-all shrink-0 text-zinc-400 hover:text-white hover:bg-white/5 data-[state=open]:text-white data-[state=open]:bg-white/10"
+                            title="Sort"
+                        >
+                            <ArrowUp01Icon className="w-4.5 h-4.5" />
+                        </motion.button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end" className="w-48 bg-zinc-900 border-zinc-800">
+                        <DropdownMenuLabel className="text-zinc-500 text-xs uppercase tracking-wider">Sort By</DropdownMenuLabel>
+                        {['name', 'size', 'date'].map((field) => (
+                            <DropdownMenuItem
+                                key={field}
+                                onSelect={() => handleSort(field)}
+                                className="justify-between capitalize cursor-pointer hover:bg-zinc-800 focus:bg-zinc-800"
                             >
-                                <div className="px-3 py-2 text-xs font-semibold text-zinc-500 uppercase tracking-wider">
-                                    Sort By
-                                </div>
-                                {['name', 'size', 'date'].map((field) => (
-                                    <button
-                                        key={field}
-                                        onClick={() => {
-                                            handleSort(field);
-                                            setShowSortMenu(false);
-                                        }}
-                                        className="w-full flex items-center justify-between px-3 py-2 text-sm text-zinc-300 hover:bg-white/5 hover:text-white transition-colors capitalize"
-                                    >
-                                        <span>{field}</span>
-                                        {sortBy === field && (
-                                            <Tick01Icon className="w-4 h-4 text-blue-500" />
-                                        )}
-                                    </button>
-                                ))}
-                                <div className="h-px bg-white/10 my-1" />
-                                <div className="px-3 py-2 text-xs font-semibold text-zinc-500 uppercase tracking-wider">
-                                    Order
-                                </div>
-                                <button
-                                    onClick={() => {
-                                        setSortOrder('asc');
-                                        setShowSortMenu(false);
-                                    }}
-                                    className="w-full flex items-center justify-between px-3 py-2 text-sm text-zinc-300 hover:bg-white/5 hover:text-white transition-colors"
-                                >
-                                    <span>Ascending</span>
-                                    {sortOrder === 'asc' && (
-                                        <Tick01Icon className="w-4 h-4 text-blue-500" />
-                                    )}
-                                </button>
-                                <button
-                                    onClick={() => {
-                                        setSortOrder('desc');
-                                        setShowSortMenu(false);
-                                    }}
-                                    className="w-full flex items-center justify-between px-3 py-2 text-sm text-zinc-300 hover:bg-white/5 hover:text-white transition-colors"
-                                >
-                                    <span>Descending</span>
-                                    {sortOrder === 'desc' && (
-                                        <Tick01Icon className="w-4 h-4 text-blue-500" />
-                                    )}
-                                </button>
-                            </motion.div>
-                        )}
-                    </AnimatePresence>
-                </div>
+                                {field}
+                                {sortBy === field && <Tick01Icon className="w-4 h-4 text-blue-500" />}
+                            </DropdownMenuItem>
+                        ))}
+                        <DropdownMenuSeparator className="bg-white/10" />
+                        <DropdownMenuLabel className="text-zinc-500 text-xs uppercase tracking-wider">Order</DropdownMenuLabel>
+                        <DropdownMenuItem
+                            onSelect={() => setSortOrder('asc')}
+                            className="justify-between cursor-pointer hover:bg-zinc-800 focus:bg-zinc-800"
+                        >
+                            Ascending
+                            {sortOrder === 'asc' && <Tick01Icon className="w-4 h-4 text-blue-500" />}
+                        </DropdownMenuItem>
+                        <DropdownMenuItem
+                            onSelect={() => setSortOrder('desc')}
+                            className="justify-between cursor-pointer hover:bg-zinc-800 focus:bg-zinc-800"
+                        >
+                            Descending
+                            {sortOrder === 'desc' && <Tick01Icon className="w-4 h-4 text-blue-500" />}
+                        </DropdownMenuItem>
+                    </DropdownMenuContent>
+                </DropdownMenu>
 
                 {/* View Mode Toggle */}
                 <div className="flex items-center gap-0.5 sm:gap-1 p-0.5 sm:p-1 bg-white/5 rounded-lg border border-white/10 shrink-0">
@@ -797,6 +867,7 @@ export const FileExplorer = ({
                     onRename={(item) => onRenameModal(item, handleRename)}
                     onDelete={(item) => handleDelete([item])}
                     onPreview={onPreviewModal}
+                    onDetails={onDetailsModal}
                     isLoading={isLoading}
                     viewMode={viewMode}
                 />
@@ -856,6 +927,21 @@ export const FileExplorer = ({
                 onRemove={handleRemoveDownload}
                 onClear={handleClearDownloads}
             />
+
+            {/* Duplicate File Modal */}
+            {duplicateFileInfo && (
+                <DuplicateFileModal
+                    isOpen={!!duplicateFileInfo}
+                    fileName={duplicateFileInfo.file?.name || ''}
+                    onClose={() => setDuplicateFileInfo(null)}
+                    onResolve={(resolution) => {
+                        if (duplicateFileInfo.onResolve) {
+                            duplicateFileInfo.onResolve(resolution);
+                        }
+                        setDuplicateFileInfo(null);
+                    }}
+                />
+            )}
         </div>
     );
 };

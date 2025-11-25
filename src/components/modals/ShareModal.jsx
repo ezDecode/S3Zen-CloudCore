@@ -6,12 +6,12 @@
 import { useState } from 'react';
 import { Cancel01Icon, Link01Icon, Copy01Icon, Tick02Icon, ArrowDown01Icon } from 'hugeicons-react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { useToast } from '../common/Toast';
+import { toast } from 'sonner';
 import { generateShareableLink } from '../../services/aws/s3Service';
 import { shortenUrl } from '../../services/urlShortener';
 
 export const ShareModal = ({ isOpen, onClose, item }) => {
-    const toast = useToast();
+    
     const [url, setUrl] = useState('');
     const [expiresIn, setExpiresIn] = useState(3600); // 1 hour default
     const [isLoading, setIsLoading] = useState(false);

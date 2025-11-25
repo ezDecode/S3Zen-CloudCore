@@ -6,11 +6,11 @@
 import { Cancel01Icon, Alert01Icon } from 'hugeicons-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useState } from 'react';
-import { useToast } from '../common/Toast';
+import { toast } from 'sonner';
 import { deleteObjects } from '../../services/aws/s3Service';
 
 export const DeleteConfirmModal = ({ isOpen, onClose, items, onSuccess }) => {
-    const toast = useToast();
+    
     const [isDeleting, setIsDeleting] = useState(false);
     const [confirmationText, setConfirmationText] = useState('');
 

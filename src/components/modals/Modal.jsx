@@ -13,13 +13,14 @@ export const Modal = ({
     icon: Icon,
     iconColor = 'text-white',
     children,
-    maxWidth = 'max-w-md'
+    maxWidth = 'max-w-md',
+    zIndex = 'z-50'
 }) => {
     return (
         <AnimatePresence>
             {isOpen && (
                 <div
-                    className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm"
+                    className={`fixed inset-0 ${zIndex} flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm`}
                     onClick={onClose}
                 >
                     <motion.div

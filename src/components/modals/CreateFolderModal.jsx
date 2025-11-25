@@ -5,12 +5,12 @@
 
 import { FolderAddIcon } from 'hugeicons-react';
 import { useState } from 'react';
-import { useToast } from '../common/Toast';
+import { toast } from 'sonner';
 import { createFolder } from '../../services/aws/s3Service';
 import { Modal } from './Modal';
 
 export const CreateFolderModal = ({ isOpen, onClose, currentPath, onSuccess }) => {
-    const toast = useToast();
+    
     const [folderName, setFolderName] = useState('');
     const [isCreating, setIsCreating] = useState(false);
 

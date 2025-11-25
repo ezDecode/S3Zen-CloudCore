@@ -5,11 +5,11 @@
 
 import { Edit02Icon } from 'hugeicons-react';
 import { useState } from 'react';
-import { useToast } from '../common/Toast';
+import { toast } from 'sonner';
 import { Modal } from './Modal';
 
 export const RenameModal = ({ isOpen, onClose, item, onSuccess }) => {
-    const toast = useToast();
+    
     const [newName, setNewName] = useState(item?.name || '');
     const [isRenaming, setIsRenaming] = useState(false);
 
