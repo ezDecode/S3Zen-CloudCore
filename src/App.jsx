@@ -3,12 +3,11 @@
  * Premium AWS S3 File Manager
  * 
  * Structure:
- * - ToastProvider wraps the entire app
  * - AppContent handles authentication flow
  * - Custom hooks manage auth and modals
+ * - Sonner Toaster for toast notifications
  */
 
-import { ToastProvider } from './components/common/Toast';
 import { Hero } from './components/auth/Hero';
 import { AuthModal } from './components/auth/AuthModal';
 import { FileExplorer } from './components/file-explorer/FileExplorer';
@@ -16,6 +15,7 @@ import { ShareModal, DeleteConfirmModal, CreateFolderModal, RenameModal, Details
 import { useAuth } from './hooks/useAuth';
 import { useModals } from './hooks/useModals';
 import { useSessionTimeout } from './hooks/useSessionTimeout';
+import { Toaster } from './components/ui/sonner';
 
 /**
  * Main Application Content
@@ -125,20 +125,18 @@ function AppContent() {
         onClose={closeDetailsModal}
         item={detailsModalItem}
       />
+
+      {/* Toaster for notifications */}
+      <Toaster />
     </>
   );
 }
 
 /**
  * Root App Component
- * Wraps everything with ToastProvider
  */
 function App() {
-  return (
-    <ToastProvider>
-      <AppContent />
-    </ToastProvider>
-  );
+  return <AppContent />;
 }
 
 export default App;

@@ -10,7 +10,7 @@ import { createFolder } from '../../services/aws/s3Service';
 import { Modal } from './Modal';
 
 export const CreateFolderModal = ({ isOpen, onClose, currentPath, onSuccess }) => {
-    
+
     const [folderName, setFolderName] = useState('');
     const [isCreating, setIsCreating] = useState(false);
 
@@ -66,6 +66,7 @@ export const CreateFolderModal = ({ isOpen, onClose, currentPath, onSuccess }) =
             title="Create New Folder"
             icon={FolderAddIcon}
             iconColor="text-blue-400"
+            zIndex="z-[100]"
         >
             {/* Folder Name Input */}
             <div className="space-y-2">

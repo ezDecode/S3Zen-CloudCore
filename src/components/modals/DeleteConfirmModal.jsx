@@ -10,7 +10,7 @@ import { toast } from 'sonner';
 import { deleteObjects } from '../../services/aws/s3Service';
 
 export const DeleteConfirmModal = ({ isOpen, onClose, items, onSuccess }) => {
-    
+
     const [isDeleting, setIsDeleting] = useState(false);
     const [confirmationText, setConfirmationText] = useState('');
 
@@ -58,7 +58,7 @@ export const DeleteConfirmModal = ({ isOpen, onClose, items, onSuccess }) => {
     return (
         <AnimatePresence>
             {isOpen && (
-                <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm" onClick={handleCloseModal}>
+                <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm" onClick={handleCloseModal}>
                     <motion.div
                         initial={{ opacity: 0, scale: 0.95 }}
                         animate={{ opacity: 1, scale: 1 }}

@@ -4,7 +4,7 @@
  */
 
 import { useState, useEffect, useCallback } from 'react';
-import { useToast } from '../components/common/Toast';
+import { toast } from 'sonner';
 import {
     initializeS3Client,
     validateCredentials
@@ -21,7 +21,6 @@ import {
 } from '../utils/authUtils';
 
 export const useAuth = () => {
-    const toast = useToast();
     const [isLoggedIn, setIsLoggedIn] = useState(false);
     const [showAuthModal, setShowAuthModal] = useState(false);
     const [authInitialized, setAuthInitialized] = useState(false);
@@ -65,7 +64,7 @@ export const useAuth = () => {
         };
 
         init();
-    }, [toast]);
+    }, []);
 
     // Handle authentication
     const handleAuthenticate = useCallback(async (formData) => {
@@ -121,14 +120,14 @@ export const useAuth = () => {
             clearAuth();
             throw new Error(error.message || 'Authentication failed');
         }
-    }, [authInitialized, toast]);
+    }, [authInitialized]);
 
     // Handle logout
     const handleLogout = useCallback(() => {
         clearAuth();
         setIsLoggedIn(false);
         toast.info('Logged out - credentials securely cleared');
-    }, [toast]);
+    }, []);
 
     // Handle get started
     const handleGetStarted = useCallback(() => {
@@ -137,7 +136,7 @@ export const useAuth = () => {
             return;
         }
         setShowAuthModal(true);
-    }, [authInitialized, toast]);
+    }, [authInitialized]);
 
     return {
         isLoggedIn,

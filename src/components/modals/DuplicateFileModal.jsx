@@ -3,7 +3,7 @@
  * Modal for handling duplicate file uploads
  */
 
-import { AlertTriangleIcon } from 'hugeicons-react';
+import { Alert02Icon } from 'hugeicons-react';
 import { useState } from 'react';
 import { Modal } from './Modal';
 
@@ -42,7 +42,7 @@ export const DuplicateFileModal = ({ isOpen, onClose, fileName, onResolve }) => 
             isOpen={isOpen}
             onClose={handleCancel}
             title="File Already Exists"
-            icon={AlertTriangleIcon}
+            icon={Alert02Icon}
             iconColor="text-yellow-400"
             zIndex="z-[100]"
         >

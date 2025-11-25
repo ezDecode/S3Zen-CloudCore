@@ -9,7 +9,7 @@ import { toast } from 'sonner';
 import { Modal } from './Modal';
 
 export const RenameModal = ({ isOpen, onClose, item, onSuccess }) => {
-    
+
     const [newName, setNewName] = useState(item?.name || '');
     const [isRenaming, setIsRenaming] = useState(false);
 
@@ -74,6 +74,7 @@ export const RenameModal = ({ isOpen, onClose, item, onSuccess }) => {
             title={`Rename ${item.type === 'folder' ? 'Folder' : 'File'}`}
             icon={Edit02Icon}
             iconColor="text-purple-400"
+            zIndex="z-[100]"
         >
             {/* Current Name Display */}
             <div className="space-y-2">
