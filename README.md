@@ -12,9 +12,15 @@
 
 **CloudCore** is a minimal URL shortener with a clean backend. No AWS, no S3, no authentication - just simple URL shortening with SQLite storage.
 
+> **SEO Optimized**: CloudCore is fully optimized for search engines with comprehensive meta tags, Open Graph support, structured data, and PWA capabilities.
+
 ---
 
 ## ✨ Features
+
+- **🔍 SEO Optimized**: Comprehensive meta tags, Open Graph, Twitter Cards, and JSON-LD structured data
+- **📱 Progressive Web App**: Install as a mobile app with web manifest and service worker ready
+- **🌐 Social Media Ready**: Beautiful preview cards for Facebook, Twitter, LinkedIn, and more
 
 - **🔗 URL Shortening**: Convert long URLs into short, shareable links
 - **🗄️ SQLite Storage**: Lightweight database, no external services needed

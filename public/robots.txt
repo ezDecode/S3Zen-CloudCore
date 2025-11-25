@@ -1,0 +1,13 @@
+User-agent: *
+Allow: /
+
+# Allow all search engines to crawl the site
+# CloudCore - Premium AWS S3 File Manager
+
+# Sitemap location
+Sitemap: https://cloudcore.creativesky.me/sitemap.xml
+
+# Disallow any future API routes or sensitive paths
+Disallow: /api/
+Disallow: /*.json$
+Disallow: /private/
