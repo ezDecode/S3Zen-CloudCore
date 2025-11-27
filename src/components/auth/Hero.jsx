@@ -24,17 +24,22 @@ export const Hero = ({ onGetStarted }) => {
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
-            className="inline-flex items-center gap-2 px-4 py-2 mb-8 bg-white/5 backdrop-blur-sm border border-white/10 rounded-full"
+            className="inline-flex items-center px-4 py-2 bg-white/5 backdrop-blur-sm border border-white/10 rounded-full"
+            style={{ gap: '0.43rem', marginBottom: '3rem' }}
           >
             <span className="w-2 h-2 bg-green-500 rounded-full" aria-hidden="true" />
-            <span className="text-xs font-medium text-white/80">v2.0 Now Available</span>
+            <span className="text-md font-bold text-white/80"
+            style={{ fontFamily: 'Watson, sans-serif' }}
+            >
+              v2.0 Now Available</span>
           </motion.div>
 
           <motion.h1
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
-            className="text-7xl md:text-8xl lg:text-9xl font-medium mb-6"
+            className="font-bold"
+            style={{ fontFamily: 'Watson, sans-serif', fontSize: 'clamp(5.4rem, 9.6vw, 10.8rem)', marginTop: '1.44rem', marginBottom: '1.44rem', lineHeight: '0.9' }}
           >
             <span className="gradient-text">Cloud</span>
             <span className="text-white">Core</span>
@@ -44,7 +49,8 @@ export const Hero = ({ onGetStarted }) => {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.6, delay: 0.1 }}
-            className="text-2xl md:text-3xl font-light text-white/90 mb-4"
+            className="font-medium text-white/90"
+            style={{ fontFamily: 'Watson, sans-serif', fontSize: 'clamp(1.8rem, 3.6vw, 2.4rem)', marginBottom: '0.85rem' }}
           >
             Premium AWS S3 Management
           </motion.p>
@@ -53,7 +59,8 @@ export const Hero = ({ onGetStarted }) => {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.6, delay: 0.2 }}
-            className="w-full max-w-3xl mx-auto text-lg text-white/70 mb-12"
+            className="w-full max-w-3xl mx-auto text-white/70"
+            style={{ fontFamily: 'Watson, sans-serif', fontSize: '1.35rem', marginBottom: '2.55rem' }}
           >
             The most beautiful way to manage your S3 buckets. Lightning-fast uploads, intuitive<br />
             organization, and enterprise-grade security.
@@ -64,7 +71,8 @@ export const Hero = ({ onGetStarted }) => {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.6, delay: 0.3 }}
-          className="flex flex-wrap items-center justify-center gap-3 mb-12"
+          className="flex flex-wrap items-center justify-center mb-12"
+          style={{ gap: '0.64rem' }}
           role="list"
           aria-label="Key features"
         >
@@ -72,10 +80,11 @@ export const Hero = ({ onGetStarted }) => {
             <div
               key={index}
               role="listitem"
-              className="flex items-center gap-2 bg-white/5 border border-white/10 rounded-full px-4 py-2"
+              className="flex items-center bg-white/5 border border-white/10 rounded-full px-4 py-2"
+              style={{ fontFamily: 'Watson, sans-serif', gap: '0.43rem' }}
             >
               <feature.icon className="w-4 h-4 text-purple-400" aria-hidden="true" />
-              <span className="text-sm font-medium text-white/80">{feature.label}</span>
+              <span className="font-medium text-white/80" style={{ fontSize: '1.05rem' }}>{feature.label}</span>
             </div>
           ))}
         </motion.div>
@@ -84,12 +93,14 @@ export const Hero = ({ onGetStarted }) => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.4 }}
-          className="flex flex-row flex-nowrap items-center justify-center gap-2 sm:gap-4"
+          className="flex flex-row flex-nowrap items-center justify-center"
+          style={{ gap: 'clamp(0.43rem, 1vw, 0.85rem)' }}
         >
           <button
             onClick={onGetStarted}
-            className="group text-sm sm:text-base font-semibold text-white rounded-xl bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 transition-all shadow-lg hover:shadow-purple-500/30 flex items-center gap-1 sm:gap-2 px-4 sm:px-8 py-3 sm:py-4"
+            className="group font-semibold text-white rounded-xl bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 transition-all shadow-lg hover:shadow-purple-500/30 flex items-center px-4 sm:px-8 py-3 sm:py-4"
             aria-label="Get started with CloudCore"
+            style={{ fontFamily: 'Watson, sans-serif', fontSize: 'clamp(1.05rem, 2vw, 1.2rem)', gap: 'clamp(0.21rem, 0.5vw, 0.43rem)' }}
           >
             <span>Get Started</span>
             <ArrowRight01Icon className="w-4 h-4 sm:w-5 sm:h-5 transition-transform group-hover:translate-x-1" aria-hidden="true" />
@@ -99,8 +110,9 @@ export const Hero = ({ onGetStarted }) => {
             href="https://github.com/ezDecode/S3Zen-CloudCore"
             target="_blank"
             rel="noopener noreferrer"
-            className="text-sm sm:text-base font-semibold text-white bg-white/10 backdrop-blur-sm border border-white/20 rounded-xl hover:bg-white/20 transition-all flex items-center gap-1 sm:gap-2 px-4 sm:px-8 py-3 sm:py-4"
+            className="font-semibold text-white bg-white/10 backdrop-blur-sm border border-white/20 rounded-xl hover:bg-white/20 transition-all flex items-center px-4 sm:px-8 py-3 sm:py-4"
             aria-label="Star CloudCore on GitHub"
+            style={{ fontFamily: 'Watson, sans-serif', fontSize: 'clamp(1.05rem, 2vw, 1.2rem)', gap: 'clamp(0.21rem, 0.5vw, 0.43rem)' }}
           >
             <Github01Icon className="w-4 h-4 sm:w-5 sm:h-5" aria-hidden="true" />
             <span>Star on GitHub</span>
@@ -109,7 +121,7 @@ export const Hero = ({ onGetStarted }) => {
       </main>
 
       <footer className="absolute bottom-6 left-0 right-0 text-center z-10">
-        <p className="text-l text-white/30 font-medium tracking-wider">
+        <p className="text-white/30 font-medium tracking-wider" style={{ fontFamily: 'Watson, sans-serif', fontSize: '1.2rem' }}>
           Developed by{' '}
           <a
             href="https://github.com/ezDecode"

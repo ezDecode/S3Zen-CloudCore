@@ -1,8 +1,18 @@
 @import "tailwindcss";
 
+/* Custom Fonts */
+@font-face {
+  font-family: 'Watson';
+  src: url('/fonts/WatsonSans.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
 @theme {
   --font-sans: "Inter Tight", sans-serif;
   --font-serif: "Instrument Serif", serif;
+  --font-display: "Watson", sans-serif;
 
   /* Spacing System */
   --space-xs: 0.25rem;
@@ -107,6 +117,11 @@ body {
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
+}
+
+/* Watson Font Utility */
+.font-Watson {
+  font-family: 'Watson', sans-serif !important;
 }
 
 /* Page Isolation Wrappers */
