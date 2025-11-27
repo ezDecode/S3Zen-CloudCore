@@ -601,7 +601,7 @@ export const FileExplorer = ({
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
-                        className="absolute inset-0 z-50 bg-blue-500/20 backdrop-blur-sm flex items-center justify-center border-2 border-blue-500 border-dashed m-4 rounded-2xl pointer-events-none"
+                        className="absolute inset-0 z-50 bg-[rgba(59,130,246,0.2)] backdrop-blur-sm flex items-center justify-center border-2 border-blue-500 border-dashed m-4 rounded-2xl pointer-events-none"
                     >
                         <div className="bg-zinc-900/90 p-8 rounded-2xl shadow-2xl flex flex-col items-center gap-4 border border-blue-500/30">
                             <div className="p-4 bg-blue-500/20 rounded-full">
@@ -680,7 +680,7 @@ export const FileExplorer = ({
                         whileHover={{ scale: 1.05, rotate: 90 }}
                         whileTap={{ scale: 0.95 }}
                         onClick={loadFiles}
-                        className="hidden sm:flex p-1.5 sm:p-2 rounded-lg text-zinc-400 hover:text-white hover:bg-white/5 transition-all shrink-0"
+                        className="hidden sm:flex p-1.5 sm:p-2 rounded-lg text-zinc-400 hover:text-white hover:bg-[rgba(255,255,255,0.05)] transition-all shrink-0"
                         title="Refresh"
                     >
                         <Loading03Icon className="w-4.5 h-4.5" />
@@ -692,7 +692,7 @@ export const FileExplorer = ({
                         whileHover={{ scale: 1.05 }}
                         whileTap={{ scale: 0.95 }}
                         onClick={handleLogout}
-                        className="p-1.5 sm:p-2 rounded-lg text-zinc-400 hover:text-white hover:bg-white/5 transition-all shrink-0"
+                        className="p-1.5 sm:p-2 rounded-lg text-zinc-400 hover:text-white hover:bg-[rgba(255,255,255,0.05)] transition-all shrink-0"
                         title="Logout"
                     >
                         <Logout01Icon className="w-4 sm:w-4.5 h-4 sm:h-4.5" />
@@ -808,7 +808,7 @@ export const FileExplorer = ({
                             }}
                             className={`flex items-center gap-1.5 sm:gap-2 px-2 sm:px-4 py-1.5 sm:py-2 border rounded-lg text-xs sm:text-sm font-semibold transition-all shrink-0 ${selectedItems.length === items.length && items.length > 0
                                 ? 'bg-blue-500 border-blue-500 text-white'
-                                : 'bg-white/5 border-white/10 text-zinc-400 hover:text-white hover:bg-white/10'
+                                : 'bg-[rgba(255,255,255,0.05)] border-white/10 text-zinc-400 hover:text-white hover:bg-[rgba(255,255,255,0.1)]'
                                 }`}
                         >
                             <Tick01Icon className="w-4 sm:w-4.5 h-4 sm:h-4.5" />
@@ -824,7 +824,7 @@ export const FileExplorer = ({
                                     initial={{ width: 0, opacity: 0 }}
                                     animate={{ width: 'auto', opacity: 1 }}
                                     exit={{ width: 0, opacity: 0 }}
-                                    className="hidden sm:block h-8 w-px bg-white/10 mx-1 shrink-0"
+                                    className="hidden sm:block h-8 w-px bg-[rgba(255,255,255,0.1)] mx-1 shrink-0"
                                 />
 
                                 <motion.div
@@ -842,7 +842,7 @@ export const FileExplorer = ({
                                             whileHover={{ scale: 1.02 }}
                                             whileTap={{ scale: 0.98 }}
                                             onClick={handleDownloadSelected}
-                                            className="flex items-center gap-1 sm:gap-1.5 px-2 sm:px-3 py-1 sm:py-1.5 bg-blue-500/10 border border-blue-500/20 text-blue-400 rounded-lg text-xs font-semibold hover:bg-blue-500/20 transition-all shrink-0"
+                                            className="flex items-center gap-1 sm:gap-1.5 px-2 sm:px-3 py-1 sm:py-1.5 bg-[rgba(59,130,246,0.1)] border border-blue-500/20 text-blue-400 rounded-lg text-xs font-semibold hover:bg-[rgba(59,130,246,0.2)] transition-all shrink-0"
                                             title="Download"
                                         >
                                             <Download01Icon className="w-4 h-4" />
@@ -855,7 +855,7 @@ export const FileExplorer = ({
                                             whileHover={{ scale: 1.02 }}
                                             whileTap={{ scale: 0.98 }}
                                             onClick={handleShareSelected}
-                                            className="flex items-center gap-1 sm:gap-1.5 px-2 sm:px-3 py-1 sm:py-1.5 bg-green-500/10 border border-green-500/20 text-green-400 rounded-lg text-xs font-semibold hover:bg-green-500/20 transition-all shrink-0"
+                                            className="flex items-center gap-1 sm:gap-1.5 px-2 sm:px-3 py-1 sm:py-1.5 bg-[rgba(34,197,94,0.1)] border border-green-500/20 text-green-400 rounded-lg text-xs font-semibold hover:bg-[rgba(34,197,94,0.2)] transition-all shrink-0"
                                             title="Share"
                                         >
                                             <Share01Icon className="w-4 h-4" />
@@ -867,7 +867,7 @@ export const FileExplorer = ({
                                         whileHover={{ scale: 1.02 }}
                                         whileTap={{ scale: 0.98 }}
                                         onClick={() => handleDelete(selectedItems)}
-                                        className="flex items-center gap-1 sm:gap-1.5 px-2 sm:px-3 py-1 sm:py-1.5 bg-red-500/10 border border-red-500/20 text-red-400 rounded-lg text-xs font-semibold hover:bg-red-500/20 transition-all shrink-0"
+                                        className="flex items-center gap-1 sm:gap-1.5 px-2 sm:px-3 py-1 sm:py-1.5 bg-[rgba(239,68,68,0.1)] border border-red-500/20 text-red-400 rounded-lg text-xs font-semibold hover:bg-[rgba(239,68,68,0.2)] transition-all shrink-0"
                                         title="Delete"
                                     >
                                         <Delete02Icon className="w-4 h-4" />
@@ -878,7 +878,7 @@ export const FileExplorer = ({
                                         whileHover={{ scale: 1.05 }}
                                         whileTap={{ scale: 0.95 }}
                                         onClick={() => setSelectedItems([])}
-                                        className="p-1 sm:p-1.5 rounded-lg text-zinc-400 hover:text-white hover:bg-white/5 transition-all shrink-0"
+                                        className="p-1 sm:p-1.5 rounded-lg text-zinc-400 hover:text-white hover:bg-[rgba(255,255,255,0.05)] transition-all shrink-0"
                                         title="Clear selection"
                                     >
                                         <Cancel01Icon className="w-4 h-4" />
@@ -895,7 +895,7 @@ export const FileExplorer = ({
                         <motion.button
                             whileHover={{ scale: 1.05 }}
                             whileTap={{ scale: 0.95 }}
-                            className="p-1.5 sm:p-2 rounded-lg transition-all shrink-0 text-zinc-400 hover:text-white data-[state=open]:text-white data-[state=open]:bg-white/10"
+                            className="p-1.5 sm:p-2 rounded-lg transition-all shrink-0 text-zinc-400 hover:text-white data-[state=open]:text-white data-[state=open]:bg-[rgba(255,255,255,0.1)]"
                             title="Sort"
                         >
                             <ArrowUp01Icon className="w-4.5 h-4.5" />
@@ -962,93 +962,93 @@ export const FileExplorer = ({
             {/* Main Content Area - Fixed scrolling */}
             <main className="flex-1 flex flex-col overflow-hidden z-0 relative">
                 <FileList
-                    items={sortedItems}
-                    sortBy={sortBy}
-                    sortOrder={sortOrder}
-                    onSort={handleSort}
-                    selectedItems={selectedItems}
-                    onSelectItem={handleSelectItem}
-                    onOpenFolder={handleOpenFolder}
-                    onDownload={handleSingleDownload}
-                    onShare={onShareModal}
-                    onRename={(item) => onRenameModal(item, handleRename)}
-                    onDelete={(item) => handleDelete([item])}
-                    onPreview={onPreviewModal}
-                    onDetails={onDetailsModal}
-                    isLoading={isLoading}
-                    viewMode={viewMode}
-                />
-            </main>
+                            items={sortedItems}
+                            sortBy={sortBy}
+                            sortOrder={sortOrder}
+                            onSort={handleSort}
+                            selectedItems={selectedItems}
+                            onSelectItem={handleSelectItem}
+                            onOpenFolder={handleOpenFolder}
+                            onDownload={handleSingleDownload}
+                            onShare={onShareModal}
+                            onRename={(item) => onRenameModal(item, handleRename)}
+                            onDelete={(item) => handleDelete([item])}
+                            onPreview={onPreviewModal}
+                            onDetails={onDetailsModal}
+                            isLoading={isLoading}
+                            viewMode={viewMode}
+                        />
+                    </main>
 
-            {/* Upload Progress Panel */}
-            <AnimatePresence>
-                {uploadingFiles.length > 0 && (
-                    <motion.div
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0, y: 20 }}
-                        className="fixed bottom-0 sm:bottom-6 right-0 sm:right-6 w-full sm:w-96 bg-zinc-900/98 border-t sm:border border-white/10 rounded-t-2xl sm:rounded-2xl shadow-2xl overflow-hidden z-40 backdrop-blur-2xl"
-                    >
-                        <div className="px-4 py-3 border-b border-white/10 flex items-center justify-between bg-zinc-950/50">
-                            <div className="flex items-center gap-2">
-                                <div className="w-2 h-2 rounded-full bg-blue-500 animate-pulse" />
-                                <h4 className="text-sm font-semibold text-white">
-                                    Uploading {uploadingFiles.length} {uploadingFiles.length === 1 ? 'file' : 'files'}
-                                </h4>
-                            </div>
-                        </div>
-                        <div className="p-4 space-y-3 max-h-60 sm:max-h-80 overflow-y-auto custom-scrollbar">
-                            {uploadingFiles.map((file) => (
-                                <motion.div
-                                    key={file.id}
-                                    initial={{ opacity: 0, x: -10 }}
-                                    animate={{ opacity: 1, x: 0 }}
-                                    className="space-y-2"
-                                >
-                                    <div className="flex justify-between items-center">
-                                        <span className="text-sm font-medium text-white truncate max-w-72">
-                                            {file.name}
-                                        </span>
-                                        <span className="text-xs font-bold text-zinc-400 tabular-nums">
-                                            {Math.round(file.progress)}%
-                                        </span>
+                    {/* Upload Progress Panel */}
+                    <AnimatePresence>
+                        {uploadingFiles.length > 0 && (
+                            <motion.div
+                                initial={{ opacity: 0, y: 20 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                exit={{ opacity: 0, y: 20 }}
+                                className="fixed bottom-0 sm:bottom-6 right-0 sm:right-6 w-full sm:w-96 bg-zinc-900/98 border-t sm:border border-white/10 rounded-t-2xl sm:rounded-2xl shadow-2xl overflow-hidden z-40 backdrop-blur-2xl"
+                            >
+                                <div className="px-4 py-3 border-b border-white/10 flex items-center justify-between bg-zinc-950/50">
+                                    <div className="flex items-center gap-2">
+                                        <div className="w-2 h-2 rounded-full bg-blue-500 animate-pulse" />
+                                        <h4 className="text-sm font-semibold text-white">
+                                            Uploading {uploadingFiles.length} {uploadingFiles.length === 1 ? 'file' : 'files'}
+                                        </h4>
                                     </div>
-                                    <div className="h-1.5 w-full bg-white/5 rounded-full overflow-hidden">
+                                </div>
+                                <div className="p-4 space-y-3 max-h-60 sm:max-h-80 overflow-y-auto custom-scrollbar">
+                                    {uploadingFiles.map((file) => (
                                         <motion.div
-                                            className="h-full bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 rounded-full"
-                                            initial={{ width: 0 }}
-                                            animate={{ width: `${file.progress}%` }}
-                                            transition={{ duration: 0.3, ease: 'easeOut' }}
-                                        />
-                                    </div>
-                                </motion.div>
-                            ))}
-                        </div>
-                    </motion.div>
-                )}
-            </AnimatePresence>
+                                            key={file.id}
+                                            initial={{ opacity: 0, x: -10 }}
+                                            animate={{ opacity: 1, x: 0 }}
+                                            className="space-y-2"
+                                        >
+                                            <div className="flex justify-between items-center">
+                                                <span className="text-sm font-medium text-white truncate max-w-72">
+                                                    {file.name}
+                                                </span>
+                                                <span className="text-xs font-bold text-zinc-400 tabular-nums">
+                                                    {Math.round(file.progress)}%
+                                                </span>
+                                            </div>
+                                            <div className="h-1.5 w-full bg-white/5 rounded-full overflow-hidden">
+                                                <motion.div
+                                                    className="h-full bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 rounded-full"
+                                                    initial={{ width: 0 }}
+                                                    animate={{ width: `${file.progress}%` }}
+                                                    transition={{ duration: 0.3, ease: 'easeOut' }}
+                                                />
+                                            </div>
+                                        </motion.div>
+                                    ))}
+                                </div>
+                            </motion.div>
+                        )}
+                    </AnimatePresence>
 
-            {/* Download Manager */}
-            <DownloadManager
-                downloads={downloads}
-                onRemove={handleRemoveDownload}
-                onClear={handleClearDownloads}
-            />
+                    {/* Download Manager */}
+                    <DownloadManager
+                        downloads={downloads}
+                        onRemove={handleRemoveDownload}
+                        onClear={handleClearDownloads}
+                    />
 
-            {/* Duplicate File Modal */}
-            {duplicateFileInfo && (
-                <DuplicateFileModal
-                    isOpen={!!duplicateFileInfo}
-                    fileName={duplicateFileInfo.file?.name || ''}
-                    onClose={() => setDuplicateFileInfo(null)}
-                    onResolve={(resolution) => {
-                        if (duplicateFileInfo.onResolve) {
-                            duplicateFileInfo.onResolve(resolution);
-                        }
-                        setDuplicateFileInfo(null);
-                    }}
-                />
-            )}
-        </div>
-    );
+                    {/* Duplicate File Modal */}
+                    {duplicateFileInfo && (
+                        <DuplicateFileModal
+                            isOpen={!!duplicateFileInfo}
+                            fileName={duplicateFileInfo.file?.name || ''}
+                            onClose={() => setDuplicateFileInfo(null)}
+                            onResolve={(resolution) => {
+                                if (duplicateFileInfo.onResolve) {
+                                    duplicateFileInfo.onResolve(resolution);
+                                }
+                                setDuplicateFileInfo(null);
+                            }}
+                        />
+                    )}
+            </div>
+            );
 };
