@@ -863,7 +863,7 @@ export const FileExplorer = ({
                                     setSelectedItems(items);
                                 }
                             }}
-                            className={`flex items-center gap-1.5 sm:gap-2 px-2 sm:px-4 py-1.5 sm:py-2 border rounded-lg text-xs sm:text-sm font-semibold transition-all shrink-0 ${selectedItems.length === items.length && items.length > 0
+                            className={`flex items-center gap-1.5 sm:gap-2 px-2 sm:px-4 py-1.5 sm:py-2 border rounded-lg text-xs sm:text-sm font-medium transition-all shrink-0 ${selectedItems.length === items.length && items.length > 0
                                 ? 'bg-blue-500 border-blue-500 text-white'
                                 : 'bg-[rgba(255,255,255,0.05)] border-white/10 text-zinc-400 hover:text-white hover:bg-[rgba(255,255,255,0.1)]'
                                 }`}
