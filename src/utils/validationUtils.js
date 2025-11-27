@@ -36,22 +36,58 @@ export const sanitizeFileName = (name) => {
 };
 
 /**
+ * Normalize S3 key - replace multiple slashes with one, preserve trailing slash
+ * @param {string} key - The raw key to normalize
+ * @returns {string} Normalized key
+ */
+export const normalizeKey = (key) => {
+    if (!key || typeof key !== 'string') {
+        return '';
+    }
+
+    // Preserve trailing slash
+    const hasTrailingSlash = key.endsWith('/');
+
+    // Replace multiple slashes with one
+    let normalized = key.replace(/\/+/g, '/');
+
+    // Restore trailing slash if it was present
+    if (hasTrailingSlash && !normalized.endsWith('/')) {
+        normalized += '/';
+    }
+
+    return normalized;
+};
+
+/**
  * Sanitize S3 key/path to prevent path traversal
+ * ONLY sanitizes name segments, does NOT remove trailing slash
  */
 export const sanitizeS3Path = (path) => {
     if (!path || typeof path !== 'string') {
         return '';
     }
 
+    // Preserve trailing slash (indicates folder)
+    const hasTrailingSlash = path.endsWith('/');
+
     // Split path into segments
     const segments = path.split('/').filter(Boolean);
 
-    // Sanitize each segment
+    // Sanitize each segment (name only, not slashes)
     const sanitizedSegments = segments.map(segment => {
         return sanitizeFileName(segment);
     }).filter(segment => segment.length > 0);
 
-    return sanitizedSegments.join('/');
+    // Rejoin with slashes
+    let sanitized = sanitizedSegments.join('/');
+
+    // Restore trailing slash if it was present
+    if (hasTrailingSlash && sanitized && !sanitized.endsWith('/')) {
+        sanitized += '/';
+    }
+
+    return sanitized;
 };
 
 /**
@@ -146,7 +182,35 @@ export const isValidFileSize = (size, maxSizeGB = 5) => {
 };
 
 /**
- * Check if path contains dangerous patterns
+ * Validate sanitized S3 key - reject ONLY dangerous patterns
+ * This should ONLY be called on sanitized keys, not raw keys
+ * Returns true if key is INVALID (dangerous), false if key is VALID
+ */
+export const validateKey = (sanitizedKey) => {
+    if (!sanitizedKey || typeof sanitizedKey !== 'string') {
+        return true; // Invalid - empty or non-string
+    }
+
+    // Reject these specific patterns:
+    // - Path traversal: ../ or ..
+    // - URL encoded path traversal: %2e%2e, %2f, %5c
+    // - Null bytes
+    // - Backslashes
+    const dangerousPatterns = [
+        /\.\./,              // ".." anywhere (path traversal)
+        /%2e%2e/i,          // URL encoded ".."
+        /%2f/i,             // URL encoded "/"
+        /%5c/i,             // URL encoded "\"
+        /\x00/,             // Null byte
+        /\\/,               // Backslash
+    ];
+
+    return dangerousPatterns.some(pattern => pattern.test(sanitizedKey));
+};
+
+/**
+ * @deprecated Use validateKey instead - validates sanitized keys only
+ * Check if path contains dangerous patterns (legacy function)
  */
 export const isDangerousPath = (path) => {
     if (!path || typeof path !== 'string') {
@@ -346,5 +410,43 @@ export const preserveFileExtension = (newName, originalFilename) => {
  */
 export const hasFileExtension = (filename) => {
     return getFileExtension(filename).length > 0;
+};
+
+/**
+ * Build a complete S3 key from folder path and filename
+ * Handles trailing slashes correctly and prevents double slashes
+ * 
+ * @param {string} folderPath - The folder path (may or may not have trailing slash)
+ * @param {string} filename - The filename to append
+ * @returns {string} Complete S3 key with proper formatting
+ * 
+ * @example
+ * buildS3Key('', 'file.txt') → 'file.txt'
+ * buildS3Key('images', 'photo.jpg') → 'images/photo.jpg'
+ * buildS3Key('images/', 'photo.jpg') → 'images/photo.jpg'
+ * buildS3Key('a/b/c/', 'file.txt') → 'a/b/c/file.txt'
+ */
+export const buildS3Key = (folderPath, filename) => {
+    if (!filename || typeof filename !== 'string') {
+        return '';
+    }
+
+    // If no folder path, return just the filename
+    if (!folderPath || typeof folderPath !== 'string') {
+        return filename;
+    }
+
+    // Remove trailing slash from folder path if present
+    const normalizedFolder = folderPath.endsWith('/')
+        ? folderPath.slice(0, -1)
+        : folderPath;
+
+    // If normalized folder is empty (was just '/'), return filename
+    if (!normalizedFolder) {
+        return filename;
+    }
+
+    // Combine with single slash
+    return `${normalizedFolder}/${filename}`;
 };
 

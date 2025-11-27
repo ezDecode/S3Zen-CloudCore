@@ -46,6 +46,7 @@ import {
     renameObject
 } from '../../services/aws/s3Service';
 import { clearAuth, getBucketConfig } from '../../utils/authUtils';
+import { buildS3Key } from '../../utils/validationUtils';
 
 const LARGE_FILE_THRESHOLD = 100 * 1024 * 1024; // 100MB
 
@@ -74,6 +75,7 @@ export const FileExplorer = ({
     const [sortBy, setSortBy] = useState('name'); // 'name', 'size', 'date'
     const [sortOrder, setSortOrder] = useState('asc'); // 'asc', 'desc'
     const [mobileDrawerOpen, setMobileDrawerOpen] = useState(false);
+    const [duplicateFileInfo, setDuplicateFileInfo] = useState(null);
 
     const bucketConfig = getBucketConfig();
 
@@ -130,18 +132,86 @@ export const FileExplorer = ({
         });
     };
 
-    // Duplicate file handling
-    const [duplicateFileInfo, setDuplicateFileInfo] = useState(null);
+    // Helper to recursively get files from DataTransferItems
+    const getFilesFromDataTransferItems = async (items) => {
+        const files = [];
+        const queue = [];
+
+        // Initial queue population
+        for (let i = 0; i < items.length; i++) {
+            const item = items[i];
+            if (item.kind === 'file') {
+                const entry = item.webkitGetAsEntry ? item.webkitGetAsEntry() : (item.getAsEntry ? item.getAsEntry() : null);
+                if (entry) {
+                    queue.push(entry);
+                }
+            }
+        }
+
+        while (queue.length > 0) {
+            const entry = queue.shift();
+            if (entry.isFile) {
+                try {
+                    const file = await new Promise((resolve, reject) => {
+                        entry.file(resolve, reject);
+                    });
+                    // entry.fullPath usually starts with /, remove it
+                    const path = entry.fullPath.startsWith('/') ? entry.fullPath.slice(1) : entry.fullPath;
+                    files.push({ file, path });
+                } catch (err) {
+                    console.error('Error reading file entry:', err);
+                }
+            } else if (entry.isDirectory) {
+                try {
+                    const reader = entry.createReader();
+                    // readEntries might not return all entries in one call, need to loop until empty
+                    const readAllEntries = async () => {
+                        let allEntries = [];
+                        let done = false;
+                        while (!done) {
+                            const entries = await new Promise((resolve, reject) => {
+                                reader.readEntries(resolve, reject);
+                            });
+                            if (entries.length === 0) {
+                                done = true;
+                            } else {
+                                allEntries = [...allEntries, ...entries];
+                            }
+                        }
+                        return allEntries;
+                    };
+
+                    const entries = await readAllEntries();
+                    queue.push(...entries);
+                } catch (err) {
+                    console.error('Error reading directory entry:', err);
+                }
+            }
+        }
+
+        return files;
+    };
 
     // Actions
     const processUploads = async (files) => {
         if (files.length === 0) return;
 
-        for (const file of files) {
-            // Check if file already exists
-            const fileExists = items.some(item =>
-                item.type === 'file' && item.name === file.name
-            );
+        for (const item of files) {
+            // Handle both raw File objects (from input) and {file, path} objects (from drop)
+            const file = item.file || item;
+            // For input files, use name. For dropped files, use path if available.
+            // If input file has webkitRelativePath (folder upload via input), use it.
+            const relativePath = item.path || file.webkitRelativePath || file.name;
+
+            // Check if file already exists (only for top-level files)
+            const isNested = relativePath.includes('/');
+            let fileExists = false;
+
+            if (!isNested) {
+                fileExists = items.some(existing =>
+                    existing.type === 'file' && existing.name === relativePath
+                );
+            }
 
             if (fileExists) {
                 // Show duplicate modal and wait for user decision
@@ -156,7 +226,7 @@ export const FileExplorer = ({
                     continue; // Skip this file
                 }
 
-                let finalFileName = file.name;
+                let finalFileName = relativePath;
                 if (resolution.action === 'keepBoth' || resolution.action === 'rename') {
                     finalFileName = resolution.newFileName;
                 }
@@ -165,7 +235,7 @@ export const FileExplorer = ({
                 await uploadSingleFile(file, finalFileName);
             } else {
                 // No duplicate, upload directly
-                await uploadSingleFile(file, file.name);
+                await uploadSingleFile(file, relativePath);
             }
         }
 
@@ -173,7 +243,8 @@ export const FileExplorer = ({
     };
 
     const uploadSingleFile = async (file, fileName) => {
-        const key = currentPath ? `${currentPath}${fileName}` : fileName;
+        // Use helper to build S3 key correctly
+        const key = buildS3Key(currentPath, fileName);
         const uploadId = Date.now() + Math.random();
 
         setUploadingFiles(prev => [...prev, { id: uploadId, name: fileName, progress: 0 }]);
@@ -196,27 +267,31 @@ export const FileExplorer = ({
                 toast.success(`Uploaded ${fileName}`);
 
                 // Optimistically add the file to the list without refreshing
-                const newItem = {
-                    key: key,
-                    name: fileName,
-                    type: 'file',
-                    size: file.size,
-                    lastModified: new Date().toISOString()
-                };
+                // Only add if it's in the current view (not nested in a new folder)
+                const isNested = fileName.includes('/');
+                if (!isNested) {
+                    const newItem = {
+                        key: key,
+                        name: fileName,
+                        type: 'file',
+                        size: file.size,
+                        lastModified: new Date().toISOString()
+                    };
 
-                setItems(prev => {
-                    // Check if item already exists (in case of replace)
-                    const existingIndex = prev.findIndex(item => item.key === key);
-                    if (existingIndex !== -1) {
-                        // Replace existing item
-                        const newItems = [...prev];
-                        newItems[existingIndex] = newItem;
-                        return newItems;
-                    } else {
-                        // Add new item
-                        return [...prev, newItem];
-                    }
-                });
+                    setItems(prev => {
+                        // Check if item already exists (in case of replace)
+                        const existingIndex = prev.findIndex(item => item.key === key);
+                        if (existingIndex !== -1) {
+                            // Replace existing item
+                            const newItems = [...prev];
+                            newItems[existingIndex] = newItem;
+                            return newItems;
+                        } else {
+                            // Add new item
+                            return [...prev, newItem];
+                        }
+                    });
+                }
             } else {
                 toast.error(`Failed to upload ${fileName}`);
             }
@@ -256,9 +331,17 @@ export const FileExplorer = ({
         e.stopPropagation();
         setIsDragging(false);
 
-        const files = Array.from(e.dataTransfer.files || []);
-        if (files.length > 0) {
-            await processUploads(files);
+        const items = e.dataTransfer.items;
+        if (items && items.length > 0) {
+            const filesWithPath = await getFilesFromDataTransferItems(items);
+            if (filesWithPath.length > 0) {
+                await processUploads(filesWithPath);
+            }
+        } else {
+            const files = Array.from(e.dataTransfer.files || []);
+            if (files.length > 0) {
+                await processUploads(files);
+            }
         }
     };
 

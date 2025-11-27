@@ -25,6 +25,7 @@ import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 import {
     sanitizeFileName,
     sanitizeS3Path,
+    validateKey,
     isDangerousPath,
     isValidFolderName,
     isValidFileSize,
@@ -128,8 +129,8 @@ export const listObjects = async (prefix = '', continuationToken = null) => {
         // SECURITY: Sanitize prefix to prevent path traversal
         const sanitizedPrefix = sanitizeS3Path(prefix);
 
-        // SECURITY: Check for dangerous patterns
-        if (prefix && isDangerousPath(prefix)) {
+        // SECURITY: Validate ONLY the sanitized prefix
+        if (prefix && validateKey(sanitizedPrefix)) {
             return { success: false, error: 'Invalid path format' };
         }
 
@@ -190,10 +191,17 @@ export const uploadFile = async (file, key, onProgress) => {
             return { success: false, error: 'File size exceeds maximum allowed (5GB)' };
         }
 
-        // SECURITY: Sanitize the S3 key
-        const sanitizedKey = sanitizeS3Path(key);
-        if (!sanitizedKey || isDangerousPath(key)) {
-            return { success: false, error: 'Invalid file path' };
+        // SECURITY PIPELINE: rawKey → normalizeKey → sanitizeKey → validateKey → upload
+        // 1. Normalize: replace multiple slashes with one, preserve trailing slash
+        const normalizedKey = key; // normalizeKey is done by frontend buildS3Key
+
+        // 2. Sanitize: sanitize ONLY name segments, preserve trailing slash
+        const sanitizedKey = sanitizeS3Path(normalizedKey);
+
+        // 3. Validate: validate ONLY the sanitized key
+        if (!sanitizedKey || validateKey(sanitizedKey)) {
+            console.error('❌ Upload blocked - Invalid path:', { original: key, normalized: normalizedKey, sanitized: sanitizedKey });
+            return { success: false, error: 'Invalid file path - contains dangerous patterns' };
         }
 
         const fileBuffer = await file.arrayBuffer();
@@ -232,10 +240,17 @@ export const uploadLargeFile = async (file, key, onProgress) => {
             return { success: false, error: 'File size exceeds maximum allowed (5GB)' };
         }
 
-        // SECURITY: Sanitize the S3 key
-        const sanitizedKey = sanitizeS3Path(key);
-        if (!sanitizedKey || isDangerousPath(key)) {
-            return { success: false, error: 'Invalid file path' };
+        // SECURITY PIPELINE: rawKey → normalizeKey → sanitizeKey → validateKey → upload
+        // 1. Normalize: replace multiple slashes with one, preserve trailing slash
+        const normalizedKey = key; // normalizeKey is done by frontend buildS3Key
+
+        // 2. Sanitize: sanitize ONLY name segments, preserve trailing slash
+        const sanitizedKey = sanitizeS3Path(normalizedKey);
+
+        // 3. Validate: validate ONLY the sanitized key
+        if (!sanitizedKey || validateKey(sanitizedKey)) {
+            console.error('❌ Large file upload blocked - Invalid path:', { original: key, normalized: normalizedKey, sanitized: sanitizedKey });
+            return { success: false, error: 'Invalid file path - contains dangerous patterns' };
         }
 
         const upload = new Upload({
@@ -396,7 +411,8 @@ export const deleteObjects = async (keys) => {
         // SECURITY: Validate and sanitize all keys
         const sanitizedKeys = keys.map(key => {
             const sanitized = sanitizeS3Path(key);
-            if (!sanitized || isDangerousPath(key)) {
+            // Validate ONLY the sanitized key
+            if (!sanitized || validateKey(sanitized)) {
                 throw new Error(`Invalid path: ${key}`);
             }
             return sanitized;
@@ -441,7 +457,9 @@ export const createFolder = async (folderKey) => {
 
         // SECURITY: Sanitize the full path
         let sanitizedKey = sanitizeS3Path(folderKey);
-        if (!sanitizedKey || isDangerousPath(folderKey)) {
+
+        // Validate ONLY the sanitized key
+        if (!sanitizedKey || validateKey(sanitizedKey)) {
             return { success: false, error: 'Invalid folder path' };
         }
 
