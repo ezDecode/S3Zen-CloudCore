@@ -3,7 +3,7 @@
  * Complete UI Redesign - Modern & Sophisticated
  */
 
-import { useState, useEffect, useCallback, useRef, useMemo } from 'react';
+import { useState, useEffect, useCallback, useRef, useMemo, Fragment } from 'react';
 import { Upload02Icon, FolderAddIcon, Delete02Icon, Logout01Icon, Search01Icon, Loading03Icon, Home01Icon, LayoutGridIcon, ListViewIcon, Download01Icon, Share01Icon, Cancel01Icon, Tick01Icon, UserGroupIcon, ArrowUp01Icon, PlusSignIcon, File02Icon } from 'hugeicons-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { toast } from 'sonner';
@@ -16,6 +16,7 @@ import {
     BreadcrumbList,
     BreadcrumbPage,
     BreadcrumbSeparator,
+    BreadcrumbEllipsis,
 } from "../ui/breadcrumb";
 import {
     DropdownMenu,
@@ -42,7 +43,6 @@ import {
     uploadFile,
     uploadLargeFile,
     downloadFile,
-    deleteObjects,
     renameObject
 } from '../../services/aws/s3Service';
 import { clearAuth, getBucketConfig } from '../../utils/authUtils';
@@ -627,7 +627,8 @@ export const FileExplorer = ({
                 <div className="flex items-center min-w-0 flex-1">
                     <Breadcrumb>
                         <BreadcrumbList>
-                            <BreadcrumbItem>
+                            {/* Home */}
+                            <BreadcrumbItem key="home">
                                 <BreadcrumbLink
                                     onClick={() => handleNavigate('')}
                                     className="flex items-center gap-1 cursor-pointer"
@@ -636,27 +637,83 @@ export const FileExplorer = ({
                                     <span className="hidden sm:inline">Home</span>
                                 </BreadcrumbLink>
                             </BreadcrumbItem>
-                            {pathParts.map((part, index) => {
-                                const path = pathParts.slice(0, index + 1).join('/') + '/';
-                                const isLast = index === pathParts.length - 1;
-                                return (
-                                    <div key={path} className="flex items-center">
-                                        <BreadcrumbSeparator />
-                                        <BreadcrumbItem>
-                                            {isLast ? (
-                                                <BreadcrumbPage>{part}</BreadcrumbPage>
-                                            ) : (
+
+                            {/* Breadcrumb with Ellipsis - Show first item, ellipsis, and last 2 items */}
+                            {pathParts.length > 0 && (
+                                <>
+                                    {pathParts.length <= 2 ? (
+                                        // Show all items if 2 or less
+                                        <AnimatePresence mode="popLayout">
+                                            {pathParts.map((part, index) => {
+                                                const path = pathParts.slice(0, index + 1).join('/') + '/';
+                                                const isLast = index === pathParts.length - 1;
+                                                return (
+                                                    <Fragment key={path}>
+                                                        <BreadcrumbSeparator />
+                                                        <BreadcrumbItem>
+                                                            {isLast ? (
+                                                                <BreadcrumbPage>{part}</BreadcrumbPage>
+                                                            ) : (
+                                                                <BreadcrumbLink
+                                                                    onClick={() => handleBreadcrumbClick(path)}
+                                                                    className="cursor-pointer"
+                                                                >
+                                                                    {part}
+                                                                </BreadcrumbLink>
+                                                            )}
+                                                        </BreadcrumbItem>
+                                                    </Fragment>
+                                                );
+                                            })}
+                                        </AnimatePresence>
+                                    ) : (
+                                        // Show first, ellipsis dropdown, and last item
+                                        <>
+                                            {/* First item */}
+                                            <BreadcrumbSeparator />
+                                            <BreadcrumbItem>
                                                 <BreadcrumbLink
-                                                    onClick={() => handleBreadcrumbClick(path)}
+                                                    onClick={() => handleBreadcrumbClick(pathParts.slice(0, 1).join('/') + '/')}
                                                     className="cursor-pointer"
                                                 >
-                                                    {part}
+                                                    {pathParts[0]}
                                                 </BreadcrumbLink>
-                                            )}
-                                        </BreadcrumbItem>
-                                    </div>
-                                );
-                            })}
+                                            </BreadcrumbItem>
+
+                                            {/* Ellipsis with dropdown for middle items */}
+                                            <BreadcrumbSeparator />
+                                            <BreadcrumbItem>
+                                                <DropdownMenu>
+                                                    <DropdownMenuTrigger className="flex items-center gap-1 outline-none">
+                                                        <BreadcrumbEllipsis className="h-4 w-4" />
+                                                    </DropdownMenuTrigger>
+                                                    <DropdownMenuContent align="start" className="w-56 bg-zinc-900/95 backdrop-blur-xl border-white/10">
+                                                        {pathParts.slice(1, -1).map((part, index) => {
+                                                            const actualIndex = index + 1;
+                                                            const path = pathParts.slice(0, actualIndex + 1).join('/') + '/';
+                                                            return (
+                                                                <DropdownMenuItem
+                                                                    key={path}
+                                                                    onClick={() => handleBreadcrumbClick(path)}
+                                                                    className="cursor-pointer hover:bg-white/10 focus:bg-white/10"
+                                                                >
+                                                                    {part}
+                                                                </DropdownMenuItem>
+                                                            );
+                                                        })}
+                                                    </DropdownMenuContent>
+                                                </DropdownMenu>
+                                            </BreadcrumbItem>
+
+                                            {/* Last item (current page) */}
+                                            <BreadcrumbSeparator />
+                                            <BreadcrumbItem>
+                                                <BreadcrumbPage>{pathParts[pathParts.length - 1]}</BreadcrumbPage>
+                                            </BreadcrumbItem>
+                                        </>
+                                    )}
+                                </>
+                            )}
                         </BreadcrumbList>
                     </Breadcrumb>
                 </div>
@@ -812,7 +869,7 @@ export const FileExplorer = ({
                                 }`}
                         >
                             <Tick01Icon className="w-4 sm:w-4.5 h-4 sm:h-4.5" />
-                            <span className="hidden sm:inline">{selectedItems.length === items.length ? 'Deselect All' : 'Select All'}</span>
+                            <span className="hidden sm:inline">{selectedItems.length === items.length ? 'Remove All' : 'Select All'}</span>
                         </motion.button>
                     )}
 

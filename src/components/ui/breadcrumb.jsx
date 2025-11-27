@@ -1,6 +1,7 @@
 import * as React from "react"
 import { Slot } from "@radix-ui/react-slot"
 import { ArrowRight01Icon, MoreHorizontalIcon } from "hugeicons-react"
+import { motion, AnimatePresence } from "framer-motion"
 
 import { cn } from "../../lib/utils"
 
@@ -20,8 +21,12 @@ const BreadcrumbList = React.forwardRef(({ className, ...props }, ref) => (
 BreadcrumbList.displayName = "BreadcrumbList"
 
 const BreadcrumbItem = React.forwardRef(({ className, ...props }, ref) => (
-    <li
+    <motion.li
         ref={ref}
+        initial={{ opacity: 0, x: -10 }}
+        animate={{ opacity: 1, x: 0 }}
+        exit={{ opacity: 0, x: 10 }}
+        transition={{ duration: 0.2, ease: "easeOut" }}
         className={cn("inline-flex items-center gap-1.5", className)}
         {...props}
     />
@@ -34,7 +39,7 @@ const BreadcrumbLink = React.forwardRef(({ asChild, className, ...props }, ref) 
     return (
         <Comp
             ref={ref}
-            className={cn("transition-colors hover:text-white", className)}
+            className={cn("transition-opacity hover:opacity-100 opacity-70", className)}
             {...props}
         />
     )
@@ -42,11 +47,14 @@ const BreadcrumbLink = React.forwardRef(({ asChild, className, ...props }, ref) 
 BreadcrumbLink.displayName = "BreadcrumbLink"
 
 const BreadcrumbPage = React.forwardRef(({ className, ...props }, ref) => (
-    <span
+    <motion.span
         ref={ref}
         role="link"
         aria-disabled="true"
         aria-current="page"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.2, ease: "easeOut" }}
         className={cn("font-normal text-white", className)}
         {...props}
     />
@@ -58,14 +66,18 @@ const BreadcrumbSeparator = ({
     className,
     ...props
 }) => (
-    <li
+    <motion.li
         role="presentation"
         aria-hidden="true"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        transition={{ duration: 0.15, ease: "easeOut" }}
         className={cn("[&>svg]:size-3.5", className)}
         {...props}
     >
         {children ?? <span className="text-zinc-600">/</span>}
-    </li>
+    </motion.li>
 )
 BreadcrumbSeparator.displayName = "BreadcrumbSeparator"
 

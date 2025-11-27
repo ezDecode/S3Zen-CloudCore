@@ -7,7 +7,7 @@ import { Cancel01Icon, Alert01Icon } from 'hugeicons-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useState } from 'react';
 import { toast } from 'sonner';
-import { deleteObjects } from '../../services/aws/s3Service';
+import { deleteItems } from '../../services/aws/s3Service';
 
 export const DeleteConfirmModal = ({ isOpen, onClose, items, onSuccess }) => {
 
@@ -27,8 +27,8 @@ export const DeleteConfirmModal = ({ isOpen, onClose, items, onSuccess }) => {
 
         setIsDeleting(true);
         try {
-            const keys = items.map(item => item.key);
-            const result = await deleteObjects(keys);
+            // Use deleteItems which handles recursive folder deletion
+            const result = await deleteItems(items);
 
             if (result.success) {
                 toast.success(`Deleted ${items.length} item(s)`);

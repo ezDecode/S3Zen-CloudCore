@@ -30,7 +30,34 @@ export const FileItem = ({
     viewMode = 'grid'
 }) => {
     const [isHovered, setIsHovered] = useState(false);
+    const [isDragOver, setIsDragOver] = useState(false);
     const isFolder = item.type === 'folder';
+
+    // Drag and drop handlers for folders
+    const handleDragOver = (e) => {
+        if (!isFolder) return;
+        e.preventDefault();
+        e.stopPropagation();
+        setIsDragOver(true);
+    };
+
+    const handleDragLeave = (e) => {
+        if (!isFolder) return;
+        e.preventDefault();
+        e.stopPropagation();
+        setIsDragOver(false);
+    };
+
+    const handleDrop = (e) => {
+        if (!isFolder) return;
+        e.preventDefault();
+        e.stopPropagation();
+        setIsDragOver(false);
+        
+        // TODO: Handle file drop into folder
+        // This will be implemented when folder upload is added
+        console.log('Files dropped into folder:', item.name);
+    };
 
     const MenuContent = () => (
         <>
@@ -95,15 +122,46 @@ export const FileItem = ({
             <motion.div
                 whileHover={{ y: -2 }}
                 whileTap={{ scale: 0.98 }}
+                animate={{
+                    scale: isDragOver ? 1.05 : 1,
+                    borderColor: isDragOver ? 'rgba(59, 130, 246, 0.8)' : undefined
+                }}
                 onHoverStart={() => setIsHovered(true)}
                 onHoverEnd={() => setIsHovered(false)}
-                className={`group relative rounded-xl border transition-all duration-200 cursor-pointer ${isSelected
-                    ? 'bg-blue-500/10 border-blue-500/50 shadow-[0_0_15px_rgba(59,130,246,0.15)]'
-                    : 'bg-white/5 border-white/10 hover:bg-white/10 hover:border-white/20'
-                    }`}
+                onDragOver={handleDragOver}
+                onDragLeave={handleDragLeave}
+                onDrop={handleDrop}
+                className={`group relative rounded-xl border transition-all duration-200 cursor-pointer ${
+                    isDragOver
+                        ? 'bg-blue-500/20 border-blue-500 shadow-[0_0_20px_rgba(59,130,246,0.3)]'
+                        : isSelected
+                            ? 'bg-blue-500/10 border-blue-500/50 shadow-[0_0_15px_rgba(59,130,246,0.15)]'
+                            : 'bg-white/5 border-white/10 hover:bg-white/10 hover:border-white/20'
+                }`}
                 onClick={() => isFolder ? onOpen(item) : onSelect(item)}
                 onDoubleClick={() => !isFolder && onPreview && onPreview(item)}
             >
+                {/* Drag Over Indicator */}
+                <AnimatePresence>
+                    {isDragOver && isFolder && (
+                        <motion.div
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            exit={{ opacity: 0 }}
+                            className="absolute inset-0 bg-blue-500/10 backdrop-blur-sm rounded-xl border-2 border-blue-500 border-dashed flex items-center justify-center z-30 pointer-events-none"
+                        >
+                            <motion.div
+                                initial={{ scale: 0.8, opacity: 0 }}
+                                animate={{ scale: 1, opacity: 1 }}
+                                transition={{ delay: 0.1 }}
+                                className="text-blue-400 text-xs font-semibold"
+                            >
+                                Drop here
+                            </motion.div>
+                        </motion.div>
+                    )}
+                </AnimatePresence>
+
                 {/* Selection Indicator */}
                 <AnimatePresence>
                     {isSelected && (
@@ -141,8 +199,9 @@ export const FileItem = ({
                 <div className="p-4 flex flex-col items-center text-center gap-3">
                     <motion.div
                         animate={{
-                            scale: isHovered ? 1.1 : 1,
-                            rotate: isHovered && isFolder ? 5 : 0
+                            scale: isDragOver ? 1.2 : isHovered ? 1.1 : 1,
+                            rotate: isDragOver ? 10 : isHovered && isFolder ? 5 : 0,
+                            y: isDragOver ? -5 : 0
                         }}
                         transition={{ type: 'spring', stiffness: 300, damping: 20 }}
                         className="w-16 h-16 flex items-center justify-center"
@@ -167,29 +226,73 @@ export const FileItem = ({
     return (
         <motion.div
             whileHover={{ backgroundColor: 'rgba(255, 255, 255, 0.08)' }}
+            animate={{
+                scale: isDragOver ? 1.02 : 1,
+                x: isDragOver ? 4 : 0
+            }}
             onHoverStart={() => setIsHovered(true)}
             onHoverEnd={() => setIsHovered(false)}
-            className={`group relative grid grid-cols-12 gap-4 items-center px-4 py-3.5 rounded-lg border transition-all duration-200 cursor-pointer ${isSelected
-                ? 'bg-blue-500/10 border-blue-500/50 shadow-[0_0_15px_rgba(59,130,246,0.15)]'
-                : 'bg-white/[0.02] border-white/[0.08] hover:border-white/20 hover:shadow-md'
-                }`}
+            onDragOver={handleDragOver}
+            onDragLeave={handleDragLeave}
+            onDrop={handleDrop}
+            className={`group relative grid grid-cols-12 gap-4 items-center px-4 py-3.5 rounded-lg border transition-all duration-200 cursor-pointer ${
+                isDragOver
+                    ? 'bg-blue-500/20 border-blue-500 shadow-[0_0_20px_rgba(59,130,246,0.3)]'
+                    : isSelected
+                        ? 'bg-blue-500/10 border-blue-500/50 shadow-[0_0_15px_rgba(59,130,246,0.15)]'
+                        : 'bg-white/[0.02] border-white/[0.08] hover:border-white/20 hover:shadow-md'
+            }`}
             onClick={() => isFolder ? onOpen(item) : onSelect(item)}
             onDoubleClick={() => !isFolder && onPreview && onPreview(item)}
         >
+            {/* Drag Over Indicator for List View */}
+            <AnimatePresence>
+                {isDragOver && isFolder && (
+                    <motion.div
+                        initial={{ opacity: 0, scaleX: 0 }}
+                        animate={{ opacity: 1, scaleX: 1 }}
+                        exit={{ opacity: 0, scaleX: 0 }}
+                        className="absolute left-0 top-0 bottom-0 w-1 bg-blue-500 rounded-r-full"
+                    />
+                )}
+            </AnimatePresence>
+
             {/* Name Column */}
             <div className="col-span-8 sm:col-span-6 flex items-center gap-3 min-w-0">
                 {/* Icon */}
                 <motion.div
+                    animate={{
+                        scale: isDragOver ? 1.3 : 1,
+                        rotate: isDragOver ? 10 : isFolder ? 5 : 0,
+                        x: isDragOver ? 5 : 0
+                    }}
                     whileHover={{ scale: 1.1, rotate: isFolder ? 5 : 0 }}
+                    transition={{ type: 'spring', stiffness: 300, damping: 20 }}
                     className="flex-shrink-0"
                 >
                     <FileIcon filename={item.name} isFolder={isFolder} className="w-5 h-5" />
                 </motion.div>
 
                 {/* Name */}
-                <span className="truncate font-semibold text-sm text-white">
+                <span className={`truncate font-semibold text-sm transition-colors ${
+                    isDragOver ? 'text-blue-400' : 'text-white'
+                }`}>
                     {item.name}
                 </span>
+                
+                {/* Drop indicator text */}
+                <AnimatePresence>
+                    {isDragOver && isFolder && (
+                        <motion.span
+                            initial={{ opacity: 0, x: -10 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            exit={{ opacity: 0, x: -10 }}
+                            className="text-xs text-blue-400 font-semibold ml-2"
+                        >
+                            Drop here
+                        </motion.span>
+                    )}
+                </AnimatePresence>
             </div>
 
             {/* Size Column */}
