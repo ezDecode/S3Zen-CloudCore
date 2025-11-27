@@ -123,12 +123,12 @@ export const FileItem = ({
                     <DropdownMenu>
                         <DropdownMenuTrigger asChild>
                             <button
-                                className={`p-1.5 rounded-lg transition-all duration-200 ${isHovered
+                                className={`p-1 rounded-lg outline-none border-none ring-0 focus:outline-none focus:ring-0 ${isHovered
                                     ? 'opacity-100'
                                     : 'opacity-0 data-[state=open]:opacity-100'} 
-                                    bg-black/40 text-white hover:bg-black/60 backdrop-blur-sm border border-white/10 data-[state=open]:bg-white data-[state=open]:text-black`}
+                                    bg-transparent text-white data-[state=open]:bg-transparent data-[state=open]:text-white`}
                             >
-                                <MoreVerticalIcon className="w-4 h-4" />
+                                <MoreVerticalIcon className="w-8 h-8" />
                             </button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end" className="w-56 bg-zinc-900/95 backdrop-blur-xl border-white/10">
@@ -206,13 +206,11 @@ export const FileItem = ({
             <div className="col-span-4 sm:col-span-1 flex justify-end relative" onClick={(e) => e.stopPropagation()}>
                 <DropdownMenu>
                     <DropdownMenuTrigger asChild>
-                        <motion.button
-                            whileHover={{ scale: 1.1 }}
-                            whileTap={{ scale: 0.9 }}
-                            className="p-2 rounded-lg bg-white/10 border border-white/20 text-zinc-300 hover:text-white hover:bg-white/15 hover:border-white/30 transition-all shadow-sm data-[state=open]:bg-white data-[state=open]:text-black"
+                        <button
+                            className="p-1 rounded-lg outline-none border-none ring-0 focus:outline-none focus:ring-0 bg-transparent text-white data-[state=open]:bg-transparent data-[state=open]:text-white"
                         >
-                            <MoreVerticalIcon className="w-4 h-4" />
-                        </motion.button>
+                            <MoreVerticalIcon className="w-8 h-8" />
+                        </button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end" className="w-56 bg-zinc-900/95 backdrop-blur-xl border-white/10">
                         <MenuContent />

@@ -895,7 +895,7 @@ export const FileExplorer = ({
                         <motion.button
                             whileHover={{ scale: 1.05 }}
                             whileTap={{ scale: 0.95 }}
-                            className="p-1.5 sm:p-2 rounded-lg transition-all shrink-0 text-zinc-400 hover:text-white hover:bg-white/5 data-[state=open]:text-white data-[state=open]:bg-white/10"
+                            className="p-1.5 sm:p-2 rounded-lg transition-all shrink-0 text-zinc-400 hover:text-white data-[state=open]:text-white data-[state=open]:bg-white/10"
                             title="Sort"
                         >
                             <ArrowUp01Icon className="w-4.5 h-4.5" />

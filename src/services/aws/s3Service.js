@@ -440,6 +440,77 @@ export const deleteObjects = async (keys) => {
 };
 
 /**
+ * Delete multiple items (files and folders) recursively
+ * Handles folder content deletion
+ */
+export const deleteItems = async (items) => {
+    if (!s3Client || !currentBucket) {
+        return { success: false, error: 'S3 client not initialized' };
+    }
+
+    try {
+        let allKeysToDelete = [];
+
+        for (const item of items) {
+            if (item.type === 'folder') {
+                // List all objects in the folder recursively (no delimiter)
+                let continuationToken = null;
+                do {
+                    const command = new ListObjectsV2Command({
+                        Bucket: currentBucket,
+                        Prefix: item.key,
+                        // No Delimiter means recursive list
+                    });
+
+                    if (continuationToken) {
+                        command.input.ContinuationToken = continuationToken;
+                    }
+
+                    const response = await s3Client.send(command);
+
+                    if (response.Contents) {
+                        response.Contents.forEach(obj => {
+                            allKeysToDelete.push(obj.Key);
+                        });
+                    }
+
+                    continuationToken = response.NextContinuationToken;
+                } while (continuationToken);
+
+                // Also ensure the folder key itself is included (though usually it's in Contents if it was created as a 0-byte object)
+                allKeysToDelete.push(item.key);
+            } else {
+                allKeysToDelete.push(item.key);
+            }
+        }
+
+        // Remove duplicates
+        allKeysToDelete = [...new Set(allKeysToDelete)];
+
+        if (allKeysToDelete.length === 0) {
+            return { success: true };
+        }
+
+        // Delete in batches of 1000
+        const batchSize = 1000;
+        for (let i = 0; i < allKeysToDelete.length; i += batchSize) {
+            const batch = allKeysToDelete.slice(i, i + batchSize);
+            // We can reuse deleteObjects but it does validation which might be slow for 1000s of items
+            // But for safety let's use the raw command or call deleteObjects?
+            // deleteObjects calls sanitizeS3Path and validateKey. 
+            // Since these keys come from S3 list, they should be valid, but validation doesn't hurt.
+            // However, deleteObjects takes an array of strings.
+            await deleteObjects(batch);
+        }
+
+        return { success: true };
+    } catch (error) {
+        console.error('Failed to delete items:', error);
+        return { success: false, error: error.message };
+    }
+};
+
+/**
  * Create a folder (by creating an empty object with trailing /)
  * SECURITY: Validates folder name and sanitizes path
  */
