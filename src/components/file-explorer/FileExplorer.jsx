@@ -4,7 +4,7 @@
  */
 
 import { useState, useEffect, useCallback, useRef, useMemo, Fragment } from 'react';
-import { Upload02Icon, FolderAddIcon, Delete02Icon, Logout01Icon, Search01Icon, Loading03Icon, Home01Icon, LayoutGridIcon, ListViewIcon, Download01Icon, Share01Icon, Cancel01Icon, Tick01Icon, UserGroupIcon, ArrowUp01Icon, PlusSignIcon, File02Icon } from 'hugeicons-react';
+import { Upload02Icon, FolderAddIcon, Delete02Icon, Logout01Icon, Search01Icon, Loading03Icon, Home01Icon, LayoutGridIcon, ListViewIcon, Download01Icon, Share01Icon, Cancel01Icon, Tick01Icon, UserGroupIcon, ArrowUp01Icon, PlusSignIcon, File02Icon, Book02Icon } from 'hugeicons-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { toast } from 'sonner';
 import { FileList } from './FileList';
@@ -57,7 +57,8 @@ export const FileExplorer = ({
     onDeleteModal,
     onPreviewModal,
     onCreateFolderModal,
-    onDetailsModal
+    onDetailsModal,
+    onShowSetupGuide
 }) => {
     const [currentPath, setCurrentPath] = useState('');
     const [items, setItems] = useState([]);
@@ -743,6 +744,14 @@ export const FileExplorer = ({
                         <Loading03Icon className="w-4.5 h-4.5" />
                     </motion.button>
 
+                    {/* Setup Guide */}
+                    <motion.button
+                        onClick={onShowSetupGuide}
+                        className="p-1.5 sm:p-2 rounded-lg text-zinc-400 hover:text-white hover:bg-[rgba(255,255,255,0.05)] transition-all shrink-0"
+                        title="Setup Guide"
+                    >
+                        <Book02Icon className="w-4 sm:w-4.5 h-4 sm:h-4.5" />
+                    </motion.button>
 
                     {/* Logout */}
                     <motion.button
@@ -1019,93 +1028,93 @@ export const FileExplorer = ({
             {/* Main Content Area - Fixed scrolling */}
             <main className="flex-1 flex flex-col overflow-hidden z-0 relative">
                 <FileList
-                            items={sortedItems}
-                            sortBy={sortBy}
-                            sortOrder={sortOrder}
-                            onSort={handleSort}
-                            selectedItems={selectedItems}
-                            onSelectItem={handleSelectItem}
-                            onOpenFolder={handleOpenFolder}
-                            onDownload={handleSingleDownload}
-                            onShare={onShareModal}
-                            onRename={(item) => onRenameModal(item, handleRename)}
-                            onDelete={(item) => handleDelete([item])}
-                            onPreview={onPreviewModal}
-                            onDetails={onDetailsModal}
-                            isLoading={isLoading}
-                            viewMode={viewMode}
-                        />
-                    </main>
+                    items={sortedItems}
+                    sortBy={sortBy}
+                    sortOrder={sortOrder}
+                    onSort={handleSort}
+                    selectedItems={selectedItems}
+                    onSelectItem={handleSelectItem}
+                    onOpenFolder={handleOpenFolder}
+                    onDownload={handleSingleDownload}
+                    onShare={onShareModal}
+                    onRename={(item) => onRenameModal(item, handleRename)}
+                    onDelete={(item) => handleDelete([item])}
+                    onPreview={onPreviewModal}
+                    onDetails={onDetailsModal}
+                    isLoading={isLoading}
+                    viewMode={viewMode}
+                />
+            </main>
 
-                    {/* Upload Progress Panel */}
-                    <AnimatePresence>
-                        {uploadingFiles.length > 0 && (
-                            <motion.div
-                                initial={{ opacity: 0, y: 20 }}
-                                animate={{ opacity: 1, y: 0 }}
-                                exit={{ opacity: 0, y: 20 }}
-                                className="fixed bottom-0 sm:bottom-6 right-0 sm:right-6 w-full sm:w-96 bg-zinc-900/98 border-t sm:border border-white/10 rounded-t-2xl sm:rounded-2xl shadow-2xl overflow-hidden z-40 backdrop-blur-2xl"
-                            >
-                                <div className="px-4 py-3 border-b border-white/10 flex items-center justify-between bg-zinc-950/50">
-                                    <div className="flex items-center gap-2">
-                                        <div className="w-2 h-2 rounded-full bg-blue-500 animate-pulse" />
-                                        <h4 className="text-sm font-semibold text-white">
-                                            Uploading {uploadingFiles.length} {uploadingFiles.length === 1 ? 'file' : 'files'}
-                                        </h4>
+            {/* Upload Progress Panel */}
+            <AnimatePresence>
+                {uploadingFiles.length > 0 && (
+                    <motion.div
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: 20 }}
+                        className="fixed bottom-0 sm:bottom-6 right-0 sm:right-6 w-full sm:w-96 bg-zinc-900/98 border-t sm:border border-white/10 rounded-t-2xl sm:rounded-2xl shadow-2xl overflow-hidden z-40 backdrop-blur-2xl"
+                    >
+                        <div className="px-4 py-3 border-b border-white/10 flex items-center justify-between bg-zinc-950/50">
+                            <div className="flex items-center gap-2">
+                                <div className="w-2 h-2 rounded-full bg-blue-500 animate-pulse" />
+                                <h4 className="text-sm font-semibold text-white">
+                                    Uploading {uploadingFiles.length} {uploadingFiles.length === 1 ? 'file' : 'files'}
+                                </h4>
+                            </div>
+                        </div>
+                        <div className="p-4 space-y-3 max-h-60 sm:max-h-80 overflow-y-auto custom-scrollbar">
+                            {uploadingFiles.map((file) => (
+                                <motion.div
+                                    key={file.id}
+                                    initial={{ opacity: 0, x: -10 }}
+                                    animate={{ opacity: 1, x: 0 }}
+                                    className="space-y-2"
+                                >
+                                    <div className="flex justify-between items-center">
+                                        <span className="text-sm font-medium text-white truncate max-w-72">
+                                            {file.name}
+                                        </span>
+                                        <span className="text-xs font-bold text-zinc-400 tabular-nums">
+                                            {Math.round(file.progress)}%
+                                        </span>
                                     </div>
-                                </div>
-                                <div className="p-4 space-y-3 max-h-60 sm:max-h-80 overflow-y-auto custom-scrollbar">
-                                    {uploadingFiles.map((file) => (
+                                    <div className="h-1.5 w-full bg-white/5 rounded-full overflow-hidden">
                                         <motion.div
-                                            key={file.id}
-                                            initial={{ opacity: 0, x: -10 }}
-                                            animate={{ opacity: 1, x: 0 }}
-                                            className="space-y-2"
-                                        >
-                                            <div className="flex justify-between items-center">
-                                                <span className="text-sm font-medium text-white truncate max-w-72">
-                                                    {file.name}
-                                                </span>
-                                                <span className="text-xs font-bold text-zinc-400 tabular-nums">
-                                                    {Math.round(file.progress)}%
-                                                </span>
-                                            </div>
-                                            <div className="h-1.5 w-full bg-white/5 rounded-full overflow-hidden">
-                                                <motion.div
-                                                    className="h-full bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 rounded-full"
-                                                    initial={{ width: 0 }}
-                                                    animate={{ width: `${file.progress}%` }}
-                                                    transition={{ duration: 0.3, ease: 'easeOut' }}
-                                                />
-                                            </div>
-                                        </motion.div>
-                                    ))}
-                                </div>
-                            </motion.div>
-                        )}
-                    </AnimatePresence>
+                                            className="h-full bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 rounded-full"
+                                            initial={{ width: 0 }}
+                                            animate={{ width: `${file.progress}%` }}
+                                            transition={{ duration: 0.3, ease: 'easeOut' }}
+                                        />
+                                    </div>
+                                </motion.div>
+                            ))}
+                        </div>
+                    </motion.div>
+                )}
+            </AnimatePresence>
 
-                    {/* Download Manager */}
-                    <DownloadManager
-                        downloads={downloads}
-                        onRemove={handleRemoveDownload}
-                        onClear={handleClearDownloads}
-                    />
+            {/* Download Manager */}
+            <DownloadManager
+                downloads={downloads}
+                onRemove={handleRemoveDownload}
+                onClear={handleClearDownloads}
+            />
 
-                    {/* Duplicate File Modal */}
-                    {duplicateFileInfo && (
-                        <DuplicateFileModal
-                            isOpen={!!duplicateFileInfo}
-                            fileName={duplicateFileInfo.file?.name || ''}
-                            onClose={() => setDuplicateFileInfo(null)}
-                            onResolve={(resolution) => {
-                                if (duplicateFileInfo.onResolve) {
-                                    duplicateFileInfo.onResolve(resolution);
-                                }
-                                setDuplicateFileInfo(null);
-                            }}
-                        />
-                    )}
-            </div>
-            );
+            {/* Duplicate File Modal */}
+            {duplicateFileInfo && (
+                <DuplicateFileModal
+                    isOpen={!!duplicateFileInfo}
+                    fileName={duplicateFileInfo.file?.name || ''}
+                    onClose={() => setDuplicateFileInfo(null)}
+                    onResolve={(resolution) => {
+                        if (duplicateFileInfo.onResolve) {
+                            duplicateFileInfo.onResolve(resolution);
+                        }
+                        setDuplicateFileInfo(null);
+                    }}
+                />
+            )}
+        </div>
+    );
 };

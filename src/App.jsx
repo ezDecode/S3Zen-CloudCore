@@ -8,10 +8,11 @@
  * - Sonner Toaster for toast notifications
  */
 
+import { useState } from 'react';
 import { Hero } from './components/auth/Hero';
 import { AuthModal } from './components/auth/AuthModal';
 import { FileExplorer } from './components/file-explorer/FileExplorer';
-import { ShareModal, DeleteConfirmModal, CreateFolderModal, RenameModal, DetailsModal } from './components/modals';
+import { ShareModal, DeleteConfirmModal, CreateFolderModal, RenameModal, DetailsModal, SetupGuideModal } from './components/modals';
 import { useAuth } from './hooks/useAuth';
 import { useModals } from './hooks/useModals';
 import { useSessionTimeout } from './hooks/useSessionTimeout';
@@ -31,6 +32,9 @@ function AppContent() {
     handleLogout,
     handleGetStarted
   } = useAuth();
+
+  // Setup Guide Modal state
+  const [showSetupGuide, setShowSetupGuide] = useState(false);
 
   // Modal state and handlers
   const {
@@ -66,7 +70,10 @@ function AppContent() {
           ============================================ */}
       {!isLoggedIn ? (
         <>
-          <Hero onGetStarted={handleGetStarted} />
+          <Hero
+            onGetStarted={handleGetStarted}
+            onShowSetupGuide={() => setShowSetupGuide(true)}
+          />
           <AuthModal
             isOpen={showAuthModal}
             onClose={() => setShowAuthModal(false)}
@@ -81,6 +88,7 @@ function AppContent() {
           onCreateFolderModal={handleCreateFolderModal}
           onRenameModal={handleRenameModal}
           onDetailsModal={handleDetailsModal}
+          onShowSetupGuide={() => setShowSetupGuide(true)}
         />
       )}
 
@@ -124,6 +132,12 @@ function AppContent() {
         isOpen={!!detailsModalItem}
         onClose={closeDetailsModal}
         item={detailsModalItem}
+      />
+
+      {/* Setup Guide Modal */}
+      <SetupGuideModal
+        isOpen={showSetupGuide}
+        onClose={() => setShowSetupGuide(false)}
       />
 
       {/* Toaster for notifications */}

@@ -1,8 +1,8 @@
 
 import { motion } from 'framer-motion';
-import { ArrowRight01Icon, Github01Icon, ZapIcon, Shield01Icon, CloudIcon } from 'hugeicons-react';
+import { ArrowRight01Icon, Github01Icon, ZapIcon, Shield01Icon, CloudIcon, Book02Icon } from 'hugeicons-react';
 
-export const Hero = ({ onGetStarted }) => {
+export const Hero = ({ onGetStarted, onShowSetupGuide }) => {
   const features = [
     { icon: ZapIcon, label: 'Lightning Fast' },
     { icon: Shield01Icon, label: '100% Secure' },
@@ -29,7 +29,7 @@ export const Hero = ({ onGetStarted }) => {
           >
             <span className="w-2 h-2 bg-green-500 rounded-full" aria-hidden="true" />
             <span className="text-md font-bold text-white/80"
-            style={{ fontFamily: 'Watson, sans-serif' }}
+              style={{ fontFamily: 'Watson, sans-serif' }}
             >
               v2.0 Now Available</span>
           </motion.div>
@@ -104,6 +104,16 @@ export const Hero = ({ onGetStarted }) => {
           >
             <span>Get Started</span>
             <ArrowRight01Icon className="w-4 h-4 sm:w-5 sm:h-5 transition-transform group-hover:translate-x-1" aria-hidden="true" />
+          </button>
+
+          <button
+            onClick={onShowSetupGuide}
+            className="font-semibold text-white bg-white/10 backdrop-blur-sm border border-white/20 rounded-xl hover:bg-white/20 transition-all flex items-center px-4 sm:px-8 py-3 sm:py-4"
+            aria-label="View AWS setup guide"
+            style={{ fontFamily: 'Watson, sans-serif', fontSize: 'clamp(1.05rem, 2vw, 1.2rem)', gap: 'clamp(0.21rem, 0.5vw, 0.43rem)' }}
+          >
+            <Book02Icon className="w-4 h-4 sm:w-5 sm:h-5" aria-hidden="true" />
+            <span>Setup Guide</span>
           </button>
 
           <a

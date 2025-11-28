@@ -10,3 +10,4 @@ export { CreateFolderModal } from './CreateFolderModal';
 export { RenameModal } from './RenameModal';
 export { DetailsModal } from './DetailsModal';
 export { DuplicateFileModal } from './DuplicateFileModal';
+export { SetupGuideModal } from './SetupGuideModal';
