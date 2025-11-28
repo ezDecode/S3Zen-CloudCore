@@ -18,17 +18,17 @@ export const Hero = ({ onGetStarted, onShowSetupGuide }) => {
       {/* Grid Pattern - Contained within hero wrapper */}
       <div className="absolute inset-0 opacity-10 pointer-events-none z-0 bg-[linear-gradient(rgba(255,255,255,0.1)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.1)_1px,transparent_1px)] bg-[length:50px_50px]" />
 
-      <main className="relative z-10 flex flex-col items-center w-full max-w-6xl px-6 mx-auto text-center pt-20">
+      <main className="relative z-10 flex flex-col items-center w-full max-w-6xl px-4 sm:px-6 mx-auto text-center pt-12 sm:pt-16 md:pt-20">
         <header>
           <motion.div
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
-            className="inline-flex items-center px-4 py-2 bg-white/5 backdrop-blur-sm border border-white/10 rounded-full"
-            style={{ gap: '0.43rem', marginBottom: '3rem' }}
+            className="inline-flex items-center px-3 sm:px-4 py-1.5 sm:py-2 bg-white/5 backdrop-blur-sm border border-white/10 rounded-full"
+            style={{ gap: '0.43rem', marginBottom: 'clamp(1.5rem, 4vw, 3rem)' }}
           >
             <span className="w-2 h-2 bg-green-500 rounded-full" aria-hidden="true" />
-            <span className="text-md font-bold text-white/80"
+            <span className="text-xs sm:text-sm md:text-md font-bold text-white/80"
               style={{ fontFamily: 'Watson, sans-serif' }}
             >
               v2.0 Now Available</span>
@@ -38,8 +38,8 @@ export const Hero = ({ onGetStarted, onShowSetupGuide }) => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
-            className="font-bold"
-            style={{ fontFamily: 'Watson, sans-serif', fontSize: 'clamp(5.4rem, 9.6vw, 10.8rem)', marginTop: '1.44rem', marginBottom: '1.44rem', lineHeight: '0.9' }}
+            className="font-bold px-2"
+            style={{ fontFamily: 'Watson, sans-serif', fontSize: 'clamp(3.5rem, 12vw, 10.8rem)', marginTop: 'clamp(0.5rem, 2vw, 1.44rem)', marginBottom: 'clamp(0.8rem, 2vw, 1.44rem)', lineHeight: '0.9' }}
           >
             <span className="gradient-text">Cloud</span>
             <span className="text-white">Core</span>
@@ -49,8 +49,8 @@ export const Hero = ({ onGetStarted, onShowSetupGuide }) => {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.6, delay: 0.1 }}
-            className="font-medium text-white/90"
-            style={{ fontFamily: 'Watson, sans-serif', fontSize: 'clamp(1.8rem, 3.6vw, 2.4rem)', marginBottom: '0.85rem' }}
+            className="font-medium text-white/90 px-2"
+            style={{ fontFamily: 'Watson, sans-serif', fontSize: 'clamp(1.2rem, 4vw, 2.4rem)', marginBottom: 'clamp(0.5rem, 1.5vw, 0.85rem)' }}
           >
             Premium AWS S3 Management
           </motion.p>
@@ -59,10 +59,12 @@ export const Hero = ({ onGetStarted, onShowSetupGuide }) => {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.6, delay: 0.2 }}
-            className="w-full max-w-3xl mx-auto text-white/70"
-            style={{ fontFamily: 'Watson, sans-serif', fontSize: '1.35rem', marginBottom: '2.55rem' }}
+            className="w-full max-w-3xl mx-auto text-white/70 px-2"
+            style={{ fontFamily: 'Watson, sans-serif', fontSize: 'clamp(0.95rem, 2.5vw, 1.35rem)', marginBottom: 'clamp(1.5rem, 3vw, 2.55rem)', lineHeight: '1.5' }}
           >
-            The most beautiful way to manage your S3 buckets. Lightning-fast uploads, intuitive<br />
+            The most beautiful way to manage your S3 buckets. Lightning-fast uploads, intuitive
+            <span className="hidden sm:inline"><br /></span>
+            <span className="sm:hidden"> </span>
             organization, and enterprise-grade security.
           </motion.p>
         </header>
@@ -71,8 +73,8 @@ export const Hero = ({ onGetStarted, onShowSetupGuide }) => {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.6, delay: 0.3 }}
-          className="flex flex-wrap items-center justify-center mb-12"
-          style={{ gap: '0.64rem' }}
+          className="flex flex-wrap items-center justify-center"
+          style={{ gap: 'clamp(0.4rem, 1.5vw, 0.64rem)', marginBottom: 'clamp(2rem, 4vw, 3rem)' }}
           role="list"
           aria-label="Key features"
         >
@@ -80,11 +82,11 @@ export const Hero = ({ onGetStarted, onShowSetupGuide }) => {
             <div
               key={index}
               role="listitem"
-              className="flex items-center bg-white/5 border border-white/10 rounded-full px-4 py-2"
+              className="flex items-center bg-white/5 border border-white/10 rounded-full px-3 sm:px-4 py-1.5 sm:py-2"
               style={{ fontFamily: 'Watson, sans-serif', gap: '0.43rem' }}
             >
-              <feature.icon className="w-4 h-4 text-purple-400" aria-hidden="true" />
-              <span className="font-medium text-white/80" style={{ fontSize: '1.05rem' }}>{feature.label}</span>
+              <feature.icon className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-purple-400" aria-hidden="true" />
+              <span className="font-medium text-white/80" style={{ fontSize: 'clamp(0.85rem, 2vw, 1.05rem)' }}>{feature.label}</span>
             </div>
           ))}
         </motion.div>
@@ -93,45 +95,50 @@ export const Hero = ({ onGetStarted, onShowSetupGuide }) => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.4 }}
-          className="flex flex-row flex-nowrap items-center justify-center"
-          style={{ gap: 'clamp(0.43rem, 1vw, 0.85rem)' }}
+          className="flex flex-col sm:flex-row items-stretch sm:items-center justify-center w-full max-w-2xl px-2"
+          style={{ gap: 'clamp(0.5rem, 1.5vw, 0.64rem)' }}
         >
-          <button
-            onClick={onGetStarted}
-            className="group font-semibold text-white rounded-xl bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 transition-all shadow-lg hover:shadow-purple-500/30 flex items-center px-4 sm:px-8 py-3 sm:py-4"
-            aria-label="Get started with CloudCore"
-            style={{ fontFamily: 'Watson, sans-serif', fontSize: 'clamp(1.05rem, 2vw, 1.2rem)', gap: 'clamp(0.21rem, 0.5vw, 0.43rem)' }}
-          >
-            <span>Get Started</span>
-            <ArrowRight01Icon className="w-4 h-4 sm:w-5 sm:h-5 transition-transform group-hover:translate-x-1" aria-hidden="true" />
-          </button>
+          {/* First row on mobile: Get Started + Setup Guide */}
+          <div className="flex flex-row items-stretch justify-center w-full sm:w-auto" style={{ gap: 'clamp(0.5rem, 1.5vw, 0.64rem)' }}>
+            <button
+              onClick={onGetStarted}
+              className="group font-semibold text-white rounded-lg sm:rounded-xl bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 transition-all shadow-lg hover:shadow-purple-500/30 flex items-center justify-center flex-1 sm:flex-initial px-3 sm:px-6 md:px-8 py-2.5 sm:py-3 md:py-4"
+              aria-label="Get started with CloudCore"
+              style={{ fontFamily: 'Watson, sans-serif', fontSize: 'clamp(0.9rem, 2.5vw, 1.2rem)', gap: 'clamp(0.25rem, 0.8vw, 0.43rem)' }}
+            >
+              <span className="whitespace-nowrap">Get Started</span>
+              <ArrowRight01Icon className="w-3.5 h-3.5 sm:w-4 sm:h-4 md:w-5 md:h-5 transition-transform group-hover:translate-x-1" aria-hidden="true" />
+            </button>
 
-          <button
-            onClick={onShowSetupGuide}
-            className="font-semibold text-white bg-white/10 backdrop-blur-sm border border-white/20 rounded-xl hover:bg-white/20 transition-all flex items-center px-4 sm:px-8 py-3 sm:py-4"
-            aria-label="View AWS setup guide"
-            style={{ fontFamily: 'Watson, sans-serif', fontSize: 'clamp(1.05rem, 2vw, 1.2rem)', gap: 'clamp(0.21rem, 0.5vw, 0.43rem)' }}
-          >
-            <Book02Icon className="w-4 h-4 sm:w-5 sm:h-5" aria-hidden="true" />
-            <span>Setup Guide</span>
-          </button>
+            <button
+              onClick={onShowSetupGuide}
+              className="font-semibold text-white bg-white/10 backdrop-blur-sm border border-white/20 rounded-lg sm:rounded-xl hover:bg-white/20 transition-all flex items-center justify-center flex-1 sm:flex-initial px-3 sm:px-6 md:px-8 py-2.5 sm:py-3 md:py-4"
+              aria-label="View AWS setup guide"
+              style={{ fontFamily: 'Watson, sans-serif', fontSize: 'clamp(0.9rem, 2.5vw, 1.2rem)', gap: 'clamp(0.25rem, 0.8vw, 0.43rem)' }}
+            >
+              <Book02Icon className="w-3.5 h-3.5 sm:w-4 sm:h-4 md:w-5 md:h-5" aria-hidden="true" />
+              <span className="hidden sm:inline whitespace-nowrap">Setup Guide</span>
+              <span className="sm:hidden whitespace-nowrap">Guide</span>
+            </button>
+          </div>
 
+          {/* Second row on mobile: GitHub button full width */}
           <a
             href="https://github.com/ezDecode/S3Zen-CloudCore"
             target="_blank"
             rel="noopener noreferrer"
-            className="font-semibold text-white bg-white/10 backdrop-blur-sm border border-white/20 rounded-xl hover:bg-white/20 transition-all flex items-center px-4 sm:px-8 py-3 sm:py-4"
+            className="font-semibold text-white bg-white/10 backdrop-blur-sm border border-white/20 rounded-lg sm:rounded-xl hover:bg-white/20 transition-all flex items-center justify-center w-full sm:w-auto px-3 sm:px-6 md:px-8 py-2.5 sm:py-3 md:py-4"
             aria-label="Star CloudCore on GitHub"
-            style={{ fontFamily: 'Watson, sans-serif', fontSize: 'clamp(1.05rem, 2vw, 1.2rem)', gap: 'clamp(0.21rem, 0.5vw, 0.43rem)' }}
+            style={{ fontFamily: 'Watson, sans-serif', fontSize: 'clamp(0.9rem, 2.5vw, 1.2rem)', gap: 'clamp(0.25rem, 0.8vw, 0.43rem)' }}
           >
-            <Github01Icon className="w-4 h-4 sm:w-5 sm:h-5" aria-hidden="true" />
-            <span>Star on GitHub</span>
+            <Github01Icon className="w-3.5 h-3.5 sm:w-4 sm:h-4 md:w-5 md:h-5" aria-hidden="true" />
+            <span className="whitespace-nowrap">Star on GitHub</span>
           </a>
         </motion.div>
       </main>
 
-      <footer className="absolute bottom-6 left-0 right-0 text-center z-10">
-        <p className="text-white/30 font-medium tracking-wider" style={{ fontFamily: 'Watson, sans-serif', fontSize: '1.2rem' }}>
+      <footer className="absolute bottom-4 sm:bottom-6 left-0 right-0 text-center z-10 px-4">
+        <p className="text-white/30 font-medium tracking-wider" style={{ fontFamily: 'Watson, sans-serif', fontSize: 'clamp(0.85rem, 2vw, 1.2rem)' }}>
           Developed by{' '}
           <a
             href="https://github.com/ezDecode"
