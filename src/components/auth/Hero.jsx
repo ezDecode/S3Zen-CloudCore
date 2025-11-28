@@ -10,7 +10,7 @@ export const Hero = ({ onGetStarted, onShowSetupGuide }) => {
   ];
 
   return (
-    <div className="hero-page-wrapper relative flex flex-col items-center justify-center w-full min-h-screen overflow-hidden bg-black">
+    <div className="hero-page-wrapper relative flex flex-col items-center justify-center w-full h-screen overflow-hidden bg-black">
       {/* Subtle Background Blobs - Contained within hero wrapper */}
       <div className="absolute w-[600px] h-[600px] bg-indigo-500/10 rounded-full blur-3xl top-0 left-0 -translate-x-1/2 -translate-y-1/2 pointer-events-none z-0" />
       <div className="absolute w-[600px] h-[600px] bg-purple-500/10 rounded-full blur-3xl bottom-0 right-0 translate-x-1/2 -translate-y-1/2 pointer-events-none z-0" />
@@ -18,14 +18,14 @@ export const Hero = ({ onGetStarted, onShowSetupGuide }) => {
       {/* Grid Pattern - Contained within hero wrapper */}
       <div className="absolute inset-0 opacity-10 pointer-events-none z-0 bg-[linear-gradient(rgba(255,255,255,0.1)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.1)_1px,transparent_1px)] bg-[length:50px_50px]" />
 
-      <main className="relative z-10 flex flex-col items-center w-full max-w-6xl px-4 sm:px-6 mx-auto text-center pt-12 sm:pt-16 md:pt-20">
+      <main className="relative z-10 flex flex-col items-center justify-center w-full max-w-6xl px-4 sm:px-6 mx-auto text-center h-full overflow-y-auto">
         <header>
           <motion.div
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
             className="inline-flex items-center px-3 sm:px-4 py-1.5 sm:py-2 bg-white/5 backdrop-blur-sm border border-white/10 rounded-full"
-            style={{ gap: '0.43rem', marginBottom: 'clamp(1.5rem, 4vw, 3rem)' }}
+            style={{ gap: '0.43rem', marginBottom: 'clamp(1rem, 3vh, 2rem)' }}
           >
             <span className="w-2 h-2 bg-green-500 rounded-full" aria-hidden="true" />
             <span className="text-xs sm:text-sm md:text-md font-bold text-white/80"
@@ -39,7 +39,7 @@ export const Hero = ({ onGetStarted, onShowSetupGuide }) => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
             className="font-bold px-2"
-            style={{ fontFamily: 'Watson, sans-serif', fontSize: 'clamp(3.5rem, 12vw, 10.8rem)', marginTop: 'clamp(0.5rem, 2vw, 1.44rem)', marginBottom: 'clamp(0.8rem, 2vw, 1.44rem)', lineHeight: '0.9' }}
+            style={{ fontFamily: 'Watson, sans-serif', fontSize: 'clamp(3rem, 10vh, 10.8rem)', marginTop: 'clamp(0.3rem, 1vh, 1rem)', marginBottom: 'clamp(0.5rem, 1.5vh, 1.2rem)', lineHeight: '0.9' }}
           >
             <span className="gradient-text">Cloud</span>
             <span className="text-white">Core</span>
@@ -50,7 +50,7 @@ export const Hero = ({ onGetStarted, onShowSetupGuide }) => {
             animate={{ opacity: 1 }}
             transition={{ duration: 0.6, delay: 0.1 }}
             className="font-medium text-white/90 px-2"
-            style={{ fontFamily: 'Watson, sans-serif', fontSize: 'clamp(1.2rem, 4vw, 2.4rem)', marginBottom: 'clamp(0.5rem, 1.5vw, 0.85rem)' }}
+            style={{ fontFamily: 'Watson, sans-serif', fontSize: 'clamp(1.1rem, 3vh, 2.4rem)', marginBottom: 'clamp(0.3rem, 1vh, 0.7rem)' }}
           >
             Premium AWS S3 Management
           </motion.p>
@@ -60,7 +60,7 @@ export const Hero = ({ onGetStarted, onShowSetupGuide }) => {
             animate={{ opacity: 1 }}
             transition={{ duration: 0.6, delay: 0.2 }}
             className="w-full max-w-3xl mx-auto text-white/70 px-2"
-            style={{ fontFamily: 'Watson, sans-serif', fontSize: 'clamp(0.95rem, 2.5vw, 1.35rem)', marginBottom: 'clamp(1.5rem, 3vw, 2.55rem)', lineHeight: '1.5' }}
+            style={{ fontFamily: 'Watson, sans-serif', fontSize: 'clamp(0.9rem, 2vh, 1.35rem)', marginBottom: 'clamp(1.2rem, 2.5vh, 2rem)', lineHeight: '1.4' }}
           >
             The most beautiful way to manage your S3 buckets. Lightning-fast uploads, intuitive
             <span className="hidden sm:inline"><br /></span>
@@ -74,7 +74,7 @@ export const Hero = ({ onGetStarted, onShowSetupGuide }) => {
           animate={{ opacity: 1 }}
           transition={{ duration: 0.6, delay: 0.3 }}
           className="flex flex-wrap items-center justify-center"
-          style={{ gap: 'clamp(0.4rem, 1.5vw, 0.64rem)', marginBottom: 'clamp(2rem, 4vw, 3rem)' }}
+          style={{ gap: 'clamp(0.4rem, 1.5vw, 0.64rem)', marginBottom: 'clamp(1.5rem, 3vh, 2.5rem)' }}
           role="list"
           aria-label="Key features"
         >
@@ -95,8 +95,8 @@ export const Hero = ({ onGetStarted, onShowSetupGuide }) => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.4 }}
-          className="flex flex-row items-stretch justify-center w-full sm:max-w-2xl px-2"
-          style={{ gap: 'clamp(0.4rem, 1.5vw, 0.64rem)', maxWidth: '70%' }}
+          className="flex flex-row items-stretch justify-center w-full px-2"
+          style={{ gap: 'clamp(0.4rem, 1.5vw, 0.64rem)' }}
         >
           <button
             onClick={onGetStarted}
@@ -132,8 +132,8 @@ export const Hero = ({ onGetStarted, onShowSetupGuide }) => {
         </motion.div>
       </main>
 
-      <footer className="absolute bottom-4 sm:bottom-6 left-0 right-0 text-center z-10 px-4">
-        <p className="text-white/30 font-medium tracking-wider" style={{ fontFamily: 'Watson, sans-serif', fontSize: 'clamp(0.85rem, 2vw, 1.2rem)' }}>
+      <footer className="absolute bottom-2 sm:bottom-4 md:bottom-6 left-0 right-0 text-center z-10 px-4">
+        <p className="text-white/30 font-medium tracking-wider" style={{ fontFamily: 'Watson, sans-serif', fontSize: 'clamp(0.75rem, 1.8vh, 1.1rem)' }}>
           Developed by{' '}
           <a
             href="https://github.com/ezDecode"
