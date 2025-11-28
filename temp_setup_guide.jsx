@@ -13,35 +13,14 @@ export const SetupGuideModal = ({ isOpen, onClose }) => {
     const [expandedSection, setExpandedSection] = useState('credentials');
 
     const handleCopy = (text, label) => {
-        try {
-            navigator.clipboard.writeText(text);
-            setCopied(label);
-            toast.success(`${label} copied to clipboard`);
-            setTimeout(() => setCopied(''), 2000);
-        } catch (e) {
-            toast.error('Unable to copy to clipboard');
-        }
-    };
-
-    const scrollSectionIntoView = (id) => {
-        // use the DOM directly so we don't need extra hooks/imports
-        const el = document.getElementById(`section-${id}`);
-        if (el) {
-            // center-ish offset for nicer visual (accounting for modal header)
-            el.scrollIntoView({ behavior: 'smooth', block: 'start', inline: 'nearest' });
-        }
+        navigator.clipboard.writeText(text);
+        setCopied(label);
+        toast.success(`${label} copied to clipboard`);
+        setTimeout(() => setCopied(''), 2000);
     };
 
     const toggleSection = (section) => {
-        // open -> set expanded, then scroll into view
-        if (expandedSection === section) {
-            // close with a velocity-friendly exit
-            setExpandedSection('');
-        } else {
-            setExpandedSection(section);
-            // small timeout to allow DOM to mount the expanded node so scroll works reliably
-            setTimeout(() => scrollSectionIntoView(section), 80);
-        }
+        setExpandedSection(expandedSection === section ? '' : section);
     };
 
     // CORS Configuration JSON
@@ -82,68 +61,10 @@ export const SetupGuideModal = ({ isOpen, onClose }) => {
     ]
 }`;
 
-    /**
-     * Redesigned Section component:
-     * - Uses scaleY-based animations to avoid `height:auto` jank
-     * - Uses spring-based open animation and velocity-friendly close
-     * - Adds a soft staggered fade for each direct child node by wrapping them
-     * - Smoothly scrolls the section into view when opening (via DOM)
-     *
-     * Note: children are wrapped using Array.isArray and mapped; single node handled too.
-     */
     const Section = ({ id, title, icon: Icon, children }) => {
         const isExpanded = expandedSection === id;
-
-        // prepare children array so we can apply a small stagger to direct children
-        const childrenArray = Array.isArray(children) ? children : [children];
-
-        // parent variants
-        const containerVariants = {
-            hidden: {
-                opacity: 0,
-                scaleY: 0.82,
-                y: -14,
-            },
-            visible: {
-                opacity: 1,
-                scaleY: 1,
-                y: 0,
-                transition: {
-                    type: "spring",
-                    stiffness: 90,
-                    damping: 12,
-                    mass: 0.9,
-                    bounce: 0.45,
-                    duration: 0.75,
-                    when: "beforeChildren",
-                    staggerChildren: 0.06,
-                },
-            },
-            exit: {
-                opacity: 0,
-                scaleY: 0.88,
-                y: -10,
-                transition: {
-                    type: "spring",
-                    stiffness: 80,
-                    damping: 13,
-                    mass: 1.0,
-                    bounce: 0.38,
-                    duration: 0.7,
-                },
-            },
-        };
-
-
-        // child variants for small fade + slide
-        const childVariant = {
-            hidden: { opacity: 0, y: 6 },
-            visible: { opacity: 1, y: 0, transition: { duration: 0.22, ease: [0.22, 1, 0.36, 1] } },
-            exit: { opacity: 0, y: 6, transition: { duration: 0.16 } }
-        };
-
         return (
-            <div id={`section-${id}`} className="border border-white/10 rounded-xl overflow-hidden bg-white/5">
+            <div className="border border-white/10 rounded-xl overflow-hidden bg-white/5">
                 <button
                     onClick={() => toggleSection(id)}
                     className="w-full flex items-center justify-between p-4 hover:bg-white/5 transition-colors"
@@ -158,32 +79,30 @@ export const SetupGuideModal = ({ isOpen, onClose }) => {
                         <ArrowRight01Icon className="w-5 h-5 text-white/60" />
                     )}
                 </button>
-
                 <AnimatePresence mode="wait">
                     {isExpanded && (
                         <motion.div
-                            key={`panel-${id}`}
-                            variants={containerVariants}
-                            initial="hidden"
-                            animate="visible"
-                            exit="exit"
-                            style={{ transformOrigin: 'top' }}
+                            initial={{ height: 0, opacity: 0 }}
+                            animate={{
+                                height: 'auto',
+                                opacity: 1,
+                                transition: {
+                                    height: { duration: 0.3, ease: 'easeOut' },
+                                    opacity: { duration: 0.25, delay: 0.1 }
+                                }
+                            }}
+                            exit={{
+                                height: 0,
+                                opacity: 0,
+                                transition: {
+                                    height: { duration: 0.25, ease: 'easeIn' },
+                                    opacity: { duration: 0.15 }
+                                }
+                            }}
                             className="overflow-hidden"
                         >
-                            {/* inner container - we wrap each direct child to get a subtle stagger/fade */}
                             <div className="p-4 pt-0 space-y-3 text-sm text-white/80">
-                                {/* Map direct children to motion wrappers to get staggered fade */}
-                                {childrenArray.map((child, idx) => (
-                                    <motion.div
-                                        key={idx}
-                                        variants={childVariant}
-                                        initial="hidden"
-                                        animate="visible"
-                                        exit="exit"
-                                    >
-                                        {child}
-                                    </motion.div>
-                                ))}
+                                {children}
                             </div>
                         </motion.div>
                     )}
@@ -229,7 +148,7 @@ export const SetupGuideModal = ({ isOpen, onClose }) => {
                             scale: 1,
                             y: 0,
                             transition: {
-                                duration: 0.32,
+                                duration: 0.3,
                                 ease: [0.16, 1, 0.3, 1]
                             }
                         }}
@@ -238,7 +157,7 @@ export const SetupGuideModal = ({ isOpen, onClose }) => {
                             scale: 0.95,
                             y: 10,
                             transition: {
-                                duration: 0.22,
+                                duration: 0.2,
                                 ease: [0.4, 0, 1, 1]
                             }
                         }}
@@ -293,13 +212,13 @@ export const SetupGuideModal = ({ isOpen, onClose }) => {
                                         <li>Check the confirmation checkbox and click <span className="font-semibold">Next</span></li>
                                         <li>Add a description tag (optional) and click <span className="font-semibold">Create access key</span></li>
                                         <li className="text-yellow-400 font-medium">
-                                            ⚠️ Download or copy both the <span className="font-mono">Access Key ID</span> and <span className="font-mono">Secret Access Key</span> - you won't be able to see the secret again!
+                                            ΓÜá∩╕Å Download or copy both the <span className="font-mono">Access Key ID</span> and <span className="font-mono">Secret Access Key</span> - you won't be able to see the secret again!
                                         </li>
                                     </ol>
 
                                     <div className="bg-blue-500/10 border border-blue-500/20 rounded-lg p-3 mt-3">
                                         <p className="text-xs text-blue-200">
-                                            <strong>💡 Best Practice:</strong> For production use, create an IAM user with limited permissions instead of using root account credentials. See the IAM Permissions section below.
+                                            <strong>≡ƒÆí Best Practice:</strong> For production use, create an IAM user with limited permissions instead of using root account credentials. See the IAM Permissions section below.
                                         </p>
                                     </div>
                                 </div>
@@ -355,7 +274,7 @@ export const SetupGuideModal = ({ isOpen, onClose }) => {
 
                                     <div className="bg-yellow-500/10 border border-yellow-500/20 rounded-lg p-3">
                                         <p className="text-xs text-yellow-200">
-                                            <strong>⚠️ Security Note:</strong> The above configuration uses <span className="font-mono">AllowedOrigins: ["*"]</span> for development. For production, replace <span className="font-mono">["*"]</span> with your specific domain, e.g., <span className="font-mono">["https://yourdomain.com"]</span>
+                                            <strong>ΓÜá∩╕Å Security Note:</strong> The above configuration uses <span className="font-mono">AllowedOrigins: ["*"]</span> for development. For production, replace <span className="font-mono">["*"]</span> with your specific domain, e.g., <span className="font-mono">["https://yourdomain.com"]</span>
                                         </p>
                                     </div>
                                 </div>
@@ -381,7 +300,7 @@ export const SetupGuideModal = ({ isOpen, onClose }) => {
                                                 IAM Console
                                             </a>
                                         </li>
-                                        <li>Click <span className="font-mono bg-white/10 px-1.5 py-0.5 rounded text-xs">Users</span> → <span className="font-mono bg-white/10 px-1.5 py-0.5 rounded text-xs">Create user</span></li>
+                                        <li>Click <span className="font-mono bg-white/10 px-1.5 py-0.5 rounded text-xs">Users</span> ΓåÆ <span className="font-mono bg-white/10 px-1.5 py-0.5 rounded text-xs">Create user</span></li>
                                         <li>Enter a username (e.g., <span className="font-mono">cloudcore-user</span>)</li>
                                         <li>Click <span className="font-semibold">Next</span></li>
                                         <li>Select <span className="font-mono bg-white/10 px-1.5 py-0.5 rounded text-xs">Attach policies directly</span></li>
@@ -439,14 +358,14 @@ export const SetupGuideModal = ({ isOpen, onClose }) => {
                                     </div>
 
                                     <p className="text-xs text-white/60">
-                                        💡 Choose a region close to your users for better performance. Find your bucket's region in the S3 Console.
+                                        ≡ƒÆí Choose a region close to your users for better performance. Find your bucket's region in the S3 Console.
                                     </p>
                                 </div>
                             </Section>
 
                             {/* Final Notes */}
                             <div className="bg-green-500/10 border border-green-500/20 rounded-xl p-4">
-                                <h4 className="text-sm font-semibold text-green-300 mb-2">✅ You're All Set!</h4>
+                                <h4 className="text-sm font-semibold text-green-300 mb-2">Γ£à You're All Set!</h4>
                                 <p className="text-xs text-white/80">
                                     Once you've completed these steps, click "Get Started" and enter your AWS credentials to begin managing your S3 files with CloudCore.
                                 </p>
