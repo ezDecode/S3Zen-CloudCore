@@ -82,15 +82,6 @@ export const SetupGuideModal = ({ isOpen, onClose }) => {
     ]
 }`;
 
-    /**
-     * Redesigned Section component:
-     * - Uses scaleY-based animations to avoid `height:auto` jank
-     * - Uses spring-based open animation and velocity-friendly close
-     * - Adds a soft staggered fade for each direct child node by wrapping them
-     * - Smoothly scrolls the section into view when opening (via DOM)
-     *
-     * Note: children are wrapped using Array.isArray and mapped; single node handled too.
-     */
     const Section = ({ id, title, icon: Icon, children }) => {
         const isExpanded = expandedSection === id;
 
