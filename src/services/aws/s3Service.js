@@ -586,33 +586,73 @@ export const renameObject = async (oldKey, newName, isFolder = false) => {
         const newKey = pathParts.join('/');
 
         if (isFolder) {
-            // For folders, we need to rename all objects with this prefix
-            const listResult = await listObjects(oldKey);
-            if (!listResult.success) {
-                throw new Error('Failed to list folder contents');
-            }
+            // OPTIMIZED: Stream processing - start copying while still listing
+            let allObjects = [];
+            let continuationToken = null;
+            const copyPromises = [];
+            const COPY_BATCH_SIZE = 50; // Increased from 10 to 50 for max throughput
+            const MAX_CONCURRENT_COPIES = 100; // Max concurrent operations
+            
+            // Stream: List and copy simultaneously
+            do {
+                const command = new ListObjectsV2Command({
+                    Bucket: currentBucket,
+                    Prefix: oldKey,
+                    MaxKeys: 1000, // Get max objects per request
+                    ...(continuationToken && { ContinuationToken: continuationToken })
+                });
 
-            // Copy all items
-            for (const item of listResult.items) {
-                const itemNewKey = item.key.replace(oldKey, newKey);
-
-                if (item.type === 'file') {
-                    const copyCommand = new CopyObjectCommand({
-                        Bucket: currentBucket,
-                        CopySource: `${currentBucket}/${item.key}`,
-                        Key: itemNewKey
+                const response = await s3Client.send(command);
+                
+                if (response.Contents && response.Contents.length > 0) {
+                    allObjects.push(...response.Contents);
+                    
+                    // Start copying immediately without waiting for full list
+                    const copyBatch = response.Contents.map(obj => {
+                        const itemNewKey = obj.Key.replace(oldKey, newKey);
+                        
+                        return s3Client.send(new CopyObjectCommand({
+                            Bucket: currentBucket,
+                            CopySource: encodeURIComponent(`${currentBucket}/${obj.Key}`),
+                            Key: itemNewKey
+                        })).catch(err => {
+                            console.error(`Failed to copy ${obj.Key}:`, err);
+                            throw err;
+                        });
                     });
-                    await s3Client.send(copyCommand);
+                    
+                    copyPromises.push(...copyBatch);
+                    
+                    // Throttle: Wait if we have too many concurrent operations
+                    if (copyPromises.length >= MAX_CONCURRENT_COPIES) {
+                        await Promise.all(copyPromises.splice(0, COPY_BATCH_SIZE));
+                    }
                 }
+                
+                continuationToken = response.NextContinuationToken;
+            } while (continuationToken);
+
+            // Wait for remaining copy operations
+            if (copyPromises.length > 0) {
+                await Promise.all(copyPromises);
             }
 
-            // Delete old folder
-            const keysToDelete = listResult.items.map(item => item.key);
-            keysToDelete.push(oldKey); // Include folder marker
-            await deleteObjects(keysToDelete);
+            if (allObjects.length === 0) {
+                return { success: true, newKey };
+            }
 
-            // Create new folder marker
-            await createFolder(newKey);
+            // OPTIMIZED: Parallel delete in maximum batches (1000 = S3 limit)
+            const keysToDelete = allObjects.map(obj => obj.Key);
+            const DELETE_BATCH_SIZE = 1000;
+            const deletePromises = [];
+            
+            for (let i = 0; i < keysToDelete.length; i += DELETE_BATCH_SIZE) {
+                const batch = keysToDelete.slice(i, i + DELETE_BATCH_SIZE);
+                // Fire all delete batches in parallel
+                deletePromises.push(deleteObjects(batch));
+            }
+            
+            await Promise.all(deletePromises);
         } else {
             // For files, simple copy and delete
             const copyCommand = new CopyObjectCommand({
