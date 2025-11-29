@@ -4,21 +4,21 @@
  */
 
 import { Edit02Icon } from 'hugeicons-react';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { toast } from 'sonner';
 import { Modal } from './Modal';
 
 export const RenameModal = ({ isOpen, onClose, item, onSuccess }) => {
 
-    const [newName, setNewName] = useState(item?.name || '');
+    const [newName, setNewName] = useState('');
     const [isRenaming, setIsRenaming] = useState(false);
 
-    // Update newName when item changes
-    useState(() => {
-        if (item) {
+    // Update newName when item changes or modal opens
+    useEffect(() => {
+        if (item && isOpen) {
             setNewName(item.name);
         }
-    }, [item]);
+    }, [item, isOpen]);
 
     const handleRename = async () => {
         if (!newName.trim()) {
@@ -54,7 +54,7 @@ export const RenameModal = ({ isOpen, onClose, item, onSuccess }) => {
 
     const handleClose = () => {
         if (!isRenaming) {
-            setNewName(item?.name || '');
+            setNewName('');
             onClose();
         }
     };

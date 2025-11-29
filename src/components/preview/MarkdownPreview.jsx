@@ -71,31 +71,56 @@ export const MarkdownPreview = ({ item }) => {
     return (
         <div className="w-full h-full overflow-auto custom-scrollbar bg-zinc-900 rounded-lg">
             <div className="max-w-4xl mx-auto p-8">
-                <ReactMarkdown
-                    remarkPlugins={[remarkGfm]}
-                    components={{
-                        code({ node, inline, className, children, ...props }) {
-                            const match = /language-(\w+)/.exec(className || '');
-                            return !inline && match ? (
-                                <SyntaxHighlighter
-                                    style={vscDarkPlus}
-                                    language={match[1]}
-                                    PreTag="div"
-                                    {...props}
-                                >
-                                    {String(children).replace(/\n$/, '')}
-                                </SyntaxHighlighter>
-                            ) : (
-                                <code className={className} {...props}>
-                                    {children}
-                                </code>
-                            );
-                        }
-                    }}
-                    className="prose prose-invert prose-zinc max-w-none"
-                >
-                    {content}
-                </ReactMarkdown>
+                <div className="markdown-content text-zinc-100">
+                    <ReactMarkdown
+                        remarkPlugins={[remarkGfm]}
+                        components={{
+                            h1: ({ children }) => <h1 className="text-4xl font-bold mb-6 mt-8 text-white border-b border-zinc-700 pb-2">{children}</h1>,
+                            h2: ({ children }) => <h2 className="text-3xl font-bold mb-4 mt-6 text-white border-b border-zinc-800 pb-2">{children}</h2>,
+                            h3: ({ children }) => <h3 className="text-2xl font-semibold mb-3 mt-5 text-white">{children}</h3>,
+                            h4: ({ children }) => <h4 className="text-xl font-semibold mb-2 mt-4 text-white">{children}</h4>,
+                            h5: ({ children }) => <h5 className="text-lg font-semibold mb-2 mt-3 text-white">{children}</h5>,
+                            h6: ({ children }) => <h6 className="text-base font-semibold mb-2 mt-3 text-zinc-300">{children}</h6>,
+                            p: ({ children }) => <p className="mb-4 leading-7 text-zinc-300">{children}</p>,
+                            a: ({ href, children }) => <a href={href} className="text-blue-400 hover:text-blue-300 underline" target="_blank" rel="noopener noreferrer">{children}</a>,
+                            ul: ({ children }) => <ul className="list-disc list-inside mb-4 space-y-2 text-zinc-300">{children}</ul>,
+                            ol: ({ children }) => <ol className="list-decimal list-inside mb-4 space-y-2 text-zinc-300">{children}</ol>,
+                            li: ({ children }) => <li className="ml-4">{children}</li>,
+                            blockquote: ({ children }) => <blockquote className="border-l-4 border-blue-500 pl-4 py-2 mb-4 italic text-zinc-400 bg-zinc-800/50">{children}</blockquote>,
+                            table: ({ children }) => <div className="overflow-x-auto mb-4"><table className="min-w-full border border-zinc-700">{children}</table></div>,
+                            thead: ({ children }) => <thead className="bg-zinc-800">{children}</thead>,
+                            tbody: ({ children }) => <tbody className="divide-y divide-zinc-700">{children}</tbody>,
+                            tr: ({ children }) => <tr>{children}</tr>,
+                            th: ({ children }) => <th className="px-4 py-2 text-left text-white font-semibold border border-zinc-700">{children}</th>,
+                            td: ({ children }) => <td className="px-4 py-2 text-zinc-300 border border-zinc-700">{children}</td>,
+                            hr: () => <hr className="my-8 border-zinc-700" />,
+                            strong: ({ children }) => <strong className="font-bold text-white">{children}</strong>,
+                            em: ({ children }) => <em className="italic text-zinc-300">{children}</em>,
+                            code({ node, inline, className, children, ...props }) {
+                                const match = /language-(\w+)/.exec(className || '');
+                                return !inline && match ? (
+                                    <div className="mb-4">
+                                        <SyntaxHighlighter
+                                            style={vscDarkPlus}
+                                            language={match[1]}
+                                            PreTag="div"
+                                            className="rounded-lg"
+                                            {...props}
+                                        >
+                                            {String(children).replace(/\n$/, '')}
+                                        </SyntaxHighlighter>
+                                    </div>
+                                ) : (
+                                    <code className="bg-zinc-800 text-blue-400 px-1.5 py-0.5 rounded text-sm font-mono" {...props}>
+                                        {children}
+                                    </code>
+                                );
+                            }
+                        }}
+                    >
+                        {content}
+                    </ReactMarkdown>
+                </div>
             </div>
         </div>
     );
