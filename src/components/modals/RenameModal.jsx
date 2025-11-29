@@ -28,6 +28,7 @@ export const RenameModal = ({ isOpen, onClose, item, onSuccess }) => {
 
         if (newName === item.name) {
             toast.info('Name unchanged');
+            setNewName('');
             onClose();
             return;
         }
@@ -44,6 +45,7 @@ export const RenameModal = ({ isOpen, onClose, item, onSuccess }) => {
             // The parent component will handle the actual rename logic
             await onSuccess(item, newName);
             toast.success(`Renamed to "${newName}"`);
+            setNewName('');
             onClose();
         } catch (error) {
             toast.error(error.message || 'Failed to rename');
