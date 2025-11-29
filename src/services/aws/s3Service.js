@@ -586,6 +586,11 @@ export const renameObject = async (oldKey, newName, isFolder = false) => {
         pathParts[pathParts.length - (isFolder ? 2 : 1)] = finalNewName;
         const newKey = pathParts.join('/');
 
+        // Check if name is actually changing
+        if (oldKey === newKey) {
+            return { success: true, newKey, message: 'Name unchanged' };
+        }
+
         if (isFolder) {
             // OPTIMIZED: Stream processing - start copying while still listing
             let allObjects = [];
