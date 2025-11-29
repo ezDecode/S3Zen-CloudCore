@@ -1,4 +1,4 @@
-/**
+ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff/**
  * FileExplorerNav Component
  * Top navigation bar with breadcrumbs and actions
  */
@@ -60,74 +60,72 @@ export const FileExplorerNav = ({
                             </BreadcrumbLink>
                         </BreadcrumbItem>
 
-                        {pathParts.length > 0 && (
+                        {pathParts.length > 0 && pathParts.length <= 2 && (
+                            <AnimatePresence mode="popLayout">
+                                {pathParts.map((part, index) => {
+                                    const path = pathParts.slice(0, index + 1).join('/') + '/';
+                                    const isLast = index === pathParts.length - 1;
+                                    return (
+                                        <Fragment key={path}>
+                                            <BreadcrumbSeparator />
+                                            <BreadcrumbItem>
+                                                {isLast ? (
+                                                    <BreadcrumbPage>{part}</BreadcrumbPage>
+                                                ) : (
+                                                    <BreadcrumbLink
+                                                        onClick={() => onNavigate(path)}
+                                                        className="cursor-pointer"
+                                                    >
+                                                        {part}
+                                                    </BreadcrumbLink>
+                                                )}
+                                            </BreadcrumbItem>
+                                        </Fragment>
+                                    );
+                                })}
+                            </AnimatePresence>
+                        )}
+
+                        {pathParts.length > 2 && (
                             <>
-                                {pathParts.length <= 2 ? (
-                                    <AnimatePresence mode="popLayout">
-                                        {pathParts.map((part, index) => {
-                                            const path = pathParts.slice(0, index + 1).join('/') + '/';
-                                            const isLast = index === pathParts.length - 1;
-                                            return (
-                                                <Fragment key={path}>
-                                                    <BreadcrumbSeparator />
-                                                    <BreadcrumbItem>
-                                                        {isLast ? (
-                                                            <BreadcrumbPage>{part}</BreadcrumbPage>
-                                                        ) : (
-                                                            <BreadcrumbLink
-                                                                onClick={() => onNavigate(path)}
-                                                                className="cursor-pointer"
-                                                            >
-                                                                {part}
-                                                            </BreadcrumbLink>
-                                                        )}
-                                                    </BreadcrumbItem>
-                                                </Fragment>
-                                            );
-                                        })}
-                                    </AnimatePresence>
-                                ) : (
-                                    <>
-                                        <BreadcrumbSeparator />
-                                        <BreadcrumbItem>
-                                            <BreadcrumbLink
-                                                onClick={() => onNavigate(pathParts.slice(0, 1).join('/') + '/')}
-                                                className="cursor-pointer"
-                                            >
-                                                {pathParts[0]}
-                                            </BreadcrumbLink>
-                                        </BreadcrumbItem>
+                                <BreadcrumbSeparator />
+                                <BreadcrumbItem>
+                                    <BreadcrumbLink
+                                        onClick={() => onNavigate(pathParts.slice(0, 1).join('/') + '/')}
+                                        className="cursor-pointer"
+                                    >
+                                        {pathParts[0]}
+                                    </BreadcrumbLink>
+                                </BreadcrumbItem>
 
-                                        <BreadcrumbSeparator />
-                                        <BreadcrumbItem>
-                                            <DropdownMenu>
-                                                <DropdownMenuTrigger className="flex items-center gap-1 outline-none">
-                                                    <BreadcrumbEllipsis className="h-4 w-4" />
-                                                </DropdownMenuTrigger>
-                                                <DropdownMenuContent align="start" className="w-56 bg-zinc-900/95 backdrop-blur-xl border-white/10">
-                                                    {pathParts.slice(1, -1).map((part, index) => {
-                                                        const actualIndex = index + 1;
-                                                        const path = pathParts.slice(0, actualIndex + 1).join('/') + '/';
-                                                        return (
-                                                            <DropdownMenuItem
-                                                                key={path}
-                                                                onClick={() => onNavigate(path)}
-                                                                className="cursor-pointer hover:bg-white/10 focus:bg-white/10"
-                                                            >
-                                                                {part}
-                                                            </DropdownMenuItem>
-                                                        );
-                                                    })}
-                                                </DropdownMenuContent>
-                                            </DropdownMenu>
-                                        </BreadcrumbItem>
+                                <BreadcrumbSeparator />
+                                <BreadcrumbItem>
+                                    <DropdownMenu>
+                                        <DropdownMenuTrigger className="flex items-center gap-1 outline-none">
+                                            <BreadcrumbEllipsis className="h-4 w-4" />
+                                        </DropdownMenuTrigger>
+                                        <DropdownMenuContent align="start" className="w-56 bg-zinc-900/95 backdrop-blur-xl border-white/10">
+                                            {pathParts.slice(1, -1).map((part, index) => {
+                                                const actualIndex = index + 1;
+                                                const path = pathParts.slice(0, actualIndex + 1).join('/') + '/';
+                                                return (
+                                                    <DropdownMenuItem
+                                                        key={path}
+                                                        onClick={() => onNavigate(path)}
+                                                        className="cursor-pointer hover:bg-white/10 focus:bg-white/10"
+                                                    >
+                                                        {part}
+                                                    </DropdownMenuItem>
+                                                );
+                                            })}
+                                        </DropdownMenuContent>
+                                    </DropdownMenu>
+                                </BreadcrumbItem>
 
-                                        <BreadcrumbSeparator />
-                                        <BreadcrumbItem>
-                                            <BreadcrumbPage>{pathParts[pathParts.length - 1]}</BreadcrumbPage>
-                                        </BreadcrumbItem>
-                                    </>
-                                )}
+                                <BreadcrumbSeparator />
+                                <BreadcrumbItem>
+                                    <BreadcrumbPage>{pathParts[pathParts.length - 1]}</BreadcrumbPage>
+                                </BreadcrumbItem>
                             </>
                         )}
                     </BreadcrumbList>

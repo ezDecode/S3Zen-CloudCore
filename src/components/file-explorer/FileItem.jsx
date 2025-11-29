@@ -55,7 +55,7 @@ export const FileItem = memo(({
         e.preventDefault();
         e.stopPropagation();
         setIsDragOver(false);
-        
+
         // TODO: Handle file drop into folder
         // This will be implemented when folder upload is added
         console.log('Files dropped into folder:', item.name);
@@ -133,13 +133,12 @@ export const FileItem = memo(({
                 onDragOver={handleDragOver}
                 onDragLeave={handleDragLeave}
                 onDrop={handleDrop}
-                className={`group relative rounded-xl border transition-all duration-200 cursor-pointer ${
-                    isDragOver
+                className={`group relative rounded-xl border transition-all duration-200 cursor-pointer ${isDragOver
                         ? 'bg-blue-500/20 border-blue-500 shadow-[0_0_20px_rgba(59,130,246,0.3)]'
                         : isSelected
                             ? 'bg-blue-500/10 border-blue-500/50 shadow-[0_0_15px_rgba(59,130,246,0.15)]'
                             : 'bg-white/5 border-white/10 hover:bg-white/10 hover:border-white/20'
-                }`}
+                    }`}
                 onClick={() => isFolder ? onOpen(item) : onSelect(item)}
                 onDoubleClick={() => !isFolder && onPreview && onPreview(item)}
             >
@@ -263,7 +262,6 @@ export const FileItem = memo(({
     // List View
     return (
         <motion.div
-            whileHover={{ backgroundColor: 'rgba(255, 255, 255, 0.08)' }}
             animate={{
                 scale: isDragOver ? 1.02 : 1,
                 x: isDragOver ? 4 : 0
@@ -273,13 +271,12 @@ export const FileItem = memo(({
             onDragOver={handleDragOver}
             onDragLeave={handleDragLeave}
             onDrop={handleDrop}
-            className={`group relative grid grid-cols-12 gap-4 items-center px-4 py-3.5 rounded-lg border transition-all duration-200 cursor-pointer ${
-                isDragOver
+            className={`group relative grid grid-cols-12 gap-4 items-center px-4 py-3.5 rounded-lg border transition-all duration-200 cursor-pointer ${isDragOver
                     ? 'bg-blue-500/20 border-blue-500 shadow-[0_0_20px_rgba(59,130,246,0.3)]'
                     : isSelected
                         ? 'bg-blue-500/10 border-blue-500/50 shadow-[0_0_15px_rgba(59,130,246,0.15)]'
                         : 'bg-white/[0.02] border-white/[0.08] hover:border-white/20 hover:shadow-md'
-            }`}
+                }`}
             onClick={() => isFolder ? onOpen(item) : onSelect(item)}
             onDoubleClick={() => !isFolder && onPreview && onPreview(item)}
         >
@@ -312,12 +309,11 @@ export const FileItem = memo(({
                 </motion.div>
 
                 {/* Name */}
-                <span className={`truncate font-semibold text-sm transition-colors ${
-                    isDragOver ? 'text-blue-400' : 'text-white'
-                }`}>
+                <span className={`truncate font-semibold text-sm transition-colors ${isDragOver ? 'text-blue-400' : 'text-white'
+                    }`}>
                     {item.name}
                 </span>
-                
+
                 {/* Drop indicator text */}
                 <AnimatePresence>
                     {isDragOver && isFolder && (
