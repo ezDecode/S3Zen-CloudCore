@@ -178,6 +178,42 @@ export const FileItem = memo(({
                     )}
                 </AnimatePresence>
 
+                {/* Quick Action Buttons - Show on hover for files */}
+                <AnimatePresence>
+                    {!isFolder && isHovered && (
+                        <motion.div
+                            initial={{ opacity: 0, y: -10 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            exit={{ opacity: 0, y: -10 }}
+                            className="absolute top-2 left-2 right-2 z-20 flex items-center justify-center gap-1"
+                            onClick={(e) => e.stopPropagation()}
+                        >
+                            {onPreview && (
+                                <motion.button
+                                    whileHover={{ scale: 1.1 }}
+                                    whileTap={{ scale: 0.9 }}
+                                    onClick={() => onPreview(item)}
+                                    className="p-2 rounded-lg bg-blue-500/90 hover:bg-blue-600 text-white backdrop-blur-sm transition-colors shadow-lg"
+                                    title="Preview"
+                                >
+                                    <ViewIcon className="w-4 h-4" />
+                                </motion.button>
+                            )}
+                            {onDownload && (
+                                <motion.button
+                                    whileHover={{ scale: 1.1 }}
+                                    whileTap={{ scale: 0.9 }}
+                                    onClick={() => onDownload(item)}
+                                    className="p-2 rounded-lg bg-green-500/90 hover:bg-green-600 text-white backdrop-blur-sm transition-colors shadow-lg"
+                                    title="Download"
+                                >
+                                    <Download01Icon className="w-4 h-4" />
+                                </motion.button>
+                            )}
+                        </motion.div>
+                    )}
+                </AnimatePresence>
+
                 {/* Context Menu Button */}
                 <div className="absolute top-2 right-2 z-20" onClick={(e) => e.stopPropagation()}>
                     <DropdownMenu>
@@ -308,7 +344,43 @@ export const FileItem = memo(({
             </div>
 
             {/* Actions Column */}
-            <div className="col-span-4 sm:col-span-1 flex justify-end relative" onClick={(e) => e.stopPropagation()}>
+            <div className="col-span-4 sm:col-span-1 flex justify-end items-center gap-1 relative" onClick={(e) => e.stopPropagation()}>
+                {/* Quick Action Buttons for List View */}
+                <AnimatePresence>
+                    {!isFolder && isHovered && (
+                        <>
+                            {onPreview && (
+                                <motion.button
+                                    initial={{ opacity: 0, scale: 0.8 }}
+                                    animate={{ opacity: 1, scale: 1 }}
+                                    exit={{ opacity: 0, scale: 0.8 }}
+                                    whileHover={{ scale: 1.1 }}
+                                    whileTap={{ scale: 0.9 }}
+                                    onClick={() => onPreview(item)}
+                                    className="p-1.5 rounded-lg bg-blue-500/90 hover:bg-blue-600 text-white transition-colors shadow-lg"
+                                    title="Preview"
+                                >
+                                    <ViewIcon className="w-4 h-4" />
+                                </motion.button>
+                            )}
+                            {onDownload && (
+                                <motion.button
+                                    initial={{ opacity: 0, scale: 0.8 }}
+                                    animate={{ opacity: 1, scale: 1 }}
+                                    exit={{ opacity: 0, scale: 0.8 }}
+                                    whileHover={{ scale: 1.1 }}
+                                    whileTap={{ scale: 0.9 }}
+                                    onClick={() => onDownload(item)}
+                                    className="p-1.5 rounded-lg bg-green-500/90 hover:bg-green-600 text-white transition-colors shadow-lg"
+                                    title="Download"
+                                >
+                                    <Download01Icon className="w-4 h-4" />
+                                </motion.button>
+                            )}
+                        </>
+                    )}
+                </AnimatePresence>
+
                 <DropdownMenu>
                     <DropdownMenuTrigger asChild>
                         <button

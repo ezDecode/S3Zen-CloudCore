@@ -8,15 +8,17 @@
  * - Sonner Toaster for toast notifications
  */
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Hero } from './components/auth/Hero';
 import { AuthModal } from './components/auth/AuthModal';
 import { FileExplorer } from './components/file-explorer/FileExplorer';
-import { ShareModal, DeleteConfirmModal, CreateFolderModal, RenameModal, DetailsModal, SetupGuideModal } from './components/modals';
+import { ShareModal, DeleteConfirmModal, CreateFolderModal, RenameModal, DetailsModal, SetupGuideModal, PreviewModal } from './components/modals';
 import { useAuth } from './hooks/useAuth';
 import { useModals } from './hooks/useModals';
 import { useSessionTimeout } from './hooks/useSessionTimeout';
 import { Toaster } from './components/ui/sonner';
+import { initializePreviewService } from './services/previewService';
+import { downloadFile } from './services/aws/s3Service';
 
 /**
  * Main Application Content
@@ -35,6 +37,65 @@ function AppContent() {
 
   // Setup Guide Modal state
   const [showSetupGuide, setShowSetupGuide] = useState(false);
+
+  // Preview Modal state
+  const [previewState, setPreviewState] = useState({
+    item: null,
+    items: [],
+    currentIndex: -1
+  });
+
+  const handlePreviewModal = (item, allItems = []) => {
+    const previewableItems = allItems.filter(i => i.type === 'file');
+    const index = previewableItems.findIndex(i => i.key === item.key);
+    setPreviewState({
+      item,
+      items: previewableItems,
+      currentIndex: index
+    });
+  };
+
+  const closePreviewModal = () => {
+    setPreviewState({ item: null, items: [], currentIndex: -1 });
+  };
+
+  const nextPreviewFile = () => {
+    if (previewState.currentIndex < previewState.items.length - 1) {
+      const nextIndex = previewState.currentIndex + 1;
+      setPreviewState(prev => ({
+        ...prev,
+        item: prev.items[nextIndex],
+        currentIndex: nextIndex
+      }));
+    }
+  };
+
+  const previousPreviewFile = () => {
+    if (previewState.currentIndex > 0) {
+      const prevIndex = previewState.currentIndex - 1;
+      setPreviewState(prev => ({
+        ...prev,
+        item: prev.items[prevIndex],
+        currentIndex: prevIndex
+      }));
+    }
+  };
+
+  // Handle single file download from preview
+  const handleSingleDownload = async (item) => {
+    try {
+      await downloadFile(item);
+    } catch (error) {
+      console.error('Download failed:', error);
+    }
+  };
+
+  // Initialize preview service with S3 client getters
+  useEffect(() => {
+    import('./services/aws/s3Service').then(module => {
+      initializePreviewService(module.getS3Client, module.getCurrentBucket);
+    });
+  }, []);
 
   // Modal state and handlers
   const {
@@ -87,6 +148,7 @@ function AppContent() {
           onDeleteModal={handleDeleteModal}
           onCreateFolderModal={handleCreateFolderModal}
           onRenameModal={handleRenameModal}
+          onPreviewModal={handlePreviewModal}
           onDetailsModal={handleDetailsModal}
           onShowSetupGuide={() => setShowSetupGuide(true)}
         />
@@ -138,6 +200,21 @@ function AppContent() {
       <SetupGuideModal
         isOpen={showSetupGuide}
         onClose={() => setShowSetupGuide(false)}
+      />
+
+      {/* Preview Modal */}
+      <PreviewModal
+        item={previewState.item}
+        isOpen={!!previewState.item}
+        onClose={closePreviewModal}
+        onDownload={handleSingleDownload}
+        onShare={handleShareModal}
+        hasNext={previewState.currentIndex < previewState.items.length - 1}
+        hasPrevious={previewState.currentIndex > 0}
+        onNext={nextPreviewFile}
+        onPrevious={previousPreviewFile}
+        currentIndex={previewState.currentIndex}
+        totalFiles={previewState.items.length}
       />
 
       {/* Toaster for notifications */}

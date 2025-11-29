@@ -64,6 +64,13 @@ export default defineConfig({
             'tailwind-merge',
             'class-variance-authority',
           ],
+
+          // Preview/Syntax highlighting libraries
+          'preview': [
+            'react-markdown',
+            'remark-gfm',
+            'react-syntax-highlighter',
+          ],
         },
       },
     },

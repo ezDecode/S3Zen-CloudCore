@@ -115,7 +115,7 @@ export const FileExplorer = ({
         handleRename,
         handleRemoveDownload,
         handleClearDownloads
-    } = useFileOperations(currentPath, items, setItems, loadFiles);
+    } = useFileOperations(currentPath, items, setItems, loadFiles, handleNavigate);
 
     // Drag & Drop
     const {
@@ -253,7 +253,7 @@ export const FileExplorer = ({
                     onShare={onShareModal}
                     onRename={(item) => onRenameModal(item, handleRename)}
                     onDelete={(item) => handleDelete([item])}
-                    onPreview={onPreviewModal}
+                    onPreview={(item) => onPreviewModal(item, sortedItems)}
                     onDetails={onDetailsModal}
                     isLoading={isLoading}
                     viewMode={viewMode}

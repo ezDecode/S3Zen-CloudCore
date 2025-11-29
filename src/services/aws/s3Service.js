@@ -680,6 +680,11 @@ export const renameObject = async (oldKey, newName, isFolder = false) => {
 export const getCurrentBucket = () => currentBucket;
 
 /**
+ * Get S3 client (for preview service)
+ */
+export const getS3Client = () => s3Client;
+
+/**
  * Check if S3 client is initialized
  */
 export const isS3ClientInitialized = () => !!(s3Client && currentBucket);

@@ -15,14 +15,16 @@ import { buildS3Key } from '../../../utils/validationUtils';
 
 const LARGE_FILE_THRESHOLD = 100 * 1024 * 1024; // 100MB
 
-export const useFileOperations = (currentPath, items, setItems, loadFiles) => {
+export const useFileOperations = (currentPath, items, setItems, loadFiles, onNavigateToFolder) => {
     const [uploadingFiles, setUploadingFiles] = useState([]);
     const [downloads, setDownloads] = useState([]);
     const [duplicateFileInfo, setDuplicateFileInfo] = useState(null);
 
     // Upload single file
-    const uploadSingleFile = useCallback(async (file, fileName) => {
-        const key = buildS3Key(currentPath, fileName);
+    const uploadSingleFile = useCallback(async (file, fileName, originalCurrentPath) => {
+        // Use the original path when upload started, not the current path
+        const uploadBasePath = originalCurrentPath !== undefined ? originalCurrentPath : currentPath;
+        const key = buildS3Key(uploadBasePath, fileName);
         const uploadId = Date.now() + Math.random();
 
         setUploadingFiles(prev => [...prev, { 
@@ -44,14 +46,15 @@ export const useFileOperations = (currentPath, items, setItems, loadFiles) => {
                 : await uploadFile(file, key, onProgress);
 
             if (result.success) {
-                // Optimistic update - add to list immediately
-                const isNested = fileName.includes('/');
+                // Extract file info
                 const fileNameOnly = fileName.split('/').pop();
                 
-                // Check if file is in current folder view
+                // Determine which folder this file belongs to
                 const fileFolder = fileName.includes('/') 
-                    ? fileName.substring(0, fileName.lastIndexOf('/') + 1)
-                    : '';
+                    ? uploadBasePath + fileName.substring(0, fileName.lastIndexOf('/') + 1)
+                    : uploadBasePath;
+
+                // Check if file should appear in CURRENT view (after navigation)
                 const isInCurrentView = currentPath === fileFolder;
 
                 if (isInCurrentView) {
@@ -64,17 +67,19 @@ export const useFileOperations = (currentPath, items, setItems, loadFiles) => {
                     };
 
                     setItems(prev => {
+                        // Check if already exists
                         const existingIndex = prev.findIndex(item => item.key === key);
                         if (existingIndex !== -1) {
                             const newItems = [...prev];
                             newItems[existingIndex] = newItem;
                             return newItems;
                         }
+                        // Add new item
                         return [...prev, newItem];
                     });
                 }
                 
-                // Show toast only for completed files
+                // Show toast for completed files
                 toast.success(`✓ ${fileNameOnly}`, { duration: 2000 });
             } else {
                 toast.error(`Failed: ${fileName}`);
@@ -82,7 +87,7 @@ export const useFileOperations = (currentPath, items, setItems, loadFiles) => {
         } catch (error) {
             toast.error(`Error: ${fileName}`);
         } finally {
-            // Remove from uploading list after a short delay to show completion
+            // Remove from uploading list after showing completion
             setTimeout(() => {
                 setUploadingFiles(prev => prev.filter(f => f.id !== uploadId));
             }, 1000);
@@ -129,11 +134,29 @@ export const useFileOperations = (currentPath, items, setItems, loadFiles) => {
         // Check if uploading a folder (multiple files with paths)
         const isUploadingFolder = uploadQueue.some(({ fileName }) => fileName.includes('/'));
         
+        // Store the original path before navigation
+        const originalPath = currentPath;
+        
+        // If uploading a folder, navigate into the first folder
+        if (isUploadingFolder && onNavigateToFolder) {
+            // Get the root folder name from the first file
+            const firstFile = uploadQueue[0].fileName;
+            const rootFolderName = firstFile.split('/')[0];
+            const targetFolderPath = currentPath + rootFolderName + '/';
+            
+            // Navigate to the folder
+            onNavigateToFolder(targetFolderPath);
+            
+            // Wait a bit for navigation to complete
+            await new Promise(resolve => setTimeout(resolve, 100));
+        }
+        
         // Process uploads in parallel batches
+        // Pass originalPath so files are uploaded to correct location
         for (let i = 0; i < uploadQueue.length; i += MAX_CONCURRENT_UPLOADS) {
             const batch = uploadQueue.slice(i, i + MAX_CONCURRENT_UPLOADS);
             await Promise.all(batch.map(({ file, fileName }) =>
-                uploadSingleFile(file, fileName)
+                uploadSingleFile(file, fileName, originalPath)
             ));
         }
 
@@ -145,7 +168,7 @@ export const useFileOperations = (currentPath, items, setItems, loadFiles) => {
             return fileFolder !== currentPath;
         });
 
-        if (needsRefresh) {
+        if (needsRefresh && !isUploadingFolder) {
             await loadFiles(true);
         }
     }, [items, uploadSingleFile, loadFiles]);
