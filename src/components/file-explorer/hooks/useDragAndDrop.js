@@ -25,6 +25,7 @@ export const useDragAndDrop = (processUploads) => {
         const files = [];
         const queue = [];
 
+        // Initial queue population
         for (let i = 0; i < items.length; i++) {
             const item = items[i];
             if (item.kind === 'file') {
@@ -33,43 +34,61 @@ export const useDragAndDrop = (processUploads) => {
             }
         }
 
+        // OPTIMIZED: Process entries in parallel batches instead of sequentially
+        const MAX_CONCURRENT_READS = 10; // Process 10 entries at once
+        
         while (queue.length > 0) {
-            const entry = queue.shift();
-            if (entry.isFile) {
-                try {
-                    const file = await new Promise((resolve, reject) => {
-                        entry.file(resolve, reject);
-                    });
-                    const path = entry.fullPath.startsWith('/') 
-                        ? entry.fullPath.slice(1) 
-                        : entry.fullPath;
-                    files.push({ file, path });
-                } catch (err) {
-                    console.error('Error reading file entry:', err);
-                }
-            } else if (entry.isDirectory) {
-                try {
-                    const reader = entry.createReader();
-                    const readAllEntries = async () => {
-                        let allEntries = [];
-                        let done = false;
-                        while (!done) {
-                            const entries = await new Promise((resolve, reject) => {
-                                reader.readEntries(resolve, reject);
-                            });
-                            if (entries.length === 0) {
-                                done = true;
-                            } else {
-                                allEntries = [...allEntries, ...entries];
+            const batch = queue.splice(0, MAX_CONCURRENT_READS);
+            
+            const batchResults = await Promise.all(batch.map(async (entry) => {
+                if (entry.isFile) {
+                    try {
+                        const file = await new Promise((resolve, reject) => {
+                            entry.file(resolve, reject);
+                        });
+                        const path = entry.fullPath.startsWith('/') 
+                            ? entry.fullPath.slice(1) 
+                            : entry.fullPath;
+                        return { type: 'file', data: { file, path } };
+                    } catch (err) {
+                        console.error('Error reading file entry:', err);
+                        return { type: 'error' };
+                    }
+                } else if (entry.isDirectory) {
+                    try {
+                        const reader = entry.createReader();
+                        const readAllEntries = async () => {
+                            let allEntries = [];
+                            let done = false;
+                            while (!done) {
+                                const entries = await new Promise((resolve, reject) => {
+                                    reader.readEntries(resolve, reject);
+                                });
+                                if (entries.length === 0) {
+                                    done = true;
+                                } else {
+                                    allEntries = [...allEntries, ...entries];
+                                }
                             }
-                        }
-                        return allEntries;
-                    };
+                            return allEntries;
+                        };
 
-                    const entries = await readAllEntries();
-                    queue.push(...entries);
-                } catch (err) {
-                    console.error('Error reading directory entry:', err);
+                        const entries = await readAllEntries();
+                        return { type: 'directory', data: entries };
+                    } catch (err) {
+                        console.error('Error reading directory entry:', err);
+                        return { type: 'error' };
+                    }
+                }
+                return { type: 'error' };
+            }));
+            
+            // Process batch results
+            for (const result of batchResults) {
+                if (result.type === 'file') {
+                    files.push(result.data);
+                } else if (result.type === 'directory') {
+                    queue.push(...result.data);
                 }
             }
         }

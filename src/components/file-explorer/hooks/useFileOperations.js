@@ -98,7 +98,9 @@ export const useFileOperations = (currentPath, items, setItems, loadFiles, onNav
     const processUploads = useCallback(async (files) => {
         if (files.length === 0) return;
 
-        const MAX_CONCURRENT_UPLOADS = 3;
+        // OPTIMIZED: Increased from 3 to 6 for better throughput
+        // Modern browsers support 6-8 concurrent connections per domain
+        const MAX_CONCURRENT_UPLOADS = 6;
         const uploadQueue = [];
 
         for (const item of files) {
