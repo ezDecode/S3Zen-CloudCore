@@ -441,7 +441,7 @@ export const deleteObjects = async (keys) => {
 
 /**
  * Delete multiple items (files and folders) recursively
- * Handles folder content deletion
+ * OPTIMIZED: Parallel listing and batched deletion
  */
 export const deleteItems = async (items) => {
     if (!s3Client || !currentBucket) {
@@ -449,17 +449,17 @@ export const deleteItems = async (items) => {
     }
 
     try {
-        let allKeysToDelete = [];
-
-        for (const item of items) {
+        // OPTIMIZATION: Process all items in parallel
+        const listPromises = items.map(async (item) => {
             if (item.type === 'folder') {
-                // List all objects in the folder recursively (no delimiter)
+                const keys = [];
                 let continuationToken = null;
+                
                 do {
                     const command = new ListObjectsV2Command({
                         Bucket: currentBucket,
                         Prefix: item.key,
-                        // No Delimiter means recursive list
+                        MaxKeys: 1000, // Max per request
                     });
 
                     if (continuationToken) {
@@ -469,20 +469,22 @@ export const deleteItems = async (items) => {
                     const response = await s3Client.send(command);
 
                     if (response.Contents) {
-                        response.Contents.forEach(obj => {
-                            allKeysToDelete.push(obj.Key);
-                        });
+                        keys.push(...response.Contents.map(obj => obj.Key));
                     }
 
                     continuationToken = response.NextContinuationToken;
                 } while (continuationToken);
 
-                // Also ensure the folder key itself is included (though usually it's in Contents if it was created as a 0-byte object)
-                allKeysToDelete.push(item.key);
+                keys.push(item.key); // Include folder marker
+                return keys;
             } else {
-                allKeysToDelete.push(item.key);
+                return [item.key];
             }
-        }
+        });
+
+        // Wait for all listings to complete
+        const allKeyArrays = await Promise.all(listPromises);
+        let allKeysToDelete = allKeyArrays.flat();
 
         // Remove duplicates
         allKeysToDelete = [...new Set(allKeysToDelete)];
@@ -491,17 +493,16 @@ export const deleteItems = async (items) => {
             return { success: true };
         }
 
-        // Delete in batches of 1000
-        const batchSize = 1000;
-        for (let i = 0; i < allKeysToDelete.length; i += batchSize) {
-            const batch = allKeysToDelete.slice(i, i + batchSize);
-            // We can reuse deleteObjects but it does validation which might be slow for 1000s of items
-            // But for safety let's use the raw command or call deleteObjects?
-            // deleteObjects calls sanitizeS3Path and validateKey. 
-            // Since these keys come from S3 list, they should be valid, but validation doesn't hurt.
-            // However, deleteObjects takes an array of strings.
-            await deleteObjects(batch);
+        // OPTIMIZATION: Delete all batches in parallel
+        const BATCH_SIZE = 1000;
+        const deletePromises = [];
+        
+        for (let i = 0; i < allKeysToDelete.length; i += BATCH_SIZE) {
+            const batch = allKeysToDelete.slice(i, i + BATCH_SIZE);
+            deletePromises.push(deleteObjects(batch));
         }
+        
+        await Promise.all(deletePromises);
 
         return { success: true };
     } catch (error) {

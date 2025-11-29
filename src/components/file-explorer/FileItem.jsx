@@ -1,11 +1,12 @@
 /**
  * FileItem Component
  * Complete UI Redesign - Modern Card & Row Design
+ * OPTIMIZED: Memoized to prevent unnecessary re-renders
  */
 
 import { motion, AnimatePresence } from 'framer-motion';
 import { MoreVerticalIcon, Download01Icon, Share01Icon, Delete02Icon, Edit02Icon, ViewIcon, Tick02Icon, InformationCircleIcon } from 'hugeicons-react';
-import { useState } from 'react';
+import { useState, memo, useCallback } from 'react';
 import { FileIcon } from './FileIcon';
 import { formatFileSize, formatDate, formatExactDateTime } from '../../utils/formatters';
 import {
@@ -16,7 +17,8 @@ import {
     DropdownMenuTrigger,
 } from "../ui/dropdown-menu";
 
-export const FileItem = ({
+// OPTIMIZED: Memoize FileItem to prevent re-renders when props don't change
+export const FileItem = memo(({
     item,
     isSelected,
     onSelect,
@@ -322,4 +324,12 @@ export const FileItem = ({
             </div>
         </motion.div>
     );
-};
+}, (prevProps, nextProps) => {
+    // Custom comparison for better performance
+    return (
+        prevProps.item.key === nextProps.item.key &&
+        prevProps.isSelected === nextProps.isSelected &&
+        prevProps.viewMode === nextProps.viewMode &&
+        prevProps.item.lastModified === nextProps.item.lastModified
+    );
+});

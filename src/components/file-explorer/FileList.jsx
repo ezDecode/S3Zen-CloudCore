@@ -8,7 +8,10 @@ import { FileItem } from './FileItem';
 import { FolderOpenIcon, SparklesIcon, ArrowUp01Icon, ArrowDown01Icon } from 'hugeicons-react';
 import { FileListSkeleton } from '../common/SkeletonLoader';
 
-export const FileList = ({
+import { memo, useMemo } from 'react';
+
+// OPTIMIZED: Memoize FileList to prevent unnecessary re-renders
+export const FileList = memo(({
     items,
     selectedItems,
     onSelectItem,
@@ -25,6 +28,11 @@ export const FileList = ({
     sortOrder,
     onSort
 }) => {
+    // OPTIMIZED: Create a Set for O(1) lookup instead of array.some() for each item
+    const selectedKeys = useMemo(() => 
+        new Set(selectedItems.map(item => item.key)), 
+        [selectedItems]
+    );
     if (isLoading) {
         return <FileListSkeleton viewMode={viewMode} count={16} />;
     }
@@ -101,11 +109,14 @@ export const FileList = ({
                                 initial={{ opacity: 0, scale: 0.9 }}
                                 animate={{ opacity: 1, scale: 1 }}
                                 exit={{ opacity: 0, scale: 0.9 }}
-                                transition={{ delay: index * 0.01, duration: 0.2 }}
+                                transition={{ 
+                                    delay: Math.min(index * 0.01, 0.3), // Cap delay at 300ms
+                                    duration: 0.15 
+                                }}
                             >
                                 <FileItem
                                     item={item}
-                                    isSelected={selectedItems.some(selected => selected.key === item.key)}
+                                    isSelected={selectedKeys.has(item.key)}
                                     onSelect={onSelectItem}
                                     onOpen={onOpenFolder}
                                     onDownload={onDownload}
@@ -153,11 +164,14 @@ export const FileList = ({
                                 initial={{ opacity: 0, x: -10 }}
                                 animate={{ opacity: 1, x: 0 }}
                                 exit={{ opacity: 0, x: -10 }}
-                                transition={{ delay: index * 0.01, duration: 0.15 }}
+                                transition={{ 
+                                    delay: Math.min(index * 0.01, 0.3), // Cap delay at 300ms
+                                    duration: 0.15 
+                                }}
                             >
                                 <FileItem
                                     item={item}
-                                    isSelected={selectedItems.some(selected => selected.key === item.key)}
+                                    isSelected={selectedKeys.has(item.key)}
                                     onSelect={onSelectItem}
                                     onOpen={onOpenFolder}
                                     onDownload={onDownload}
@@ -175,4 +189,4 @@ export const FileList = ({
             )}
         </div>
     );
-};
+});
