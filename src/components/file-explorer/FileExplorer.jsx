@@ -37,8 +37,7 @@ export const FileExplorer = ({
     onDeleteModal,
     onPreviewModal,
     onCreateFolderModal,
-    onDetailsModal,
-    onShowSetupGuide
+    onDetailsModal
 }) => {
     const [items, setItems] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
@@ -214,7 +213,6 @@ export const FileExplorer = ({
                 onSearchChange={setSearchQuery}
                 onNavigate={handleNavigate}
                 onRefresh={loadFiles}
-                onShowSetupGuide={onShowSetupGuide}
                 onLogout={handleLogout}
             />
 

@@ -12,7 +12,7 @@ import { useState, useEffect } from 'react';
 import { LandingPage } from './components/auth/LandingPage';
 import { AuthModal } from './components/auth/AuthModal';
 import { FileExplorer } from './components/file-explorer/FileExplorer';
-import { ShareModal, DeleteConfirmModal, CreateFolderModal, RenameModal, DetailsModal, SetupGuideModal, PreviewModal } from './components/modals';
+import { ShareModal, DeleteConfirmModal, CreateFolderModal, RenameModal, DetailsModal, PreviewModal } from './components/modals';
 import { useAuth } from './hooks/useAuth';
 import { useModals } from './hooks/useModals';
 import { useSessionTimeout } from './hooks/useSessionTimeout';
@@ -34,9 +34,6 @@ function AppContent() {
     handleLogout,
     handleGetStarted
   } = useAuth();
-
-  // Setup Guide Modal state
-  const [showSetupGuide, setShowSetupGuide] = useState(false);
 
   // Preview Modal state
   const [previewState, setPreviewState] = useState({
@@ -133,7 +130,6 @@ function AppContent() {
         <>
           <LandingPage
             onGetStarted={handleGetStarted}
-            onShowSetupGuide={() => setShowSetupGuide(true)}
           />
           <AuthModal
             isOpen={showAuthModal}
@@ -150,7 +146,6 @@ function AppContent() {
           onRenameModal={handleRenameModal}
           onPreviewModal={handlePreviewModal}
           onDetailsModal={handleDetailsModal}
-          onShowSetupGuide={() => setShowSetupGuide(true)}
         />
       )}
 
@@ -194,12 +189,6 @@ function AppContent() {
         isOpen={!!detailsModalItem}
         onClose={closeDetailsModal}
         item={detailsModalItem}
-      />
-
-      {/* Setup Guide Modal */}
-      <SetupGuideModal
-        isOpen={showSetupGuide}
-        onClose={() => setShowSetupGuide(false)}
       />
 
       {/* Preview Modal */}

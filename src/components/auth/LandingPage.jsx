@@ -1,5 +1,6 @@
 import { Hero } from './Hero';
 import { FeaturesSection } from './sections/FeaturesSection';
+import { FAQSection } from './sections/FAQSection';
 import { HowItWorksSection } from './sections/HowItWorksSection';
 import { CTASection } from './sections/CTASection';
 
@@ -16,14 +17,17 @@ import { CTASection } from './sections/CTASection';
  * 5. Footer: Brand touchpoint, attribution (close)
  */
 
-export const LandingPage = ({ onGetStarted, onShowSetupGuide }) => {
+export const LandingPage = ({ onGetStarted }) => {
     return (
         <div className="w-full min-h-screen bg-black">
             {/* Hero Section */}
-            <Hero onGetStarted={onGetStarted} onShowSetupGuide={onShowSetupGuide} />
+            <Hero onGetStarted={onGetStarted} />
 
             {/* Features Section */}
             <FeaturesSection />
+
+            {/* FAQ Section */}
+            <FAQSection />
 
             {/* How It Works Section */}
             <HowItWorksSection />

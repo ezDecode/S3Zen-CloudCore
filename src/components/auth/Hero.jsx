@@ -2,12 +2,19 @@
 import { motion } from 'framer-motion';
 import { ArrowRight01Icon, Github01Icon, ZapIcon, Shield01Icon, CloudIcon, Book02Icon } from 'hugeicons-react';
 
-export const Hero = ({ onGetStarted, onShowSetupGuide }) => {
+export const Hero = ({ onGetStarted }) => {
   const features = [
     { icon: ZapIcon, label: 'Lightning Fast' },
     { icon: Shield01Icon, label: '100% Secure' },
     { icon: CloudIcon, label: 'Zero Config' },
   ];
+
+  const scrollToSetupGuide = () => {
+    const faqSection = document.getElementById('setup-guide');
+    if (faqSection) {
+      faqSection.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
 
   return (
     <div className="hero-page-wrapper relative flex flex-col items-center justify-center w-full h-screen overflow-hidden bg-black">
@@ -130,7 +137,7 @@ export const Hero = ({ onGetStarted, onShowSetupGuide }) => {
           <div className="flex items-stretch gap-3 sm:gap-4">
             {/* Setup Guide Button */}
             <button
-              onClick={onShowSetupGuide}
+              onClick={scrollToSetupGuide}
               className="flex-1 sm:flex-none text-white bg-white/6 backdrop-blur-md border border-white/12 rounded-xl hover:bg-white/10 hover:border-white/18 transition-all duration-150 flex items-center justify-center px-4 sm:px-6 py-4 sm:py-4.5 active:scale-[0.99] touch-target-lg focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white/50"
               aria-label="View AWS setup guide"
             >

@@ -9,7 +9,6 @@ import {
     Search01Icon,
     Loading03Icon,
     Home01Icon,
-    Book02Icon,
     Logout01Icon
 } from 'hugeicons-react';
 import {
@@ -34,7 +33,6 @@ export const FileExplorerNav = ({
     onSearchChange,
     onNavigate,
     onRefresh,
-    onShowSetupGuide,
     onLogout
 }) => {
     const pathParts = currentPath.split('/').filter(Boolean);
@@ -153,15 +151,6 @@ export const FileExplorerNav = ({
                     title="Refresh"
                 >
                     <Loading03Icon className="w-4.5 h-4.5" />
-                </button>
-
-                {/* Premium Setup Guide */}
-                <button
-                    onClick={onShowSetupGuide}
-                    className="p-1.5 sm:p-2 rounded-lg text-white/40 hover:text-white/70 hover:bg-white/[0.04] transition-all duration-150 shrink-0 active:scale-95"
-                    title="Setup Guide"
-                >
-                    <Book02Icon className="w-4 sm:w-4.5 h-4 sm:h-4.5" />
                 </button>
 
                 {/* Premium Logout */}
