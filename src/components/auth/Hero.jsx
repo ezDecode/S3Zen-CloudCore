@@ -28,10 +28,7 @@ export const Hero = ({ onGetStarted, onShowSetupGuide }) => {
             className="inline-flex items-center gap-2 px-4 py-2 bg-white/5 backdrop-blur-sm border border-white/10 rounded-full mb-6 sm:mb-8 md:mb-10"
           >
             <span className="w-2 h-2 bg-green-500 rounded-full" aria-hidden="true" />
-            <span 
-              className="text-xs sm:text-sm font-bold text-white/80"
-              style={{ fontFamily: 'Watson, sans-serif' }}
-            >
+            <span className="text-xs sm:text-sm font-medium text-white/80">
               v2.0 Now Available
             </span>
           </motion.div>
@@ -41,10 +38,9 @@ export const Hero = ({ onGetStarted, onShowSetupGuide }) => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
-            className="font-bold mb-4 sm:mb-6 md:mb-8"
-            style={{ 
-              fontFamily: 'Watson, sans-serif', 
-              fontSize: 'clamp(3rem, 10vw + 1rem, 11rem)', 
+            className="font-regular mb-4 sm:mb-6 md:mb-8"
+            style={{
+              fontSize: 'clamp(3rem, 10vw + 1rem, 11rem)',
               lineHeight: '0.95',
               letterSpacing: '-0.02em'
             }}
@@ -58,9 +54,8 @@ export const Hero = ({ onGetStarted, onShowSetupGuide }) => {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.6, delay: 0.1 }}
-            className="font-medium text-white/90 mb-3 sm:mb-4"
-            style={{ 
-              fontFamily: 'Watson, sans-serif', 
+            className="font-regular text-white/90 mb-3 sm:mb-4"
+            style={{
               fontSize: 'clamp(1.3rem, 2.5vw + 0.5rem, 2.5rem)'
             }}
           >
@@ -72,11 +67,10 @@ export const Hero = ({ onGetStarted, onShowSetupGuide }) => {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.6, delay: 0.2 }}
-            className="w-full max-w-2xl mx-auto text-white/80 mb-8 sm:mb-10 md:mb-12 leading-relaxed font-medium"
-            style={{ 
-              fontFamily: 'Watson, sans-serif', 
+            className="w-full max-w-2xl mx-auto text-white/80 mb-8 sm:mb-10 md:mb-12 leading-normal"
+            style={{
               fontSize: 'clamp(1.15rem, 1.8vw + 0.4rem, 1.6rem)',
-              fontWeight: '500'
+              fontWeight: '400'
             }}
           >
             The most beautiful way to manage your S3 buckets. Lightning-fast uploads, intuitive organization, and enterprise-grade security.
@@ -97,11 +91,10 @@ export const Hero = ({ onGetStarted, onShowSetupGuide }) => {
               key={index}
               role="listitem"
               className="flex items-center gap-2 bg-white/5 border border-white/10 rounded-full px-4 py-2"
-              style={{ fontFamily: 'Watson, sans-serif' }}
             >
               <feature.icon className="w-4 h-4 text-purple-400" aria-hidden="true" />
-              <span 
-                className="font-medium text-white/80" 
+              <span
+                className="font-medium text-white/80"
                 style={{ fontSize: 'clamp(0.95rem, 1.2vw + 0.2rem, 1.1rem)' }}
               >
                 {feature.label}
@@ -120,10 +113,9 @@ export const Hero = ({ onGetStarted, onShowSetupGuide }) => {
           {/* Get Started Button */}
           <button
             onClick={onGetStarted}
-            className="group font-semibold text-white rounded-xl bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 transition-all shadow-lg hover:shadow-purple-500/30 flex items-center justify-center flex-1 px-6 sm:px-8 py-3.5 sm:py-4"
+            className="group font-regular text-white rounded-xl bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 transition-all shadow-lg hover:shadow-purple-500/30 flex items-center justify-center flex-1 px-6 sm:px-8 py-3.5 sm:py-4"
             aria-label="Get started with CloudCore"
-            style={{ 
-              fontFamily: 'Watson, sans-serif', 
+            style={{
               fontSize: 'clamp(1rem, 1.5vw + 0.2rem, 1.15rem)',
               gap: '0.5rem',
               maxWidth: '280px'
@@ -136,10 +128,9 @@ export const Hero = ({ onGetStarted, onShowSetupGuide }) => {
           {/* Setup Guide Button */}
           <button
             onClick={onShowSetupGuide}
-            className="font-semibold text-white bg-white/10 backdrop-blur-sm border border-white/20 rounded-xl hover:bg-white/20 transition-all flex items-center justify-center px-5 sm:px-8 py-3.5 sm:py-4"
+            className="font-regular text-white bg-white/10 backdrop-blur-sm border border-white/20 rounded-xl hover:bg-white/20 transition-all flex items-center justify-center px-5 sm:px-8 py-3.5 sm:py-4"
             aria-label="View AWS setup guide"
-            style={{ 
-              fontFamily: 'Watson, sans-serif', 
+            style={{
               fontSize: 'clamp(1rem, 1.5vw + 0.2rem, 1.15rem)',
               gap: '0.5rem',
               minWidth: 'auto'
@@ -154,10 +145,9 @@ export const Hero = ({ onGetStarted, onShowSetupGuide }) => {
             href="https://github.com/ezDecode/S3Zen-CloudCore"
             target="_blank"
             rel="noopener noreferrer"
-            className="font-semibold text-white bg-white/10 backdrop-blur-sm border border-white/20 rounded-xl hover:bg-white/20 transition-all flex items-center justify-center px-5 sm:px-8 py-3.5 sm:py-4"
+            className="font-regular text-white bg-white/10 backdrop-blur-sm border border-white/20 rounded-xl hover:bg-white/20 transition-all flex items-center justify-center px-5 sm:px-8 py-3.5 sm:py-4"
             aria-label="Star CloudCore on GitHub"
-            style={{ 
-              fontFamily: 'Watson, sans-serif', 
+            style={{
               fontSize: 'clamp(1rem, 1.5vw + 0.2rem, 1.15rem)',
               gap: '0.5rem',
               minWidth: 'auto'
@@ -170,10 +160,9 @@ export const Hero = ({ onGetStarted, onShowSetupGuide }) => {
       </main>
 
       <footer className="absolute bottom-4 sm:bottom-6 left-0 right-0 text-center z-10 px-4">
-        <p 
-          className="text-white/30 font-medium tracking-wider" 
-          style={{ 
-            fontFamily: 'Watson, sans-serif', 
+        <p
+          className="text-white/30 font-medium tracking-wider"
+          style={{
             fontSize: 'clamp(0.9rem, 1.2vw + 0.2rem, 1.05rem)'
           }}
         >
