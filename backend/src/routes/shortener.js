@@ -93,6 +93,12 @@ router.get('/s/:code', (req, res) => {
             return res.status(404).send('Short URL not found');
         }
 
+        // Security: Re-validate URL before redirect to prevent open redirect
+        if (!isSafeUrl(row.url)) {
+            console.warn(`⚠️ Blocked unsafe redirect for ${code}`);
+            return res.status(403).send('URL no longer valid');
+        }
+
         console.log(`🔗 Redirecting ${code} to ${row.url.substring(0, 50)}...`);
         // Redirect to the original URL
         res.redirect(302, row.url);

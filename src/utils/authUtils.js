@@ -30,7 +30,7 @@ const STORAGE_KEYS = {
     BUCKET_INFO: 'cc_bucket_info', // Non-sensitive bucket metadata
 };
 
-const SESSION_TIMEOUT_MS = 7 * 24 * 60 * 60 * 1000; // 7 days instead of 30 minutes
+const SESSION_TIMEOUT_MS = 24 * 60 * 60 * 1000; // 24 hours for better security
 
 // In-memory credential cache (encrypted)
 let credentialCache = null;

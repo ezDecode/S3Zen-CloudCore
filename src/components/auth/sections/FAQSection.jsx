@@ -215,7 +215,7 @@ export const FAQSection = () => {
                         Setup Guide
                     </span>
                     <h2 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-normal text-white mb-4 sm:mb-6 tracking-tight">
-                        AWS <span className="text-white/40">Configuration</span>
+                        The boring <span className="text-white/40">AWS stuff</span>
                     </h2>
                     <p className="text-lg sm:text-xl lg:text-2xl text-white/50 max-w-2xl mx-auto">
                         Follow these steps to set up your AWS credentials and start managing your S3 buckets

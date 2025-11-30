@@ -40,14 +40,14 @@ export const CTASection = ({ onGetStarted }) => {
 
                     {/* Headline */}
                     <h2 className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-normal text-white mb-6 sm:mb-8 tracking-tight leading-[1.1]">
-                        Start managing S3
+                        Still here?
                         <br />
-                        <span className="text-white/40">like a professional</span>
+                        <span className="text-white/40">Let's do this</span>
                     </h2>
 
                     {/* Subheadline */}
                     <p className="text-lg sm:text-xl lg:text-2xl text-white/50 mb-10 sm:mb-12 lg:mb-14 max-w-2xl mx-auto leading-relaxed">
-                        Join teams who upgraded from clunky AWS Console to CloudCore's intuitive interface.
+                        Join the cool kids who ditched the AWS Console. Your future self will thank you.
                     </p>
 
                     {/* CTA Group */}
@@ -81,19 +81,19 @@ export const CTASection = ({ onGetStarted }) => {
                     <div className="flex flex-wrap items-center justify-center gap-x-8 gap-y-4 text-sm text-white/40">
                         <div className="flex items-center gap-2.5">
                             <span className="w-2 h-2 bg-emerald-400/80 rounded-full" />
-                            <span>Free & Open Source</span>
+                            <span>100% Free Forever</span>
                         </div>
                         <div className="flex items-center gap-2.5">
                             <span className="w-2 h-2 bg-emerald-400/80 rounded-full" />
-                            <span>No Credit Card</span>
+                            <span>No Account Needed</span>
                         </div>
                         <div className="flex items-center gap-2.5">
                             <span className="w-2 h-2 bg-emerald-400/80 rounded-full" />
-                            <span>MIT License</span>
+                            <span>Open Source</span>
                         </div>
                         <div className="flex items-center gap-2.5">
                             <span className="w-2 h-2 bg-emerald-400/80 rounded-full" />
-                            <span>Works Offline</span>
+                            <span>Works Offline Too</span>
                         </div>
                     </div>
                 </motion.div>

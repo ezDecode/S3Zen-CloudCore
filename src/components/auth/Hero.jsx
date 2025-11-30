@@ -50,7 +50,7 @@ export const Hero = ({ onGetStarted }) => {
               fontSize: 'clamp(3rem, 10vw + 1rem, 11rem)',
               lineHeight: '0.95',
               letterSpacing: '-0.03em',
-              fontWeight: '600'
+              fontWeight: '400'
             }}
           >
             <span className="text-white">Cloud</span>
@@ -68,7 +68,7 @@ export const Hero = ({ onGetStarted }) => {
               fontWeight: '500'
             }}
           >
-            Premium AWS S3 Management
+            S3 management that doesn't suck
           </motion.p>
 
           {/* Premium Description */}
@@ -83,7 +83,7 @@ export const Hero = ({ onGetStarted }) => {
               letterSpacing: '-0.01em'
             }}
           >
-            The most beautiful way to manage your S3 buckets. Lightning-fast uploads, intuitive organization, and enterprise-grade security.
+            Because life's too short for the AWS Console. Fast uploads, drag-and-drop magic, and your secrets stay secret.
           </motion.p>
         </header>
 
@@ -121,29 +121,29 @@ export const Hero = ({ onGetStarted }) => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.7, delay: 0.5, ease: [0.4, 0, 0.2, 1] }}
-          className="flex flex-col sm:flex-row items-stretch sm:items-center justify-center w-full max-w-3xl gap-3 sm:gap-4 px-4"
+          className="flex flex-col sm:flex-row items-stretch sm:items-center justify-center w-full max-w-3xl gap-3 px-4"
         >
-          {/* Mobile-First Get Started Button - High Contrast */}
+          {/* Get Started Button */}
           <button
             onClick={onGetStarted}
-            className="group w-full sm:w-auto text-black rounded-xl bg-white hover:bg-gray-100 transition-all duration-150 shadow-lg flex items-center justify-center px-6 sm:px-8 py-4 sm:py-4.5 active:scale-[0.99] touch-target-lg focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white/80"
+            className="group w-full sm:w-auto text-black rounded-xl bg-white hover:bg-gray-100 transition-all duration-150 shadow-lg flex items-center justify-center px-5 sm:px-6 py-3 sm:py-3.5 active:scale-[0.99] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white/80"
             aria-label="Get started with CloudCore"
           >
-            <span className="text-sm sm:text-base font-semibold whitespace-nowrap">Get Started</span>
-            <ArrowRight01Icon className="w-4 h-4 sm:w-5 sm:h-5 ml-2 transition-transform duration-200 group-hover:translate-x-0.5" aria-hidden="true" />
+            <span className="text-sm font-semibold whitespace-nowrap">Get Started</span>
+            <ArrowRight01Icon className="w-4 h-4 ml-2 transition-transform duration-200 group-hover:translate-x-0.5" aria-hidden="true" />
           </button>
 
-          {/* Mobile-First Icon Buttons Container */}
-          <div className="flex items-stretch gap-3 sm:gap-4">
+          {/* Icon Buttons Container */}
+          <div className="flex items-stretch gap-3">
             {/* Setup Guide Button */}
             <button
               onClick={scrollToSetupGuide}
-              className="flex-1 sm:flex-none text-white bg-white/6 backdrop-blur-md border border-white/12 rounded-xl hover:bg-white/10 hover:border-white/18 transition-all duration-150 flex items-center justify-center px-4 sm:px-6 py-4 sm:py-4.5 active:scale-[0.99] touch-target-lg focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white/50"
+              className="flex-1 sm:flex-none text-white bg-white/6 backdrop-blur-md border border-white/12 rounded-xl hover:bg-white/10 hover:border-white/18 transition-all duration-150 flex items-center justify-center px-4 sm:px-5 py-3 sm:py-3.5 active:scale-[0.99] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white/50"
               aria-label="View AWS setup guide"
             >
-              <Book02Icon className="w-5 h-5" aria-hidden="true" />
-              <span className="ml-2 text-sm sm:text-base font-medium sm:hidden">Guide</span>
-              <span className="ml-2 text-sm sm:text-base font-medium hidden sm:inline whitespace-nowrap">Setup Guide</span>
+              <Book02Icon className="w-4 h-4" aria-hidden="true" />
+              <span className="ml-2 text-sm font-medium sm:hidden">Guide</span>
+              <span className="ml-2 text-sm font-medium hidden sm:inline whitespace-nowrap">Setup Guide</span>
             </button>
 
             {/* GitHub Button */}
@@ -151,12 +151,12 @@ export const Hero = ({ onGetStarted }) => {
               href="https://github.com/ezDecode/S3Zen-CloudCore"
               target="_blank"
               rel="noopener noreferrer"
-              className="flex-1 sm:flex-none text-white bg-white/6 backdrop-blur-md border border-white/12 rounded-xl hover:bg-white/10 hover:border-white/18 transition-all duration-150 flex items-center justify-center px-4 sm:px-6 py-4 sm:py-4.5 active:scale-[0.99] touch-target-lg focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white/50"
+              className="flex-1 sm:flex-none text-white bg-white/6 backdrop-blur-md border border-white/12 rounded-xl hover:bg-white/10 hover:border-white/18 transition-all duration-150 flex items-center justify-center px-4 sm:px-5 py-3 sm:py-3.5 active:scale-[0.99] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white/50"
               aria-label="Star CloudCore on GitHub"
             >
-              <Github01Icon className="w-5 h-5" aria-hidden="true" />
-              <span className="ml-2 text-sm sm:text-base font-medium sm:hidden">GitHub</span>
-              <span className="ml-2 text-sm sm:text-base font-medium hidden sm:inline whitespace-nowrap">Star on GitHub</span>
+              <Github01Icon className="w-4 h-4" aria-hidden="true" />
+              <span className="ml-2 text-sm font-medium sm:hidden">GitHub</span>
+              <span className="ml-2 text-sm font-medium hidden sm:inline whitespace-nowrap">Star on GitHub</span>
             </a>
           </div>
         </motion.div>

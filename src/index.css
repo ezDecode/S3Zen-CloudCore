@@ -352,8 +352,17 @@ html {
   }
 }
 
-/* Mobile-optimized touch targets (min 44x44px) */
+/* Mobile-optimized touch targets (min 40x40px) */
 .touch-target {
+  min-width: 40px;
+  min-height: 40px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Large touch target for primary actions (44x44px) */
+.touch-target-lg {
   min-width: 44px;
   min-height: 44px;
   display: inline-flex;
@@ -361,19 +370,10 @@ html {
   justify-content: center;
 }
 
-/* Large touch target for primary actions (48x48px - Google Material spec) */
-.touch-target-lg {
-  min-width: 48px;
-  min-height: 48px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-}
-
 /* Extra-large touch target for critical actions */
 .touch-target-xl {
-  min-width: 56px;
-  min-height: 56px;
+  min-width: 50px;
+  min-height: 50px;
   display: inline-flex;
   align-items: center;
   justify-content: center;

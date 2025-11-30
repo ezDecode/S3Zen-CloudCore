@@ -17,38 +17,38 @@ import { ZapIcon, Shield01Icon, FolderLibraryIcon, Upload04Icon, SearchList01Ico
 const features = [
     {
         icon: ZapIcon,
-        title: 'Instant Performance',
-        description: 'Sub-100ms response times with optimized AWS SDK integration and intelligent caching.',
+        title: 'Blazing Fast',
+        description: 'So fast you\'ll think something\'s broken. Spoiler: it\'s not.',
         gradient: 'from-amber-500/20 to-orange-500/20'
     },
     {
         icon: Shield01Icon,
-        title: 'Enterprise Security',
-        description: 'Bank-grade encryption, IAM authentication, and zero data persistence on our servers.',
+        title: 'Fort Knox Security',
+        description: 'Your secrets are safe with us. Actually, they never even reach us. Problem solved.',
         gradient: 'from-emerald-500/20 to-teal-500/20'
     },
     {
         icon: CloudIcon,
-        title: 'Zero Configuration',
-        description: 'Connect with just your AWS credentials. No complex setup or infrastructure required.',
+        title: 'Zero Setup Headaches',
+        description: 'Just your AWS keys and you\'re in. No PhD in cloud computing required.',
         gradient: 'from-sky-500/20 to-blue-500/20'
     },
     {
         icon: FolderLibraryIcon,
-        title: 'Intuitive Organization',
-        description: 'Familiar file system interface with drag-and-drop, breadcrumbs, and smart navigation.',
+        title: 'Actually Makes Sense',
+        description: 'Drag, drop, done. Like your computer\'s file explorer, but for the cloud.',
         gradient: 'from-violet-500/20 to-purple-500/20'
     },
     {
         icon: Upload04Icon,
-        title: 'Bulk Operations',
-        description: 'Upload, download, or manage thousands of files simultaneously with progress tracking.',
+        title: 'Bulk Everything',
+        description: 'Upload 1000 files at once? Sure. We won\'t even break a sweat.',
         gradient: 'from-rose-500/20 to-pink-500/20'
     },
     {
         icon: SearchList01Icon,
-        title: 'Powerful Search',
-        description: 'Find any file instantly with advanced filtering, sorting, and search capabilities.',
+        title: 'Find Anything',
+        description: 'Lost that file from 2019? We\'ll find it faster than you can say "bucket".',
         gradient: 'from-cyan-500/20 to-teal-500/20'
     }
 ];
@@ -75,10 +75,10 @@ export const FeaturesSection = () => {
                         Features
                     </span>
                     <h2 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-normal text-white mb-4 sm:mb-6 tracking-tight">
-                        Enterprise-grade <span className="text-white/40">capabilities</span>
+                        Okay, it's actually <span className="text-white/40">pretty good</span>
                     </h2>
                     <p className="text-lg sm:text-xl lg:text-2xl text-white/50 max-w-2xl mx-auto">
-                        Everything you need to manage AWS S3 buckets professionally
+                        Features that make you wonder why AWS didn't do this themselves
                     </p>
                 </motion.div>
 

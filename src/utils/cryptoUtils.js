@@ -19,18 +19,20 @@ let masterKey = null;
 
 /**
  * Generate a random encryption key on app initialization
- * This key exists only in browser memory and is lost on page reload
+ * SECURITY: Key stored in sessionStorage (cleared on tab close) instead of localStorage
+ * This limits exposure window if XSS occurs
  */
 const STORAGE_KEY_CRYPTO = 'cc_master_key';
 
 /**
  * Initialize encryption key
- * Tries to recover key from storage first, otherwise generates new one
+ * Tries to recover key from sessionStorage first, otherwise generates new one
+ * Note: Using sessionStorage means users need to re-authenticate per session
  */
 export const initializeCryptoKey = async () => {
     try {
-        // Try to load existing key
-        const storedKey = localStorage.getItem(STORAGE_KEY_CRYPTO);
+        // Try to load existing key from sessionStorage (more secure than localStorage)
+        const storedKey = sessionStorage.getItem(STORAGE_KEY_CRYPTO);
 
         if (storedKey) {
             try {
@@ -63,9 +65,9 @@ export const initializeCryptoKey = async () => {
 
         masterKey = keyMaterial;
 
-        // Export and save key
+        // Export and save key to sessionStorage (cleared on tab close)
         const exportedKey = await crypto.subtle.exportKey('jwk', keyMaterial);
-        localStorage.setItem(STORAGE_KEY_CRYPTO, JSON.stringify(exportedKey));
+        sessionStorage.setItem(STORAGE_KEY_CRYPTO, JSON.stringify(exportedKey));
 
         return { success: true };
     } catch (error) {
