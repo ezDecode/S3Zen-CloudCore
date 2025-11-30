@@ -5,7 +5,7 @@
 
 import { useState, memo } from 'react';
 import { motion } from 'framer-motion';
-import { Link01Icon, Tick02Icon, SpinnerIcon } from 'hugeicons-react';
+import { Link01Icon, Tick02Icon, Loading03Icon } from 'hugeicons-react';
 import { toast } from 'sonner';
 import { generateShareableLink } from '../../services/aws/s3Service';
 import { shortenUrl } from '../../services/urlShortener';
@@ -77,7 +77,7 @@ export const QuickShareButton = memo(({ item, className = '' }) => {
                     animate={{ rotate: 360 }}
                     transition={{ duration: 1, repeat: Infinity, ease: 'linear' }}
                 >
-                    <SpinnerIcon className="w-4 h-4" />
+                    <Loading03Icon className="w-4 h-4" />
                 </motion.div>
             ) : copied ? (
                 <Tick02Icon className="w-4 h-4" />

@@ -10,12 +10,7 @@
  * Features:
  * - Quick Share with one-click links
  * - Favorites/Pins for frequently accessed files
- * - Recent Files for quick access
- * - Keyboard Shortcuts for power users
- * - File Thumbnails for images
- * - Drag to Organize files between folders
- * - Bulk Select with Shift+Click
- * - Storage Stats Widget
+ * - Storage Stats Widget with file type breakdown
  */
 
 import { useState, useCallback, useRef, useEffect } from 'react';
@@ -31,22 +26,17 @@ import { FileList } from './FileList';
 import { DownloadManager } from '../common/DownloadManager';
 import { DuplicateFileModal } from '../modals/DuplicateFileModal';
 import { FavoritesPanel } from '../common/FavoritesPanel';
-import { RecentFilesPanel } from '../common/RecentFilesPanel';
 import { StorageStatsWidget } from '../common/StorageStatsWidget';
-import { KeyboardShortcutsHelp, KeyboardShortcutsButton } from '../common/KeyboardShortcutsHelp';
 
 // Hooks
 import { useFileNavigation } from './hooks/useFileNavigation';
 import { useFileOperations } from './hooks/useFileOperations';
 import { useDragAndDrop } from './hooks/useDragAndDrop';
 import { useFavorites } from '../../hooks/useFavorites';
-import { useRecentFiles } from '../../hooks/useRecentFiles';
-import { useKeyboardShortcuts } from '../../hooks/useKeyboardShortcuts';
 import { useStorageStats } from '../../hooks/useStorageStats';
-import { useBulkSelect } from '../../hooks/useBulkSelect';
 
 // Services
-import { listObjects, moveFile } from '../../services/aws/s3Service';
+import { listObjects } from '../../services/aws/s3Service';
 import { clearAuth } from '../../utils/authUtils';
 
 export const FileExplorer = ({
@@ -61,10 +51,8 @@ export const FileExplorer = ({
     const [items, setItems] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
     const [mobileDrawerOpen, setMobileDrawerOpen] = useState(false);
-    const [showKeyboardHelp, setShowKeyboardHelp] = useState(false);
     const [showSidebar, setShowSidebar] = useState(true);
     const searchInputRef = useRef(null);
-    const fileUploadRef = useRef(null);
 
     // Navigation & Selection
     const {
@@ -94,33 +82,20 @@ export const FileExplorer = ({
         toggleFavorite, 
         removeFavorite, 
         clearFavorites,
-        getSortedFavorites 
+        getSortedFavorites,
+        removeMultipleFromFavorites
     } = useFavorites();
-
-    // Recent Files
-    const { 
-        recentFiles, 
-        addRecentFile, 
-        removeRecentFile, 
-        clearRecentFiles 
-    } = useRecentFiles();
 
     // Storage Stats
     const { 
         totalSize, 
         fileCount, 
-        folderCount, 
+        folderCount,
+        fileTypes,
         isLoading: statsLoading, 
         error: statsError,
         refresh: refreshStats 
     } = useStorageStats(0); // Disable auto-refresh, manual only
-
-    // Bulk Selection
-    const { handleBulkSelect, resetSelection } = useBulkSelect(
-        sortedItems, 
-        selectedItems, 
-        setSelectedItems
-    );
 
     // Load files
     const loadFilesRef = useRef(null);
@@ -172,7 +147,7 @@ export const FileExplorer = ({
         handleRename,
         handleRemoveDownload,
         handleClearDownloads
-    } = useFileOperations(currentPath, items, setItems, loadFiles, handleNavigate);
+    } = useFileOperations(currentPath, items, setItems, loadFiles, handleNavigate, refreshStats);
 
     // Drag & Drop
     const {
@@ -218,12 +193,16 @@ export const FileExplorer = ({
                     }
                 }
 
+                // Remove deleted items from favorites
+                const deletedKeys = itemsToDelete.map(item => item.key);
+                removeMultipleFromFavorites(deletedKeys);
+
                 setSelectedItems([]);
                 loadFiles();
                 refreshStats(); // Refresh storage stats after delete
             });
         }
-    }, [onDeleteModal, currentPath, setCurrentPath, setSelectedItems, loadFiles, refreshStats]);
+    }, [onDeleteModal, currentPath, setCurrentPath, setSelectedItems, loadFiles, refreshStats, removeMultipleFromFavorites]);
 
     const handleShareSelected = useCallback(() => {
         if (selectedItems.length === 1 && selectedItems[0].type === 'file') {
@@ -236,78 +215,19 @@ export const FileExplorer = ({
         onLogout();
     }, [onLogout]);
 
-    // Handle preview with recent files tracking
+    // Handle preview
     const handlePreview = useCallback((item, allItems) => {
-        addRecentFile(item);
         onPreviewModal(item, allItems || sortedItems);
-    }, [addRecentFile, onPreviewModal, sortedItems]);
+    }, [onPreviewModal, sortedItems]);
 
-    // Handle file selection with bulk select support
-    const handleItemSelect = useCallback((item, event) => {
-        if (event?.shiftKey) {
-            handleBulkSelect(item, event);
-        } else {
-            handleSelectItem(item);
-        }
-    }, [handleBulkSelect, handleSelectItem]);
-
-    // Handle moving file to folder (drag to organize)
-    const handleMoveToFolder = useCallback(async (sourceItem, targetFolder) => {
-        try {
-            const result = await moveFile(sourceItem.key, targetFolder.key);
-            if (result.success) {
-                toast.success(`Moved "${sourceItem.name}" to "${targetFolder.name}"`);
-                loadFiles();
-            } else {
-                toast.error(`Failed to move: ${result.error}`);
-            }
-        } catch (error) {
-            toast.error('Failed to move file');
-        }
-    }, [loadFiles]);
-
-    // Handle opening favorites/recent items
-    const handleOpenFavoriteOrRecent = useCallback((item) => {
+    // Handle opening favorite items
+    const handleOpenFavorite = useCallback((item) => {
         if (item.type === 'folder') {
             handleNavigate(item.key);
         } else {
-            addRecentFile(item);
             onPreviewModal(item, [item]);
         }
-    }, [handleNavigate, addRecentFile, onPreviewModal]);
-
-    // Keyboard Shortcuts
-    useKeyboardShortcuts({
-        onUpload: () => fileUploadRef.current?.click(),
-        onDelete: (items) => handleDelete(items),
-        onSelectAll: handleSelectAll,
-        onClearSelection: clearSelection,
-        onNewFolder: handleCreateFolder,
-        onDownload: (items) => handleDownloadSelected(items),
-        onFocusSearch: () => searchInputRef.current?.focus(),
-        onRename: (item) => onRenameModal(item, handleRename),
-        onOpen: handleOpenFolder,
-        onPreview: (item) => handlePreview(item),
-        selectedItems,
-        isEnabled: true
-    });
-
-    // Listen for '?' key to show keyboard shortcuts help
-    useEffect(() => {
-        const handleKeyPress = (e) => {
-            if (e.key === '?' && !e.ctrlKey && !e.metaKey) {
-                const target = e.target;
-                const isTyping = target.tagName === 'INPUT' || 
-                                target.tagName === 'TEXTAREA' || 
-                                target.isContentEditable;
-                if (!isTyping) {
-                    setShowKeyboardHelp(prev => !prev);
-                }
-            }
-        };
-        document.addEventListener('keydown', handleKeyPress);
-        return () => document.removeEventListener('keydown', handleKeyPress);
-    }, []);
+    }, [handleNavigate, onPreviewModal]);
 
     return (
         <div
@@ -346,6 +266,7 @@ export const FileExplorer = ({
                 onNavigate={handleNavigate}
                 onRefresh={loadFiles}
                 onLogout={handleLogout}
+                searchInputRef={searchInputRef}
             />
 
             {/* Action Bar */}
@@ -369,26 +290,67 @@ export const FileExplorer = ({
                 onCreateFolder={handleCreateFolder}
             />
 
-            {/* File List */}
-            <main className="flex-1 flex flex-col overflow-hidden z-0 relative">
-                <FileList
-                    items={sortedItems}
-                    sortBy={sortBy}
-                    sortOrder={sortOrder}
-                    onSort={handleSort}
-                    selectedItems={selectedItems}
-                    onSelectItem={handleSelectItem}
-                    onOpenFolder={handleOpenFolder}
-                    onDownload={handleSingleDownload}
-                    onShare={onShareModal}
-                    onRename={(item) => onRenameModal(item, handleRename)}
-                    onDelete={(item) => handleDelete([item])}
-                    onPreview={(item) => onPreviewModal(item, sortedItems)}
-                    onDetails={onDetailsModal}
-                    isLoading={isLoading}
-                    viewMode={viewMode}
-                />
-            </main>
+            {/* Main Content Area with Sidebar */}
+            <div className="flex-1 flex overflow-hidden z-0 relative">
+                {/* Sidebar - Favorites & Storage Stats */}
+                <AnimatePresence>
+                    {showSidebar && (
+                        <motion.aside
+                            initial={{ width: 0, opacity: 0 }}
+                            animate={{ width: 280, opacity: 1 }}
+                            exit={{ width: 0, opacity: 0 }}
+                            transition={{ duration: 0.2 }}
+                            className="hidden lg:flex flex-col border-r border-white/5 bg-zinc-950/50 overflow-hidden"
+                        >
+                            {/* Favorites Panel */}
+                            <div className="flex-shrink-0">
+                                <FavoritesPanel
+                                    favorites={getSortedFavorites()}
+                                    onOpenFile={handleOpenFavorite}
+                                    onRemoveFavorite={removeFavorite}
+                                    onClearAll={clearFavorites}
+                                />
+                            </div>
+
+                            {/* Storage Stats Widget */}
+                            <div className="flex-1 p-3 overflow-y-auto custom-scrollbar">
+                                <StorageStatsWidget
+                                    totalSize={totalSize}
+                                    fileCount={fileCount}
+                                    folderCount={folderCount}
+                                    fileTypes={fileTypes}
+                                    isLoading={statsLoading}
+                                    error={statsError}
+                                    onRefresh={refreshStats}
+                                />
+                            </div>
+                        </motion.aside>
+                    )}
+                </AnimatePresence>
+
+                {/* File List */}
+                <main className="flex-1 flex flex-col overflow-hidden">
+                    <FileList
+                        items={sortedItems}
+                        sortBy={sortBy}
+                        sortOrder={sortOrder}
+                        onSort={handleSort}
+                        selectedItems={selectedItems}
+                        onSelectItem={handleSelectItem}
+                        onOpenFolder={handleOpenFolder}
+                        onDownload={handleSingleDownload}
+                        onShare={onShareModal}
+                        onRename={(item) => onRenameModal(item, handleRename)}
+                        onDelete={(item) => handleDelete([item])}
+                        onPreview={(item) => handlePreview(item)}
+                        onDetails={onDetailsModal}
+                        isLoading={isLoading}
+                        viewMode={viewMode}
+                        favorites={favorites}
+                        onToggleFavorite={toggleFavorite}
+                    />
+                </main>
+            </div>
 
             {/* Upload Progress Panel */}
             <UploadProgressPanel uploadingFiles={uploadingFiles} />

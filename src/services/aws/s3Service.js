@@ -735,17 +735,45 @@ export const getPreviewUrl = async (key, expiresIn = 3600) => {
 
 /**
  * Get bucket storage statistics
- * Calculates total size, file count, and folder count
+ * Calculates total size, file count, folder count, and file type breakdown
  */
 export const getBucketStats = async () => {
     if (!s3Client || !currentBucket) {
         return { success: false, error: 'S3 client not initialized' };
     }
 
+    // File type categories based on extension
+    const getFileCategory = (key) => {
+        const ext = key.split('.').pop()?.toLowerCase() || '';
+        const imageExts = ['jpg', 'jpeg', 'png', 'gif', 'webp', 'svg', 'bmp', 'ico'];
+        const videoExts = ['mp4', 'webm', 'mov', 'avi', 'mkv', 'm4v'];
+        const audioExts = ['mp3', 'wav', 'ogg', 'm4a', 'flac', 'aac'];
+        const docExts = ['pdf', 'doc', 'docx', 'xls', 'xlsx', 'ppt', 'pptx', 'txt', 'rtf'];
+        const codeExts = ['js', 'jsx', 'ts', 'tsx', 'json', 'html', 'css', 'py', 'java', 'c', 'cpp', 'go', 'rs', 'md'];
+        const archiveExts = ['zip', 'rar', '7z', 'tar', 'gz', 'bz2'];
+        
+        if (imageExts.includes(ext)) return 'images';
+        if (videoExts.includes(ext)) return 'videos';
+        if (audioExts.includes(ext)) return 'audio';
+        if (docExts.includes(ext)) return 'documents';
+        if (codeExts.includes(ext)) return 'code';
+        if (archiveExts.includes(ext)) return 'archives';
+        return 'other';
+    };
+
     try {
         let totalSize = 0;
         let fileCount = 0;
         let folderCount = 0;
+        const fileTypes = {
+            images: { count: 0, size: 0 },
+            videos: { count: 0, size: 0 },
+            audio: { count: 0, size: 0 },
+            documents: { count: 0, size: 0 },
+            code: { count: 0, size: 0 },
+            archives: { count: 0, size: 0 },
+            other: { count: 0, size: 0 }
+        };
         let continuationToken = null;
 
         do {
@@ -763,7 +791,13 @@ export const getBucketStats = async () => {
                         folderCount++;
                     } else {
                         fileCount++;
-                        totalSize += item.Size || 0;
+                        const size = item.Size || 0;
+                        totalSize += size;
+                        
+                        // Track file type
+                        const category = getFileCategory(item.Key);
+                        fileTypes[category].count++;
+                        fileTypes[category].size += size;
                     }
                 }
             }
@@ -775,7 +809,8 @@ export const getBucketStats = async () => {
             success: true,
             totalSize,
             fileCount,
-            folderCount
+            folderCount,
+            fileTypes
         };
     } catch (error) {
         console.error('Failed to get bucket stats:', error);

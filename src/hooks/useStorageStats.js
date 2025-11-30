@@ -11,6 +11,7 @@ export const useStorageStats = (refreshInterval = 60000) => {
         totalSize: 0,
         fileCount: 0,
         folderCount: 0,
+        fileTypes: null,
         lastUpdated: null,
         isLoading: true,
         error: null
@@ -27,6 +28,7 @@ export const useStorageStats = (refreshInterval = 60000) => {
                     totalSize: result.totalSize,
                     fileCount: result.fileCount,
                     folderCount: result.folderCount,
+                    fileTypes: result.fileTypes,
                     lastUpdated: new Date().toISOString(),
                     isLoading: false,
                     error: null

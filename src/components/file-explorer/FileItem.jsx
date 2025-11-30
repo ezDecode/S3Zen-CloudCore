@@ -6,18 +6,14 @@
  * Features:
  * - Favorites toggle
  * - Quick share button
- * - Thumbnails for images
- * - Drag to organize
- * - Shift+click bulk selection
  */
 
 import { motion, AnimatePresence } from 'framer-motion';
-import { MoreVerticalIcon, Download01Icon, Share01Icon, Delete02Icon, Edit02Icon, ViewIcon, Tick02Icon, InformationCircleIcon, FavouriteIcon, Link01Icon } from 'hugeicons-react';
-import { useState, memo, useCallback } from 'react';
+import { MoreVerticalIcon, Download01Icon, Share01Icon, Delete02Icon, Edit02Icon, ViewIcon, Tick02Icon, InformationCircleIcon, FavouriteIcon } from 'hugeicons-react';
+import { useState, memo } from 'react';
 import { FileIcon } from './FileIcon';
-import { FileThumbnail } from '../common/FileThumbnail';
 import { QuickShareButton } from '../common/QuickShareButton';
-import { formatFileSize, formatDate, formatExactDateTime } from '../../utils/formatters';
+import { formatFileSize, formatExactDateTime } from '../../utils/formatters';
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -40,64 +36,10 @@ export const FileItem = memo(({
     onDetails,
     viewMode = 'grid',
     isFavorite = false,
-    onToggleFavorite,
-    onMoveToFolder,
-    showThumbnails = true
+    onToggleFavorite
 }) => {
     const [isHovered, setIsHovered] = useState(false);
-    const [isDragOver, setIsDragOver] = useState(false);
-    const [isDragging, setIsDragging] = useState(false);
     const isFolder = item.type === 'folder';
-
-    // Drag start for moving files
-    const handleDragStart = (e) => {
-        if (isFolder) {
-            e.preventDefault();
-            return;
-        }
-        setIsDragging(true);
-        e.dataTransfer.setData('application/json', JSON.stringify(item));
-        e.dataTransfer.effectAllowed = 'move';
-    };
-
-    const handleDragEnd = () => {
-        setIsDragging(false);
-    };
-
-    // Drag and drop handlers for folders
-    const handleDragOver = (e) => {
-        if (!isFolder) return;
-        e.preventDefault();
-        e.stopPropagation();
-        setIsDragOver(true);
-    };
-
-    const handleDragLeave = (e) => {
-        if (!isFolder) return;
-        e.preventDefault();
-        e.stopPropagation();
-        setIsDragOver(false);
-    };
-
-    const handleDrop = (e) => {
-        if (!isFolder) return;
-        e.preventDefault();
-        e.stopPropagation();
-        setIsDragOver(false);
-
-        // Handle file drop into folder for organizing
-        try {
-            const data = e.dataTransfer.getData('application/json');
-            if (data) {
-                const droppedItem = JSON.parse(data);
-                if (droppedItem.key !== item.key && onMoveToFolder) {
-                    onMoveToFolder(droppedItem, item);
-                }
-            }
-        } catch (err) {
-            console.log('Files dropped into folder:', item.name);
-        }
-    };
 
     const MenuContent = () => (
         <>
@@ -174,25 +116,13 @@ export const FileItem = memo(({
             <motion.div
                 whileHover={{ y: -2 }}
                 whileTap={{ scale: 0.98 }}
-                animate={{
-                    scale: isDragOver ? 1.05 : isDragging ? 0.95 : 1,
-                    opacity: isDragging ? 0.5 : 1,
-                    borderColor: isDragOver ? 'rgba(59, 130, 246, 0.8)' : undefined
-                }}
-                draggable={!isFolder}
-                onDragStart={handleDragStart}
-                onDragEnd={handleDragEnd}
                 onHoverStart={() => setIsHovered(true)}
                 onHoverEnd={() => setIsHovered(false)}
-                onDragOver={handleDragOver}
-                onDragLeave={handleDragLeave}
-                onDrop={handleDrop}
-                className={`group relative rounded-xl border transition-all duration-200 cursor-pointer ${isDragOver
-                        ? 'bg-blue-500/20 border-blue-500 shadow-[0_0_20px_rgba(59,130,246,0.3)]'
-                        : isSelected
-                            ? 'bg-blue-500/10 border-blue-500/50 shadow-[0_0_15px_rgba(59,130,246,0.15)]'
-                            : 'bg-white/5 border-white/10 hover:bg-white/10 hover:border-white/20'
-                    }`}
+                className={`group relative rounded-xl border transition-all duration-200 cursor-pointer ${
+                    isSelected
+                        ? 'bg-blue-500/10 border-blue-500/50 shadow-[0_0_15px_rgba(59,130,246,0.15)]'
+                        : 'bg-white/5 border-white/10 hover:bg-white/10 hover:border-white/20'
+                }`}
                 onClick={(e) => isFolder ? onOpen(item) : onSelect(item, e)}
                 onDoubleClick={() => !isFolder && onPreview && onPreview(item)}
             >
@@ -202,27 +132,6 @@ export const FileItem = memo(({
                         <FavouriteIcon className="w-4 h-4 text-yellow-400 fill-yellow-400" />
                     </div>
                 )}
-
-                {/* Drag Over Indicator */}
-                <AnimatePresence>
-                    {isDragOver && isFolder && (
-                        <motion.div
-                            initial={{ opacity: 0 }}
-                            animate={{ opacity: 1 }}
-                            exit={{ opacity: 0 }}
-                            className="absolute inset-0 bg-blue-500/10 backdrop-blur-sm rounded-xl border-2 border-blue-500 border-dashed flex items-center justify-center z-30 pointer-events-none"
-                        >
-                            <motion.div
-                                initial={{ scale: 0.8, opacity: 0 }}
-                                animate={{ scale: 1, opacity: 1 }}
-                                transition={{ delay: 0.1 }}
-                                className="text-blue-400 text-xs font-semibold"
-                            >
-                                Drop here
-                            </motion.div>
-                        </motion.div>
-                    )}
-                </AnimatePresence>
 
                 {/* Selection Indicator */}
                 <AnimatePresence>
@@ -253,7 +162,7 @@ export const FileItem = memo(({
                                     whileHover={{ scale: 1.1 }}
                                     whileTap={{ scale: 0.9 }}
                                     onClick={() => onPreview(item)}
-                                    className="touch-target p-2.5 rounded-lg bg-blue-500/90 hover:bg-blue-600 text-white backdrop-blur-sm transition-colors shadow-lg focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-400"
+                                    className="p-2 rounded-lg bg-blue-500/90 hover:bg-blue-600 text-white backdrop-blur-sm transition-colors shadow-lg"
                                     title="Preview"
                                 >
                                     <ViewIcon className="w-4 h-4" />
@@ -264,7 +173,7 @@ export const FileItem = memo(({
                                     whileHover={{ scale: 1.1 }}
                                     whileTap={{ scale: 0.9 }}
                                     onClick={() => onDownload(item)}
-                                    className="touch-target p-2.5 rounded-lg bg-green-500/90 hover:bg-green-600 text-white backdrop-blur-sm transition-colors shadow-lg focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-400"
+                                    className="p-2 rounded-lg bg-green-500/90 hover:bg-green-600 text-white backdrop-blur-sm transition-colors shadow-lg"
                                     title="Download"
                                 >
                                     <Download01Icon className="w-4 h-4" />
@@ -272,8 +181,6 @@ export const FileItem = memo(({
                             )}
                             {/* Quick Share Button */}
                             <QuickShareButton item={item} className="backdrop-blur-sm shadow-lg" />
-                                </motion.button>
-                            )}
                         </motion.div>
                     )}
                 </AnimatePresence>
@@ -301,9 +208,8 @@ export const FileItem = memo(({
                 <div className="p-4 flex flex-col items-center text-center gap-3">
                     <motion.div
                         animate={{
-                            scale: isDragOver ? 1.2 : isHovered ? 1.1 : 1,
-                            rotate: isDragOver ? 10 : isHovered && isFolder ? 5 : 0,
-                            y: isDragOver ? -5 : 0
+                            scale: isHovered ? 1.1 : 1,
+                            rotate: isHovered && isFolder ? 5 : 0
                         }}
                         transition={{ type: 'spring', stiffness: 300, damping: 20 }}
                         className="w-16 h-16 flex items-center justify-center"
@@ -327,40 +233,16 @@ export const FileItem = memo(({
     // List View
     return (
         <motion.div
-            animate={{
-                scale: isDragOver ? 1.02 : isDragging ? 0.98 : 1,
-                opacity: isDragging ? 0.5 : 1,
-                x: isDragOver ? 4 : 0
-            }}
-            draggable={!isFolder}
-            onDragStart={handleDragStart}
-            onDragEnd={handleDragEnd}
             onHoverStart={() => setIsHovered(true)}
             onHoverEnd={() => setIsHovered(false)}
-            onDragOver={handleDragOver}
-            onDragLeave={handleDragLeave}
-            onDrop={handleDrop}
-            className={`group relative grid grid-cols-12 gap-4 items-center px-4 py-3.5 rounded-lg border transition-all duration-200 cursor-pointer ${isDragOver
-                    ? 'bg-blue-500/20 border-blue-500 shadow-[0_0_20px_rgba(59,130,246,0.3)]'
-                    : isSelected
-                        ? 'bg-blue-500/10 border-blue-500/50 shadow-[0_0_15px_rgba(59,130,246,0.15)]'
-                        : 'bg-white/2 border-white/8 hover:border-white/20 hover:shadow-md'
-                }`}
+            className={`group relative grid grid-cols-12 gap-4 items-center px-4 py-3.5 rounded-lg border transition-all duration-200 cursor-pointer ${
+                isSelected
+                    ? 'bg-blue-500/10 border-blue-500/50 shadow-[0_0_15px_rgba(59,130,246,0.15)]'
+                    : 'bg-white/2 border-white/8 hover:border-white/20 hover:shadow-md'
+            }`}
             onClick={(e) => isFolder ? onOpen(item) : onSelect(item, e)}
             onDoubleClick={() => !isFolder && onPreview && onPreview(item)}
         >
-            {/* Drag Over Indicator for List View */}
-            <AnimatePresence>
-                {isDragOver && isFolder && (
-                    <motion.div
-                        initial={{ opacity: 0, scaleX: 0 }}
-                        animate={{ opacity: 1, scaleX: 1 }}
-                        exit={{ opacity: 0, scaleX: 0 }}
-                        className="absolute left-0 top-0 bottom-0 w-1 bg-blue-500 rounded-r-full"
-                    />
-                )}
-            </AnimatePresence>
-
             {/* Favorite Indicator for List View */}
             {isFavorite && (
                 <div className="absolute left-1 top-1/2 -translate-y-1/2">
@@ -370,43 +252,19 @@ export const FileItem = memo(({
 
             {/* Name Column */}
             <div className="col-span-8 sm:col-span-6 flex items-center gap-3 min-w-0">
-                {/* Thumbnail or Icon */}
+                {/* Icon */}
                 <motion.div
-                    animate={{
-                        scale: isDragOver ? 1.3 : 1,
-                        rotate: isDragOver ? 10 : isFolder ? 5 : 0,
-                        x: isDragOver ? 5 : 0
-                    }}
                     whileHover={{ scale: 1.1, rotate: isFolder ? 5 : 0 }}
                     transition={{ type: 'spring', stiffness: 300, damping: 20 }}
                     className="shrink-0"
                 >
-                    {showThumbnails ? (
-                        <FileThumbnail item={item} size="sm" />
-                    ) : (
-                        <FileIcon filename={item.name} isFolder={isFolder} className="w-5 h-5" />
-                    )}
+                    <FileIcon filename={item.name} isFolder={isFolder} className="w-5 h-5" />
                 </motion.div>
 
                 {/* Name */}
-                <span className={`truncate font-semibold text-sm transition-colors ${isDragOver ? 'text-blue-400' : 'text-white'
-                    }`}>
+                <span className="truncate font-semibold text-sm text-white">
                     {item.name}
                 </span>
-
-                {/* Drop indicator text */}
-                <AnimatePresence>
-                    {isDragOver && isFolder && (
-                        <motion.span
-                            initial={{ opacity: 0, x: -10 }}
-                            animate={{ opacity: 1, x: 0 }}
-                            exit={{ opacity: 0, x: -10 }}
-                            className="text-xs text-blue-400 font-semibold ml-2"
-                        >
-                            Drop here
-                        </motion.span>
-                    )}
-                </AnimatePresence>
             </div>
 
             {/* Size Column */}
@@ -433,7 +291,7 @@ export const FileItem = memo(({
                                     whileHover={{ scale: 1.1 }}
                                     whileTap={{ scale: 0.9 }}
                                     onClick={() => onPreview(item)}
-                                    className="touch-target p-2 rounded-lg bg-blue-500/90 hover:bg-blue-600 text-white transition-colors shadow-lg focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-400"
+                                    className="p-2 rounded-lg bg-blue-500/90 hover:bg-blue-600 text-white transition-colors shadow-lg"
                                     title="Preview"
                                 >
                                     <ViewIcon className="w-4 h-4" />
@@ -447,7 +305,7 @@ export const FileItem = memo(({
                                     whileHover={{ scale: 1.1 }}
                                     whileTap={{ scale: 0.9 }}
                                     onClick={() => onDownload(item)}
-                                    className="touch-target p-2 rounded-lg bg-green-500/90 hover:bg-green-600 text-white transition-colors shadow-lg focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-400"
+                                    className="p-2 rounded-lg bg-green-500/90 hover:bg-green-600 text-white transition-colors shadow-lg"
                                     title="Download"
                                 >
                                     <Download01Icon className="w-4 h-4" />
@@ -487,7 +345,6 @@ export const FileItem = memo(({
         prevProps.isSelected === nextProps.isSelected &&
         prevProps.viewMode === nextProps.viewMode &&
         prevProps.isFavorite === nextProps.isFavorite &&
-        prevProps.showThumbnails === nextProps.showThumbnails &&
         prevProps.item.lastModified === nextProps.item.lastModified
     );
 });

@@ -3,7 +3,7 @@
  * Top navigation bar with breadcrumbs and actions
  */
 
-import { Fragment } from 'react';
+import { Fragment, forwardRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
     Search01Icon,
@@ -27,14 +27,15 @@ import {
     DropdownMenuTrigger,
 } from "../../ui/dropdown-menu";
 
-export const FileExplorerNav = ({
+export const FileExplorerNav = forwardRef(({
     currentPath,
     searchQuery,
     onSearchChange,
     onNavigate,
     onRefresh,
-    onLogout
-}) => {
+    onLogout,
+    searchInputRef
+}, ref) => {
     const pathParts = currentPath.split('/').filter(Boolean);
 
     return (
@@ -136,8 +137,9 @@ export const FileExplorerNav = ({
                 <div className="relative w-32 sm:w-48 md:w-64">
                     <Search01Icon className="absolute left-2 sm:left-3 top-1/2 -translate-y-1/2 w-4 sm:w-4 h-4 sm:h-4 text-white/30 pointer-events-none" />
                     <input
+                        ref={searchInputRef}
                         type="text"
-                        placeholder="Search..."
+                        placeholder="Search... (Ctrl+F)"
                         value={searchQuery}
                         onChange={(e) => onSearchChange(e.target.value)}
                         className="w-full pl-8 sm:pl-10 pr-2 sm:pr-4 py-1.5 sm:py-2 bg-white/[0.03] border border-white/[0.08] rounded-lg text-xs sm:text-sm text-white placeholder:text-white/30 focus:outline-none focus:border-white/[0.15] focus:bg-white/[0.05] transition-all duration-150"
@@ -164,4 +166,4 @@ export const FileExplorerNav = ({
             </div>
         </nav>
     );
-};
+});

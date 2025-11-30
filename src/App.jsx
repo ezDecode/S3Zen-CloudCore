@@ -18,7 +18,7 @@ import { useModals } from './hooks/useModals';
 import { useSessionTimeout } from './hooks/useSessionTimeout';
 import { Toaster } from './components/ui/sonner';
 import { initializePreviewService } from './services/previewService';
-import { downloadFile } from './services/aws/s3Service';
+import { downloadFile, getS3Client, getCurrentBucket } from './services/aws/s3Service';
 
 /**
  * Main Application Content
@@ -89,9 +89,7 @@ function AppContent() {
 
   // Initialize preview service with S3 client getters
   useEffect(() => {
-    import('./services/aws/s3Service').then(module => {
-      initializePreviewService(module.getS3Client, module.getCurrentBucket);
-    });
+    initializePreviewService(getS3Client, getCurrentBucket);
   }, []);
 
   // Modal state and handlers

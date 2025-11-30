@@ -4,9 +4,7 @@
  * 
  * Features:
  * - Favorites integration
- * - Thumbnails for images
- * - Drag to organize
- * - Bulk selection with Shift+Click
+ * - Quick Share
  */
 
 import { motion, AnimatePresence } from 'framer-motion';
@@ -33,11 +31,9 @@ export const FileList = memo(({
     sortBy,
     sortOrder,
     onSort,
-    // New props for features
+    // Feature props
     favorites = [],
-    onToggleFavorite,
-    onMoveToFolder,
-    showThumbnails = true
+    onToggleFavorite
 }) => {
     // OPTIMIZED: Create a Set for O(1) lookup instead of array.some() for each item
     const selectedKeys = useMemo(() => 
@@ -145,9 +141,7 @@ export const FileList = memo(({
                                     onPreview={onPreview}
                                     onDetails={onDetails}
                                     onToggleFavorite={onToggleFavorite}
-                                    onMoveToFolder={onMoveToFolder}
                                     viewMode={viewMode}
-                                    showThumbnails={showThumbnails}
                                 />
                             </motion.div>
                         ))}
@@ -204,9 +198,7 @@ export const FileList = memo(({
                                     onPreview={onPreview}
                                     onDetails={onDetails}
                                     onToggleFavorite={onToggleFavorite}
-                                    onMoveToFolder={onMoveToFolder}
                                     viewMode={viewMode}
-                                    showThumbnails={showThumbnails}
                                 />
                             </motion.div>
                         ))}

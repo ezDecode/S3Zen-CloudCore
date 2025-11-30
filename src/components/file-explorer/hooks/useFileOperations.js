@@ -15,7 +15,7 @@ import { buildS3Key } from '../../../utils/validationUtils';
 
 const LARGE_FILE_THRESHOLD = 100 * 1024 * 1024; // 100MB
 
-export const useFileOperations = (currentPath, items, setItems, loadFiles, onNavigateToFolder) => {
+export const useFileOperations = (currentPath, items, setItems, loadFiles, onNavigateToFolder, onRefreshStats) => {
     const [uploadingFiles, setUploadingFiles] = useState([]);
     const [downloads, setDownloads] = useState([]);
     const [duplicateFileInfo, setDuplicateFileInfo] = useState(null);
@@ -173,7 +173,12 @@ export const useFileOperations = (currentPath, items, setItems, loadFiles, onNav
         if (needsRefresh && !isUploadingFolder) {
             await loadFiles(true);
         }
-    }, [items, uploadSingleFile, loadFiles]);
+
+        // Refresh storage stats after uploads complete
+        if (onRefreshStats) {
+            onRefreshStats();
+        }
+    }, [items, uploadSingleFile, loadFiles, onRefreshStats]);
 
     // Download single file
     const handleSingleDownload = useCallback(async (item) => {

@@ -65,6 +65,13 @@ export const useFavorites = () => {
         setFavorites(prev => prev.filter(fav => fav.key !== key));
     }, []);
 
+    // Remove multiple items from favorites (used when files/folders are deleted)
+    const removeMultipleFromFavorites = useCallback((keys) => {
+        if (!keys || keys.length === 0) return;
+        const keySet = new Set(keys);
+        setFavorites(prev => prev.filter(fav => !keySet.has(fav.key)));
+    }, []);
+
     // Clear all favorites
     const clearFavorites = useCallback(() => {
         setFavorites([]);
@@ -83,6 +90,7 @@ export const useFavorites = () => {
         toggleFavorite,
         addFavorite,
         removeFavorite,
+        removeMultipleFromFavorites,
         clearFavorites,
         getSortedFavorites,
         favoritesCount: favorites.length
