@@ -1,7 +1,7 @@
 import { Hero } from './Hero';
 import { FeaturesSection } from './sections/FeaturesSection';
-import { FAQSection } from './sections/FAQSection';
 import { HowItWorksSection } from './sections/HowItWorksSection';
+import { FAQSection } from './sections/FAQSection';
 import { CTASection } from './sections/CTASection';
 
 /**
@@ -9,30 +9,31 @@ import { CTASection } from './sections/CTASection';
  * 
  * PURPOSE: Guide visitor from awareness → understanding → conversion
  * 
- * STRUCTURE RATIONALE:
+ * OPTIMIZED STRUCTURE:
  * 1. Hero: Grab attention, communicate value (5 seconds)
  * 2. Features: Build credibility, prove capability (scan)
- * 3. How It Works: Remove barriers, show simplicity (understand)
- * 4. CTA: Final push, convert (act)
- * 5. Footer: Brand touchpoint, attribution (close)
+ * 3. How It Works: Show simplicity, remove barriers (3 easy steps)
+ * 4. Setup Guide: Detailed AWS configuration for those ready to dive in
+ * 5. CTA: Final push, convert (act)
+ * 6. Footer: Brand touchpoint, attribution (close)
  */
 
 export const LandingPage = ({ onGetStarted }) => {
     return (
         <div className="w-full min-h-screen bg-black">
-            {/* Hero Section */}
+            {/* 1. Hero - First impression, value proposition */}
             <Hero onGetStarted={onGetStarted} />
 
-            {/* Features Section */}
+            {/* 2. Features - Build credibility with capabilities */}
             <FeaturesSection />
 
-            {/* FAQ Section */}
-            <FAQSection />
-
-            {/* How It Works Section */}
+            {/* 3. How It Works - Show the 3-step simplicity */}
             <HowItWorksSection />
 
-            {/* Final CTA Section */}
+            {/* 4. Setup Guide - Detailed AWS configuration steps */}
+            <FAQSection />
+
+            {/* 5. Final CTA - Convert visitors to users */}
             <CTASection onGetStarted={onGetStarted} />
 
             {/* Premium Footer */}

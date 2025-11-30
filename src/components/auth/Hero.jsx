@@ -161,29 +161,6 @@ export const Hero = ({ onGetStarted }) => {
           </div>
         </motion.div>
       </main>
-
-      <footer className="absolute bottom-4 sm:bottom-6 left-0 right-0 text-center z-10 px-4">
-        <motion.p
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.7, delay: 0.7, ease: [0.4, 0, 0.2, 1] }}
-          className="text-white/30 font-medium tracking-wide"
-          style={{
-            fontSize: 'clamp(0.85rem, 1.1vw + 0.2rem, 1rem)',
-            letterSpacing: '0.02em'
-          }}
-        >
-          Developed by{' '}
-          <a
-            href="https://github.com/ezDecode"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-white/40 hover:text-white/70 transition-colors duration-300 underline decoration-white/10 hover:decoration-white/30"
-          >
-            @ezDecode
-          </a>
-        </motion.p>
-      </footer>
     </div>
   );
 };
