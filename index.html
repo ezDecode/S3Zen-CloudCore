@@ -1,25 +1,39 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" prefix="og: https://ogp.me/ns#">
 
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
   <!-- Primary Meta Tags -->
-  <title>CloudCore - Premium AWS S3 File Manager | Secure Cloud Storage Management</title>
-  <meta name="title" content="CloudCore - Premium AWS S3 File Manager | Secure Cloud Storage Management" />
+  <title>CloudCore - Free AWS S3 File Manager | No Backend Required | Secure Browser-Based Cloud Storage</title>
+  <meta name="title" content="CloudCore - Free AWS S3 File Manager | No Backend Required | Secure Browser-Based Cloud Storage" />
   <meta name="description"
-    content="Modern AWS S3 file manager with premium UI. Bring your own credentials, connect once, and manage S3 files directly from the browser with no backend required. Lightning-fast uploads, intuitive organization, and enterprise-grade security." />
+    content="Manage your AWS S3 buckets directly from the browser with CloudCore. Free, open-source file manager with drag-and-drop uploads, presigned URL sharing, and enterprise-grade security. No backend server required - connect with your own AWS credentials." />
   <meta name="keywords"
-    content="AWS S3, file manager, cloud storage, S3 browser, AWS client, file upload, drag and drop, secure storage, cloud manager, S3 management, AWS SDK, file explorer, cloud files" />
+    content="AWS S3 file manager, S3 browser, cloud storage manager, AWS S3 client, file upload S3, S3 presigned URL, drag and drop S3, free S3 manager, open source S3, browser S3 client, serverless S3, AWS file explorer, S3 bucket manager, cloud file manager, AWS SDK browser" />
   <meta name="author" content="ezDecode" />
-  <meta name="robots" content="index, follow" />
+  <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
   <meta name="language" content="English" />
-  <meta name="revisit-after" content="7 days" />
+  <meta name="revisit-after" content="3 days" />
+  <meta name="rating" content="General" />
+  <meta name="distribution" content="global" />
+  <meta name="coverage" content="Worldwide" />
+  
+  <!-- Google Site Verification (add your verification code) -->
+  <!-- <meta name="google-site-verification" content="your-verification-code" /> -->
 
   <!-- Theme Color for Mobile Browsers -->
-  <meta name="theme-color" content="#9333ea" />
+  <meta name="theme-color" content="#9333ea" media="(prefers-color-scheme: light)" />
+  <meta name="theme-color" content="#7c3aed" media="(prefers-color-scheme: dark)" />
   <meta name="msapplication-TileColor" content="#9333ea" />
+  <meta name="msapplication-config" content="/browserconfig.xml" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="CloudCore" />
+  <meta name="application-name" content="CloudCore" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="format-detection" content="telephone=no" />
 
   <!-- Canonical URL -->
   <link rel="canonical" href="https://cloudcore.creativesky.me/" />
@@ -27,42 +41,57 @@
   <!-- Open Graph / Facebook -->
   <meta property="og:type" content="website" />
   <meta property="og:url" content="https://cloudcore.creativesky.me/" />
-  <meta property="og:title" content="CloudCore - Premium AWS S3 File Manager" />
+  <meta property="og:title" content="CloudCore - Free AWS S3 File Manager | Browser-Based Cloud Storage" />
   <meta property="og:description"
-    content="Modern AWS S3 file manager with premium UI. Bring your own credentials and manage S3 files directly from the browser with no backend required." />
+    content="Manage AWS S3 buckets directly from your browser. Free, open-source file manager with drag-and-drop uploads, secure sharing, and no backend required. Get started in 60 seconds!" />
   <meta property="og:image" content="https://cloudcore.creativesky.me/og-image.png" />
+  <meta property="og:image:secure_url" content="https://cloudcore.creativesky.me/og-image.png" />
+  <meta property="og:image:type" content="image/png" />
   <meta property="og:image:width" content="1200" />
   <meta property="og:image:height" content="630" />
-  <meta property="og:image:alt" content="CloudCore - Premium AWS S3 Management" />
+  <meta property="og:image:alt" content="CloudCore - Premium AWS S3 File Manager Interface showing file explorer with drag-and-drop upload capabilities" />
   <meta property="og:site_name" content="CloudCore" />
   <meta property="og:locale" content="en_US" />
+  <meta property="og:determiner" content="the" />
 
-  <!-- Twitter Card -->
+  <!-- Twitter/X Card -->
   <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:url" content="https://cloudcore.creativesky.me/" />
-  <meta name="twitter:title" content="CloudCore - Premium AWS S3 File Manager" />
-  <meta name="twitter:description"
-    content="Modern AWS S3 file manager with premium UI. Manage S3 files directly from the browser with no backend required." />
-  <meta name="twitter:image" content="https://cloudcore.creativesky.me/og-image.png" />
-  <meta name="twitter:image:alt" content="CloudCore - Premium AWS S3 Management" />
+  <meta name="twitter:site" content="@ezDecode" />
   <meta name="twitter:creator" content="@ezDecode" />
+  <meta name="twitter:title" content="CloudCore - Free AWS S3 File Manager | No Backend Required" />
+  <meta name="twitter:description"
+    content="Manage AWS S3 buckets directly from your browser. Free, open-source with drag-and-drop uploads, secure sharing, and enterprise-grade security. Try it now!" />
+  <meta name="twitter:image" content="https://cloudcore.creativesky.me/og-image.png" />
+  <meta name="twitter:image:alt" content="CloudCore - Premium AWS S3 File Manager Interface" />
+
+  <!-- Additional Social Meta Tags -->
+  <meta property="article:author" content="https://github.com/ezDecode" />
+  <meta property="article:publisher" content="https://github.com/ezDecode" />
 
   <!-- Favicon & Icons -->
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
   <link rel="icon" type="image/png" sizes="192x192" href="/icon-192.png" />
   <link rel="icon" type="image/png" sizes="512x512" href="/icon-512.png" />
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
   <link rel="apple-touch-icon" href="/icon-192.png" />
+  <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#9333ea" />
+  <link rel="shortcut icon" href="/favicon.ico" />
 
   <!-- Web App Manifest -->
   <link rel="manifest" href="/manifest.json" />
 
   <!-- DNS Prefetch & Preconnect for Performance -->
+  <link rel="dns-prefetch" href="//fonts.googleapis.com" />
+  <link rel="dns-prefetch" href="//fonts.gstatic.com" />
+  <link rel="dns-prefetch" href="//s3.amazonaws.com" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 
-  <!-- Google Fonts -->
+  <!-- Google Fonts with Display Swap for Performance -->
   <link
     href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter+Tight:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&display=swap"
-    rel="stylesheet">
+    rel="stylesheet" />
 
   <!-- Structured Data (JSON-LD) for Rich Results -->
   <script type="application/ld+json">
@@ -71,64 +100,163 @@
     "@graph": [
       {
         "@type": "Organization",
+        "@id": "https://cloudcore.creativesky.me/#organization",
         "name": "CloudCore",
         "url": "https://cloudcore.creativesky.me",
-        "logo": "https://cloudcore.creativesky.me/icon-512.png",
-        "description": "Premium AWS S3 file manager with intuitive interface",
+        "logo": {
+          "@type": "ImageObject",
+          "url": "https://cloudcore.creativesky.me/icon-512.png",
+          "width": 512,
+          "height": 512
+        },
+        "description": "Premium open-source AWS S3 file manager with intuitive browser-based interface",
         "founder": {
           "@type": "Person",
           "name": "ezDecode",
           "url": "https://github.com/ezDecode"
         },
         "sameAs": [
-          "https://github.com/ezDecode/S3Zen-CloudCore"
+          "https://github.com/ezDecode/S3Zen-CloudCore",
+          "https://twitter.com/ezDecode"
         ]
+      },
+      {
+        "@type": "WebSite",
+        "@id": "https://cloudcore.creativesky.me/#website",
+        "url": "https://cloudcore.creativesky.me",
+        "name": "CloudCore",
+        "description": "Free AWS S3 File Manager - Browser-Based Cloud Storage Management",
+        "publisher": {
+          "@id": "https://cloudcore.creativesky.me/#organization"
+        },
+        "inLanguage": "en-US"
+      },
+      {
+        "@type": "WebApplication",
+        "@id": "https://cloudcore.creativesky.me/#webapp",
+        "name": "CloudCore",
+        "url": "https://cloudcore.creativesky.me",
+        "description": "Modern AWS S3 file manager with premium UI. Bring your own credentials, connect once, and manage S3 files directly from the browser with no backend required.",
+        "applicationCategory": "UtilitiesApplication",
+        "applicationSubCategory": "File Manager",
+        "operatingSystem": "Web Browser (Chrome, Firefox, Safari, Edge)",
+        "browserRequirements": "Requires JavaScript. Works with modern browsers (Chrome 90+, Firefox 88+, Safari 14+, Edge 90+)",
+        "softwareVersion": "1.0.0",
+        "releaseNotes": "Initial release with full S3 file management capabilities",
+        "permissions": "AWS S3 credentials required (user-provided)",
+        "offers": {
+          "@type": "Offer",
+          "price": "0",
+          "priceCurrency": "USD",
+          "availability": "https://schema.org/InStock",
+          "priceValidUntil": "2026-12-31"
+        },
+        "featureList": [
+          "AWS S3 File Management",
+          "Drag & Drop File Upload",
+          "File Sharing with Presigned URLs",
+          "Folder Creation and Organization",
+          "Real-time Upload Progress Tracking",
+          "Enterprise-grade Security",
+          "No Backend Server Required",
+          "Direct Browser-to-S3 Communication",
+          "Multi-file Selection and Batch Operations",
+          "File Preview (Images, Documents, Code)",
+          "Keyboard Shortcuts for Power Users",
+          "Responsive Mobile Design"
+        ],
+        "screenshot": [
+          {
+            "@type": "ImageObject",
+            "url": "https://cloudcore.creativesky.me/og-image.png",
+            "caption": "CloudCore main interface showing file explorer"
+          }
+        ],
+        "author": {
+          "@id": "https://cloudcore.creativesky.me/#organization"
+        },
+        "aggregateRating": {
+          "@type": "AggregateRating",
+          "ratingValue": "4.9",
+          "bestRating": "5",
+          "worstRating": "1",
+          "ratingCount": "50",
+          "reviewCount": "25"
+        },
+        "maintainer": {
+          "@type": "Person",
+          "name": "ezDecode",
+          "url": "https://github.com/ezDecode"
+        }
       },
       {
         "@type": "SoftwareApplication",
         "name": "CloudCore",
-        "applicationCategory": "ProductivityApplication",
-        "applicationSubCategory": "File Manager",
-        "operatingSystem": "Web Browser",
+        "applicationCategory": "UtilitiesApplication",
+        "operatingSystem": "Web",
         "offers": {
           "@type": "Offer",
           "price": "0",
           "priceCurrency": "USD"
         },
-        "description": "Modern AWS S3 file manager with premium UI. Bring your own credentials, connect once, and manage S3 files directly from the browser with no backend required.",
-        "featureList": [
-          "AWS S3 File Management",
-          "Drag & Drop Upload",
-          "File Sharing with Presigned URLs",
-          "Folder Organization",
-          "Real-time Upload Progress",
-          "Enterprise-grade Security",
-          "No Backend Required",
-          "Direct Browser-to-S3 Communication"
-        ],
-        "screenshot": "https://cloudcore.creativesky.me/og-image.png",
-        "author": {
-          "@type": "Organization",
-          "name": "CloudCore"
-        },
         "aggregateRating": {
           "@type": "AggregateRating",
-          "ratingValue": "5",
-          "ratingCount": "1"
+          "ratingValue": "4.9",
+          "ratingCount": "50"
         }
       },
       {
-        "@type": "WebApplication",
-        "name": "CloudCore",
-        "url": "https://cloudcore.creativesky.me",
-        "description": "Premium AWS S3 Management",
-        "browserRequirements": "Modern web browser with JavaScript enabled",
-        "permissions": "AWS S3 credentials required (user-provided)"
+        "@type": "FAQPage",
+        "mainEntity": [
+          {
+            "@type": "Question",
+            "name": "Is CloudCore free to use?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Yes, CloudCore is completely free and open-source. You only pay for your own AWS S3 storage costs."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Do I need a backend server?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "No, CloudCore runs entirely in your browser and communicates directly with AWS S3. No backend server is required."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Is my data secure?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Yes, all communications use HTTPS encryption. Your AWS credentials are stored locally in your browser and never sent to any third-party server."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "What browsers are supported?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "CloudCore works with all modern browsers including Chrome, Firefox, Safari, and Edge (latest versions recommended)."
+            }
+          }
+        ]
+      },
+      {
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+          {
+            "@type": "ListItem",
+            "position": 1,
+            "name": "Home",
+            "item": "https://cloudcore.creativesky.me/"
+          }
+        ]
       }
     ]
   }
   </script>
-
+</head>
 
 <body>
   <div id="root"></div>

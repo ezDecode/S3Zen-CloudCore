@@ -1,13 +1,29 @@
+# CloudCore - Free AWS S3 File Manager
+# https://cloudcore.creativesky.me
+
+# Allow all search engine crawlers
 User-agent: *
 Allow: /
 
-# Allow all search engines to crawl the site
-# CloudCore - Premium AWS S3 File Manager
+# Googlebot specific rules
+User-agent: Googlebot
+Allow: /
+Crawl-delay: 1
+
+# Bingbot specific rules
+User-agent: Bingbot
+Allow: /
+Crawl-delay: 2
+
+# Disallow API routes and sensitive paths
+Disallow: /api/
+Disallow: /*.json$
+Disallow: /private/
+Disallow: /assets/*.js.map
+Disallow: /assets/*.css.map
 
 # Sitemap location
 Sitemap: https://cloudcore.creativesky.me/sitemap.xml
 
-# Disallow any future API routes or sensitive paths
-Disallow: /api/
-Disallow: /*.json$
-Disallow: /private/
+# Host directive for search engines
+Host: https://cloudcore.creativesky.me
