@@ -87,22 +87,22 @@ export const AuthModal = ({ isOpen, onClose, onAuthenticate }) => {
                         onClick={(e) => e.stopPropagation()}
                         className="relative w-full max-w-md z-50"
                     >
-                        {/* Modal Card */}
-                        <div className="relative bg-[var(--color-surface-dark)] backdrop-blur-xl shadow-2xl border border-white/10 rounded-2xl overflow-hidden">
-                            {/* Decorative Top Highlight */}
-                            <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-purple-500 via-pink-500 to-purple-500" />
+                        {/* Premium Modal Card */}
+                        <div className="relative bg-[#0a0a0a] backdrop-blur-xl shadow-2xl border border-white/[0.08] rounded-2xl overflow-hidden">
+                            {/* Premium Top Highlight */}
+                            <div className="absolute top-0 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-white/20 to-transparent" />
 
-                            {/* Header */}
+                            {/* Premium Header */}
                             <div className="flex items-start justify-between p-6 pb-4">
                                 <div>
-                                    <h2 className="text-2xl font-bold text-white tracking-tight">Connect to S3</h2>
-                                    <p className="text-sm text-white/60 mt-1.5">
+                                    <h2 className="text-2xl font-semibold text-white tracking-tight">Connect to S3</h2>
+                                    <p className="text-sm text-white/50 mt-1.5">
                                         Enter your AWS credentials to continue
                                     </p>
                                 </div>
                                 <button
                                     onClick={onClose}
-                                    className="p-2 text-white/40 hover:text-white hover:bg-white/10 transition-all rounded-lg -mr-2 -mt-1"
+                                    className="p-2 text-white/30 hover:text-white/70 hover:bg-white/[0.04] transition-all duration-300 rounded-lg -mr-2 -mt-1"
                                     aria-label="Close modal"
                                 >
                                     <Cancel01Icon className="w-5 h-5" />
@@ -111,22 +111,23 @@ export const AuthModal = ({ isOpen, onClose, onAuthenticate }) => {
 
                             {/* Form */}
                             <form onSubmit={handleSubmit} className="px-6 pb-6 space-y-5">
-                                {/* Error Message */}
+                                {/* Premium Error Message */}
                                 {error && (
                                     <motion.div
                                         initial={{ opacity: 0, y: -10 }}
                                         animate={{ opacity: 1, y: 0 }}
-                                        className="flex items-center gap-3 text-sm bg-red-500/10 border border-red-500/30 text-red-200 px-4 py-3 rounded-lg"
+                                        transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }}
+                                        className="flex items-center gap-3 text-sm bg-white/[0.03] border border-white/[0.08] text-white/70 px-4 py-3 rounded-lg"
                                     >
-                                        <LockIcon className="w-4 h-4 shrink-0" />
+                                        <LockIcon className="w-4 h-4 shrink-0 text-white/50" />
                                         {error}
                                     </motion.div>
                                 )}
 
-                                {/* Access Key ID */}
+                                {/* Premium Access Key ID */}
                                 <div className="space-y-2">
-                                    <label className="flex items-center gap-2 text-xs font-medium text-white/70 uppercase tracking-wide">
-                                        <Key01Icon className="w-4 h-4 text-purple-400" />
+                                    <label className="flex items-center gap-2 text-xs font-medium text-white/50 uppercase tracking-wider">
+                                        <Key01Icon className="w-4 h-4 text-white/40" />
                                         Access Key ID
                                     </label>
                                     <input
@@ -134,15 +135,15 @@ export const AuthModal = ({ isOpen, onClose, onAuthenticate }) => {
                                         placeholder="AKIAIOSFODNN7EXAMPLE"
                                         value={formData.accessKeyId}
                                         onChange={handleChange}
-                                        className="w-full px-4 py-3 text-sm bg-white/5 border border-white/10 text-white placeholder-white/30 rounded-lg outline-none focus:border-purple-500/50 focus:bg-white/10 focus:ring-2 focus:ring-purple-500/20 transition-all"
+                                        className="w-full px-4 py-3 text-sm bg-white/[0.03] border border-white/[0.08] text-white placeholder-white/30 rounded-lg outline-none focus:border-white/20 focus:bg-white/[0.05] transition-all duration-300"
                                         autoComplete="off"
                                     />
                                 </div>
 
-                                {/* Secret Access Key */}
+                                {/* Premium Secret Access Key */}
                                 <div className="space-y-2">
-                                    <label className="flex items-center gap-2 text-xs font-medium text-white/70 uppercase tracking-wide">
-                                        <LockIcon className="w-4 h-4 text-pink-400" />
+                                    <label className="flex items-center gap-2 text-xs font-medium text-white/50 uppercase tracking-wider">
+                                        <LockIcon className="w-4 h-4 text-white/40" />
                                         Secret Access Key
                                     </label>
                                     <input
@@ -151,15 +152,15 @@ export const AuthModal = ({ isOpen, onClose, onAuthenticate }) => {
                                         placeholder="Your secret key"
                                         value={formData.secretAccessKey}
                                         onChange={handleChange}
-                                        className="w-full px-4 py-3 text-sm bg-white/5 border border-white/10 text-white placeholder-white/30 rounded-lg outline-none focus:border-pink-500/50 focus:bg-white/10 focus:ring-2 focus:ring-pink-500/20 transition-all"
+                                        className="w-full px-4 py-3 text-sm bg-white/[0.03] border border-white/[0.08] text-white placeholder-white/30 rounded-lg outline-none focus:border-white/20 focus:bg-white/[0.05] transition-all duration-300"
                                         autoComplete="off"
                                     />
                                 </div>
 
-                                {/* Bucket Name */}
+                                {/* Premium Bucket Name */}
                                 <div className="space-y-2">
-                                    <label className="flex items-center gap-2 text-xs font-medium text-white/70 uppercase tracking-wide">
-                                        <Database01Icon className="w-4 h-4 text-blue-400" />
+                                    <label className="flex items-center gap-2 text-xs font-medium text-white/50 uppercase tracking-wider">
+                                        <Database01Icon className="w-4 h-4 text-white/40" />
                                         Bucket Name
                                     </label>
                                     <input
@@ -167,15 +168,15 @@ export const AuthModal = ({ isOpen, onClose, onAuthenticate }) => {
                                         placeholder="my-awesome-bucket"
                                         value={formData.bucketName}
                                         onChange={handleChange}
-                                        className="w-full px-4 py-3 text-sm bg-white/5 border border-white/10 text-white placeholder-white/30 rounded-lg outline-none focus:border-blue-500/50 focus:bg-white/10 focus:ring-2 focus:ring-blue-500/20 transition-all"
+                                        className="w-full px-4 py-3 text-sm bg-white/[0.03] border border-white/[0.08] text-white placeholder-white/30 rounded-lg outline-none focus:border-white/20 focus:bg-white/[0.05] transition-all duration-300"
                                         autoComplete="off"
                                     />
                                 </div>
 
-                                {/* Region Select */}
+                                {/* Premium Region Select */}
                                 <div className="space-y-2">
-                                    <label className="flex items-center gap-2 text-xs font-medium text-white/70 uppercase tracking-wide">
-                                        <Location01Icon className="w-4 h-4 text-green-400" />
+                                    <label className="flex items-center gap-2 text-xs font-medium text-white/50 uppercase tracking-wider">
+                                        <Location01Icon className="w-4 h-4 text-white/40" />
                                         AWS Region
                                     </label>
                                     <div className="relative">
@@ -183,7 +184,7 @@ export const AuthModal = ({ isOpen, onClose, onAuthenticate }) => {
                                             name="region"
                                             value={formData.region}
                                             onChange={handleChange}
-                                            className="w-full px-4 py-3 pr-10 text-sm bg-white/5 border border-white/10 text-white appearance-none cursor-pointer rounded-lg outline-none focus:border-green-500/50 focus:bg-white/10 focus:ring-2 focus:ring-green-500/20 transition-all"
+                                            className="w-full px-4 py-3 pr-10 text-sm bg-white/[0.03] border border-white/[0.08] text-white appearance-none cursor-pointer rounded-lg outline-none focus:border-white/20 focus:bg-white/[0.05] transition-all duration-300"
                                             style={{
                                                 backgroundImage: 'none'
                                             }}
@@ -192,28 +193,28 @@ export const AuthModal = ({ isOpen, onClose, onAuthenticate }) => {
                                                 <option
                                                     key={region.value}
                                                     value={region.value}
-                                                    className="bg-zinc-900 text-white py-2"
+                                                    className="bg-[#0a0a0a] text-white py-2"
                                                 >
                                                     {region.label}
                                                 </option>
                                             ))}
                                         </select>
-                                        <ArrowDown01Icon className="absolute right-3 top-1/2 -translate-y-1/2 text-white/40 pointer-events-none w-5 h-5" />
+                                        <ArrowDown01Icon className="absolute right-3 top-1/2 -translate-y-1/2 text-white/30 pointer-events-none w-5 h-5" />
                                     </div>
                                 </div>
 
-                                {/* Submit Button */}
+                                {/* Premium Submit Button */}
                                 <button
                                     type="submit"
                                     disabled={isLoading}
-                                    className="w-full mt-2 px-6 py-3.5 font-semibold text-white bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-lg hover:shadow-xl hover:shadow-purple-500/30 rounded-xl flex items-center justify-center gap-2"
+                                    className="w-full mt-2 px-6 py-3.5 font-semibold text-black bg-white hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed transition-opacity duration-150 shadow-lg rounded-xl flex items-center justify-center gap-2 active:scale-[0.99]"
                                 >
                                     {isLoading ? (
                                         <>
                                             <motion.div
                                                 animate={{ rotate: 360 }}
                                                 transition={{ duration: 1, repeat: Infinity, ease: 'linear' }}
-                                                className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full"
+                                                className="w-4 h-4 border-2 border-black/30 border-t-black rounded-full"
                                             />
                                             <span>Connecting...</span>
                                         </>
@@ -222,8 +223,8 @@ export const AuthModal = ({ isOpen, onClose, onAuthenticate }) => {
                                     )}
                                 </button>
 
-                                {/* Help Text */}
-                                <p className="text-xs text-center text-white/40 pt-1">
+                                {/* Premium Help Text */}
+                                <p className="text-xs text-center text-white/30 pt-1">
                                     Credentials are encrypted and stored locally
                                 </p>
                             </form>

@@ -23,37 +23,51 @@
   --radius-2xl: 1.5rem;
   --radius-full: 9999px;
 
-  /* Monochromatic Color System */
+  /* Premium Monochromatic Color System */
   --color-surface-black: #000000;
-  --color-surface-dark: #09090b;
-  /* Zinc 950 */
-  --color-surface-gray: #18181b;
-  /* Zinc 900 */
-  --color-border: #27272a;
-  /* Zinc 800 */
+  --color-surface-dark: #0a0a0a;
+  --color-surface-elevated: #141414;
+  --color-surface-hover: #1a1a1a;
+  --color-border-subtle: #1f1f1f;
+  --color-border: #2a2a2a;
+  --color-border-strong: #3a3a3a;
   --color-text-primary: #ffffff;
-  --color-text-secondary: #a1a1aa;
-  /* Zinc 400 */
-  --color-text-muted: #52525b;
-  /* Zinc 600 */
+  --color-text-secondary: #a0a0a0;
+  --color-text-muted: #6a6a6a;
+  --color-text-disabled: #4a4a4a;
+  --color-accent: #ffffff;
+  --color-accent-muted: #e0e0e0;
 }
 
-/* Minimal Global Styles - Let Tailwind Preflight handle resets */
+/* Mobile-First Global Styles */
 html,
 body {
   height: 100%;
   min-height: 100vh;
+  min-height: -webkit-fill-available; /* iOS Safari fix */
   font-family: var(--font-sans);
   color: var(--color-text-primary);
   background: #000000;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden; /* Prevent horizontal scroll on mobile */
 }
 
-/* Custom Scrollbar */
+/* Mobile viewport height fix */
+html {
+  height: -webkit-fill-available;
+}
+
+/* Touch optimization */
+* {
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+}
+
+/* Premium Scrollbar */
 ::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
+  width: 6px;
+  height: 6px;
 }
 
 ::-webkit-scrollbar-track {
@@ -61,13 +75,13 @@ body {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #27272a;
-  border-radius: 4px;
-  transition: background 0.2s;
+  background: var(--color-border);
+  border-radius: 3px;
+  transition: background 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #3f3f46;
+  background: var(--color-border-strong);
 }
 
 /* Custom scrollbar for upload status */
@@ -90,11 +104,11 @@ body {
 
 /* Selection */
 ::selection {
-  background: #ffffff;
-  color: #000000;
+  background: var(--color-accent);
+  color: var(--color-surface-black);
 }
 
-/* Utilities */
+/* Premium Utilities */
 .mono-border {
   border: 1px solid var(--color-border);
 }
@@ -103,12 +117,104 @@ body {
   background-color: var(--color-surface-dark);
 }
 
-/* Gradient Text Utility */
+.mono-surface-elevated {
+  background-color: var(--color-surface-elevated);
+}
+
+/* Monochromatic Gradient Text */
 .gradient-text {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #ffffff 0%, #a0a0a0 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
+}
+
+/* Premium Animations */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -1000px 0;
+  }
+  100% {
+    background-position: 1000px 0;
+  }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.5s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+.animate-slide-in {
+  animation: slideIn 0.5s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+.animate-scale-in {
+  animation: scaleIn 0.4s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+/* Premium Hover Effects - Subtle & Stable */
+.premium-hover {
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.premium-hover:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(255, 255, 255, 0.04);
+}
+
+/* Button hover - minimal lift */
+.btn-hover {
+  transition: all 0.15s ease-out;
+}
+
+.btn-hover:hover {
+  opacity: 0.9;
+}
+
+.btn-hover:active {
+  transform: scale(0.99);
+}
+
+/* Card hover - very subtle */
+.card-hover {
+  transition: all 0.2s ease-out;
+}
+
+.card-hover:hover {
+  background-color: rgba(255, 255, 255, 0.04);
+  border-color: rgba(255, 255, 255, 0.12);
 }
 
 /* Uncut Sans Font Utility */
@@ -123,4 +229,218 @@ body {
 
 .file-explorer-wrapper {
   isolation: isolate;
+}
+
+/* Mobile-First Responsive Utilities */
+
+/* Safe Area Insets for iOS notch/home indicator */
+@supports (padding: max(0px)) {
+  .safe-top {
+    padding-top: max(env(safe-area-inset-top), 1rem);
+  }
+  
+  .safe-bottom {
+    padding-bottom: max(env(safe-area-inset-bottom), 1rem);
+  }
+  
+  .safe-left {
+    padding-left: max(env(safe-area-inset-left), 1rem);
+  }
+  
+  .safe-right {
+    padding-right: max(env(safe-area-inset-right), 1rem);
+  }
+}
+
+/* Mobile-optimized touch targets (min 44x44px) */
+.touch-target {
+  min-width: 44px;
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Prevent text selection on mobile for UI elements */
+.no-select {
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+/* Mobile-friendly scrolling */
+.smooth-scroll {
+  -webkit-overflow-scrolling: touch;
+  scroll-behavior: smooth;
+}
+
+/* Hide scrollbar on mobile but keep functionality */
+.hide-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.hide-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+/* Mobile-first container */
+.container-mobile {
+  width: 100%;
+  padding-left: 1rem;
+  padding-right: 1rem;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+@media (min-width: 640px) {
+  .container-mobile {
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .container-mobile {
+    padding-left: 2rem;
+    padding-right: 2rem;
+    max-width: 1280px;
+  }
+}
+
+/* Responsive text sizing */
+.text-responsive-xs {
+  font-size: clamp(0.75rem, 2vw, 0.875rem);
+}
+
+.text-responsive-sm {
+  font-size: clamp(0.875rem, 2.5vw, 1rem);
+}
+
+.text-responsive-base {
+  font-size: clamp(1rem, 3vw, 1.125rem);
+}
+
+.text-responsive-lg {
+  font-size: clamp(1.125rem, 3.5vw, 1.25rem);
+}
+
+.text-responsive-xl {
+  font-size: clamp(1.25rem, 4vw, 1.5rem);
+}
+
+.text-responsive-2xl {
+  font-size: clamp(1.5rem, 5vw, 2rem);
+}
+
+.text-responsive-3xl {
+  font-size: clamp(2rem, 6vw, 3rem);
+}
+
+/* Mobile-optimized spacing */
+.spacing-mobile-sm {
+  padding: 0.75rem;
+}
+
+.spacing-mobile-md {
+  padding: 1rem;
+}
+
+.spacing-mobile-lg {
+  padding: 1.5rem;
+}
+
+@media (min-width: 640px) {
+  .spacing-mobile-sm {
+    padding: 1rem;
+  }
+  
+  .spacing-mobile-md {
+    padding: 1.5rem;
+  }
+  
+  .spacing-mobile-lg {
+    padding: 2rem;
+  }
+}
+
+/* Mobile-first grid */
+.grid-mobile {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1rem;
+}
+
+@media (min-width: 640px) {
+  .grid-mobile {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.5rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .grid-mobile {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2rem;
+  }
+}
+
+/* Mobile navigation optimization */
+.mobile-nav {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 50;
+  background: var(--color-surface-dark);
+  border-top: 1px solid var(--color-border-subtle);
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+@media (min-width: 768px) {
+  .mobile-nav {
+    position: static;
+    border-top: none;
+    padding-bottom: 0;
+  }
+}
+
+/* Prevent zoom on input focus (iOS) */
+input,
+select,
+textarea {
+  font-size: 16px; /* Prevents iOS zoom */
+}
+
+@media (min-width: 768px) {
+  input,
+  select,
+  textarea {
+    font-size: 14px;
+  }
+}
+
+/* Mobile-optimized modals */
+@media (max-width: 639px) {
+  .modal-mobile {
+    position: fixed;
+    inset: 0;
+    margin: 0;
+    max-width: 100%;
+    max-height: 100%;
+    border-radius: 0;
+  }
+}
+
+/* Landscape mobile optimization */
+@media (max-height: 500px) and (orientation: landscape) {
+  .hide-landscape {
+    display: none;
+  }
+  
+  .compact-landscape {
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
+  }
 }

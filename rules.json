@@ -1,0 +1,7 @@
+{
+  "documentation": {
+    "rule": "Do not create documentation files after every task",
+    "description": "Documentation files should only be created when explicitly requested by the user. No automatic documentation generation.",
+    "enforcement": "strict"
+  }
+}

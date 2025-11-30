@@ -41,73 +41,80 @@ const steps = [
 
 export const HowItWorksSection = () => {
     return (
-        <section className="relative w-full py-32 bg-black overflow-hidden">
-            {/* Top separator */}
-            <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/10 to-transparent" />
+        <section className="relative w-full py-16 sm:py-24 lg:py-32 bg-black overflow-hidden">
+            {/* Premium separator */}
+            <div className="absolute inset-x-0 top-0 h-[1px] bg-gradient-to-r from-transparent via-white/[0.08] to-transparent" />
 
-            {/* Ambient background */}
-            <div className="absolute w-[800px] h-[800px] bg-purple-500/5 rounded-full blur-3xl top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none" />
+            {/* Subtle ambient background */}
+            <div className="absolute w-[600px] h-[600px] bg-white/[0.01] rounded-full blur-3xl top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none" />
 
-            <div className="relative z-10 max-w-7xl mx-auto px-6 sm:px-8 lg:px-12">
-                {/* Section Header - Creates expectation, reduces cognitive load */}
+            <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-12">
+                {/* Mobile-First Section Header */}
                 <motion.div
                     initial={{ opacity: 0, y: 20 }}
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true, margin: "-100px" }}
-                    transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
-                    className="text-center mb-20"
+                    transition={{ duration: 0.6, ease: [0.4, 0, 0.2, 1] }}
+                    className="text-center mb-12 sm:mb-16 lg:mb-20"
                 >
-                    <h2 className="text-3xl sm:text-4xl md:text-5xl font-semibold text-white mb-4">
-                        Ready in <span className="gradient-text">under 60 seconds</span>
+                    <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-semibold text-white mb-3 sm:mb-4 tracking-tight px-4">
+                        Ready in <span className="text-white/40">under 60 seconds</span>
                     </h2>
-                    <p className="text-lg text-white/50 max-w-2xl mx-auto">
+                    <p className="text-base sm:text-lg text-white/40 max-w-2xl mx-auto px-4">
                         No installation, no configuration, no complexity
                     </p>
                 </motion.div>
 
-                {/* Steps - Sequential, clear, confidence-building */}
+                {/* Mobile-First Steps Layout */}
                 <div className="relative">
-                    {/* Connection line (desktop) - Shows progression */}
-                    <div className="hidden lg:block absolute top-24 left-0 right-0 h-px bg-gradient-to-r from-purple-500/20 via-purple-500/40 to-purple-500/20" />
+                    {/* Vertical connection line (mobile) */}
+                    <div className="lg:hidden absolute left-[27px] top-0 bottom-0 w-[1px] bg-gradient-to-b from-white/[0.08] via-white/[0.12] to-white/[0.08]" />
+                    
+                    {/* Horizontal connection line (desktop) */}
+                    <div className="hidden lg:block absolute top-[56px] left-0 right-0 h-[1px] bg-gradient-to-r from-white/[0.08] via-white/[0.12] to-white/[0.08]" />
 
-                    <div className="grid grid-cols-1 lg:grid-cols-3 gap-12 lg:gap-8">
+                    <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 sm:gap-10 lg:gap-8">
                         {steps.map((step, index) => (
                             <motion.div
                                 key={index}
-                                initial={{ opacity: 0, y: 30 }}
+                                initial={{ opacity: 0, y: 20 }}
                                 whileInView={{ opacity: 1, y: 0 }}
                                 viewport={{ once: true, margin: "-50px" }}
                                 transition={{
                                     duration: 0.5,
-                                    delay: index * 0.15,
-                                    ease: [0.22, 1, 0.36, 1]
+                                    delay: index * 0.1,
+                                    ease: [0.4, 0, 0.2, 1]
                                 }}
                                 className="relative"
                             >
-                                {/* Step Card - Clear hierarchy, digestible content */}
-                                <div className="relative h-full">
-                                    {/* Large number - Visual anchor, progress indicator */}
-                                    <div className="absolute -top-6 -left-2 text-8xl font-bold text-white/[0.03] select-none leading-none">
-                                        {step.number}
+                                {/* Mobile-First Step Card */}
+                                <div className="relative h-full pl-16 lg:pl-0">
+                                    {/* Mobile: Number on left, Desktop: Background */}
+                                    <div className="absolute left-0 top-0 lg:static lg:-top-4 lg:-left-2">
+                                        <div className="lg:absolute lg:inset-0 flex items-start lg:items-start justify-start">
+                                            <span className="text-5xl sm:text-6xl lg:text-8xl font-bold text-white/[0.08] lg:text-white/[0.03] select-none leading-none">
+                                                {step.number}
+                                            </span>
+                                        </div>
                                     </div>
 
-                                    {/* Icon container - Category identifier */}
-                                    <div className="relative inline-flex items-center justify-center w-14 h-14 rounded-xl bg-white border border-white/10 mb-8 shadow-lg shadow-white/5">
-                                        <step.icon className="w-7 h-7 text-black" />
+                                    {/* Icon - Mobile optimized size */}
+                                    <div className="relative inline-flex items-center justify-center w-12 h-12 sm:w-14 sm:h-14 rounded-xl bg-white/[0.08] border border-white/[0.12] mb-4 sm:mb-6 lg:mb-8">
+                                        <step.icon className="w-6 h-6 sm:w-7 sm:h-7 text-white/90" />
                                     </div>
 
-                                    {/* Content - Title communicates action, description builds understanding */}
-                                    <h3 className="text-2xl font-semibold text-white mb-4">
+                                    {/* Content - Mobile-first typography */}
+                                    <h3 className="text-xl sm:text-2xl font-semibold text-white mb-3 sm:mb-4 tracking-tight">
                                         {step.title}
                                     </h3>
-                                    <p className="text-white/60 leading-relaxed mb-4">
+                                    <p className="text-sm sm:text-base text-white/50 leading-relaxed mb-4 sm:mb-5">
                                         {step.description}
                                     </p>
 
-                                    {/* Trust signal - Addresses specific concern per step */}
-                                    <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-emerald-500/10 border border-emerald-500/20 rounded-full">
-                                        <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full" />
-                                        <span className="text-xs font-medium text-emerald-400/90">
+                                    {/* Trust badge - Mobile optimized */}
+                                    <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-white/[0.04] border border-white/[0.08] rounded-full">
+                                        <span className="w-1.5 h-1.5 bg-white rounded-full" />
+                                        <span className="text-xs font-medium text-white/60">
                                             {step.security}
                                         </span>
                                     </div>

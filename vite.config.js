@@ -25,56 +25,88 @@ export default defineConfig({
   build: {
     rollupOptions: {
       output: {
-        manualChunks: {
+        manualChunks: (id) => {
           // React core
-          'react-vendor': ['react', 'react-dom'],
+          if (id.includes('node_modules/react') || id.includes('node_modules/react-dom')) {
+            return 'react-vendor';
+          }
 
-          // AWS SDK - split into separate chunks (these are large)
-          'aws-s3': [
-            '@aws-sdk/client-s3',
-            '@aws-sdk/lib-storage',
-            '@aws-sdk/s3-request-presigner',
-          ],
-          'aws-auth': [
-            '@aws-sdk/client-cognito-identity',
-            '@aws-sdk/client-sts',
-            '@aws-sdk/credential-provider-cognito-identity',
-            'amazon-cognito-identity-js',
-          ],
+          // AWS S3 SDK
+          if (id.includes('@aws-sdk/client-s3') || 
+              id.includes('@aws-sdk/lib-storage') || 
+              id.includes('@aws-sdk/s3-request-presigner')) {
+            return 'aws-s3';
+          }
 
-          // Animation libraries
-          'animations': ['framer-motion'],
+          // AWS Auth SDK
+          if (id.includes('@aws-sdk/client-cognito-identity') || 
+              id.includes('@aws-sdk/client-sts') || 
+              id.includes('@aws-sdk/credential-provider-cognito-identity') || 
+              id.includes('amazon-cognito-identity-js')) {
+            return 'aws-auth';
+          }
 
-          // UI component libraries
-          'ui-components': [
-            '@radix-ui/react-dialog',
-            '@radix-ui/react-dropdown-menu',
-            '@radix-ui/react-slot',
-            'vaul',
-            'sonner',
-          ],
+          // Framer Motion
+          if (id.includes('framer-motion')) {
+            return 'animations';
+          }
+
+          // UI Components
+          if (id.includes('@radix-ui') || 
+              id.includes('vaul') || 
+              id.includes('sonner')) {
+            return 'ui-components';
+          }
 
           // Icons
-          'icons': ['hugeicons-react', 'lucide-react'],
+          if (id.includes('hugeicons-react') || id.includes('lucide-react')) {
+            return 'icons';
+          }
 
-          // Utility libraries
-          'utils': [
-            'date-fns',
-            'clsx',
-            'tailwind-merge',
-            'class-variance-authority',
-          ],
+          // Utilities
+          if (id.includes('date-fns') || 
+              id.includes('clsx') || 
+              id.includes('tailwind-merge') || 
+              id.includes('class-variance-authority')) {
+            return 'utils';
+          }
 
-          // Preview/Syntax highlighting libraries
-          'preview': [
-            'react-markdown',
-            'remark-gfm',
-            'react-syntax-highlighter',
-          ],
+          // Split large preview libraries into separate chunks
+          if (id.includes('react-syntax-highlighter')) {
+            // Split syntax highlighter by language groups
+            if (id.includes('refractor')) {
+              return 'syntax-refractor';
+            }
+            return 'syntax-highlighter';
+          }
+
+          if (id.includes('react-markdown') || id.includes('remark-gfm')) {
+            return 'markdown';
+          }
+
+          // Split other large dependencies
+          if (id.includes('unified') || id.includes('micromark') || id.includes('mdast')) {
+            return 'markdown-parser';
+          }
+
+          // Polyfills
+          if (id.includes('buffer') || 
+              id.includes('stream-browserify') || 
+              id.includes('util')) {
+            return 'polyfills';
+          }
+
+          // Default: let Vite handle other node_modules
+          if (id.includes('node_modules')) {
+            return 'vendor';
+          }
         },
       },
     },
-    // Increase chunk size warning limit (optional, but makes build output cleaner)
-    chunkSizeWarningLimit: 600,
+    // Increase chunk size warning limit (syntax-highlighter is large but necessary)
+    chunkSizeWarningLimit: 1500,
+    // Use esbuild for faster minification
+    minify: 'esbuild',
+    target: 'es2015',
   },
 });

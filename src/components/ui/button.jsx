@@ -5,25 +5,25 @@ import { cva } from "class-variance-authority"
 import { cn } from "../../lib/utils"
 
 const buttonVariants = cva(
-    "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-zinc-300 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0",
+    "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-lg text-sm font-medium transition-all duration-150 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-white/20 disabled:pointer-events-none disabled:opacity-50 active:scale-[0.99] [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0",
     {
         variants: {
             variant: {
                 default:
-                    "bg-zinc-50 text-zinc-900 shadow hover:bg-zinc-50/90",
+                    "bg-white text-black shadow-lg hover:opacity-90",
                 destructive:
-                    "bg-red-500 text-zinc-50 shadow-sm hover:bg-red-500/90",
+                    "bg-white/[0.08] text-white border border-white/[0.12] shadow-sm hover:bg-white/[0.12]",
                 outline:
-                    "border border-zinc-800 bg-transparent shadow-sm hover:bg-zinc-800 hover:text-zinc-50",
+                    "border border-white/[0.08] bg-transparent shadow-sm hover:bg-white/[0.04] hover:border-white/[0.1]",
                 secondary:
-                    "bg-zinc-800 text-zinc-50 shadow-sm hover:bg-zinc-800/80",
-                ghost: "hover:bg-zinc-800 hover:text-zinc-50",
-                link: "text-zinc-50 underline-offset-4 hover:underline",
+                    "bg-white/[0.04] text-white shadow-sm hover:bg-white/[0.06]",
+                ghost: "hover:bg-white/[0.04] hover:text-white",
+                link: "text-white/70 underline-offset-4 hover:underline hover:text-white",
             },
             size: {
                 default: "h-9 px-4 py-2",
-                sm: "h-8 rounded-md px-3 text-xs",
-                lg: "h-10 rounded-md px-8",
+                sm: "h-8 rounded-lg px-3 text-xs",
+                lg: "h-10 rounded-lg px-8",
                 icon: "h-9 w-9",
             },
         },

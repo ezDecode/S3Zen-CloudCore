@@ -20,25 +20,26 @@ export const Modal = ({
         <AnimatePresence>
             {isOpen && (
                 <div
-                    className={`fixed inset-0 ${zIndex} flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm`}
+                    className={`fixed inset-0 ${zIndex} flex items-center justify-center p-4 bg-black/60 backdrop-blur-md`}
                     onClick={onClose}
                 >
                     <motion.div
-                        initial={{ opacity: 0, scale: 0.95 }}
-                        animate={{ opacity: 1, scale: 1 }}
-                        exit={{ opacity: 0, scale: 0.95 }}
+                        initial={{ opacity: 0, scale: 0.96, y: 20 }}
+                        animate={{ opacity: 1, scale: 1, y: 0 }}
+                        exit={{ opacity: 0, scale: 0.96, y: 20 }}
+                        transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }}
                         onClick={(e) => e.stopPropagation()}
-                        className={`bg-zinc-900/98 backdrop-blur-2xl rounded-2xl shadow-2xl w-full ${maxWidth} border border-white/10 z-50 overflow-hidden`}
+                        className={`bg-[#0a0a0a] backdrop-blur-2xl rounded-2xl shadow-2xl w-full ${maxWidth} border border-white/[0.08] z-50 overflow-hidden`}
                     >
-                        {/* Header */}
-                        <div className="flex items-center justify-between p-5 border-b border-white/10">
-                            <div className="flex items-center gap-2">
+                        {/* Premium Header */}
+                        <div className="flex items-center justify-between p-5 border-b border-white/[0.06]">
+                            <div className="flex items-center gap-2.5">
                                 {Icon && <Icon className={`w-5 h-5 ${iconColor}`} />}
-                                <h2 className="text-lg font-bold text-white">{title}</h2>
+                                <h2 className="text-lg font-semibold text-white tracking-tight">{title}</h2>
                             </div>
                             <button
                                 onClick={onClose}
-                                className="p-1.5 text-zinc-400 hover:text-white hover:bg-white/5 rounded-lg transition-all"
+                                className="p-1.5 text-white/30 hover:text-white/70 hover:bg-white/[0.04] rounded-lg transition-all duration-300"
                             >
                                 <X className="w-5 h-5" />
                             </button>
