@@ -25,81 +25,47 @@ export default defineConfig({
   build: {
     rollupOptions: {
       output: {
-        manualChunks: (id) => {
-          // React core
-          if (id.includes('node_modules/react') || id.includes('node_modules/react-dom')) {
-            return 'react-vendor';
-          }
-
-          // AWS S3 SDK
-          if (id.includes('@aws-sdk/client-s3') || 
-              id.includes('@aws-sdk/lib-storage') || 
-              id.includes('@aws-sdk/s3-request-presigner')) {
-            return 'aws-s3';
-          }
-
-          // AWS Auth SDK
-          if (id.includes('@aws-sdk/client-cognito-identity') || 
-              id.includes('@aws-sdk/client-sts') || 
-              id.includes('@aws-sdk/credential-provider-cognito-identity') || 
-              id.includes('amazon-cognito-identity-js')) {
-            return 'aws-auth';
-          }
-
-          // Framer Motion
-          if (id.includes('framer-motion')) {
-            return 'animations';
-          }
-
-          // UI Components
-          if (id.includes('@radix-ui') || 
-              id.includes('vaul') || 
-              id.includes('sonner')) {
-            return 'ui-components';
-          }
-
-          // Icons
-          if (id.includes('hugeicons-react') || id.includes('lucide-react')) {
-            return 'icons';
-          }
-
+        manualChunks: {
+          // React must be in its own chunk and loaded first
+          'react-vendor': ['react', 'react-dom'],
+          
+          // UI libraries that depend on React - bundle together
+          'ui-vendor': [
+            'lucide-react',
+            'hugeicons-react', 
+            '@radix-ui/react-dialog',
+            '@radix-ui/react-dropdown-menu',
+            '@radix-ui/react-slot',
+            'vaul',
+            'sonner',
+            'framer-motion',
+            'class-variance-authority',
+            'clsx',
+            'tailwind-merge'
+          ],
+          
+          // AWS SDKs
+          'aws-s3': [
+            '@aws-sdk/client-s3',
+            '@aws-sdk/lib-storage',
+            '@aws-sdk/s3-request-presigner'
+          ],
+          'aws-auth': [
+            '@aws-sdk/client-cognito-identity',
+            '@aws-sdk/client-sts',
+            '@aws-sdk/credential-provider-cognito-identity',
+            'amazon-cognito-identity-js'
+          ],
+          
+          // Markdown & syntax highlighting
+          'markdown': [
+            'react-markdown',
+            'remark-gfm',
+            'react-syntax-highlighter'
+          ],
+          
           // Utilities
-          if (id.includes('date-fns') || 
-              id.includes('clsx') || 
-              id.includes('tailwind-merge') || 
-              id.includes('class-variance-authority')) {
-            return 'utils';
-          }
-
-          // Split large preview libraries into separate chunks
-          if (id.includes('react-syntax-highlighter')) {
-            // Split syntax highlighter by language groups
-            if (id.includes('refractor')) {
-              return 'syntax-refractor';
-            }
-            return 'syntax-highlighter';
-          }
-
-          if (id.includes('react-markdown') || id.includes('remark-gfm')) {
-            return 'markdown';
-          }
-
-          // Split other large dependencies
-          if (id.includes('unified') || id.includes('micromark') || id.includes('mdast')) {
-            return 'markdown-parser';
-          }
-
-          // Polyfills
-          if (id.includes('buffer') || 
-              id.includes('stream-browserify') || 
-              id.includes('util')) {
-            return 'polyfills';
-          }
-
-          // Default: let Vite handle other node_modules
-          if (id.includes('node_modules')) {
-            return 'vendor';
-          }
+          'utils': ['date-fns', 'buffer', 'stream-browserify', 'util']
         },
       },
     },
