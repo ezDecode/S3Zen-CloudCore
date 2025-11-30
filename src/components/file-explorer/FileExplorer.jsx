@@ -6,6 +6,16 @@
  * - Custom hooks handle business logic (upload, download, navigation)
  * - Sub-components handle UI sections (nav, action bar)
  * - Main component orchestrates everything
+ * 
+ * Features:
+ * - Quick Share with one-click links
+ * - Favorites/Pins for frequently accessed files
+ * - Recent Files for quick access
+ * - Keyboard Shortcuts for power users
+ * - File Thumbnails for images
+ * - Drag to Organize files between folders
+ * - Bulk Select with Shift+Click
+ * - Storage Stats Widget
  */
 
 import { useState, useCallback, useRef, useEffect } from 'react';
@@ -20,14 +30,23 @@ import { UploadProgressPanel } from './components/UploadProgressPanel';
 import { FileList } from './FileList';
 import { DownloadManager } from '../common/DownloadManager';
 import { DuplicateFileModal } from '../modals/DuplicateFileModal';
+import { FavoritesPanel } from '../common/FavoritesPanel';
+import { RecentFilesPanel } from '../common/RecentFilesPanel';
+import { StorageStatsWidget } from '../common/StorageStatsWidget';
+import { KeyboardShortcutsHelp, KeyboardShortcutsButton } from '../common/KeyboardShortcutsHelp';
 
 // Hooks
 import { useFileNavigation } from './hooks/useFileNavigation';
 import { useFileOperations } from './hooks/useFileOperations';
 import { useDragAndDrop } from './hooks/useDragAndDrop';
+import { useFavorites } from '../../hooks/useFavorites';
+import { useRecentFiles } from '../../hooks/useRecentFiles';
+import { useKeyboardShortcuts } from '../../hooks/useKeyboardShortcuts';
+import { useStorageStats } from '../../hooks/useStorageStats';
+import { useBulkSelect } from '../../hooks/useBulkSelect';
 
 // Services
-import { listObjects } from '../../services/aws/s3Service';
+import { listObjects, moveFile } from '../../services/aws/s3Service';
 import { clearAuth } from '../../utils/authUtils';
 
 export const FileExplorer = ({
@@ -42,6 +61,10 @@ export const FileExplorer = ({
     const [items, setItems] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
     const [mobileDrawerOpen, setMobileDrawerOpen] = useState(false);
+    const [showKeyboardHelp, setShowKeyboardHelp] = useState(false);
+    const [showSidebar, setShowSidebar] = useState(true);
+    const searchInputRef = useRef(null);
+    const fileUploadRef = useRef(null);
 
     // Navigation & Selection
     const {
@@ -63,6 +86,41 @@ export const FileExplorer = ({
         handleSort,
         sortedItems
     } = useFileNavigation(items);
+
+    // Favorites
+    const { 
+        favorites, 
+        isFavorite, 
+        toggleFavorite, 
+        removeFavorite, 
+        clearFavorites,
+        getSortedFavorites 
+    } = useFavorites();
+
+    // Recent Files
+    const { 
+        recentFiles, 
+        addRecentFile, 
+        removeRecentFile, 
+        clearRecentFiles 
+    } = useRecentFiles();
+
+    // Storage Stats
+    const { 
+        totalSize, 
+        fileCount, 
+        folderCount, 
+        isLoading: statsLoading, 
+        error: statsError,
+        refresh: refreshStats 
+    } = useStorageStats(0); // Disable auto-refresh, manual only
+
+    // Bulk Selection
+    const { handleBulkSelect, resetSelection } = useBulkSelect(
+        sortedItems, 
+        selectedItems, 
+        setSelectedItems
+    );
 
     // Load files
     const loadFilesRef = useRef(null);
@@ -162,9 +220,10 @@ export const FileExplorer = ({
 
                 setSelectedItems([]);
                 loadFiles();
+                refreshStats(); // Refresh storage stats after delete
             });
         }
-    }, [onDeleteModal, currentPath, setCurrentPath, setSelectedItems, loadFiles]);
+    }, [onDeleteModal, currentPath, setCurrentPath, setSelectedItems, loadFiles, refreshStats]);
 
     const handleShareSelected = useCallback(() => {
         if (selectedItems.length === 1 && selectedItems[0].type === 'file') {
@@ -176,6 +235,79 @@ export const FileExplorer = ({
         clearAuth();
         onLogout();
     }, [onLogout]);
+
+    // Handle preview with recent files tracking
+    const handlePreview = useCallback((item, allItems) => {
+        addRecentFile(item);
+        onPreviewModal(item, allItems || sortedItems);
+    }, [addRecentFile, onPreviewModal, sortedItems]);
+
+    // Handle file selection with bulk select support
+    const handleItemSelect = useCallback((item, event) => {
+        if (event?.shiftKey) {
+            handleBulkSelect(item, event);
+        } else {
+            handleSelectItem(item);
+        }
+    }, [handleBulkSelect, handleSelectItem]);
+
+    // Handle moving file to folder (drag to organize)
+    const handleMoveToFolder = useCallback(async (sourceItem, targetFolder) => {
+        try {
+            const result = await moveFile(sourceItem.key, targetFolder.key);
+            if (result.success) {
+                toast.success(`Moved "${sourceItem.name}" to "${targetFolder.name}"`);
+                loadFiles();
+            } else {
+                toast.error(`Failed to move: ${result.error}`);
+            }
+        } catch (error) {
+            toast.error('Failed to move file');
+        }
+    }, [loadFiles]);
+
+    // Handle opening favorites/recent items
+    const handleOpenFavoriteOrRecent = useCallback((item) => {
+        if (item.type === 'folder') {
+            handleNavigate(item.key);
+        } else {
+            addRecentFile(item);
+            onPreviewModal(item, [item]);
+        }
+    }, [handleNavigate, addRecentFile, onPreviewModal]);
+
+    // Keyboard Shortcuts
+    useKeyboardShortcuts({
+        onUpload: () => fileUploadRef.current?.click(),
+        onDelete: (items) => handleDelete(items),
+        onSelectAll: handleSelectAll,
+        onClearSelection: clearSelection,
+        onNewFolder: handleCreateFolder,
+        onDownload: (items) => handleDownloadSelected(items),
+        onFocusSearch: () => searchInputRef.current?.focus(),
+        onRename: (item) => onRenameModal(item, handleRename),
+        onOpen: handleOpenFolder,
+        onPreview: (item) => handlePreview(item),
+        selectedItems,
+        isEnabled: true
+    });
+
+    // Listen for '?' key to show keyboard shortcuts help
+    useEffect(() => {
+        const handleKeyPress = (e) => {
+            if (e.key === '?' && !e.ctrlKey && !e.metaKey) {
+                const target = e.target;
+                const isTyping = target.tagName === 'INPUT' || 
+                                target.tagName === 'TEXTAREA' || 
+                                target.isContentEditable;
+                if (!isTyping) {
+                    setShowKeyboardHelp(prev => !prev);
+                }
+            }
+        };
+        document.addEventListener('keydown', handleKeyPress);
+        return () => document.removeEventListener('keydown', handleKeyPress);
+    }, []);
 
     return (
         <div

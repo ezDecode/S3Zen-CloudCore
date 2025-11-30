@@ -2,12 +2,21 @@
  * FileItem Component
  * Complete UI Redesign - Modern Card & Row Design
  * OPTIMIZED: Memoized to prevent unnecessary re-renders
+ * 
+ * Features:
+ * - Favorites toggle
+ * - Quick share button
+ * - Thumbnails for images
+ * - Drag to organize
+ * - Shift+click bulk selection
  */
 
 import { motion, AnimatePresence } from 'framer-motion';
-import { MoreVerticalIcon, Download01Icon, Share01Icon, Delete02Icon, Edit02Icon, ViewIcon, Tick02Icon, InformationCircleIcon } from 'hugeicons-react';
+import { MoreVerticalIcon, Download01Icon, Share01Icon, Delete02Icon, Edit02Icon, ViewIcon, Tick02Icon, InformationCircleIcon, FavouriteIcon, Link01Icon } from 'hugeicons-react';
 import { useState, memo, useCallback } from 'react';
 import { FileIcon } from './FileIcon';
+import { FileThumbnail } from '../common/FileThumbnail';
+import { QuickShareButton } from '../common/QuickShareButton';
 import { formatFileSize, formatDate, formatExactDateTime } from '../../utils/formatters';
 import {
     DropdownMenu,
@@ -29,11 +38,31 @@ export const FileItem = memo(({
     onDelete,
     onPreview,
     onDetails,
-    viewMode = 'grid'
+    viewMode = 'grid',
+    isFavorite = false,
+    onToggleFavorite,
+    onMoveToFolder,
+    showThumbnails = true
 }) => {
     const [isHovered, setIsHovered] = useState(false);
     const [isDragOver, setIsDragOver] = useState(false);
+    const [isDragging, setIsDragging] = useState(false);
     const isFolder = item.type === 'folder';
+
+    // Drag start for moving files
+    const handleDragStart = (e) => {
+        if (isFolder) {
+            e.preventDefault();
+            return;
+        }
+        setIsDragging(true);
+        e.dataTransfer.setData('application/json', JSON.stringify(item));
+        e.dataTransfer.effectAllowed = 'move';
+    };
+
+    const handleDragEnd = () => {
+        setIsDragging(false);
+    };
 
     // Drag and drop handlers for folders
     const handleDragOver = (e) => {
@@ -56,9 +85,18 @@ export const FileItem = memo(({
         e.stopPropagation();
         setIsDragOver(false);
 
-        // TODO: Handle file drop into folder
-        // This will be implemented when folder upload is added
-        console.log('Files dropped into folder:', item.name);
+        // Handle file drop into folder for organizing
+        try {
+            const data = e.dataTransfer.getData('application/json');
+            if (data) {
+                const droppedItem = JSON.parse(data);
+                if (droppedItem.key !== item.key && onMoveToFolder) {
+                    onMoveToFolder(droppedItem, item);
+                }
+            }
+        } catch (err) {
+            console.log('Files dropped into folder:', item.name);
+        }
     };
 
     const MenuContent = () => (
@@ -73,6 +111,18 @@ export const FileItem = memo(({
                 <Tick02Icon className={`w-4 h-4 mr-2 ${isSelected ? 'text-blue-500' : 'text-zinc-400'}`} />
                 <span>{isSelected ? 'Deselect' : 'Select'}</span>
             </DropdownMenuItem>
+            {onToggleFavorite && (
+                <DropdownMenuItem 
+                    onClick={(e) => {
+                        e.stopPropagation();
+                        onToggleFavorite(item);
+                    }} 
+                    className="cursor-pointer"
+                >
+                    <FavouriteIcon className={`w-4 h-4 mr-2 ${isFavorite ? 'text-yellow-400 fill-yellow-400' : 'text-zinc-500'}`} />
+                    {isFavorite ? 'Remove from favorites' : 'Add to favorites'}
+                </DropdownMenuItem>
+            )}
             <DropdownMenuSeparator className="bg-white/10" />
             {!isFolder && onPreview && (
                 <DropdownMenuItem onClick={() => onPreview(item)} className="cursor-pointer">
@@ -125,9 +175,13 @@ export const FileItem = memo(({
                 whileHover={{ y: -2 }}
                 whileTap={{ scale: 0.98 }}
                 animate={{
-                    scale: isDragOver ? 1.05 : 1,
+                    scale: isDragOver ? 1.05 : isDragging ? 0.95 : 1,
+                    opacity: isDragging ? 0.5 : 1,
                     borderColor: isDragOver ? 'rgba(59, 130, 246, 0.8)' : undefined
                 }}
+                draggable={!isFolder}
+                onDragStart={handleDragStart}
+                onDragEnd={handleDragEnd}
                 onHoverStart={() => setIsHovered(true)}
                 onHoverEnd={() => setIsHovered(false)}
                 onDragOver={handleDragOver}
@@ -139,9 +193,16 @@ export const FileItem = memo(({
                             ? 'bg-blue-500/10 border-blue-500/50 shadow-[0_0_15px_rgba(59,130,246,0.15)]'
                             : 'bg-white/5 border-white/10 hover:bg-white/10 hover:border-white/20'
                     }`}
-                onClick={() => isFolder ? onOpen(item) : onSelect(item)}
+                onClick={(e) => isFolder ? onOpen(item) : onSelect(item, e)}
                 onDoubleClick={() => !isFolder && onPreview && onPreview(item)}
             >
+                {/* Favorite Indicator */}
+                {isFavorite && (
+                    <div className="absolute top-2 right-10 z-10">
+                        <FavouriteIcon className="w-4 h-4 text-yellow-400 fill-yellow-400" />
+                    </div>
+                )}
+
                 {/* Drag Over Indicator */}
                 <AnimatePresence>
                     {isDragOver && isFolder && (
@@ -184,7 +245,7 @@ export const FileItem = memo(({
                             initial={{ opacity: 0, y: -10 }}
                             animate={{ opacity: 1, y: 0 }}
                             exit={{ opacity: 0, y: -10 }}
-                            className="absolute top-2 left-2 right-2 z-20 flex items-center justify-center gap-1"
+                            className="absolute top-2 left-2 right-10 z-20 flex items-center justify-center gap-1"
                             onClick={(e) => e.stopPropagation()}
                         >
                             {onPreview && (
@@ -207,6 +268,10 @@ export const FileItem = memo(({
                                     title="Download"
                                 >
                                     <Download01Icon className="w-4 h-4" />
+                                </motion.button>
+                            )}
+                            {/* Quick Share Button */}
+                            <QuickShareButton item={item} className="backdrop-blur-sm shadow-lg" />
                                 </motion.button>
                             )}
                         </motion.div>
@@ -263,9 +328,13 @@ export const FileItem = memo(({
     return (
         <motion.div
             animate={{
-                scale: isDragOver ? 1.02 : 1,
+                scale: isDragOver ? 1.02 : isDragging ? 0.98 : 1,
+                opacity: isDragging ? 0.5 : 1,
                 x: isDragOver ? 4 : 0
             }}
+            draggable={!isFolder}
+            onDragStart={handleDragStart}
+            onDragEnd={handleDragEnd}
             onHoverStart={() => setIsHovered(true)}
             onHoverEnd={() => setIsHovered(false)}
             onDragOver={handleDragOver}
@@ -277,7 +346,7 @@ export const FileItem = memo(({
                         ? 'bg-blue-500/10 border-blue-500/50 shadow-[0_0_15px_rgba(59,130,246,0.15)]'
                         : 'bg-white/2 border-white/8 hover:border-white/20 hover:shadow-md'
                 }`}
-            onClick={() => isFolder ? onOpen(item) : onSelect(item)}
+            onClick={(e) => isFolder ? onOpen(item) : onSelect(item, e)}
             onDoubleClick={() => !isFolder && onPreview && onPreview(item)}
         >
             {/* Drag Over Indicator for List View */}
@@ -292,9 +361,16 @@ export const FileItem = memo(({
                 )}
             </AnimatePresence>
 
+            {/* Favorite Indicator for List View */}
+            {isFavorite && (
+                <div className="absolute left-1 top-1/2 -translate-y-1/2">
+                    <FavouriteIcon className="w-3 h-3 text-yellow-400 fill-yellow-400" />
+                </div>
+            )}
+
             {/* Name Column */}
             <div className="col-span-8 sm:col-span-6 flex items-center gap-3 min-w-0">
-                {/* Icon */}
+                {/* Thumbnail or Icon */}
                 <motion.div
                     animate={{
                         scale: isDragOver ? 1.3 : 1,
@@ -305,7 +381,11 @@ export const FileItem = memo(({
                     transition={{ type: 'spring', stiffness: 300, damping: 20 }}
                     className="shrink-0"
                 >
-                    <FileIcon filename={item.name} isFolder={isFolder} className="w-5 h-5" />
+                    {showThumbnails ? (
+                        <FileThumbnail item={item} size="sm" />
+                    ) : (
+                        <FileIcon filename={item.name} isFolder={isFolder} className="w-5 h-5" />
+                    )}
                 </motion.div>
 
                 {/* Name */}
@@ -373,6 +453,14 @@ export const FileItem = memo(({
                                     <Download01Icon className="w-4 h-4" />
                                 </motion.button>
                             )}
+                            {/* Quick Share for List View */}
+                            <motion.div
+                                initial={{ opacity: 0, scale: 0.8 }}
+                                animate={{ opacity: 1, scale: 1 }}
+                                exit={{ opacity: 0, scale: 0.8 }}
+                            >
+                                <QuickShareButton item={item} className="shadow-lg" />
+                            </motion.div>
                         </>
                     )}
                 </AnimatePresence>
@@ -398,6 +486,8 @@ export const FileItem = memo(({
         prevProps.item.key === nextProps.item.key &&
         prevProps.isSelected === nextProps.isSelected &&
         prevProps.viewMode === nextProps.viewMode &&
+        prevProps.isFavorite === nextProps.isFavorite &&
+        prevProps.showThumbnails === nextProps.showThumbnails &&
         prevProps.item.lastModified === nextProps.item.lastModified
     );
 });

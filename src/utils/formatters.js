@@ -80,6 +80,52 @@ export const formatExactDateTime = (date) => {
 };
 
 /**
+ * Format date to relative time (e.g., "2 minutes ago", "Yesterday")
+ */
+export const formatRelativeTime = (date) => {
+    if (!date) return '';
+
+    const d = new Date(date);
+    const now = new Date();
+    const diffMs = now - d;
+    const diffSecs = Math.floor(diffMs / 1000);
+    const diffMins = Math.floor(diffMs / 60000);
+    const diffHours = Math.floor(diffMs / 3600000);
+    const diffDays = Math.floor(diffMs / 86400000);
+
+    // Just now
+    if (diffSecs < 60) return 'Just now';
+
+    // Minutes ago
+    if (diffMins < 60) return `${diffMins}m ago`;
+
+    // Hours ago
+    if (diffHours < 24) return `${diffHours}h ago`;
+
+    // Yesterday
+    if (diffDays === 1) return 'Yesterday';
+
+    // Days ago (up to 7 days)
+    if (diffDays < 7) return `${diffDays}d ago`;
+
+    // Weeks ago (up to 4 weeks)
+    if (diffDays < 30) {
+        const weeks = Math.floor(diffDays / 7);
+        return `${weeks}w ago`;
+    }
+
+    // Months ago
+    if (diffDays < 365) {
+        const months = Math.floor(diffDays / 30);
+        return `${months}mo ago`;
+    }
+
+    // Years ago
+    const years = Math.floor(diffDays / 365);
+    return `${years}y ago`;
+};
+
+/**
  * Get file extension from filename
  */
 export const getFileExtension = (filename) => {

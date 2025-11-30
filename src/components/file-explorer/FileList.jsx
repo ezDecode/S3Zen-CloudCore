@@ -1,6 +1,12 @@
 /**
  * FileList Component
  * Complete UI Redesign - Modern Grid & List Views
+ * 
+ * Features:
+ * - Favorites integration
+ * - Thumbnails for images
+ * - Drag to organize
+ * - Bulk selection with Shift+Click
  */
 
 import { motion, AnimatePresence } from 'framer-motion';
@@ -26,13 +32,25 @@ export const FileList = memo(({
     viewMode = 'grid',
     sortBy,
     sortOrder,
-    onSort
+    onSort,
+    // New props for features
+    favorites = [],
+    onToggleFavorite,
+    onMoveToFolder,
+    showThumbnails = true
 }) => {
     // OPTIMIZED: Create a Set for O(1) lookup instead of array.some() for each item
     const selectedKeys = useMemo(() => 
         new Set(selectedItems.map(item => item.key)), 
         [selectedItems]
     );
+
+    // Create a Set for favorites for O(1) lookup
+    const favoriteKeys = useMemo(() => 
+        new Set(favorites.map(item => item.key)), 
+        [favorites]
+    );
+
     if (isLoading) {
         return <FileListSkeleton viewMode={viewMode} count={16} />;
     }
@@ -117,6 +135,7 @@ export const FileList = memo(({
                                 <FileItem
                                     item={item}
                                     isSelected={selectedKeys.has(item.key)}
+                                    isFavorite={favoriteKeys.has(item.key)}
                                     onSelect={onSelectItem}
                                     onOpen={onOpenFolder}
                                     onDownload={onDownload}
@@ -125,7 +144,10 @@ export const FileList = memo(({
                                     onDelete={onDelete}
                                     onPreview={onPreview}
                                     onDetails={onDetails}
+                                    onToggleFavorite={onToggleFavorite}
+                                    onMoveToFolder={onMoveToFolder}
                                     viewMode={viewMode}
+                                    showThumbnails={showThumbnails}
                                 />
                             </motion.div>
                         ))}
@@ -172,6 +194,7 @@ export const FileList = memo(({
                                 <FileItem
                                     item={item}
                                     isSelected={selectedKeys.has(item.key)}
+                                    isFavorite={favoriteKeys.has(item.key)}
                                     onSelect={onSelectItem}
                                     onOpen={onOpenFolder}
                                     onDownload={onDownload}
@@ -180,7 +203,10 @@ export const FileList = memo(({
                                     onDelete={onDelete}
                                     onPreview={onPreview}
                                     onDetails={onDetails}
+                                    onToggleFavorite={onToggleFavorite}
+                                    onMoveToFolder={onMoveToFolder}
                                     viewMode={viewMode}
+                                    showThumbnails={showThumbnails}
                                 />
                             </motion.div>
                         ))}

@@ -710,3 +710,112 @@ export const getS3Client = () => s3Client;
  * Check if S3 client is initialized
  */
 export const isS3ClientInitialized = () => !!(s3Client && currentBucket);
+
+/**
+ * Get presigned URL for file preview (thumbnails, etc.)
+ */
+export const getPreviewUrl = async (key, expiresIn = 3600) => {
+    if (!s3Client || !currentBucket) {
+        return { success: false, error: 'S3 client not initialized' };
+    }
+
+    try {
+        const command = new GetObjectCommand({
+            Bucket: currentBucket,
+            Key: key
+        });
+
+        const url = await getSignedUrl(s3Client, command, { expiresIn });
+        return { success: true, url };
+    } catch (error) {
+        console.error('Failed to get preview URL:', error);
+        return { success: false, error: error.message };
+    }
+};
+
+/**
+ * Get bucket storage statistics
+ * Calculates total size, file count, and folder count
+ */
+export const getBucketStats = async () => {
+    if (!s3Client || !currentBucket) {
+        return { success: false, error: 'S3 client not initialized' };
+    }
+
+    try {
+        let totalSize = 0;
+        let fileCount = 0;
+        let folderCount = 0;
+        let continuationToken = null;
+
+        do {
+            const command = new ListObjectsV2Command({
+                Bucket: currentBucket,
+                MaxKeys: 1000,
+                ...(continuationToken && { ContinuationToken: continuationToken })
+            });
+
+            const response = await s3Client.send(command);
+
+            if (response.Contents) {
+                for (const item of response.Contents) {
+                    if (item.Key.endsWith('/')) {
+                        folderCount++;
+                    } else {
+                        fileCount++;
+                        totalSize += item.Size || 0;
+                    }
+                }
+            }
+
+            continuationToken = response.NextContinuationToken;
+        } while (continuationToken);
+
+        return {
+            success: true,
+            totalSize,
+            fileCount,
+            folderCount
+        };
+    } catch (error) {
+        console.error('Failed to get bucket stats:', error);
+        return { success: false, error: error.message };
+    }
+};
+
+/**
+ * Move/Copy file to a different folder
+ * Used for drag-to-organize feature
+ */
+export const moveFile = async (sourceKey, destinationFolder) => {
+    if (!s3Client || !currentBucket) {
+        return { success: false, error: 'S3 client not initialized' };
+    }
+
+    try {
+        // Get filename from source key
+        const fileName = sourceKey.split('/').pop();
+        const newKey = destinationFolder + fileName;
+
+        // Check if source and destination are the same
+        if (sourceKey === newKey) {
+            return { success: true, newKey, message: 'File already in destination' };
+        }
+
+        // Copy to new location
+        const copyCommand = new CopyObjectCommand({
+            Bucket: currentBucket,
+            CopySource: encodeURIComponent(`${currentBucket}/${sourceKey}`),
+            Key: newKey
+        });
+        await s3Client.send(copyCommand);
+
+        // Delete from old location
+        await deleteObjects([sourceKey]);
+
+        return { success: true, newKey };
+    } catch (error) {
+        console.error('Failed to move file:', error);
+        return { success: false, error: error.message };
+    }
+};
