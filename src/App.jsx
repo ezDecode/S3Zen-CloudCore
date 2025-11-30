@@ -9,7 +9,7 @@
  */
 
 import { useState, useEffect } from 'react';
-import { Hero } from './components/auth/Hero';
+import { LandingPage } from './components/auth/LandingPage';
 import { AuthModal } from './components/auth/AuthModal';
 import { FileExplorer } from './components/file-explorer/FileExplorer';
 import { ShareModal, DeleteConfirmModal, CreateFolderModal, RenameModal, DetailsModal, SetupGuideModal, PreviewModal } from './components/modals';
@@ -131,7 +131,7 @@ function AppContent() {
           ============================================ */}
       {!isLoggedIn ? (
         <>
-          <Hero
+          <LandingPage
             onGetStarted={handleGetStarted}
             onShowSetupGuide={() => setShowSetupGuide(true)}
           />
