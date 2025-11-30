@@ -1,4 +1,4 @@
-ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff/**
+/**
  * FileExplorerNav Component
  * Top navigation bar with breadcrumbs and actions
  */
