@@ -192,7 +192,7 @@ export const FileItem = memo(({
                                     whileHover={{ scale: 1.1 }}
                                     whileTap={{ scale: 0.9 }}
                                     onClick={() => onPreview(item)}
-                                    className="p-2 rounded-lg bg-blue-500/90 hover:bg-blue-600 text-white backdrop-blur-sm transition-colors shadow-lg"
+                                    className="touch-target p-2.5 rounded-lg bg-blue-500/90 hover:bg-blue-600 text-white backdrop-blur-sm transition-colors shadow-lg focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-400"
                                     title="Preview"
                                 >
                                     <ViewIcon className="w-4 h-4" />
@@ -203,7 +203,7 @@ export const FileItem = memo(({
                                     whileHover={{ scale: 1.1 }}
                                     whileTap={{ scale: 0.9 }}
                                     onClick={() => onDownload(item)}
-                                    className="p-2 rounded-lg bg-green-500/90 hover:bg-green-600 text-white backdrop-blur-sm transition-colors shadow-lg"
+                                    className="touch-target p-2.5 rounded-lg bg-green-500/90 hover:bg-green-600 text-white backdrop-blur-sm transition-colors shadow-lg focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-400"
                                     title="Download"
                                 >
                                     <Download01Icon className="w-4 h-4" />
@@ -218,12 +218,12 @@ export const FileItem = memo(({
                     <DropdownMenu>
                         <DropdownMenuTrigger asChild>
                             <button
-                                className={`p-1 rounded-lg outline-none border-none ring-0 focus:outline-none focus:ring-0 ${isHovered
+                                className={`touch-target p-2 rounded-lg outline-none border-none ring-0 focus:outline-none focus:ring-0 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white/50 ${isHovered
                                     ? 'opacity-100'
                                     : 'opacity-0 data-[state=open]:opacity-100'} 
                                     bg-transparent text-white data-[state=open]:bg-transparent data-[state=open]:text-white`}
                             >
-                                <MoreVerticalIcon className="w-8 h-8" />
+                                <MoreVerticalIcon className="w-6 h-6" />
                             </button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end" className="w-56 bg-zinc-900/95 backdrop-blur-xl border-white/10">
@@ -275,7 +275,7 @@ export const FileItem = memo(({
                     ? 'bg-blue-500/20 border-blue-500 shadow-[0_0_20px_rgba(59,130,246,0.3)]'
                     : isSelected
                         ? 'bg-blue-500/10 border-blue-500/50 shadow-[0_0_15px_rgba(59,130,246,0.15)]'
-                        : 'bg-white/[0.02] border-white/[0.08] hover:border-white/20 hover:shadow-md'
+                        : 'bg-white/2 border-white/8 hover:border-white/20 hover:shadow-md'
                 }`}
             onClick={() => isFolder ? onOpen(item) : onSelect(item)}
             onDoubleClick={() => !isFolder && onPreview && onPreview(item)}
@@ -303,7 +303,7 @@ export const FileItem = memo(({
                     }}
                     whileHover={{ scale: 1.1, rotate: isFolder ? 5 : 0 }}
                     transition={{ type: 'spring', stiffness: 300, damping: 20 }}
-                    className="flex-shrink-0"
+                    className="shrink-0"
                 >
                     <FileIcon filename={item.name} isFolder={isFolder} className="w-5 h-5" />
                 </motion.div>
@@ -353,7 +353,7 @@ export const FileItem = memo(({
                                     whileHover={{ scale: 1.1 }}
                                     whileTap={{ scale: 0.9 }}
                                     onClick={() => onPreview(item)}
-                                    className="p-1.5 rounded-lg bg-blue-500/90 hover:bg-blue-600 text-white transition-colors shadow-lg"
+                                    className="touch-target p-2 rounded-lg bg-blue-500/90 hover:bg-blue-600 text-white transition-colors shadow-lg focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-400"
                                     title="Preview"
                                 >
                                     <ViewIcon className="w-4 h-4" />
@@ -367,7 +367,7 @@ export const FileItem = memo(({
                                     whileHover={{ scale: 1.1 }}
                                     whileTap={{ scale: 0.9 }}
                                     onClick={() => onDownload(item)}
-                                    className="p-1.5 rounded-lg bg-green-500/90 hover:bg-green-600 text-white transition-colors shadow-lg"
+                                    className="touch-target p-2 rounded-lg bg-green-500/90 hover:bg-green-600 text-white transition-colors shadow-lg focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-400"
                                     title="Download"
                                 >
                                     <Download01Icon className="w-4 h-4" />
@@ -380,9 +380,9 @@ export const FileItem = memo(({
                 <DropdownMenu>
                     <DropdownMenuTrigger asChild>
                         <button
-                            className="p-1 rounded-lg outline-none border-none ring-0 focus:outline-none focus:ring-0 bg-transparent text-white data-[state=open]:bg-transparent data-[state=open]:text-white"
+                            className="touch-target p-2 rounded-lg outline-none border-none ring-0 focus:outline-none focus:ring-0 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white/50 bg-transparent text-white data-[state=open]:bg-transparent data-[state=open]:text-white"
                         >
-                            <MoreVerticalIcon className="w-8 h-8" />
+                            <MoreVerticalIcon className="w-6 h-6" />
                         </button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end" className="w-56 bg-zinc-900/95 backdrop-blur-xl border-white/10">

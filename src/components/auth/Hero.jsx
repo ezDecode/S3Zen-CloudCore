@@ -12,11 +12,11 @@ export const Hero = ({ onGetStarted, onShowSetupGuide }) => {
   return (
     <div className="hero-page-wrapper relative flex flex-col items-center justify-center w-full h-screen overflow-hidden bg-black">
       {/* Premium Monochromatic Background */}
-      <div className="absolute w-[800px] h-[800px] bg-white/[0.02] rounded-full blur-3xl top-0 left-1/4 -translate-x-1/2 -translate-y-1/2 pointer-events-none z-0" />
-      <div className="absolute w-[600px] h-[600px] bg-white/[0.03] rounded-full blur-3xl bottom-0 right-1/4 translate-x-1/2 translate-y-1/2 pointer-events-none z-0" />
+      <div className="absolute w-[800px] h-[800px] bg-white/2 rounded-full blur-3xl top-0 left-1/4 -translate-x-1/2 -translate-y-1/2 pointer-events-none z-0" />
+      <div className="absolute w-[600px] h-[600px] bg-white/3 rounded-full blur-3xl bottom-0 right-1/4 translate-x-1/2 translate-y-1/2 pointer-events-none z-0" />
 
       {/* Subtle Grid Pattern */}
-      <div className="absolute inset-0 opacity-[0.03] pointer-events-none z-0 bg-[linear-gradient(rgba(255,255,255,0.5)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.5)_1px,transparent_1px)] bg-[length:60px_60px]" />
+      <div className="absolute inset-0 opacity-[0.03] pointer-events-none z-0 bg-[linear-gradient(rgba(255,255,255,0.5)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.5)_1px,transparent_1px)] bg-size-[60px_60px]" />
 
       <main className="relative z-10 flex flex-col items-center justify-center w-full max-w-7xl mx-auto text-center h-full overflow-y-auto px-4 sm:px-6 lg:px-8">
         <header className="w-full">
@@ -25,7 +25,7 @@ export const Hero = ({ onGetStarted, onShowSetupGuide }) => {
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, ease: [0.4, 0, 0.2, 1] }}
-            className="inline-flex items-center gap-2.5 px-5 py-2.5 bg-white/[0.04] backdrop-blur-md border border-white/[0.08] rounded-full mb-6 sm:mb-8 md:mb-10 hover:bg-white/[0.06] hover:border-white/[0.12] transition-all duration-300"
+            className="inline-flex items-center gap-2.5 px-5 py-2.5 bg-white/4 backdrop-blur-md border border-white/8 rounded-full mb-6 sm:mb-8 md:mb-10 hover:bg-white/6 hover:border-white/12 transition-all duration-300"
           >
             <span className="w-1.5 h-1.5 bg-white rounded-full animate-pulse" aria-hidden="true" />
             <span className="text-xs sm:text-sm font-medium text-white/90 tracking-wide">
@@ -96,7 +96,7 @@ export const Hero = ({ onGetStarted, onShowSetupGuide }) => {
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 0.4 + index * 0.1, ease: [0.4, 0, 0.2, 1] }}
-              className="flex items-center gap-2.5 bg-white/[0.03] border border-white/[0.08] rounded-full px-5 py-2.5 hover:bg-white/[0.06] hover:border-white/[0.12] transition-all duration-300 cursor-default"
+              className="flex items-center gap-2.5 bg-white/3 border border-white/8 rounded-full px-5 py-2.5 hover:bg-white/6 hover:border-white/12 transition-all duration-300 cursor-default"
             >
               <feature.icon className="w-4 h-4 text-white/60" aria-hidden="true" />
               <span
@@ -116,13 +116,13 @@ export const Hero = ({ onGetStarted, onShowSetupGuide }) => {
           transition={{ duration: 0.7, delay: 0.5, ease: [0.4, 0, 0.2, 1] }}
           className="flex flex-col sm:flex-row items-stretch sm:items-center justify-center w-full max-w-3xl gap-3 sm:gap-4 px-4"
         >
-          {/* Mobile-First Get Started Button */}
+          {/* Mobile-First Get Started Button - High Contrast */}
           <button
             onClick={onGetStarted}
-            className="group w-full sm:w-auto text-black rounded-xl bg-white hover:opacity-90 transition-opacity duration-150 shadow-lg flex items-center justify-center px-6 sm:px-8 py-3.5 sm:py-4 active:scale-[0.99] touch-target"
+            className="group w-full sm:w-auto text-black rounded-xl bg-white hover:bg-gray-100 transition-all duration-150 shadow-lg flex items-center justify-center px-6 sm:px-8 py-4 sm:py-4.5 active:scale-[0.99] touch-target-lg focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white/80"
             aria-label="Get started with CloudCore"
           >
-            <span className="text-sm sm:text-base font-medium whitespace-nowrap">Get Started</span>
+            <span className="text-sm sm:text-base font-semibold whitespace-nowrap">Get Started</span>
             <ArrowRight01Icon className="w-4 h-4 sm:w-5 sm:h-5 ml-2 transition-transform duration-200 group-hover:translate-x-0.5" aria-hidden="true" />
           </button>
 
@@ -131,7 +131,7 @@ export const Hero = ({ onGetStarted, onShowSetupGuide }) => {
             {/* Setup Guide Button */}
             <button
               onClick={onShowSetupGuide}
-              className="flex-1 sm:flex-none text-white bg-white/[0.04] backdrop-blur-md border border-white/[0.08] rounded-xl hover:bg-white/[0.06] hover:border-white/[0.1] transition-all duration-150 flex items-center justify-center px-4 sm:px-6 py-3.5 sm:py-4 active:scale-[0.99] touch-target"
+              className="flex-1 sm:flex-none text-white bg-white/6 backdrop-blur-md border border-white/12 rounded-xl hover:bg-white/10 hover:border-white/18 transition-all duration-150 flex items-center justify-center px-4 sm:px-6 py-4 sm:py-4.5 active:scale-[0.99] touch-target-lg focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white/50"
               aria-label="View AWS setup guide"
             >
               <Book02Icon className="w-5 h-5" aria-hidden="true" />
@@ -144,7 +144,7 @@ export const Hero = ({ onGetStarted, onShowSetupGuide }) => {
               href="https://github.com/ezDecode/S3Zen-CloudCore"
               target="_blank"
               rel="noopener noreferrer"
-              className="flex-1 sm:flex-none text-white bg-white/[0.04] backdrop-blur-md border border-white/[0.08] rounded-xl hover:bg-white/[0.06] hover:border-white/[0.1] transition-all duration-150 flex items-center justify-center px-4 sm:px-6 py-3.5 sm:py-4 active:scale-[0.99] touch-target"
+              className="flex-1 sm:flex-none text-white bg-white/6 backdrop-blur-md border border-white/12 rounded-xl hover:bg-white/10 hover:border-white/18 transition-all duration-150 flex items-center justify-center px-4 sm:px-6 py-4 sm:py-4.5 active:scale-[0.99] touch-target-lg focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white/50"
               aria-label="Star CloudCore on GitHub"
             >
               <Github01Icon className="w-5 h-5" aria-hidden="true" />

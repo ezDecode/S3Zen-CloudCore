@@ -31,12 +31,18 @@
   --color-border-subtle: #1f1f1f;
   --color-border: #2a2a2a;
   --color-border-strong: #3a3a3a;
+  
+  /* Text Colors - High Contrast for WCAG AA Compliance */
   --color-text-primary: #ffffff;
-  --color-text-secondary: #a0a0a0;
-  --color-text-muted: #6a6a6a;
-  --color-text-disabled: #4a4a4a;
+  --color-text-secondary: #b8b8b8; /* Improved from #a0a0a0 - 4.5:1+ contrast ratio */
+  --color-text-muted: #8a8a8a; /* Improved from #6a6a6a - better readability */
+  --color-text-disabled: #666666; /* Improved from #4a4a4a - meets minimum contrast */
   --color-accent: #ffffff;
   --color-accent-muted: #e0e0e0;
+  
+  /* Interactive State Colors */
+  --color-focus-ring: rgba(255, 255, 255, 0.5);
+  --color-focus-ring-offset: #0a0a0a;
 }
 
 /* Mobile-First Global Styles */
@@ -194,7 +200,14 @@ html {
   box-shadow: 0 4px 12px rgba(255, 255, 255, 0.04);
 }
 
-/* Button hover - minimal lift */
+.premium-hover:focus-visible {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(255, 255, 255, 0.04);
+  outline: 2px solid var(--color-focus-ring);
+  outline-offset: 2px;
+}
+
+/* Button hover - minimal lift with focus states */
 .btn-hover {
   transition: all 0.15s ease-out;
 }
@@ -207,7 +220,12 @@ html {
   transform: scale(0.99);
 }
 
-/* Card hover - very subtle */
+.btn-hover:focus-visible {
+  outline: 2px solid var(--color-focus-ring);
+  outline-offset: 2px;
+}
+
+/* Card hover - very subtle with focus support */
 .card-hover {
   transition: all 0.2s ease-out;
 }
@@ -215,6 +233,57 @@ html {
 .card-hover:hover {
   background-color: rgba(255, 255, 255, 0.04);
   border-color: rgba(255, 255, 255, 0.12);
+}
+
+.card-hover:focus-visible,
+.card-hover:focus-within {
+  background-color: rgba(255, 255, 255, 0.04);
+  border-color: rgba(255, 255, 255, 0.15);
+  outline: 2px solid var(--color-focus-ring);
+  outline-offset: 2px;
+}
+
+/* High contrast button styles */
+.btn-high-contrast {
+  background-color: #ffffff;
+  color: #000000;
+  font-weight: 500;
+  border: 2px solid transparent;
+  transition: all 0.15s ease-out;
+}
+
+.btn-high-contrast:hover {
+  background-color: #e0e0e0;
+}
+
+.btn-high-contrast:focus-visible {
+  outline: 3px solid rgba(255, 255, 255, 0.8);
+  outline-offset: 2px;
+}
+
+.btn-high-contrast:active {
+  background-color: #d0d0d0;
+  transform: scale(0.98);
+}
+
+/* Outline button with high contrast */
+.btn-outline-contrast {
+  background-color: transparent;
+  color: #ffffff;
+  border: 2px solid rgba(255, 255, 255, 0.4);
+  font-weight: 500;
+  transition: all 0.15s ease-out;
+}
+
+.btn-outline-contrast:hover {
+  border-color: rgba(255, 255, 255, 0.7);
+  background-color: rgba(255, 255, 255, 0.05);
+}
+
+.btn-outline-contrast:focus-visible {
+  outline: 2px solid var(--color-focus-ring);
+  outline-offset: 2px;
+  border-color: rgba(255, 255, 255, 0.7);
 }
 
 /* Uncut Sans Font Utility */
@@ -259,6 +328,65 @@ html {
   display: inline-flex;
   align-items: center;
   justify-content: center;
+}
+
+/* Large touch target for primary actions (48x48px - Google Material spec) */
+.touch-target-lg {
+  min-width: 48px;
+  min-height: 48px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Extra-large touch target for critical actions */
+.touch-target-xl {
+  min-width: 56px;
+  min-height: 56px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Accessible focus states - high visibility focus ring */
+.focus-ring {
+  outline: none;
+}
+
+.focus-ring:focus-visible {
+  outline: 2px solid var(--color-focus-ring);
+  outline-offset: 2px;
+}
+
+/* Button focus enhancement */
+button:focus-visible,
+[role="button"]:focus-visible,
+a:focus-visible {
+  outline: 2px solid var(--color-focus-ring);
+  outline-offset: 2px;
+}
+
+/* Interactive element base - ensures minimum touch area */
+.interactive {
+  position: relative;
+  cursor: pointer;
+}
+
+/* Expand touch area without changing visual size */
+.interactive::before {
+  content: '';
+  position: absolute;
+  inset: -8px;
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  :root {
+    --color-text-secondary: #d0d0d0;
+    --color-text-muted: #a0a0a0;
+    --color-border: #4a4a4a;
+    --color-border-strong: #5a5a5a;
+  }
 }
 
 /* Prevent text selection on mobile for UI elements */

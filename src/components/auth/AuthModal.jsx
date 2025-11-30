@@ -88,9 +88,9 @@ export const AuthModal = ({ isOpen, onClose, onAuthenticate }) => {
                         className="relative w-full max-w-md z-50"
                     >
                         {/* Premium Modal Card */}
-                        <div className="relative bg-[#0a0a0a] backdrop-blur-xl shadow-2xl border border-white/[0.08] rounded-2xl overflow-hidden">
+                        <div className="relative bg-[#0a0a0a] backdrop-blur-xl shadow-2xl border border-white/8 rounded-2xl overflow-hidden">
                             {/* Premium Top Highlight */}
-                            <div className="absolute top-0 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-white/20 to-transparent" />
+                            <div className="absolute top-0 left-0 right-0 h-px bg-linear-to-r from-transparent via-white/20 to-transparent" />
 
                             {/* Premium Header */}
                             <div className="flex items-start justify-between p-6 pb-4">
@@ -102,7 +102,7 @@ export const AuthModal = ({ isOpen, onClose, onAuthenticate }) => {
                                 </div>
                                 <button
                                     onClick={onClose}
-                                    className="p-2 text-white/30 hover:text-white/70 hover:bg-white/[0.04] transition-all duration-300 rounded-lg -mr-2 -mt-1"
+                                    className="touch-target-lg p-2 text-white/40 hover:text-white/80 hover:bg-white/6 focus-visible:outline-2 focus-visible:outline-white/50 focus-visible:outline-offset-2 transition-all duration-300 rounded-lg -mr-2 -mt-1"
                                     aria-label="Close modal"
                                 >
                                     <Cancel01Icon className="w-5 h-5" />
@@ -117,7 +117,7 @@ export const AuthModal = ({ isOpen, onClose, onAuthenticate }) => {
                                         initial={{ opacity: 0, y: -10 }}
                                         animate={{ opacity: 1, y: 0 }}
                                         transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }}
-                                        className="flex items-center gap-3 text-sm bg-white/[0.03] border border-white/[0.08] text-white/70 px-4 py-3 rounded-lg"
+                                        className="flex items-center gap-3 text-sm bg-white/3 border border-white/8 text-white/70 px-4 py-3 rounded-lg"
                                     >
                                         <LockIcon className="w-4 h-4 shrink-0 text-white/50" />
                                         {error}
@@ -135,7 +135,7 @@ export const AuthModal = ({ isOpen, onClose, onAuthenticate }) => {
                                         placeholder="AKIAIOSFODNN7EXAMPLE"
                                         value={formData.accessKeyId}
                                         onChange={handleChange}
-                                        className="w-full px-4 py-3 text-sm bg-white/[0.03] border border-white/[0.08] text-white placeholder-white/30 rounded-lg outline-none focus:border-white/20 focus:bg-white/[0.05] transition-all duration-300"
+                                        className="w-full px-4 py-3.5 text-sm bg-white/4 border border-white/12 text-white placeholder-white/40 rounded-lg outline-none focus:border-white/30 focus:bg-white/6 focus:ring-2 focus:ring-white/20 transition-all duration-300"
                                         autoComplete="off"
                                     />
                                 </div>
@@ -152,7 +152,7 @@ export const AuthModal = ({ isOpen, onClose, onAuthenticate }) => {
                                         placeholder="Your secret key"
                                         value={formData.secretAccessKey}
                                         onChange={handleChange}
-                                        className="w-full px-4 py-3 text-sm bg-white/[0.03] border border-white/[0.08] text-white placeholder-white/30 rounded-lg outline-none focus:border-white/20 focus:bg-white/[0.05] transition-all duration-300"
+                                        className="w-full px-4 py-3.5 text-sm bg-white/4 border border-white/12 text-white placeholder-white/40 rounded-lg outline-none focus:border-white/30 focus:bg-white/6 focus:ring-2 focus:ring-white/20 transition-all duration-300"
                                         autoComplete="off"
                                     />
                                 </div>
@@ -168,7 +168,7 @@ export const AuthModal = ({ isOpen, onClose, onAuthenticate }) => {
                                         placeholder="my-awesome-bucket"
                                         value={formData.bucketName}
                                         onChange={handleChange}
-                                        className="w-full px-4 py-3 text-sm bg-white/[0.03] border border-white/[0.08] text-white placeholder-white/30 rounded-lg outline-none focus:border-white/20 focus:bg-white/[0.05] transition-all duration-300"
+                                        className="w-full px-4 py-3.5 text-sm bg-white/4 border border-white/12 text-white placeholder-white/40 rounded-lg outline-none focus:border-white/30 focus:bg-white/6 focus:ring-2 focus:ring-white/20 transition-all duration-300"
                                         autoComplete="off"
                                     />
                                 </div>
@@ -184,7 +184,7 @@ export const AuthModal = ({ isOpen, onClose, onAuthenticate }) => {
                                             name="region"
                                             value={formData.region}
                                             onChange={handleChange}
-                                            className="w-full px-4 py-3 pr-10 text-sm bg-white/[0.03] border border-white/[0.08] text-white appearance-none cursor-pointer rounded-lg outline-none focus:border-white/20 focus:bg-white/[0.05] transition-all duration-300"
+                                            className="w-full px-4 py-3.5 pr-10 text-sm bg-white/4 border border-white/12 text-white appearance-none cursor-pointer rounded-lg outline-none focus:border-white/30 focus:bg-white/6 focus:ring-2 focus:ring-white/20 transition-all duration-300"
                                             style={{
                                                 backgroundImage: 'none'
                                             }}
@@ -203,11 +203,11 @@ export const AuthModal = ({ isOpen, onClose, onAuthenticate }) => {
                                     </div>
                                 </div>
 
-                                {/* Premium Submit Button */}
+                                {/* Premium Submit Button - High Contrast */}
                                 <button
                                     type="submit"
                                     disabled={isLoading}
-                                    className="w-full mt-2 px-6 py-3.5 font-semibold text-black bg-white hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed transition-opacity duration-150 shadow-lg rounded-xl flex items-center justify-center gap-2 active:scale-[0.99]"
+                                    className="w-full mt-2 px-6 py-4 font-semibold text-black bg-white hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-150 shadow-lg rounded-xl flex items-center justify-center gap-2 active:scale-[0.99] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white/80 touch-target-lg"
                                 >
                                     {isLoading ? (
                                         <>

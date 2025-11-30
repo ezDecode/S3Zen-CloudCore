@@ -58,7 +58,7 @@ export const DeleteConfirmModal = ({ isOpen, onClose, items, onSuccess }) => {
     return (
         <AnimatePresence>
             {isOpen && (
-                <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm" onClick={handleCloseModal}>
+                <div className="fixed inset-0 z-100 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm" onClick={handleCloseModal}>
                     <motion.div
                         initial={{ opacity: 0, scale: 0.95 }}
                         animate={{ opacity: 1, scale: 1 }}
@@ -67,14 +67,14 @@ export const DeleteConfirmModal = ({ isOpen, onClose, items, onSuccess }) => {
                         className="bg-zinc-900/95 backdrop-blur-xl rounded-2xl shadow-2xl w-full max-w-md border border-white/20 z-50"
                     >
                         {/* Header */}
-                        <div className="flex items-center justify-between p-5 border-b border-white/10">
+                        <div className="flex items-center justify-between p-5 border-b border-white/12">
                             <div className="flex items-center gap-2">
                                 <Alert01Icon className="w-5 h-5 text-red-400" />
                                 <h2 className="text-lg font-bold text-white">Confirm Deletion</h2>
                             </div>
                             <button
                                 onClick={handleCloseModal}
-                                className="p-1.5 text-white/60 hover:text-white hover:bg-white/10 rounded-lg transition-colors"
+                                className="touch-target-lg p-2 text-white/50 hover:text-white hover:bg-white/8 rounded-lg transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white/50"
                             >
                                 <Cancel01Icon className="w-5 h-5" />
                             </button>

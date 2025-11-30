@@ -29,17 +29,17 @@ export const Modal = ({
                         exit={{ opacity: 0, scale: 0.96, y: 20 }}
                         transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }}
                         onClick={(e) => e.stopPropagation()}
-                        className={`bg-[#0a0a0a] backdrop-blur-2xl rounded-2xl shadow-2xl w-full ${maxWidth} border border-white/[0.08] z-50 overflow-hidden`}
+                        className={`bg-[#0a0a0a] backdrop-blur-2xl rounded-2xl shadow-2xl w-full ${maxWidth} border border-white/8 z-50 overflow-hidden`}
                     >
                         {/* Premium Header */}
-                        <div className="flex items-center justify-between p-5 border-b border-white/[0.06]">
+                        <div className="flex items-center justify-between p-5 border-b border-white/8">
                             <div className="flex items-center gap-2.5">
                                 {Icon && <Icon className={`w-5 h-5 ${iconColor}`} />}
                                 <h2 className="text-lg font-semibold text-white tracking-tight">{title}</h2>
                             </div>
                             <button
                                 onClick={onClose}
-                                className="p-1.5 text-white/30 hover:text-white/70 hover:bg-white/[0.04] rounded-lg transition-all duration-300"
+                                className="touch-target-lg p-2 text-white/40 hover:text-white/80 hover:bg-white/6 rounded-lg transition-all duration-300 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white/50"
                             >
                                 <X className="w-5 h-5" />
                             </button>

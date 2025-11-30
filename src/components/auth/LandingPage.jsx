@@ -32,7 +32,7 @@ export const LandingPage = ({ onGetStarted, onShowSetupGuide }) => {
             <CTASection onGetStarted={onGetStarted} />
 
             {/* Premium Footer */}
-            <footer className="relative w-full py-12 bg-black border-t border-white/[0.06]">
+            <footer className="relative w-full py-12 bg-black border-t border-white/6">
                 <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12">
                     <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
                         {/* Premium Brand */}

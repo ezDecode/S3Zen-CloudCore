@@ -82,7 +82,7 @@ export const CreateFolderModal = ({ isOpen, onClose, currentPath, onSuccess }) =
                     placeholder="Enter folder name..."
                     disabled={isCreating}
                     autoFocus
-                    className="w-full px-4 py-2.5 bg-white/5 border border-white/10 rounded-lg text-white placeholder:text-zinc-500 focus:outline-none focus:border-white/20 focus:bg-white/10 transition-all disabled:opacity-50"
+                    className="w-full px-4 py-3.5 bg-white/6 border border-white/12 rounded-lg text-white placeholder:text-zinc-500 focus:outline-none focus:border-white/25 focus:bg-white/8 focus:ring-2 focus:ring-white/20 transition-all disabled:opacity-50"
                 />
                 <p className="text-xs text-white/60">
                     {currentPath ? `Will be created in: ${currentPath}` : 'Will be created in root directory'}
@@ -90,18 +90,18 @@ export const CreateFolderModal = ({ isOpen, onClose, currentPath, onSuccess }) =
             </div>
 
             {/* Action Buttons */}
-            <div className="flex gap-2 pt-3">
+            <div className="flex gap-3 pt-3">
                 <button
                     onClick={handleClose}
                     disabled={isCreating}
-                    className="flex-1 py-2.5 px-4 text-sm bg-white/10 hover:bg-white/20 text-white rounded-lg transition-all disabled:opacity-50"
+                    className="flex-1 py-3.5 px-4 text-sm bg-white/8 hover:bg-white/12 border border-white/10 text-white rounded-lg transition-all disabled:opacity-50 touch-target focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white/50"
                 >
                     Cancel
                 </button>
                 <button
                     onClick={handleCreate}
                     disabled={isCreating || !folderName.trim()}
-                    className="flex-1 py-2.5 px-4 text-sm bg-blue-500 hover:bg-blue-600 text-white font-semibold rounded-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="flex-1 py-3.5 px-4 text-sm bg-blue-500 hover:bg-blue-600 text-white font-semibold rounded-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed touch-target focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-400"
                 >
                     {isCreating ? 'Creating...' : 'Create Folder'}
                 </button>
