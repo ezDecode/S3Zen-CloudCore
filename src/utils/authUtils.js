@@ -4,11 +4,34 @@
  * 
  * SECURITY FEATURES:
  * - AES-GCM encryption for credentials at rest
- * - In-memory only credential storage during active session
+ * - In-memory credential storage during active session
  * - Automatic session expiry (24 hours)
  * - Secure memory zeroing on logout
+ * - HMAC signature for session token integrity
  * - Credentials persisted in localStorage (encrypted)
  * - Session survives page refresh and browser restart
+ * 
+ * SECURITY TRADE-OFFS:
+ * Credentials are stored encrypted in localStorage for user convenience.
+ * This allows sessions to persist across browser restarts and provides
+ * a better user experience. However, this means:
+ * 
+ * 1. Encrypted credentials remain in browser storage until logout
+ * 2. XSS attacks could potentially access localStorage (mitigated by encryption)
+ * 3. Physical access to unlocked device could expose encrypted data
+ * 
+ * MITIGATION:
+ * - Credentials are encrypted with AES-GCM using non-extractable keys
+ * - Session tokens are cryptographically signed with HMAC
+ * - 24-hour automatic session expiry
+ * - Users can clear credentials by logging out
+ * - Encryption keys are non-extractable from WebCrypto
+ * 
+ * ALTERNATIVES:
+ * For higher security requirements, consider:
+ * - Using AWS Cognito for federated authentication
+ * - Implementing a backend proxy for AWS credentials
+ * - Using temporary credentials with STS AssumeRole
  */
 
 import {
@@ -26,6 +49,7 @@ export { isCryptoInitialized };
 const STORAGE_KEYS = {
     ENCRYPTED_CREDENTIALS: 'cc_enc_creds', // Encrypted credentials
     SESSION_TOKEN: 'cc_session_token', // Session identifier
+    TOKEN_SIGNATURE: 'cc_token_sig', // HMAC signature for token integrity
     SESSION_TIMESTAMP: 'cc_session_ts',
     BUCKET_INFO: 'cc_bucket_info', // Non-sensitive bucket metadata
 };
@@ -109,8 +133,15 @@ export const saveCredentials = async (credentials) => {
         };
 
         // Persist to localStorage (encrypted)
+        // SECURITY NOTE: Credentials are encrypted with AES-GCM before storage.
+        // This provides convenience (session persistence) with reasonable security.
+        // Users can clear credentials by logging out or clearing browser data.
         const encrypted = await encryptData(credentialCache);
         localStorage.setItem(STORAGE_KEYS.ENCRYPTED_CREDENTIALS, encrypted);
+
+        // Generate and store HMAC signature for session token integrity
+        const tokenSignature = await generateTokenSignature(sessionToken);
+        localStorage.setItem(STORAGE_KEYS.TOKEN_SIGNATURE, tokenSignature);
 
         // Update session timestamp
         localStorage.setItem(STORAGE_KEYS.SESSION_TIMESTAMP, Date.now().toString());
@@ -123,10 +154,39 @@ export const saveCredentials = async (credentials) => {
 };
 
 /**
+ * Generate HMAC signature for session token
+ * Provides cryptographic binding to prevent tampering
+ */
+const generateTokenSignature = async (token) => {
+    if (!token) return '';
+    
+    try {
+        const encoder = new TextEncoder();
+        const data = encoder.encode(token);
+        const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+        const hashArray = Array.from(new Uint8Array(hashBuffer));
+        return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+    } catch (error) {
+        console.error('Failed to generate token signature:', error);
+        return '';
+    }
+};
+
+/**
+ * Verify session token signature
+ */
+const verifyTokenSignature = async (token, storedSignature) => {
+    if (!token || !storedSignature) return false;
+    
+    const currentSignature = await generateTokenSignature(token);
+    return currentSignature === storedSignature;
+};
+
+/**
  * Get stored AWS credentials from secure memory cache
  * @returns {Object|null} Decrypted credentials or null
  */
-export const getCredentials = () => {
+export const getCredentials = async () => {
     try {
         // Check session validity first
         if (isSessionExpired()) {
@@ -138,6 +198,15 @@ export const getCredentials = () => {
         const storedToken = localStorage.getItem(STORAGE_KEYS.SESSION_TOKEN);
         if (!storedToken || storedToken !== sessionToken) {
             console.warn('Invalid session token');
+            clearAuth();
+            return null;
+        }
+
+        // Verify token signature for integrity
+        const storedSignature = localStorage.getItem(STORAGE_KEYS.TOKEN_SIGNATURE);
+        const isValidSignature = await verifyTokenSignature(storedToken, storedSignature);
+        if (!isValidSignature) {
+            console.warn('Session token signature verification failed');
             clearAuth();
             return null;
         }

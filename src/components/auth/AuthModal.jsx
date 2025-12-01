@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Cancel01Icon, ArrowDown01Icon, LockIcon, Key01Icon, Database01Icon, Location01Icon } from 'hugeicons-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { isValidAccessKeyId, isValidSecretAccessKey, isValidBucketName } from '../../utils/validationUtils';
 
 const AWS_REGIONS = [
     { value: 'us-east-1', label: 'US East (N. Virginia)' },
@@ -51,8 +52,28 @@ export const AuthModal = ({ isOpen, onClose, onAuthenticate }) => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        
+        // Check required fields
         if (!formData.accessKeyId || !formData.secretAccessKey || !formData.bucketName) {
             setError('Please fill in all required fields');
+            return;
+        }
+
+        // Validate Access Key ID format
+        if (!isValidAccessKeyId(formData.accessKeyId)) {
+            setError('Invalid Access Key ID format. Must start with AKIA or ASIA and be 20 characters.');
+            return;
+        }
+
+        // Validate Secret Access Key format
+        if (!isValidSecretAccessKey(formData.secretAccessKey)) {
+            setError('Invalid Secret Access Key format. Must be 40 characters.');
+            return;
+        }
+
+        // Validate Bucket Name format
+        if (!isValidBucketName(formData.bucketName)) {
+            setError('Invalid bucket name. Must be lowercase, 3-63 characters, and follow AWS naming rules.');
             return;
         }
 
@@ -225,7 +246,9 @@ export const AuthModal = ({ isOpen, onClose, onAuthenticate }) => {
 
                                 {/* Premium Help Text */}
                                 <p className="text-xs text-center text-white/30 pt-1">
-                                    Credentials are encrypted and stored locally
+                                    Credentials are encrypted with AES-GCM and stored locally.
+                                    <br />
+                                    Session expires after 24 hours. Clear by logging out.
                                 </p>
                             </form>
                         </div>

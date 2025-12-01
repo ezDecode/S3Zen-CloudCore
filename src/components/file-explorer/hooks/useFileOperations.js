@@ -9,7 +9,8 @@ import {
     uploadFile,
     uploadLargeFile,
     downloadFile,
-    renameObject
+    renameObject,
+    listObjects
 } from '../../../services/aws/s3Service';
 import { buildS3Key } from '../../../utils/validationUtils';
 
@@ -109,10 +110,30 @@ export const useFileOperations = (currentPath, items, setItems, loadFiles, onNav
             const isNested = relativePath.includes('/');
             let fileExists = false;
 
+            // FIXED: Check for duplicates by building the full S3 key
+            // This ensures we check against the actual S3 path, not just current view
+            const fullKey = buildS3Key(currentPath, relativePath);
+            
             if (!isNested) {
+                // Check in current view items first (fast)
                 fileExists = items.some(existing =>
-                    existing.type === 'file' && existing.name === relativePath
+                    existing.type === 'file' && existing.key === fullKey
                 );
+                
+                // If not found in current view, check S3 directly (slower but accurate)
+                if (!fileExists) {
+                    try {
+                        const result = await listObjects(currentPath);
+                        if (result.success) {
+                            fileExists = result.items.some(existing =>
+                                existing.type === 'file' && existing.key === fullKey
+                            );
+                        }
+                    } catch (error) {
+                        console.warn('Failed to check for duplicates:', error);
+                        // Continue with upload if check fails
+                    }
+                }
             }
 
             if (fileExists) {

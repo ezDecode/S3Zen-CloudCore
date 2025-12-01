@@ -128,6 +128,7 @@ export const validateCredentials = async () => {
  * List objects in a folder (prefix)
  * SECURITY: Sanitizes prefix and validates against path traversal
  * PERFORMANCE: Optimized parsing and filtering
+ * RATE LIMITING: Applied to prevent API throttling
  */
 export const listObjects = async (prefix = '', continuationToken = null) => {
     if (!s3Client || !currentBucket) {
@@ -143,15 +144,20 @@ export const listObjects = async (prefix = '', continuationToken = null) => {
             return { success: false, error: 'Invalid path format' };
         }
 
-        const command = new ListObjectsV2Command({
-            Bucket: currentBucket,
-            Prefix: sanitizedPrefix,
-            Delimiter: '/',
-            MaxKeys: 1000,
-            ...(continuationToken && { ContinuationToken: continuationToken })
-        });
+        // RATE LIMITING: Import dynamically to avoid circular dependencies
+        const { rateLimitOperation } = await import('../../utils/rateLimiter.js');
+        
+        const response = await rateLimitOperation('list', async () => {
+            const command = new ListObjectsV2Command({
+                Bucket: currentBucket,
+                Prefix: sanitizedPrefix,
+                Delimiter: '/',
+                MaxKeys: 1000,
+                ...(continuationToken && { ContinuationToken: continuationToken })
+            });
 
-        const response = await s3Client.send(command);
+            return await s3Client.send(command);
+        });
 
         // OPTIMIZED: Pre-calculate prefix length to avoid repeated slicing
         const prefixLength = prefix.length;
@@ -200,6 +206,7 @@ export const listObjects = async (prefix = '', continuationToken = null) => {
 /**
  * Upload a file to S3
  * SECURITY: Validates file size and sanitizes key
+ * RATE LIMITING: Applied to prevent API throttling
  */
 export const uploadFile = async (file, key, onProgress) => {
     if (!s3Client || !currentBucket) {
@@ -225,15 +232,20 @@ export const uploadFile = async (file, key, onProgress) => {
             return { success: false, error: 'Invalid file path - contains dangerous patterns' };
         }
 
-        const fileBuffer = await file.arrayBuffer();
-        const command = new PutObjectCommand({
-            Bucket: currentBucket,
-            Key: sanitizedKey,
-            Body: new Uint8Array(fileBuffer),
-            ContentType: file.type
-        });
+        // RATE LIMITING: Import dynamically to avoid circular dependencies
+        const { rateLimitOperation } = await import('../../utils/rateLimiter.js');
+        
+        await rateLimitOperation('upload', async () => {
+            const fileBuffer = await file.arrayBuffer();
+            const command = new PutObjectCommand({
+                Bucket: currentBucket,
+                Key: sanitizedKey,
+                Body: new Uint8Array(fileBuffer),
+                ContentType: file.type
+            });
 
-        await s3Client.send(command);
+            await s3Client.send(command);
+        });
 
         if (onProgress) {
             onProgress({ loaded: file.size, total: file.size, percentage: 100 });
@@ -432,6 +444,7 @@ export const generateShareableLink = async (key, expiresIn = 3600) => {
 /**
  * Delete multiple objects
  * SECURITY: Validates all keys before deletion
+ * RATE LIMITING: Applied to prevent API throttling
  */
 export const deleteObjects = async (keys) => {
     if (!s3Client || !currentBucket) {
@@ -449,15 +462,20 @@ export const deleteObjects = async (keys) => {
             return sanitized;
         });
 
-        const command = new DeleteObjectsCommand({
-            Bucket: currentBucket,
-            Delete: {
-                Objects: sanitizedKeys.map(key => ({ Key: key })),
-                Quiet: false
-            }
-        });
+        // RATE LIMITING: Import dynamically to avoid circular dependencies
+        const { rateLimitOperation } = await import('../../utils/rateLimiter.js');
+        
+        const response = await rateLimitOperation('delete', async () => {
+            const command = new DeleteObjectsCommand({
+                Bucket: currentBucket,
+                Delete: {
+                    Objects: sanitizedKeys.map(key => ({ Key: key })),
+                    Quiet: false
+                }
+            });
 
-        const response = await s3Client.send(command);
+            return await s3Client.send(command);
+        });
 
         return {
             success: true,

@@ -209,8 +209,8 @@ export const validateKey = (sanitizedKey) => {
 };
 
 /**
- * @deprecated Use validateKey instead - validates sanitized keys only
- * Check if path contains dangerous patterns (legacy function)
+ * Check if path contains dangerous patterns
+ * Used for additional validation beyond sanitization
  */
 export const isDangerousPath = (path) => {
     if (!path || typeof path !== 'string') {

@@ -7,6 +7,17 @@ require('dotenv').config({ path: path.join(__dirname, '..', '.env') });
 
 const app = express();
 
+// Security: HTTPS enforcement in production
+if (process.env.NODE_ENV === 'production') {
+    app.use((req, res, next) => {
+        if (req.header('x-forwarded-proto') !== 'https') {
+            res.redirect(`https://${req.header('host')}${req.url}`);
+        } else {
+            next();
+        }
+    });
+}
+
 // Security: HTTP headers
 app.use(helmet());
 
@@ -17,8 +28,19 @@ const allowedOrigins = process.env.ALLOWED_ORIGINS
 
 app.use(cors({
     origin: (origin, callback) => {
-        // Allow requests with no origin (mobile apps, curl, etc.)
-        if (!origin) return callback(null, true);
+        // SECURITY: In production, require API key for origin-less requests
+        // In development, allow origin-less requests for testing
+        if (!origin) {
+            if (process.env.NODE_ENV === 'production') {
+                // Check for API key in header
+                const apiKey = callback.req?.headers['x-api-key'];
+                if (apiKey && apiKey === process.env.API_KEY) {
+                    return callback(null, true);
+                }
+                return callback(new Error('API key required for origin-less requests'));
+            }
+            return callback(null, true); // Allow in development
+        }
         if (allowedOrigins.includes(origin)) {
             return callback(null, true);
         }
