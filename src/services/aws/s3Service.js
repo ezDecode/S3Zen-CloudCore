@@ -452,7 +452,7 @@ export const deleteObjects = async (keys) => {
         const command = new DeleteObjectsCommand({
             Bucket: currentBucket,
             Delete: {
-                Objects: keys.map(key => ({ Key: key })),
+                Objects: sanitizedKeys.map(key => ({ Key: key })),
                 Quiet: false
             }
         });
@@ -525,8 +525,16 @@ export const deleteItems = async (items) => {
             deletePromises.push(deleteObjects(batch));
         }
         
-        // Execute all delete batches in parallel
-        await Promise.all(deletePromises);
+        // Execute all delete batches in parallel with proper error handling
+        const results = await Promise.allSettled(deletePromises);
+        const failures = results.filter(r => r.status === 'rejected');
+        if (failures.length > 0) {
+            console.warn(`${failures.length} delete batch(es) failed:`, failures);
+            // Still return success if at least some batches succeeded
+            if (failures.length === results.length) {
+                throw new Error('All delete batches failed');
+            }
+        }
 
         return { success: true };
     } catch (error) {

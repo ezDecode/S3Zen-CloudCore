@@ -5,7 +5,7 @@
  * SECURITY FEATURES:
  * - AES-GCM encryption for credentials at rest
  * - In-memory only credential storage during active session
- * - Automatic session expiry (7 days)
+ * - Automatic session expiry (24 hours)
  * - Secure memory zeroing on logout
  * - Credentials persisted in localStorage (encrypted)
  * - Session survives page refresh and browser restart

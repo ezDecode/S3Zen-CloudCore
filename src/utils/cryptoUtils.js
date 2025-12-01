@@ -219,7 +219,7 @@ export const zeroMemory = (obj) => {
  */
 export const destroyCryptoKey = () => {
     masterKey = null;
-    localStorage.removeItem(STORAGE_KEY_CRYPTO);
+    sessionStorage.removeItem(STORAGE_KEY_CRYPTO);
 };
 
 /**

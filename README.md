@@ -1,48 +1,83 @@
-# CloudCore URL Shortener
+# CloudCore
 
-![CloudCore Banner](https://img.shields.io/badge/CloudCore-URL%20Shortener-667eea?style=for-the-badge&logo=link&logoColor=white)
+![CloudCore Banner](https://img.shields.io/badge/CloudCore-AWS%20S3%20File%20Manager-9333ea?style=for-the-badge&logo=amazon-s3&logoColor=white)
 
-> **Simple. Fast. No AWS Required.**
+> **Free, Open-Source AWS S3 File Manager — No Backend Required**
 
-[![React](https://img.shields.io/badge/React-19.2.0-61DAFB?style=flat-square&logo=react&logoColor=black)](https://react.dev/)
-[![Vite](https://img.shields.io/badge/Vite-7.2.4-646CFF?style=flat-square&logo=vite&logoColor=white)](https://vitejs.dev/)
-[![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-4.1.17-38B2AC?style=flat-square&logo=tailwind-css&logoColor=white)](https://tailwindcss.com/)
+[![React](https://img.shields.io/badge/React-19-61DAFB?style=flat-square&logo=react&logoColor=black)](https://react.dev/)
+[![Vite](https://img.shields.io/badge/Vite-7-646CFF?style=flat-square&logo=vite&logoColor=white)](https://vitejs.dev/)
+[![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-4-38B2AC?style=flat-square&logo=tailwind-css&logoColor=white)](https://tailwindcss.com/)
 [![AWS SDK](https://img.shields.io/badge/AWS_SDK-v3-FF9900?style=flat-square&logo=amazon-aws&logoColor=white)](https://aws.amazon.com/sdk-for-javascript/)
-[![License](https://img.shields.io/badge/License-MIT_green?style=flat-square)](LICENSE)
+[![License](https://img.shields.io/badge/License-MIT-green?style=flat-square)](LICENSE)
 
-**CloudCore** is a minimal URL shortener with a clean backend. No AWS, no S3, no authentication - just simple URL shortening with SQLite storage.
+**CloudCore** is a modern, browser-based AWS S3 file manager that lets you manage your S3 buckets directly from your browser. No backend server required — just connect with your AWS credentials and start managing files instantly.
 
-> **SEO Optimized**: CloudCore is fully optimized for search engines with comprehensive meta tags, Open Graph support, structured data, and PWA capabilities.
+🌐 **Live Demo**: [cloudcore.creativesky.me](https://cloudcore.creativesky.me)
 
 ---
 
 ## ✨ Features
 
-- **🔍 SEO Optimized**: Comprehensive meta tags, Open Graph, Twitter Cards, and JSON-LD structured data
-- **📱 Progressive Web App**: Install as a mobile app with web manifest and service worker ready
-- **🌐 Social Media Ready**: Beautiful preview cards for Facebook, Twitter, LinkedIn, and more
+### 📁 File Management
+- **Drag & Drop Upload** — Upload files and folders with simple drag-and-drop
+- **Multi-file Operations** — Select, download, rename, and delete multiple files at once
+- **Folder Navigation** — Browse your S3 bucket with an intuitive file explorer interface
+- **File Preview** — Preview images, videos, audio, PDFs, markdown, and code files directly in-browser
+- **Quick Search** — Instantly filter files by name with debounced search
 
-- **🔗 URL Shortening**: Convert long URLs into short, shareable links
-- **🗄️ SQLite Storage**: Lightweight database, no external services needed
-- **✅ URL Validation**: Rejects localhost and IP addresses
-- **🚀 Fast Redirects**: 302 redirects to original URLs
-- **🔒 No Auth Required**: Simple API, no user accounts or tokens
-- **📦 Zero AWS**: No S3, no credentials, no cloud dependencies
+### 🔗 Sharing & Collaboration
+- **Presigned URL Sharing** — Generate secure, time-limited shareable links for any file
+- **URL Shortening** — Automatically shorten long presigned URLs for easy sharing
+- **Configurable Expiration** — Set link expiry from 1 hour to 7 days
+
+### ⭐ Organization
+- **Favorites/Pins** — Pin frequently accessed files and folders for quick access
+- **Storage Statistics** — View total storage usage with file type breakdown
+- **Multiple View Modes** — Switch between grid and list views
+- **Sorting Options** — Sort by name, size, or date (ascending/descending)
+
+### 🔒 Security
+- **Client-Side Encryption** — AWS credentials encrypted with AES-GCM in browser memory
+- **No Server Storage** — Your credentials never leave your browser
+- **Session Management** — Automatic session timeout with secure credential cleanup
+- **Input Validation** — Path traversal prevention and XSS protection
+
+### 🎨 User Experience
+- **Modern Dark UI** — Beautiful, responsive interface with smooth animations
+- **Progressive Web App** — Install as a mobile/desktop app
+- **SEO Optimized** — Full meta tags, Open Graph, and structured data
+- **Keyboard Shortcuts** — Power-user friendly navigation
+
+---
+
+## 🖼️ Screenshots
+
+<div align="center">
+  <img src="docs/screenshot-explorer.png" alt="File Explorer" width="800" />
+  <p><em>Modern file explorer with drag-and-drop support</em></p>
+</div>
 
 ---
 
 ## 🛠️ Tech Stack
 
-### Backend
-- **Runtime**: [Node.js](https://nodejs.org/)
-- **Framework**: [Express](https://expressjs.com/)
-- **Database**: [SQLite3](https://www.sqlite.org/)
-- **ID Generation**: [nanoid](https://github.com/ai/nanoid)
+### Frontend
+| Technology | Purpose |
+|------------|---------|
+| [React 19](https://react.dev/) | UI Framework with Hooks |
+| [Vite 7](https://vitejs.dev/) | Build Tool & Dev Server |
+| [Tailwind CSS v4](https://tailwindcss.com/) | Utility-First Styling |
+| [Framer Motion](https://www.framer.com/motion/) | Animations |
+| [AWS SDK v3](https://aws.amazon.com/sdk-for-javascript/) | S3 & STS Client |
+| [Hugeicons](https://hugeicons.com/) | Icon Library |
 
-### Frontend (Optional)
-- **Framework**: [React 19](https://react.dev/) with JSX
-- **Build Tool**: [Vite 7](https://vitejs.dev/)
-- **Styling**: [Tailwind CSS v4](https://tailwindcss.com/)
+### Backend (Optional - for URL Shortening)
+| Technology | Purpose |
+|------------|---------|
+| [Node.js](https://nodejs.org/) | Runtime |
+| [Express](https://expressjs.com/) | Web Framework |
+| [SQLite3](https://www.sqlite.org/) | Database |
+| [nanoid](https://github.com/ai/nanoid) | Short Code Generation |
 
 ---
 
@@ -50,14 +85,15 @@
 
 ### Prerequisites
 
-- [Node.js](https://nodejs.org/) (v18 or higher)
+- [Node.js](https://nodejs.org/) v18 or higher
+- AWS S3 bucket with appropriate IAM permissions
 
-### Backend Setup
+### Quick Start (Frontend Only)
 
 1. **Clone the repository**
    ```bash
    git clone https://github.com/ezDecode/S3Zen-CloudCore.git
-   cd S3Zen-CloudCore/backend
+   cd S3Zen-CloudCore
    ```
 
 2. **Install dependencies**
@@ -65,67 +101,72 @@
    npm install
    ```
 
-3. **Configure environment**
+3. **Start development server**
    ```bash
-   cp .env.example .env
-   # Edit .env if needed (default: PORT=3001)
+   npm run dev
    ```
 
-4. **Start the server**
-   ```bash
-   npm start
+4. **Open in browser**
+   ```
+   http://localhost:5173
    ```
 
-5. Server runs at `http://localhost:3001`
+5. **Connect your AWS credentials** — Enter your Access Key, Secret Key, Region, and Bucket name
 
-### Quick Test
+### Production Build
 
 ```bash
-# Create a short URL
-curl -X POST http://localhost:3001/shorten \
-  -H "Content-Type: application/json" \
-  -d '{"longUrl":"https://github.com"}'
-
-# Or run the test script
-node test.js
+npm run build
+npm run preview
 ```
+
+### Backend Setup (Optional - for URL Shortening)
+
+The backend provides URL shortening for shared presigned URLs:
+
+```bash
+cd backend
+npm install
+cp .env.example .env
+npm start
+```
+
+See [backend/README.md](backend/README.md) for detailed backend documentation.
 
 ---
 
-## 📡 API Endpoints
+## 🔐 AWS IAM Policy
 
-### POST /shorten
-Create a short URL
+CloudCore requires the following minimum IAM permissions:
 
-**Request:**
 ```json
 {
-  "longUrl": "https://example.com/very/long/path"
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Action": [
+        "s3:ListBucket",
+        "s3:GetObject",
+        "s3:PutObject",
+        "s3:DeleteObject",
+        "s3:GetBucketLocation"
+      ],
+      "Resource": [
+        "arn:aws:s3:::your-bucket-name",
+        "arn:aws:s3:::your-bucket-name/*"
+      ]
+    },
+    {
+      "Effect": "Allow",
+      "Action": "sts:GetCallerIdentity",
+      "Resource": "*"
+    }
+  ]
 }
 ```
 
-**Response:**
-```json
-{
-  "shortUrl": "http://localhost:3001/s/abc123",
-  "shortCode": "abc123"
-}
-```
-
-### GET /s/:code
-Redirect to original URL
-
-**Example:** `http://localhost:3001/s/abc123` → redirects to original URL
-
-### GET /health
-Health check endpoint
-
-**Response:**
-```json
-{
-  "status": "ok"
-}
-```
+See [docs/aws-iam-policy.json](docs/aws-iam-policy.json) for a complete policy template.
 
 ---
 
@@ -133,20 +174,31 @@ Health check endpoint
 
 ```
 CloudCore/
-├── backend/
+├── src/
+│   ├── components/
+│   │   ├── auth/              # Landing page & authentication
+│   │   ├── file-explorer/     # Main file browser component
+│   │   │   ├── hooks/         # Custom hooks (navigation, operations, drag-drop)
+│   │   │   └── components/    # Sub-components (nav, action bar, upload panel)
+│   │   ├── modals/            # Share, rename, delete, preview modals
+│   │   ├── preview/           # File preview components (image, video, PDF, etc.)
+│   │   ├── common/            # Shared components (favorites, storage stats)
+│   │   └── ui/                # Base UI components (button, drawer, etc.)
+│   ├── hooks/                 # Global hooks (auth, favorites, storage stats)
+│   ├── services/
+│   │   ├── aws/               # S3 service with all bucket operations
+│   │   ├── previewService.js  # Presigned URL caching for previews
+│   │   └── urlShortener.js    # Backend URL shortener client
+│   ├── utils/                 # Validation, crypto, formatting utilities
+│   └── App.jsx                # Root component
+├── backend/                   # Optional URL shortener backend
 │   ├── src/
-│   │   ├── routes/
-│   │   │   └── shortener.js   # URL shortening routes
-│   │   ├── utils/
-│   │   │   ├── idGen.js       # Short code generator
-│   │   │   └── validateUrl.js # URL validation
-│   │   ├── db/
-│   │   │   └── shortlinks.db  # SQLite database (auto-created)
-│   │   └── server.js          # Main server
-│   ├── .env                   # Environment variables
-│   ├── package.json           # Dependencies
-│   ├── test.js                # Test script
+│   │   ├── routes/            # API routes
+│   │   ├── utils/             # ID generation, URL validation
+│   │   └── server.js          # Express server
 │   └── README.md              # Backend documentation
+├── public/                    # Static assets, PWA manifest
+├── docs/                      # Documentation & IAM policies
 └── README.md                  # This file
 ```
 
@@ -162,6 +214,24 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 4. Push to the branch (`git push origin feature/AmazingFeature`)
 5. Open a Pull Request
 
+### Development Guidelines
+
+- Follow existing code style and patterns
+- Add comments for complex logic
+- Update documentation for new features
+- Test across different browsers
+
+---
+
+## 🗺️ Roadmap
+
+- [ ] Multi-bucket support
+- [ ] File/folder move operations
+- [ ] Batch rename with patterns
+- [ ] S3 versioning support
+- [ ] File encryption at rest
+- [ ] Collaborative workspaces
+
 ---
 
 ## 📄 License
@@ -170,4 +240,19 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ---
 
-Built with ❤️ by [@ezDecode](https://github.com/ezDecode)
+## 🙏 Acknowledgments
+
+- [AWS SDK for JavaScript](https://aws.amazon.com/sdk-for-javascript/) for S3 integration
+- [Hugeicons](https://hugeicons.com/) for the beautiful icon set
+- [Framer Motion](https://www.framer.com/motion/) for smooth animations
+- All contributors and users of CloudCore
+
+---
+
+<div align="center">
+
+**Built with ❤️ by [@ezDecode](https://github.com/ezDecode)**
+
+[Report Bug](https://github.com/ezDecode/S3Zen-CloudCore/issues) · [Request Feature](https://github.com/ezDecode/S3Zen-CloudCore/issues)
+
+</div>
