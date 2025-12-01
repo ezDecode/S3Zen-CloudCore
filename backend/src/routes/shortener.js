@@ -37,6 +37,25 @@ db.run(`CREATE TABLE IF NOT EXISTS shortlinks (
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP
 )`);
 
+// Graceful shutdown handler
+const closeDatabase = () => {
+    db.close((err) => {
+        if (err) {
+            console.error('Error closing database:', err.message);
+        } else {
+            console.log('✓ Database connection closed');
+        }
+        process.exit(0);
+    });
+};
+
+// Handle shutdown signals
+process.on('SIGINT', closeDatabase);
+process.on('SIGTERM', closeDatabase);
+process.on('exit', () => {
+    db.close();
+});
+
 // POST /shorten - Create a short URL
 router.post('/shorten', (req, res) => {
     const { longUrl, url } = req.body;

@@ -9,6 +9,7 @@
  */
 
 import { useState, useEffect } from 'react';
+import ErrorBoundary from './components/ErrorBoundary';
 import { LandingPage } from './components/auth/LandingPage';
 import { AuthModal } from './components/auth/AuthModal';
 import { FileExplorer } from './components/file-explorer/FileExplorer';
@@ -215,10 +216,14 @@ function AppContent() {
 }
 
 /**
- * Root App Component
+ * Root App Component with Error Boundary
  */
 function App() {
-  return <AppContent />;
+  return (
+    <ErrorBoundary>
+      <AppContent />
+    </ErrorBoundary>
+  );
 }
 
 export default App;

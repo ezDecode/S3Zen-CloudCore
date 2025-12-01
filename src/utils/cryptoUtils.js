@@ -26,48 +26,30 @@ const STORAGE_KEY_CRYPTO = 'cc_master_key';
 
 /**
  * Initialize encryption key
- * Tries to recover key from sessionStorage first, otherwise generates new one
- * Note: Using sessionStorage means users need to re-authenticate per session
+ * Generates a new non-extractable key for maximum security
+ * Note: Key only exists in memory - users must re-authenticate on page refresh
+ * SECURITY: Non-extractable keys cannot be stolen via XSS attacks
  */
 export const initializeCryptoKey = async () => {
     try {
-        // Try to load existing key from sessionStorage (more secure than localStorage)
-        const storedKey = sessionStorage.getItem(STORAGE_KEY_CRYPTO);
+        // Always generate a new key (no persistence for security)
+        // Previous implementation stored keys in sessionStorage which was vulnerable
 
-        if (storedKey) {
-            try {
-                const keyData = JSON.parse(storedKey);
-                masterKey = await crypto.subtle.importKey(
-                    'jwk',
-                    keyData,
-                    {
-                        name: CRYPTO_CONFIG.ALGORITHM,
-                        length: CRYPTO_CONFIG.KEY_LENGTH,
-                    },
-                    true,
-                    ['encrypt', 'decrypt']
-                );
-                return { success: true };
-            } catch (e) {
-                console.warn('Failed to recover stored key, generating new one');
-            }
-        }
-
-        // Generate a new random key
+        // Generate a new random key (non-extractable for better security)
         const keyMaterial = await crypto.subtle.generateKey(
             {
                 name: CRYPTO_CONFIG.ALGORITHM,
                 length: CRYPTO_CONFIG.KEY_LENGTH,
             },
-            true, // extractable
+            false, // non-extractable - prevents key theft via XSS
             ['encrypt', 'decrypt']
         );
 
         masterKey = keyMaterial;
 
-        // Export and save key to sessionStorage (cleared on tab close)
-        const exportedKey = await crypto.subtle.exportKey('jwk', keyMaterial);
-        sessionStorage.setItem(STORAGE_KEY_CRYPTO, JSON.stringify(exportedKey));
+        // Note: Key is now non-extractable and only exists in memory
+        // Users will need to re-authenticate on page refresh
+        // This is a security trade-off: better security vs convenience
 
         return { success: true };
     } catch (error) {

@@ -6,9 +6,68 @@
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 import { GetObjectCommand } from '@aws-sdk/client-s3';
 
-// Cache for presigned URLs (5 minutes)
-const urlCache = new Map();
+// LRU Cache for presigned URLs with size limit
+const MAX_CACHE_SIZE = 100;
 const CACHE_DURATION = 5 * 60 * 1000; // 5 minutes
+
+class LRUCache {
+    constructor(maxSize) {
+        this.maxSize = maxSize;
+        this.cache = new Map();
+    }
+
+    get(key) {
+        if (!this.cache.has(key)) return null;
+        
+        const item = this.cache.get(key);
+        // Check expiration
+        if (Date.now() - item.timestamp > CACHE_DURATION) {
+            this.cache.delete(key);
+            return null;
+        }
+        
+        // Move to end (most recently used)
+        this.cache.delete(key);
+        this.cache.set(key, item);
+        return item;
+    }
+
+    set(key, value) {
+        // Remove if exists (to update position)
+        if (this.cache.has(key)) {
+            this.cache.delete(key);
+        }
+        
+        // Evict oldest if at capacity
+        if (this.cache.size >= this.maxSize) {
+            const firstKey = this.cache.keys().next().value;
+            this.cache.delete(firstKey);
+        }
+        
+        this.cache.set(key, value);
+    }
+
+    clear() {
+        this.cache.clear();
+    }
+
+    // Cleanup expired entries
+    cleanup() {
+        const now = Date.now();
+        for (const [key, value] of this.cache.entries()) {
+            if (now - value.timestamp > CACHE_DURATION) {
+                this.cache.delete(key);
+            }
+        }
+    }
+}
+
+const urlCache = new LRUCache(MAX_CACHE_SIZE);
+
+// Periodic cleanup of expired entries
+setInterval(() => {
+    urlCache.cleanup();
+}, CACHE_DURATION);
 
 /**
  * Get S3 client from s3Service
@@ -31,7 +90,7 @@ export const getPreviewUrl = async (s3Key, expiresIn = 3600) => {
 
     // Check cache
     const cached = urlCache.get(s3Key);
-    if (cached && Date.now() - cached.timestamp < CACHE_DURATION) {
+    if (cached) {
         return cached.url;
     }
 
