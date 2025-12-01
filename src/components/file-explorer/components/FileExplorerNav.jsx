@@ -149,7 +149,7 @@ export const FileExplorerNav = forwardRef(({
                 {/* Premium Refresh */}
                 <button
                     onClick={onRefresh}
-                    className="hidden sm:flex p-1.5 sm:p-2 rounded-lg text-white/40 hover:text-white/70 hover:bg-white/[0.04] transition-all duration-150 shrink-0 active:scale-95"
+                    className="hidden sm:flex p-1.5 sm:p-2 rounded-lg text-white/40 hover:text-white/70 hover:bg-white/[0.04] transition-colors duration-150 shrink-0"
                     title="Refresh"
                 >
                     <Loading03Icon className="w-4.5 h-4.5" />
@@ -158,7 +158,7 @@ export const FileExplorerNav = forwardRef(({
                 {/* Premium Logout */}
                 <button
                     onClick={onLogout}
-                    className="p-1.5 sm:p-2 rounded-lg text-white/40 hover:text-white/70 hover:bg-white/[0.04] transition-all duration-150 shrink-0 active:scale-95"
+                    className="p-1.5 sm:p-2 rounded-lg text-white/40 hover:text-white/70 hover:bg-white/[0.04] transition-colors duration-150 shrink-0"
                     title="Logout"
                 >
                     <Logout01Icon className="w-4 sm:w-4.5 h-4 sm:h-4.5" />

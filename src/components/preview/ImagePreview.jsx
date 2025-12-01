@@ -85,11 +85,9 @@ export const ImagePreview = ({ item }) => {
             {/* Controls */}
             <div className="absolute bottom-4 left-1/2 -translate-x-1/2 z-10 flex items-center gap-2 bg-black/80 backdrop-blur-sm rounded-full px-4 py-2 border border-white/10">
                 <motion.button
-                    whileHover={{ scale: 1.1 }}
-                    whileTap={{ scale: 0.9 }}
                     onClick={handleZoomOut}
                     disabled={scale <= 0.5}
-                    className="p-2 rounded-lg hover:bg-white/10 text-white disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+                    className="p-2 rounded-lg hover:bg-white/[0.08] text-white disabled:opacity-30 disabled:cursor-not-allowed transition-colors duration-150"
                     title="Zoom Out"
                 >
                     <MinusSignIcon className="w-5 h-5" />
@@ -100,11 +98,9 @@ export const ImagePreview = ({ item }) => {
                 </span>
 
                 <motion.button
-                    whileHover={{ scale: 1.1 }}
-                    whileTap={{ scale: 0.9 }}
                     onClick={handleZoomIn}
                     disabled={scale >= 3}
-                    className="p-2 rounded-lg hover:bg-white/10 text-white disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+                    className="p-2 rounded-lg hover:bg-white/[0.08] text-white disabled:opacity-30 disabled:cursor-not-allowed transition-colors duration-150"
                     title="Zoom In"
                 >
                     <PlusSignIcon className="w-5 h-5" />
@@ -113,20 +109,16 @@ export const ImagePreview = ({ item }) => {
                 <div className="w-px h-6 bg-white/20 mx-1" />
 
                 <motion.button
-                    whileHover={{ scale: 1.1 }}
-                    whileTap={{ scale: 0.9 }}
                     onClick={handleRotate}
-                    className="p-2 rounded-lg hover:bg-white/10 text-white transition-colors"
+                    className="p-2 rounded-lg hover:bg-white/[0.08] text-white transition-colors duration-150"
                     title="Rotate"
                 >
                     <Rotate01Icon className="w-5 h-5" />
                 </motion.button>
 
                 <motion.button
-                    whileHover={{ scale: 1.1 }}
-                    whileTap={{ scale: 0.9 }}
                     onClick={handleFitToScreen}
-                    className="p-2 rounded-lg hover:bg-white/10 text-white transition-colors"
+                    className="p-2 rounded-lg hover:bg-white/[0.08] text-white transition-colors duration-150"
                     title="Fit to Screen"
                 >
                     <Maximize01Icon className="w-5 h-5" />

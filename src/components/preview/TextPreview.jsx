@@ -86,10 +86,8 @@ export const TextPreview = ({ item }) => {
             <div className="flex items-center justify-between px-4 py-2 bg-black/50 border-b border-white/10">
                 <span className="text-sm text-zinc-400">{language}</span>
                 <motion.button
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
                     onClick={handleCopy}
-                    className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-white/10 hover:bg-white/20 text-white text-sm transition-colors"
+                    className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-white/10 hover:bg-white/[0.15] text-white text-sm transition-colors duration-150"
                 >
                     {copied ? (
                         <>

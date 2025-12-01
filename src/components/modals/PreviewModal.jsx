@@ -85,13 +85,11 @@ export const PreviewModal = ({
                         <div className="flex items-center gap-2 ml-4">
                             {onShare && (
                                 <motion.button
-                                    whileHover={{ scale: 1.05 }}
-                                    whileTap={{ scale: 0.95 }}
                                     onClick={(e) => {
                                         e.stopPropagation();
                                         onShare(item);
                                     }}
-                                    className="p-2 rounded-lg bg-white/10 hover:bg-white/20 text-white transition-colors"
+                                    className="p-2 rounded-lg bg-white/10 hover:bg-white/[0.15] text-white transition-colors duration-150"
                                     title="Share"
                                 >
                                     <Share01Icon className="w-5 h-5" />
@@ -100,13 +98,11 @@ export const PreviewModal = ({
                             
                             {onDownload && (
                                 <motion.button
-                                    whileHover={{ scale: 1.05 }}
-                                    whileTap={{ scale: 0.95 }}
                                     onClick={(e) => {
                                         e.stopPropagation();
                                         onDownload(item);
                                     }}
-                                    className="p-2 rounded-lg bg-white/10 hover:bg-white/20 text-white transition-colors"
+                                    className="p-2 rounded-lg bg-white/10 hover:bg-white/[0.15] text-white transition-colors duration-150"
                                     title="Download"
                                 >
                                     <Download01Icon className="w-5 h-5" />
@@ -114,10 +110,8 @@ export const PreviewModal = ({
                             )}
 
                             <motion.button
-                                whileHover={{ scale: 1.05 }}
-                                whileTap={{ scale: 0.95 }}
                                 onClick={onClose}
-                                className="p-2 rounded-lg bg-white/10 hover:bg-white/20 text-white transition-colors"
+                                className="p-2 rounded-lg bg-white/10 hover:bg-white/[0.15] text-white transition-colors duration-150"
                                 title="Close (ESC)"
                             >
                                 <Cancel01Icon className="w-5 h-5" />
@@ -148,13 +142,11 @@ export const PreviewModal = ({
                     <motion.button
                         initial={{ opacity: 0, x: -20 }}
                         animate={{ opacity: 1, x: 0 }}
-                        whileHover={{ scale: 1.1 }}
-                        whileTap={{ scale: 0.9 }}
                         onClick={(e) => {
                             e.stopPropagation();
                             onPrevious();
                         }}
-                        className="absolute left-4 top-1/2 -translate-y-1/2 p-3 rounded-full bg-white/10 hover:bg-white/20 text-white backdrop-blur-sm transition-colors"
+                        className="absolute left-4 top-1/2 -translate-y-1/2 p-3 rounded-full bg-white/10 hover:bg-white/[0.15] text-white backdrop-blur-sm transition-colors duration-150"
                         title="Previous (←)"
                     >
                         <ArrowLeft01Icon className="w-6 h-6" />
@@ -165,13 +157,11 @@ export const PreviewModal = ({
                     <motion.button
                         initial={{ opacity: 0, x: 20 }}
                         animate={{ opacity: 1, x: 0 }}
-                        whileHover={{ scale: 1.1 }}
-                        whileTap={{ scale: 0.9 }}
                         onClick={(e) => {
                             e.stopPropagation();
                             onNext();
                         }}
-                        className="absolute right-4 top-1/2 -translate-y-1/2 p-3 rounded-full bg-white/10 hover:bg-white/20 text-white backdrop-blur-sm transition-colors"
+                        className="absolute right-4 top-1/2 -translate-y-1/2 p-3 rounded-full bg-white/10 hover:bg-white/[0.15] text-white backdrop-blur-sm transition-colors duration-150"
                         title="Next (→)"
                     >
                         <ArrowRight01Icon className="w-6 h-6" />

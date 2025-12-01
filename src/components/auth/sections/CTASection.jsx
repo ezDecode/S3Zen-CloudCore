@@ -53,28 +53,24 @@ export const CTASection = ({ onGetStarted }) => {
                     {/* CTA Group */}
                     <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-center gap-3 sm:gap-4 mb-10 sm:mb-12 lg:mb-14">
                         {/* Primary Button */}
-                        <motion.button
+                        <button
                             onClick={onGetStarted}
-                            whileHover={{ scale: 1.02 }}
-                            whileTap={{ scale: 0.98 }}
-                            className="group w-full sm:w-auto px-6 sm:px-8 py-3 sm:py-4 bg-white text-black font-normal rounded-xl hover:bg-white/95 transition-colors duration-200 flex items-center justify-center gap-2 shadow-2xl shadow-white/10"
+                            className="group w-full sm:w-auto px-6 sm:px-8 py-3 sm:py-4 bg-white text-black font-normal rounded-xl hover:bg-white/90 transition-colors duration-150 flex items-center justify-center gap-2 shadow-2xl shadow-white/10"
                         >
                             <span className="text-sm sm:text-base">Get Started Free</span>
-                            <ArrowRight01Icon className="w-4 h-4 transition-transform duration-200 group-hover:translate-x-1" />
-                        </motion.button>
+                            <ArrowRight01Icon className="w-4 h-4 transition-transform duration-200 group-hover:translate-x-0.5" />
+                        </button>
 
                         {/* Secondary Button */}
-                        <motion.a
+                        <a
                             href="https://github.com/ezDecode/S3Zen-CloudCore"
                             target="_blank"
                             rel="noopener noreferrer"
-                            whileHover={{ scale: 1.02 }}
-                            whileTap={{ scale: 0.98 }}
-                            className="group w-full sm:w-auto px-6 sm:px-8 py-3 sm:py-4 text-white/80 hover:text-white font-normal rounded-xl border border-white/10 hover:border-white/20 hover:bg-white/[0.04] transition-all duration-200 flex items-center justify-center gap-2"
+                            className="group w-full sm:w-auto px-6 sm:px-8 py-3 sm:py-4 text-white/80 hover:text-white font-normal rounded-xl border border-white/10 hover:border-white/[0.15] hover:bg-white/[0.03] transition-colors duration-150 flex items-center justify-center gap-2"
                         >
                             <Github01Icon className="w-4 h-4" />
                             <span className="text-sm sm:text-base">View on GitHub</span>
-                        </motion.a>
+                        </a>
                     </div>
 
                     {/* Trust Badges */}

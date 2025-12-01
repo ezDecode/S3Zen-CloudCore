@@ -170,20 +170,20 @@ const setupSteps = [
                 <p className="text-white/80">
                     Choose the AWS region where your S3 bucket is located. Common regions include:
                 </p>
-                <div className="grid grid-cols-2 gap-3 mt-4">
-                    <div className="bg-white/5 border border-white/10 rounded-xl p-3 hover:bg-white/[0.07] transition-colors">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-4">
+                    <div className="bg-white/5 border border-white/10 rounded-xl p-3 hover:bg-white/[0.06] hover:border-white/[0.12] transition-colors duration-150">
                         <code className="font-mono text-white/90 text-sm">us-east-1</code>
                         <span className="text-white/50 ml-2 text-sm">N. Virginia</span>
                     </div>
-                    <div className="bg-white/5 border border-white/10 rounded-xl p-3 hover:bg-white/[0.07] transition-colors">
+                    <div className="bg-white/5 border border-white/10 rounded-xl p-3 hover:bg-white/[0.06] hover:border-white/[0.12] transition-colors duration-150">
                         <code className="font-mono text-white/90 text-sm">us-west-2</code>
                         <span className="text-white/50 ml-2 text-sm">Oregon</span>
                     </div>
-                    <div className="bg-white/5 border border-white/10 rounded-xl p-3 hover:bg-white/[0.07] transition-colors">
+                    <div className="bg-white/5 border border-white/10 rounded-xl p-3 hover:bg-white/[0.06] hover:border-white/[0.12] transition-colors duration-150">
                         <code className="font-mono text-white/90 text-sm">eu-west-1</code>
                         <span className="text-white/50 ml-2 text-sm">Ireland</span>
                     </div>
-                    <div className="bg-white/5 border border-white/10 rounded-xl p-3 hover:bg-white/[0.07] transition-colors">
+                    <div className="bg-white/5 border border-white/10 rounded-xl p-3 hover:bg-white/[0.06] hover:border-white/[0.12] transition-colors duration-150">
                         <code className="font-mono text-white/90 text-sm">ap-south-1</code>
                         <span className="text-white/50 ml-2 text-sm">Mumbai</span>
                     </div>
@@ -244,9 +244,9 @@ export const FAQSection = () => {
                             >
                                 <AccordionItem
                                     value={step.id}
-                                    className="border border-white/[0.08] rounded-2xl overflow-hidden bg-white/[0.02] backdrop-blur-sm hover:border-white/[0.12] transition-colors"
+                                    className="border border-white/[0.08] rounded-2xl overflow-hidden bg-white/[0.02] backdrop-blur-sm hover:border-white/[0.1] transition-colors duration-150"
                                 >
-                                    <AccordionTrigger className="w-full flex items-center justify-between px-6 sm:px-8 py-5 sm:py-6 text-left hover:bg-white/[0.02] transition-colors">
+                                    <AccordionTrigger className="w-full flex items-center justify-between px-6 sm:px-8 py-5 sm:py-6 text-left hover:bg-white/[0.015] transition-colors duration-150">
                                         <div className="flex items-center gap-4">
                                             <span className="text-sm font-mono text-white/30">{step.number}</span>
                                             <span className="text-base sm:text-lg font-normal text-white/90">

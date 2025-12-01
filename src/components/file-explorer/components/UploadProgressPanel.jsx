@@ -97,7 +97,7 @@ export const UploadProgressPanel = ({ uploadingFiles, onCancel }) => {
                             animate={{ scale: 1, opacity: 1 }}
                             exit={{ scale: 0.8, opacity: 0 }}
                             onClick={() => setIsMinimized(false)}
-                            className="w-14 h-14 rounded-full bg-zinc-900/95 backdrop-blur-xl border border-white/10 shadow-2xl cursor-pointer flex items-center justify-center relative group hover:scale-105 transition-transform"
+                            className="w-14 h-14 rounded-full bg-zinc-900/95 backdrop-blur-xl border border-white/10 shadow-2xl cursor-pointer flex items-center justify-center relative group hover:bg-zinc-900 hover:border-white/[0.15] transition-colors duration-150"
                         >
                             <svg className="w-12 h-12 -rotate-90">
                                 <circle

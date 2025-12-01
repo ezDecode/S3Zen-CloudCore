@@ -94,14 +94,14 @@ export const CreateFolderModal = ({ isOpen, onClose, currentPath, onSuccess }) =
                 <button
                     onClick={handleClose}
                     disabled={isCreating}
-                    className="flex-1 py-3.5 px-4 text-sm bg-white/8 hover:bg-white/12 border border-white/10 text-white rounded-lg transition-all disabled:opacity-50 touch-target focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white/50"
+                    className="flex-1 py-3.5 px-4 text-sm bg-white/8 hover:bg-white/[0.1] border border-white/10 text-white rounded-lg transition-colors duration-150 disabled:opacity-50 touch-target focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white/50"
                 >
                     Cancel
                 </button>
                 <button
                     onClick={handleCreate}
                     disabled={isCreating || !folderName.trim()}
-                    className="flex-1 py-3.5 px-4 text-sm bg-blue-500 hover:bg-blue-600 text-white font-normal rounded-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed touch-target focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-400"
+                    className="flex-1 py-3.5 px-4 text-sm bg-blue-500 hover:bg-blue-600 text-white font-normal rounded-lg transition-colors duration-150 disabled:opacity-50 disabled:cursor-not-allowed touch-target focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-400"
                 >
                     {isCreating ? 'Creating...' : 'Create Folder'}
                 </button>

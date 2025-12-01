@@ -37,7 +37,7 @@ export const DownloadManager = ({ downloads, onRemove, onClear }) => {
                         {downloads.length > 0 && (
                             <button
                                 onClick={onClear}
-                                className="p-1.5 text-zinc-400 hover:text-white hover:bg-white/5 rounded-lg transition-all text-xs font-normal"
+                                className="p-1.5 text-zinc-400 hover:text-white hover:bg-white/[0.04] rounded-lg transition-colors duration-150 text-xs font-normal"
                                 title="Clear all"
                             >
                                 Clear

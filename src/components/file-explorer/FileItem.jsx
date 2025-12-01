@@ -114,11 +114,9 @@ export const FileItem = memo(({
     if (viewMode === 'grid') {
         return (
             <motion.div
-                whileHover={{ y: -2 }}
-                whileTap={{ scale: 0.98 }}
                 onHoverStart={() => setIsHovered(true)}
                 onHoverEnd={() => setIsHovered(false)}
-                className={`group relative rounded-xl border transition-all duration-200 cursor-pointer ${
+                className={`group relative rounded-xl border transition-colors duration-150 cursor-pointer ${
                     isSelected
                         ? 'bg-blue-500/10 border-blue-500/50 shadow-[0_0_15px_rgba(59,130,246,0.15)]'
                         : 'bg-white/5 border-white/10 hover:bg-white/10 hover:border-white/20'
@@ -159,10 +157,8 @@ export const FileItem = memo(({
                         >
                             {onPreview && (
                                 <motion.button
-                                    whileHover={{ scale: 1.1 }}
-                                    whileTap={{ scale: 0.9 }}
                                     onClick={() => onPreview(item)}
-                                    className="p-2 rounded-lg bg-blue-500/90 hover:bg-blue-600 text-white backdrop-blur-sm transition-colors shadow-lg"
+                                    className="p-2 rounded-lg bg-blue-500/90 hover:bg-blue-600 text-white backdrop-blur-sm transition-colors duration-150 shadow-lg"
                                     title="Preview"
                                 >
                                     <ViewIcon className="w-4 h-4" />
@@ -170,10 +166,8 @@ export const FileItem = memo(({
                             )}
                             {onDownload && (
                                 <motion.button
-                                    whileHover={{ scale: 1.1 }}
-                                    whileTap={{ scale: 0.9 }}
                                     onClick={() => onDownload(item)}
-                                    className="p-2 rounded-lg bg-green-500/90 hover:bg-green-600 text-white backdrop-blur-sm transition-colors shadow-lg"
+                                    className="p-2 rounded-lg bg-green-500/90 hover:bg-green-600 text-white backdrop-blur-sm transition-colors duration-150 shadow-lg"
                                     title="Download"
                                 >
                                     <Download01Icon className="w-4 h-4" />
@@ -235,7 +229,7 @@ export const FileItem = memo(({
         <motion.div
             onHoverStart={() => setIsHovered(true)}
             onHoverEnd={() => setIsHovered(false)}
-            className={`group relative grid grid-cols-12 gap-4 items-center px-4 py-3.5 rounded-lg border transition-all duration-200 cursor-pointer ${
+            className={`group relative grid grid-cols-12 gap-4 items-center px-4 py-3.5 rounded-lg border transition-colors duration-150 cursor-pointer ${
                 isSelected
                     ? 'bg-blue-500/10 border-blue-500/50 shadow-[0_0_15px_rgba(59,130,246,0.15)]'
                     : 'bg-white/2 border-white/8 hover:border-white/20 hover:shadow-md'
@@ -254,8 +248,6 @@ export const FileItem = memo(({
             <div className="col-span-8 sm:col-span-6 flex items-center gap-3 min-w-0">
                 {/* Icon */}
                 <motion.div
-                    whileHover={{ scale: 1.1, rotate: isFolder ? 5 : 0 }}
-                    transition={{ type: 'spring', stiffness: 300, damping: 20 }}
                     className="shrink-0"
                 >
                     <FileIcon filename={item.name} isFolder={isFolder} className="w-5 h-5" />
@@ -288,10 +280,8 @@ export const FileItem = memo(({
                                     initial={{ opacity: 0, scale: 0.8 }}
                                     animate={{ opacity: 1, scale: 1 }}
                                     exit={{ opacity: 0, scale: 0.8 }}
-                                    whileHover={{ scale: 1.1 }}
-                                    whileTap={{ scale: 0.9 }}
                                     onClick={() => onPreview(item)}
-                                    className="p-2 rounded-lg bg-blue-500/90 hover:bg-blue-600 text-white transition-colors shadow-lg"
+                                    className="p-2 rounded-lg bg-blue-500/90 hover:bg-blue-600 text-white transition-colors duration-150 shadow-lg"
                                     title="Preview"
                                 >
                                     <ViewIcon className="w-4 h-4" />
@@ -302,10 +292,8 @@ export const FileItem = memo(({
                                     initial={{ opacity: 0, scale: 0.8 }}
                                     animate={{ opacity: 1, scale: 1 }}
                                     exit={{ opacity: 0, scale: 0.8 }}
-                                    whileHover={{ scale: 1.1 }}
-                                    whileTap={{ scale: 0.9 }}
                                     onClick={() => onDownload(item)}
-                                    className="p-2 rounded-lg bg-green-500/90 hover:bg-green-600 text-white transition-colors shadow-lg"
+                                    className="p-2 rounded-lg bg-green-500/90 hover:bg-green-600 text-white transition-colors duration-150 shadow-lg"
                                     title="Download"
                                 >
                                     <Download01Icon className="w-4 h-4" />

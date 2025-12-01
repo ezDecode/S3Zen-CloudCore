@@ -39,7 +39,7 @@ const BreadcrumbLink = React.forwardRef(({ asChild, className, ...props }, ref) 
     return (
         <Comp
             ref={ref}
-            className={cn("transition-opacity hover:opacity-100 opacity-70", className)}
+            className={cn("transition-opacity duration-150 hover:opacity-100 opacity-70", className)}
             {...props}
         />
     )

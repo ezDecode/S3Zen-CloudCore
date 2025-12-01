@@ -61,7 +61,7 @@ export const DuplicateFileModal = ({ isOpen, onClose, fileName, onResolve }) => 
                         type="text"
                         value={newFileName}
                         onChange={(e) => setNewFileName(e.target.value)}
-                        className="w-full px-4 py-2.5 bg-white/5 border border-white/10 rounded-lg text-white placeholder:text-zinc-500 focus:outline-none focus:border-white/20 focus:bg-white/10 transition-all"
+                        className="w-full px-4 py-2.5 bg-white/5 border border-white/10 rounded-lg text-white placeholder:text-zinc-500 focus:outline-none focus:border-white/20 focus:bg-white/10 transition-colors duration-150"
                     />
                 </div>
 
@@ -70,25 +70,25 @@ export const DuplicateFileModal = ({ isOpen, onClose, fileName, onResolve }) => 
                     <button
                         onClick={handleRename}
                         disabled={!newFileName.trim()}
-                        className="w-full py-2.5 px-4 text-sm bg-blue-500 hover:bg-blue-600 text-white font-normal rounded-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                        className="w-full py-2.5 px-4 text-sm bg-blue-500 hover:bg-blue-600 text-white font-normal rounded-lg transition-colors duration-150 disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                         Rename & Upload
                     </button>
                     <button
                         onClick={handleKeepBoth}
-                        className="w-full py-2.5 px-4 text-sm bg-white/10 hover:bg-white/20 text-white rounded-lg transition-all"
+                        className="w-full py-2.5 px-4 text-sm bg-white/10 hover:bg-white/[0.15] text-white rounded-lg transition-colors duration-150"
                     >
                         Keep Both (Add "1")
                     </button>
                     <button
                         onClick={handleReplace}
-                        className="w-full py-2.5 px-4 text-sm bg-yellow-600/20 hover:bg-yellow-600/30 text-yellow-400 border border-yellow-600/40 rounded-lg transition-all"
+                        className="w-full py-2.5 px-4 text-sm bg-yellow-600/20 hover:bg-yellow-600/30 text-yellow-400 border border-yellow-600/40 rounded-lg transition-colors duration-150"
                     >
                         Replace Existing
                     </button>
                     <button
                         onClick={handleCancel}
-                        className="w-full py-2.5 px-4 text-sm bg-white/5 hover:bg-white/10 text-zinc-400 rounded-lg transition-all"
+                        className="w-full py-2.5 px-4 text-sm bg-white/5 hover:bg-white/[0.08] text-zinc-400 rounded-lg transition-colors duration-150"
                     >
                         Cancel Upload
                     </button>

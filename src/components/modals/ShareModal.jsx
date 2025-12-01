@@ -93,7 +93,7 @@ export const ShareModal = ({ isOpen, onClose, item }) => {
                             </div>
                             <button
                                 onClick={handleClose}
-                                className="p-1.5 text-zinc-400 hover:text-white hover:bg-white/5 rounded-lg transition-all"
+                                className="p-1.5 text-zinc-400 hover:text-white hover:bg-white/[0.04] rounded-lg transition-colors duration-150"
                             >
                                 <Cancel01Icon className="w-5 h-5" />
                             </button>
@@ -114,7 +114,7 @@ export const ShareModal = ({ isOpen, onClose, item }) => {
                                     <select
                                         value={expiresIn}
                                         onChange={(e) => setExpiresIn(parseInt(e.target.value))}
-                                        className="w-full px-4 py-3 pr-10 text-sm bg-white/5 border border-white/10 rounded-lg text-white appearance-none cursor-pointer focus:outline-none focus:border-purple-500/50 focus:bg-white/10 focus:ring-2 focus:ring-purple-500/10 transition-all"
+                                        className="w-full px-4 py-3 pr-10 text-sm bg-white/5 border border-white/10 rounded-lg text-white appearance-none cursor-pointer focus:outline-none focus:border-purple-500/50 focus:bg-white/10 focus:ring-2 focus:ring-purple-500/10 transition-colors duration-150"
                                         style={{
                                             backgroundImage: 'none'
                                         }}
@@ -135,7 +135,7 @@ export const ShareModal = ({ isOpen, onClose, item }) => {
                                 <button
                                     onClick={handleGenerate}
                                     disabled={isLoading}
-                                    className="w-full py-2.5 px-4 text-sm bg-gradient-to-r from-purple-600 to-pink-600 text-white font-normal rounded-lg hover:from-purple-700 hover:to-pink-700 hover:shadow-lg hover:shadow-purple-500/20 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                                    className="w-full py-2.5 px-4 text-sm bg-gradient-to-r from-purple-600 to-pink-600 text-white font-normal rounded-lg hover:from-purple-700 hover:to-pink-700 transition-colors duration-150 disabled:opacity-50 disabled:cursor-not-allowed"
                                 >
                                     {isLoading ? 'Generating...' : 'Generate Link'}
                                 </button>
@@ -159,7 +159,7 @@ export const ShareModal = ({ isOpen, onClose, item }) => {
                                         <button
                                             onClick={handleCopy}
                                             disabled={isCopying}
-                                            className="flex-1 flex items-center justify-center gap-2 py-2.5 px-4 text-sm bg-white/10 hover:bg-white/15 text-white rounded-lg transition-all hover:scale-[1.02] font-normal disabled:opacity-50 disabled:cursor-not-allowed"
+                                            className="flex-1 flex items-center justify-center gap-2 py-2.5 px-4 text-sm bg-white/10 hover:bg-white/[0.13] text-white rounded-lg transition-colors duration-150 font-normal disabled:opacity-50 disabled:cursor-not-allowed"
                                         >
                                             {isCopying ? (
                                                 <>
@@ -186,7 +186,7 @@ export const ShareModal = ({ isOpen, onClose, item }) => {
                                         <button
                                             onClick={handleGenerate}
                                             disabled={isLoading}
-                                            className="px-4 py-2.5 text-sm bg-white/10 hover:bg-white/15 text-white rounded-lg transition-all font-normal"
+                                            className="px-4 py-2.5 text-sm bg-white/10 hover:bg-white/[0.13] text-white rounded-lg transition-colors duration-150 font-normal"
                                         >
                                             Regenerate
                                         </button>

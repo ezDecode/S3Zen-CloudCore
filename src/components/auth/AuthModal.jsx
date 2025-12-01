@@ -123,7 +123,7 @@ export const AuthModal = ({ isOpen, onClose, onAuthenticate }) => {
                                 </div>
                                 <button
                                     onClick={onClose}
-                                    className="touch-target-lg p-2 text-white/40 hover:text-white/80 hover:bg-white/6 focus-visible:outline-2 focus-visible:outline-white/50 focus-visible:outline-offset-2 transition-all duration-300 rounded-lg -mr-2 -mt-1"
+                                    className="touch-target-lg p-2 text-white/40 hover:text-white/70 hover:bg-white/[0.05] focus-visible:outline-2 focus-visible:outline-white/50 focus-visible:outline-offset-2 transition-colors duration-150 rounded-lg -mr-2 -mt-1"
                                     aria-label="Close modal"
                                 >
                                     <Cancel01Icon className="w-5 h-5" />
@@ -194,7 +194,7 @@ export const AuthModal = ({ isOpen, onClose, onAuthenticate }) => {
                                     />
                                 </div>
 
-                                {/* Premium Region Select */}
+                                {/* Premium Region Select - Responsive */}
                                 <div className="space-y-2">
                                     <label className="flex items-center gap-2 text-xs font-normal text-white/50 uppercase tracking-wider">
                                         <Location01Icon className="w-4 h-4 text-white/40" />
@@ -222,13 +222,16 @@ export const AuthModal = ({ isOpen, onClose, onAuthenticate }) => {
                                         </select>
                                         <ArrowDown01Icon className="absolute right-3 top-1/2 -translate-y-1/2 text-white/30 pointer-events-none w-5 h-5" />
                                     </div>
+                                    <p className="text-xs text-white/40 mt-2">
+                                        💡 Choose a region close to your users for better performance
+                                    </p>
                                 </div>
 
                                 {/* Premium Submit Button - High Contrast */}
                                 <button
                                     type="submit"
                                     disabled={isLoading}
-                                    className="w-full mt-2 px-6 py-4 font-normal text-black bg-white hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-150 shadow-lg rounded-xl flex items-center justify-center gap-2 active:scale-[0.99] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white/80 touch-target-lg"
+                                    className="w-full mt-2 px-6 py-4 font-normal text-black bg-white hover:bg-white/90 disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-150 shadow-lg rounded-xl flex items-center justify-center gap-2 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white/80 touch-target-lg"
                                 >
                                     {isLoading ? (
                                         <>

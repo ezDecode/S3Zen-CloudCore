@@ -98,22 +98,22 @@ export const FeaturesSection = () => {
                             className="group relative"
                         >
                             {/* Feature Card */}
-                            <div className="relative h-full p-6 sm:p-7 lg:p-8 bg-white/[0.02] backdrop-blur-sm border border-white/[0.06] rounded-2xl hover:bg-white/[0.04] hover:border-white/[0.1] transition-all duration-300 overflow-hidden">
+                            <div className="relative h-full p-6 sm:p-7 lg:p-8 bg-white/[0.02] backdrop-blur-sm border border-white/[0.06] rounded-2xl hover:bg-white/[0.03] hover:border-white/[0.08] transition-colors duration-200 overflow-hidden">
                                 {/* Subtle gradient overlay on hover */}
-                                <div className={`absolute inset-0 bg-gradient-to-br ${feature.gradient} opacity-0 group-hover:opacity-100 transition-opacity duration-500`} />
+                                <div className={`absolute inset-0 bg-gradient-to-br ${feature.gradient} opacity-0 group-hover:opacity-[0.15] transition-opacity duration-300`} />
                                 
                                 {/* Content */}
                                 <div className="relative z-10">
                                     {/* Icon */}
-                                    <div className="inline-flex items-center justify-center w-12 h-12 sm:w-14 sm:h-14 rounded-xl bg-white/[0.06] border border-white/[0.1] mb-5 sm:mb-6 group-hover:bg-white/[0.08] group-hover:border-white/[0.15] transition-all duration-300">
-                                        <feature.icon className="w-6 h-6 sm:w-7 sm:h-7 text-white/80 group-hover:text-white transition-colors duration-300" />
+                                    <div className="inline-flex items-center justify-center w-12 h-12 sm:w-14 sm:h-14 rounded-xl bg-white/[0.06] border border-white/[0.1] mb-5 sm:mb-6 group-hover:bg-white/[0.08] group-hover:border-white/[0.12] transition-colors duration-200">
+                                        <feature.icon className="w-6 h-6 sm:w-7 sm:h-7 text-white/80" />
                                     </div>
 
                                     {/* Title & Description */}
-                                    <h3 className="text-lg sm:text-xl font-normal text-white mb-2 sm:mb-3 tracking-tight group-hover:text-white transition-colors duration-300">
+                                    <h3 className="text-lg sm:text-xl font-normal text-white mb-2 sm:mb-3 tracking-tight">
                                         {feature.title}
                                     </h3>
-                                    <p className="text-white/50 leading-relaxed text-sm sm:text-base group-hover:text-white/60 transition-colors duration-300">
+                                    <p className="text-white/50 leading-relaxed text-sm sm:text-base">
                                         {feature.description}
                                     </p>
                                 </div>

@@ -257,34 +257,32 @@ html {
   animation: scaleIn 0.4s cubic-bezier(0.4, 0, 0.2, 1) forwards;
 }
 
-/* Premium Hover Effects - Subtle & Stable */
+/* Premium Hover Effects - Minimal & Professional */
 .premium-hover {
-  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: background-color 0.15s cubic-bezier(0.4, 0, 0.2, 1), 
+              border-color 0.15s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .premium-hover:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(255, 255, 255, 0.04);
+  background-color: rgba(255, 255, 255, 0.03);
+  border-color: rgba(255, 255, 255, 0.1);
 }
 
 .premium-hover:focus-visible {
-  transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(255, 255, 255, 0.04);
+  background-color: rgba(255, 255, 255, 0.03);
+  border-color: rgba(255, 255, 255, 0.1);
   outline: 2px solid var(--color-focus-ring);
   outline-offset: 2px;
 }
 
-/* Button hover - minimal lift with focus states */
+/* Button hover - clean color transitions */
 .btn-hover {
-  transition: all 0.15s ease-out;
+  transition: background-color 0.15s ease-out, 
+              color 0.15s ease-out;
 }
 
 .btn-hover:hover {
-  opacity: 0.9;
-}
-
-.btn-hover:active {
-  transform: scale(0.99);
+  background-color: rgba(255, 255, 255, 0.9);
 }
 
 .btn-hover:focus-visible {
@@ -292,20 +290,21 @@ html {
   outline-offset: 2px;
 }
 
-/* Card hover - very subtle with focus support */
+/* Card hover - subtle background and border changes */
 .card-hover {
-  transition: all 0.2s ease-out;
+  transition: background-color 0.15s ease-out, 
+              border-color 0.15s ease-out;
 }
 
 .card-hover:hover {
-  background-color: rgba(255, 255, 255, 0.04);
-  border-color: rgba(255, 255, 255, 0.12);
+  background-color: rgba(255, 255, 255, 0.03);
+  border-color: rgba(255, 255, 255, 0.1);
 }
 
 .card-hover:focus-visible,
 .card-hover:focus-within {
-  background-color: rgba(255, 255, 255, 0.04);
-  border-color: rgba(255, 255, 255, 0.15);
+  background-color: rgba(255, 255, 255, 0.03);
+  border-color: rgba(255, 255, 255, 0.12);
   outline: 2px solid var(--color-focus-ring);
   outline-offset: 2px;
 }

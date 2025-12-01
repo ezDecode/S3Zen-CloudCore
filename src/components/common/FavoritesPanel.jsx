@@ -60,8 +60,7 @@ export const FavoritesPanel = memo(({
                             {favorites.map((item) => (
                                 <motion.div
                                     key={item.key}
-                                    whileHover={{ x: 2 }}
-                                    className="group flex items-center gap-2 px-2 py-2 rounded-lg hover:bg-white/5 cursor-pointer transition-colors"
+                                    className="group flex items-center gap-2 px-2 py-2 rounded-lg hover:bg-white/[0.04] cursor-pointer transition-colors duration-150"
                                     onClick={() => onOpenFile?.(item)}
                                 >
                                     <FileIcon 
@@ -80,7 +79,7 @@ export const FavoritesPanel = memo(({
                                             e.stopPropagation();
                                             onRemoveFavorite?.(item.key);
                                         }}
-                                        className="opacity-0 group-hover:opacity-100 p-1 hover:bg-red-500/20 rounded transition-all"
+                                        className="opacity-0 group-hover:opacity-100 p-1 hover:bg-red-500/20 rounded transition-opacity duration-150"
                                     >
                                         <Cancel01Icon className="w-3 h-3 text-red-400" />
                                     </button>

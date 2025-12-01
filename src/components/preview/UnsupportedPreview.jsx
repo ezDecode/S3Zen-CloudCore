@@ -36,10 +36,8 @@ export const UnsupportedPreview = ({ item, onDownload }) => {
                 {/* Download Button */}
                 {onDownload && (
                     <motion.button
-                        whileHover={{ scale: 1.05 }}
-                        whileTap={{ scale: 0.95 }}
                         onClick={() => onDownload(item)}
-                        className="flex items-center gap-2 px-6 py-3 bg-blue-500 hover:bg-blue-600 text-white font-normal rounded-lg transition-colors mx-auto"
+                        className="flex items-center gap-2 px-6 py-3 bg-blue-500 hover:bg-blue-600 text-white font-normal rounded-lg transition-colors duration-150 mx-auto"
                     >
                         <Download01Icon className="w-5 h-5" />
                         Download File

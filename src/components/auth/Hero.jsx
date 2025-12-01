@@ -40,7 +40,7 @@ export const Hero = ({ onGetStarted }) => {
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, ease: [0.4, 0, 0.2, 1] }}
-            className="inline-flex items-center gap-2.5 px-5 py-2.5 bg-white/4 backdrop-blur-md border border-white/8 rounded-full mb-6 sm:mb-8 md:mb-10 hover:bg-white/6 hover:border-white/12 transition-all duration-300"
+            className="inline-flex items-center gap-2.5 px-5 py-2.5 bg-white/4 backdrop-blur-md border border-white/8 rounded-full mb-6 sm:mb-8 md:mb-10 hover:bg-white/[0.06] hover:border-white/[0.12] transition-colors duration-200"
           >
             <span className="w-1.5 h-1.5 bg-white rounded-full animate-pulse" aria-hidden="true" />
             <span className="text-xs sm:text-sm font-sans text-white/90 tracking-wide" style={{ fontWeight: '400' }}>
@@ -111,7 +111,7 @@ export const Hero = ({ onGetStarted }) => {
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 0.4 + index * 0.1, ease: [0.4, 0, 0.2, 1] }}
-              className="flex items-center gap-2.5 bg-white/3 border border-white/8 rounded-full px-5 py-2.5 hover:bg-white/6 hover:border-white/12 transition-all duration-300 cursor-default"
+              className="flex items-center gap-2.5 bg-white/3 border border-white/8 rounded-full px-5 py-2.5 hover:bg-white/[0.05] hover:border-white/[0.1] transition-colors duration-200 cursor-default"
             >
               <feature.icon className="w-4 h-4 text-white/60" aria-hidden="true" />
               <span
@@ -134,7 +134,7 @@ export const Hero = ({ onGetStarted }) => {
           {/* Get Started Button */}
           <button
             onClick={onGetStarted}
-            className="group w-full sm:w-auto text-black rounded-xl bg-white hover:bg-gray-100 transition-all duration-150 shadow-lg flex items-center justify-center px-5 sm:px-6 py-3 sm:py-3.5 active:scale-[0.99] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white/80"
+            className="group w-full sm:w-auto text-black rounded-xl bg-white hover:bg-white/90 transition-colors duration-150 shadow-lg flex items-center justify-center px-5 sm:px-6 py-3 sm:py-3.5 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white/80"
             aria-label="Get started with CloudCore"
           >
             <span className="text-sm font-sans whitespace-nowrap" style={{ fontWeight: '400' }}>Get Started</span>
@@ -146,7 +146,7 @@ export const Hero = ({ onGetStarted }) => {
             {/* Setup Guide Button */}
             <button
               onClick={scrollToSetupGuide}
-              className="flex-1 sm:flex-none text-white bg-white/6 backdrop-blur-md border border-white/12 rounded-xl hover:bg-white/10 hover:border-white/18 transition-all duration-150 flex items-center justify-center px-4 sm:px-5 py-3 sm:py-3.5 active:scale-[0.99] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white/50"
+              className="flex-1 sm:flex-none text-white bg-white/6 backdrop-blur-md border border-white/12 rounded-xl hover:bg-white/[0.08] hover:border-white/[0.15] transition-colors duration-150 flex items-center justify-center px-4 sm:px-5 py-3 sm:py-3.5 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white/50"
               aria-label="View AWS setup guide"
             >
               <Book02Icon className="w-4 h-4" aria-hidden="true" />
@@ -159,7 +159,7 @@ export const Hero = ({ onGetStarted }) => {
               href="https://github.com/ezDecode/S3Zen-CloudCore"
               target="_blank"
               rel="noopener noreferrer"
-              className="flex-1 sm:flex-none text-white bg-white/6 backdrop-blur-md border border-white/12 rounded-xl hover:bg-white/10 hover:border-white/18 transition-all duration-150 flex items-center justify-center px-4 sm:px-5 py-3 sm:py-3.5 active:scale-[0.99] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white/50"
+              className="flex-1 sm:flex-none text-white bg-white/6 backdrop-blur-md border border-white/12 rounded-xl hover:bg-white/[0.08] hover:border-white/[0.15] transition-colors duration-150 flex items-center justify-center px-4 sm:px-5 py-3 sm:py-3.5 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white/50"
               aria-label="Star CloudCore on GitHub"
             >
               <Github01Icon className="w-4 h-4" aria-hidden="true" />

@@ -61,11 +61,9 @@ export const QuickShareButton = memo(({ item, className = '' }) => {
 
     return (
         <motion.button
-            whileHover={{ scale: 1.1 }}
-            whileTap={{ scale: 0.9 }}
             onClick={handleQuickShare}
             disabled={isLoading}
-            className={`p-2 rounded-lg transition-all ${
+            className={`p-2 rounded-lg transition-colors duration-150 ${
                 copied 
                     ? 'bg-green-500/90 text-white' 
                     : 'bg-purple-500/90 hover:bg-purple-600 text-white'

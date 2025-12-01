@@ -123,14 +123,14 @@ export const DeleteConfirmModal = ({ isOpen, onClose, items, onSuccess }) => {
                                 <button
                                     onClick={handleCloseModal}
                                     disabled={isDeleting}
-                                    className="flex-1 py-2.5 px-4 text-sm bg-white/10 hover:bg-white/20 text-white rounded-lg transition-all disabled:opacity-50"
+                                    className="flex-1 py-2.5 px-4 text-sm bg-white/10 hover:bg-white/[0.15] text-white rounded-lg transition-colors duration-150 disabled:opacity-50"
                                 >
                                     Cancel
                                 </button>
                                 <button
                                     onClick={handleDelete}
                                     disabled={isDeleting || !canDelete}
-                                    className="flex-1 py-2.5 px-4 text-sm bg-red-500 hover:bg-red-600 text-white font-normal rounded-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                                    className="flex-1 py-2.5 px-4 text-sm bg-red-500 hover:bg-red-600 text-white font-normal rounded-lg transition-colors duration-150 disabled:opacity-50 disabled:cursor-not-allowed"
                                 >
                                     {isDeleting ? 'Deleting...' : 'Delete'}
                                 </button>
