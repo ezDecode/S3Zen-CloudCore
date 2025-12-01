@@ -25,58 +25,47 @@ export default defineConfig({
   build: {
     rollupOptions: {
       output: {
-        manualChunks: (id) => {
-          // React core - MUST include react-window with React
-          if (id.includes('node_modules/react/') || 
-              id.includes('node_modules/react-dom/') ||
-              id.includes('node_modules/react-window/')) {
-            return 'react-vendor';
-          }
+        manualChunks: {
+          // React MUST be in its own chunk and loaded first
+          'react-vendor': ['react', 'react-dom'],
           
-          // AWS S3 SDK - separate chunk
-          if (id.includes('@aws-sdk/client-s3') || 
-              id.includes('@aws-sdk/lib-storage') || 
-              id.includes('@aws-sdk/s3-request-presigner')) {
-            return 'aws-s3';
-          }
+          // UI libraries that depend on React
+          'ui-vendor': [
+            'framer-motion',
+            'lucide-react',
+            'hugeicons-react',
+            '@radix-ui/react-dialog',
+            '@radix-ui/react-dropdown-menu',
+            '@radix-ui/react-slot',
+            '@radix-ui/react-accordion',
+            'vaul',
+            'sonner',
+          ],
           
-          // AWS Auth SDK - separate chunk
-          if (id.includes('@aws-sdk/client-sts')) {
-            return 'aws-auth';
-          }
+          // AWS SDKs
+          'aws-s3': [
+            '@aws-sdk/client-s3',
+            '@aws-sdk/lib-storage',
+            '@aws-sdk/s3-request-presigner'
+          ],
+          'aws-auth': [
+            '@aws-sdk/client-sts'
+          ],
           
-          // Markdown & syntax highlighting - lazy load
-          if (id.includes('react-markdown') || 
-              id.includes('remark-gfm') || 
-              id.includes('react-syntax-highlighter')) {
-            return 'markdown';
-          }
-          
-          // UI libraries - bundle together
-          if (id.includes('lucide-react') || 
-              id.includes('hugeicons-react') || 
-              id.includes('@radix-ui') ||
-              id.includes('vaul') ||
-              id.includes('sonner') ||
-              id.includes('framer-motion')) {
-            return 'ui-vendor';
-          }
+          // Markdown (lazy loaded)
+          'markdown': [
+            'react-markdown',
+            'remark-gfm',
+            'react-syntax-highlighter'
+          ],
           
           // Utilities
-          if (id.includes('date-fns') || 
-              id.includes('buffer') || 
-              id.includes('stream-browserify') ||
-              id.includes('util') ||
-              id.includes('clsx') ||
-              id.includes('tailwind-merge') ||
-              id.includes('class-variance-authority')) {
-            return 'utils';
-          }
-          
-          // All other node_modules
-          if (id.includes('node_modules')) {
-            return 'vendor';
-          }
+          'utils': [
+            'date-fns',
+            'clsx',
+            'tailwind-merge',
+            'class-variance-authority'
+          ]
         },
       },
     },
