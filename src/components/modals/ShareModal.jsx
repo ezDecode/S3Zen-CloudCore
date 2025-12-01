@@ -16,6 +16,7 @@ export const ShareModal = ({ isOpen, onClose, item }) => {
     const [expiresIn, setExpiresIn] = useState(3600); // 1 hour default
     const [isLoading, setIsLoading] = useState(false);
     const [copied, setCopied] = useState(false);
+    const [isCopying, setIsCopying] = useState(false);
 
     const handleGenerate = async () => {
         setIsLoading(true);
@@ -50,11 +51,19 @@ export const ShareModal = ({ isOpen, onClose, item }) => {
         }
     };
 
-    const handleCopy = () => {
-        navigator.clipboard.writeText(url);
-        setCopied(true);
-        toast.success('Link copied to clipboard');
-        setTimeout(() => setCopied(false), 2000);
+    const handleCopy = async () => {
+        setIsCopying(true);
+        try {
+            await navigator.clipboard.writeText(url);
+            setCopied(true);
+            toast.success('Link copied to clipboard');
+            setTimeout(() => setCopied(false), 2000);
+        } catch (error) {
+            toast.error('Failed to copy link');
+            console.error('Copy error:', error);
+        } finally {
+            setTimeout(() => setIsCopying(false), 300);
+        }
     };
 
     const handleClose = () => {
@@ -149,9 +158,19 @@ export const ShareModal = ({ isOpen, onClose, item }) => {
                                     <div className="flex gap-2">
                                         <button
                                             onClick={handleCopy}
-                                            className="flex-1 flex items-center justify-center gap-2 py-2.5 px-4 text-sm bg-white/10 hover:bg-white/15 text-white rounded-lg transition-all hover:scale-[1.02] font-normal"
+                                            disabled={isCopying}
+                                            className="flex-1 flex items-center justify-center gap-2 py-2.5 px-4 text-sm bg-white/10 hover:bg-white/15 text-white rounded-lg transition-all hover:scale-[1.02] font-normal disabled:opacity-50 disabled:cursor-not-allowed"
                                         >
-                                            {copied ? (
+                                            {isCopying ? (
+                                                <>
+                                                    <motion.div
+                                                        animate={{ rotate: 360 }}
+                                                        transition={{ duration: 1, repeat: Infinity, ease: 'linear' }}
+                                                        className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full"
+                                                    />
+                                                    <span>Copying...</span>
+                                                </>
+                                            ) : copied ? (
                                                 <>
                                                     <Tick02Icon className="w-4 h-4" />
                                                     <span>Copied!</span>

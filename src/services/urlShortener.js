@@ -3,7 +3,21 @@
  * Service to interact with the URL shortener backend
  */
 
-const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || 'http://localhost:3000';
+// FIXED: Better production fallback handling
+const getBackendUrl = () => {
+    const envUrl = import.meta.env.VITE_BACKEND_URL;
+    
+    // In production, require environment variable
+    if (import.meta.env.PROD && !envUrl) {
+        console.error('VITE_BACKEND_URL not configured for production');
+        throw new Error('Backend URL not configured');
+    }
+    
+    // Development fallback
+    return envUrl || 'http://localhost:3000';
+};
+
+const BACKEND_URL = getBackendUrl();
 
 /**
  * Shorten a long URL using the backend URL shortener
@@ -42,46 +56,5 @@ export async function shortenUrl(longUrl) {
     }
 }
 
-/**
- * Get statistics for all shortened URLs (requires admin API key)
- * @returns {Promise<{success: boolean, stats?: Array, error?: string}>}
- */
-export async function getUrlStats() {
-    try {
-        const apiKey = import.meta.env.VITE_ADMIN_API_KEY;
-
-        if (!apiKey) {
-            return {
-                success: false,
-                error: 'Admin API key not configured',
-            };
-        }
-
-        const response = await fetch(`${BACKEND_URL}/stats`, {
-            method: 'GET',
-            headers: {
-                'x-api-key': apiKey,
-            },
-        });
-
-        if (!response.ok) {
-            const errorData = await response.json().catch(() => ({}));
-            return {
-                success: false,
-                error: errorData.error || `HTTP ${response.status}: ${response.statusText}`,
-            };
-        }
-
-        const data = await response.json();
-        return {
-            success: true,
-            stats: data.urls,
-        };
-    } catch (error) {
-        console.error('Get stats error:', error);
-        return {
-            success: false,
-            error: error.message || 'Failed to fetch URL statistics',
-        };
-    }
-}
+// REMOVED: getUrlStats function - backend endpoint not implemented
+// If stats functionality is needed in the future, implement the backend endpoint first

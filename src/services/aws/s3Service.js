@@ -760,10 +760,14 @@ export const getPreviewUrl = async (key, expiresIn = 3600) => {
 };
 
 /**
- * Get bucket storage statistics
+ * Get bucket storage statistics with progress callbacks
  * Calculates total size, file count, folder count, and file type breakdown
+ * PERFORMANCE: Supports chunked processing with progress updates and abort capability
+ * 
+ * @param {Function} onProgress - Optional callback for progress updates (processed, total, percentage)
+ * @param {Object} abortSignal - Optional AbortController signal for cancellation
  */
-export const getBucketStats = async () => {
+export const getBucketStats = async (onProgress = null, abortSignal = null) => {
     if (!s3Client || !currentBucket) {
         return { success: false, error: 'S3 client not initialized' };
     }
@@ -791,6 +795,7 @@ export const getBucketStats = async () => {
         let totalSize = 0;
         let fileCount = 0;
         let folderCount = 0;
+        let processedObjects = 0;
         const fileTypes = {
             images: { count: 0, size: 0 },
             videos: { count: 0, size: 0 },
@@ -801,8 +806,14 @@ export const getBucketStats = async () => {
             other: { count: 0, size: 0 }
         };
         let continuationToken = null;
+        let totalObjects = null; // Will be set after first request
 
         do {
+            // Check for abort signal
+            if (abortSignal?.aborted) {
+                return { success: false, error: 'Operation cancelled' };
+            }
+
             const command = new ListObjectsV2Command({
                 Bucket: currentBucket,
                 MaxKeys: 1000,
@@ -811,8 +822,20 @@ export const getBucketStats = async () => {
 
             const response = await s3Client.send(command);
 
+            // Set total on first response
+            if (totalObjects === null && response.KeyCount !== undefined) {
+                totalObjects = response.KeyCount;
+            }
+
             if (response.Contents) {
                 for (const item of response.Contents) {
+                    // Check abort signal periodically
+                    if (abortSignal?.aborted) {
+                        return { success: false, error: 'Operation cancelled' };
+                    }
+
+                    processedObjects++;
+
                     if (item.Key.endsWith('/')) {
                         folderCount++;
                     } else {
@@ -825,6 +848,18 @@ export const getBucketStats = async () => {
                         fileTypes[category].count++;
                         fileTypes[category].size += size;
                     }
+                }
+
+                // Report progress
+                if (onProgress && totalObjects) {
+                    const percentage = Math.round((processedObjects / totalObjects) * 100);
+                    onProgress({
+                        processed: processedObjects,
+                        total: totalObjects,
+                        percentage,
+                        currentSize: totalSize,
+                        currentFileCount: fileCount
+                    });
                 }
             }
 

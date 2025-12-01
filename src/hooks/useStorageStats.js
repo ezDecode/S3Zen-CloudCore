@@ -1,9 +1,11 @@
 /**
  * useStorageStats Hook
  * Fetches and manages storage statistics for the S3 bucket
+ * 
+ * PERFORMANCE: Implements caching to prevent redundant calculations
  */
 
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useCallback, useEffect, useMemo } from 'react';
 import { getBucketStats } from '../services/aws/s3Service';
 
 export const useStorageStats = (refreshInterval = 60000) => {
@@ -48,6 +50,30 @@ export const useStorageStats = (refreshInterval = 60000) => {
             }));
         }
     }, []);
+    
+    // PERFORMANCE: Memoize derived values to prevent recalculation
+    const derivedStats = useMemo(() => {
+        if (!stats.fileTypes) return null;
+        
+        return {
+            // Calculate percentages
+            fileTypePercentages: Object.entries(stats.fileTypes).reduce((acc, [type, data]) => {
+                acc[type] = stats.totalSize > 0 
+                    ? ((data.size / stats.totalSize) * 100).toFixed(1)
+                    : 0;
+                return acc;
+            }, {}),
+            
+            // Average file size
+            averageFileSize: stats.fileCount > 0 
+                ? Math.round(stats.totalSize / stats.fileCount)
+                : 0,
+            
+            // Largest category
+            largestCategory: Object.entries(stats.fileTypes)
+                .sort((a, b) => b[1].size - a[1].size)[0]?.[0] || null
+        };
+    }, [stats.totalSize, stats.fileCount, stats.fileTypes]);
 
     // Initial fetch
     useEffect(() => {
@@ -64,6 +90,7 @@ export const useStorageStats = (refreshInterval = 60000) => {
 
     return {
         ...stats,
+        derivedStats,
         refresh: fetchStats
     };
 };

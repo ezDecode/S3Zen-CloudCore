@@ -58,44 +58,62 @@ process.on('exit', () => {
 
 // POST /shorten - Create a short URL
 router.post('/shorten', (req, res) => {
-    const { longUrl, url } = req.body;
-    const urlToShorten = longUrl || url; // Support both 'longUrl' and 'url' field names
+    // FIXED: Standardized on 'url' field name for consistency
+    const { url } = req.body;
 
     console.log('📝 Shorten request:', {
-        hasLongUrl: !!longUrl,
         hasUrl: !!url,
-        urlLength: urlToShorten ? urlToShorten.length : 0
+        urlLength: url ? url.length : 0
     });
 
     // Validate URL
-    if (!urlToShorten || !isSafeUrl(urlToShorten)) {
-        console.log('❌ URL validation failed for:', urlToShorten?.substring(0, 100));
+    if (!url || !isSafeUrl(url)) {
+        console.log('❌ URL validation failed for:', url?.substring(0, 100));
         return res.status(400).json({ error: 'Invalid URL' });
     }
+    
+    const urlToShorten = url;
 
-    // Generate short code
-    const shortCode = generateShortCode();
-
-    // Save to database
-    db.run(
-        'INSERT INTO shortlinks (code, url) VALUES (?, ?)',
-        [shortCode, urlToShorten],
-        (err) => {
-            if (err) {
-                console.error('Database error:', err);
-                return res.status(500).json({ error: 'Failed to create short URL' });
-            }
-
-            const baseUrl = process.env.BASE_URL || 'http://localhost:3000';
-            const shortUrl = `${baseUrl}/s/${shortCode}`;
-            console.log('✅ Created short URL:', shortUrl);
-
-            res.json({
-                shortUrl,
-                shortCode
+    // Generate short code with collision detection
+    const checkExists = (code) => {
+        return new Promise((resolve) => {
+            db.get('SELECT code FROM shortlinks WHERE code = ?', [code], (err, row) => {
+                if (err) {
+                    console.error('Database check error:', err);
+                    resolve(false); // Assume doesn't exist on error
+                }
+                resolve(!!row);
             });
-        }
-    );
+        });
+    };
+
+    generateShortCode(checkExists)
+        .then(shortCode => {
+            // Save to database
+            db.run(
+                'INSERT INTO shortlinks (code, url) VALUES (?, ?)',
+                [shortCode, urlToShorten],
+                (err) => {
+                    if (err) {
+                        console.error('Database error:', err);
+                        return res.status(500).json({ error: 'Failed to create short URL' });
+                    }
+
+                    const baseUrl = process.env.BASE_URL || 'http://localhost:3000';
+                    const shortUrl = `${baseUrl}/s/${shortCode}`;
+                    console.log('✅ Created short URL:', shortUrl);
+
+                    res.json({
+                        shortUrl,
+                        shortCode
+                    });
+                }
+            );
+        })
+        .catch(error => {
+            console.error('Short code generation error:', error);
+            res.status(500).json({ error: 'Failed to generate unique short code' });
+        });
 });
 
 // GET /s/:code - Redirect to original URL

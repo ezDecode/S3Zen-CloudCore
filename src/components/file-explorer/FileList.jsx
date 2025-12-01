@@ -9,10 +9,11 @@
 
 import { motion, AnimatePresence } from 'framer-motion';
 import { FileItem } from './FileItem';
-import { FolderOpenIcon, SparklesIcon, ArrowUp01Icon, ArrowDown01Icon } from 'hugeicons-react';
+import { FolderOpenIcon, SparklesIcon } from 'hugeicons-react';
 import { FileListSkeleton } from '../common/SkeletonLoader';
+import { VirtualFileList } from './VirtualFileList';
 
-import { memo, useMemo } from 'react';
+import { memo, useMemo, useRef, useEffect, useState } from 'react';
 
 // OPTIMIZED: Memoize FileList to prevent unnecessary re-renders
 export const FileList = memo(({
@@ -35,6 +36,30 @@ export const FileList = memo(({
     favorites = [],
     onToggleFavorite
 }) => {
+    const containerRef = useRef(null);
+    const [containerSize, setContainerSize] = useState({ width: 0, height: 0 });
+
+    // PERFORMANCE: Use virtual scrolling for large lists (>100 items)
+    const useVirtualScrolling = items.length > 100;
+
+    // Measure container size for virtual scrolling
+    useEffect(() => {
+        if (!useVirtualScrolling || !containerRef.current) return;
+
+        const updateSize = () => {
+            if (containerRef.current) {
+                setContainerSize({
+                    width: containerRef.current.offsetWidth,
+                    height: containerRef.current.offsetHeight
+                });
+            }
+        };
+
+        updateSize();
+        window.addEventListener('resize', updateSize);
+        return () => window.removeEventListener('resize', updateSize);
+    }, [useVirtualScrolling]);
+
     // OPTIMIZED: Create a Set for O(1) lookup instead of array.some() for each item
     const selectedKeys = useMemo(() => 
         new Set(selectedItems.map(item => item.key)), 
@@ -109,6 +134,33 @@ export const FileList = memo(({
                     <span className="text-sm text-zinc-500 font-normal">Drag and drop files here to upload</span>
                 </motion.div>
             </motion.div>
+        );
+    }
+
+    // PERFORMANCE: Use virtual scrolling for large lists
+    if (useVirtualScrolling) {
+        return (
+            <div ref={containerRef} className="flex-1 overflow-hidden">
+                {containerSize.height > 0 && (
+                    <VirtualFileList
+                        items={items}
+                        selectedItems={selectedItems}
+                        onSelectItem={onSelectItem}
+                        onOpenFolder={onOpenFolder}
+                        onDownload={onDownload}
+                        onShare={onShare}
+                        onRename={onRename}
+                        onDelete={onDelete}
+                        onPreview={onPreview}
+                        onDetails={onDetails}
+                        viewMode={viewMode}
+                        favorites={favorites}
+                        onToggleFavorite={onToggleFavorite}
+                        containerHeight={containerSize.height}
+                        containerWidth={containerSize.width}
+                    />
+                )}
+            </div>
         );
     }
 

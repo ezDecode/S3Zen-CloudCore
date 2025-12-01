@@ -25,54 +25,65 @@ export default defineConfig({
   build: {
     rollupOptions: {
       output: {
-        manualChunks: {
-          // React must be in its own chunk and loaded first
-          'react-vendor': ['react', 'react-dom'],
+        manualChunks: (id) => {
+          // React core - highest priority
+          if (id.includes('node_modules/react/') || id.includes('node_modules/react-dom/')) {
+            return 'react-vendor';
+          }
           
-          // UI libraries that depend on React - bundle together
-          'ui-vendor': [
-            'lucide-react',
-            'hugeicons-react', 
-            '@radix-ui/react-dialog',
-            '@radix-ui/react-dropdown-menu',
-            '@radix-ui/react-slot',
-            'vaul',
-            'sonner',
-            'framer-motion',
-            'class-variance-authority',
-            'clsx',
-            'tailwind-merge'
-          ],
+          // AWS S3 SDK - separate chunk
+          if (id.includes('@aws-sdk/client-s3') || 
+              id.includes('@aws-sdk/lib-storage') || 
+              id.includes('@aws-sdk/s3-request-presigner')) {
+            return 'aws-s3';
+          }
           
-          // AWS SDKs
-          'aws-s3': [
-            '@aws-sdk/client-s3',
-            '@aws-sdk/lib-storage',
-            '@aws-sdk/s3-request-presigner'
-          ],
-          'aws-auth': [
-            '@aws-sdk/client-cognito-identity',
-            '@aws-sdk/client-sts',
-            '@aws-sdk/credential-provider-cognito-identity',
-            'amazon-cognito-identity-js'
-          ],
+          // AWS Auth SDK - separate chunk
+          if (id.includes('@aws-sdk/client-sts')) {
+            return 'aws-auth';
+          }
           
-          // Markdown & syntax highlighting
-          'markdown': [
-            'react-markdown',
-            'remark-gfm',
-            'react-syntax-highlighter'
-          ],
+          // Markdown & syntax highlighting - lazy load
+          if (id.includes('react-markdown') || 
+              id.includes('remark-gfm') || 
+              id.includes('react-syntax-highlighter')) {
+            return 'markdown';
+          }
+          
+          // UI libraries - bundle together
+          if (id.includes('lucide-react') || 
+              id.includes('hugeicons-react') || 
+              id.includes('@radix-ui') ||
+              id.includes('vaul') ||
+              id.includes('sonner') ||
+              id.includes('framer-motion')) {
+            return 'ui-vendor';
+          }
           
           // Utilities
-          'utils': ['date-fns', 'buffer', 'stream-browserify', 'util']
+          if (id.includes('date-fns') || 
+              id.includes('buffer') || 
+              id.includes('stream-browserify') ||
+              id.includes('util') ||
+              id.includes('clsx') ||
+              id.includes('tailwind-merge') ||
+              id.includes('class-variance-authority')) {
+            return 'utils';
+          }
+          
+          // All other node_modules
+          if (id.includes('node_modules')) {
+            return 'vendor';
+          }
         },
       },
     },
-    // Increase chunk size warning limit (syntax-highlighter is large but necessary)
-    chunkSizeWarningLimit: 1500,
+    // FIXED: Reduced from 1500KB to 800KB with better code splitting
+    chunkSizeWarningLimit: 800,
     // Use esbuild for faster minification
     minify: 'esbuild',
     target: 'es2015',
+    // Enable source maps for production debugging
+    sourcemap: false,
   },
 });

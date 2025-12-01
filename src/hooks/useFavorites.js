@@ -1,25 +1,52 @@
 /**
  * useFavorites Hook
- * Manages favorite/pinned files with localStorage persistence
+ * Manages favorite/pinned files with encrypted localStorage persistence
+ * 
+ * SECURITY: Favorites are encrypted to protect S3 object keys
  */
 
 import { useState, useCallback, useEffect } from 'react';
+import { encryptData, decryptData, isCryptoInitialized } from '../utils/cryptoUtils';
 
-const FAVORITES_STORAGE_KEY = 'cloudcore_favorites';
+const FAVORITES_STORAGE_KEY = 'cc_enc_favorites';
 
 export const useFavorites = () => {
     const [favorites, setFavorites] = useState(() => {
         try {
+            // Only load if crypto is initialized
+            if (!isCryptoInitialized()) {
+                return [];
+            }
+            
             const stored = localStorage.getItem(FAVORITES_STORAGE_KEY);
-            return stored ? JSON.parse(stored) : [];
+            if (!stored) return [];
+            
+            // Decrypt favorites
+            decryptData(stored).then(decrypted => {
+                if (Array.isArray(decrypted)) {
+                    setFavorites(decrypted);
+                }
+            }).catch(() => {
+                // If decryption fails, clear corrupted data
+                localStorage.removeItem(FAVORITES_STORAGE_KEY);
+            });
+            
+            return [];
         } catch {
             return [];
         }
     });
 
-    // Persist to localStorage
+    // Persist to localStorage (encrypted)
     useEffect(() => {
-        localStorage.setItem(FAVORITES_STORAGE_KEY, JSON.stringify(favorites));
+        if (!isCryptoInitialized()) return;
+        
+        // Encrypt and save favorites
+        encryptData(favorites).then(encrypted => {
+            localStorage.setItem(FAVORITES_STORAGE_KEY, encrypted);
+        }).catch(error => {
+            console.error('Failed to encrypt favorites:', error);
+        });
     }, [favorites]);
 
     // Check if item is favorited
@@ -75,6 +102,7 @@ export const useFavorites = () => {
     // Clear all favorites
     const clearFavorites = useCallback(() => {
         setFavorites([]);
+        localStorage.removeItem(FAVORITES_STORAGE_KEY);
     }, []);
 
     // Get sorted favorites (most recent first)
