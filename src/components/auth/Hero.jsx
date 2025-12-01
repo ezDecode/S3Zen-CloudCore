@@ -51,115 +51,51 @@ export const Hero = ({ onGetStarted }) => {
       {/* Subtle Grid Pattern */}
       <div className="absolute inset-0 opacity-[0.02] pointer-events-none z-0 bg-[linear-gradient(rgba(255,255,255,0.5)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.5)_1px,transparent_1px)] bg-size-[60px_60px]" />
 
-      <main className="relative z-10 flex flex-col items-center justify-center w-full max-w-7xl mx-auto text-center h-full px-4 sm:px-6 lg:px-8 py-20">
-        {/* Top Row: Badge + Metrics */}
+      <main className="relative z-10 flex flex-col items-center justify-center w-[80%] max-w-6xl mx-auto text-center h-full px-4 sm:px-6 lg:px-8 py-16 sm:py-20">
+        
+        {/* Version Badge */}
         <motion.div
-          initial={{ opacity: 0, y: -20 }}
+          initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, ease: [0.4, 0, 0.2, 1] }}
-          className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-12 w-full"
+          transition={{ duration: 0.5, ease: [0.4, 0, 0.2, 1] }}
+          className="inline-flex items-center gap-2 px-3 py-1.5 bg-white/[0.03] border border-white/[0.08] rounded-full mb-8"
         >
-          {/* Badge */}
-          <div className="inline-flex items-center gap-2.5 px-4 py-2 bg-white/4 backdrop-blur-md border border-white/8 rounded-full hover:bg-white/[0.06] hover:border-white/[0.12] transition-colors duration-200">
-            <span className="w-1.5 h-1.5 bg-white rounded-full animate-pulse" />
-            <span className="text-xs font-sans text-white/90 tracking-wide" style={{ fontWeight: '400' }}>
-              v2.0 Now Available
-            </span>
-          </div>
-
-          {/* Inline Metrics */}
-          <div className="flex items-center gap-3">
-            <div className="flex items-center gap-1.5 px-3 py-1.5 bg-white/[0.02] border border-white/[0.06] rounded-lg">
-              <Github01Icon className="w-3.5 h-3.5 text-white/60" />
-              <span className="text-xs text-white/80">{githubStars ? `${githubStars}+` : '...'}</span>
-            </div>
-            <div className="flex items-center gap-1.5 px-3 py-1.5 bg-white/[0.02] border border-white/[0.06] rounded-lg">
-              <Download04Icon className="w-3.5 h-3.5 text-white/60" />
-              <span className="text-xs text-white/80">100% Free</span>
-            </div>
-            <div className="flex items-center gap-1.5 px-3 py-1.5 bg-white/[0.02] border border-white/[0.06] rounded-lg">
-              <CheckmarkCircle02Icon className="w-3.5 h-3.5 text-white/60" />
-              <span className="text-xs text-white/80">Open Source</span>
-            </div>
-          </div>
+          <span className="w-1.5 h-1.5 bg-emerald-400 rounded-full animate-pulse" />
+          <span className="text-xs text-white/70">v2.0 Now Available</span>
         </motion.div>
 
-        {/* Main Heading */}
+        {/* Main Heading with Tagline */}
         <motion.h1
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.7, ease: [0.4, 0, 0.2, 1] }}
-          className="font-sans mb-6"
-          style={{
-            fontSize: 'clamp(3.5rem, 12vw, 13rem)',
-            lineHeight: '0.9',
-            letterSpacing: '-0.04em',
-            fontWeight: '400'
-          }}
+          transition={{ duration: 0.6, delay: 0.1, ease: [0.4, 0, 0.2, 1] }}
+          className="mb-6 mx-auto max-w-5xl"
         >
-          <span className="text-white">Cloud</span>
-          <span className="text-white/40">Core</span>
+          <div className="text-[clamp(2.2rem,5.5vw,4.4rem)] leading-[1.15] tracking-[-0.02em] font-normal">
+            <span className="text-white">CloudCore is a purpose-built tool for managing AWS S3 storage</span>
+          </div>
         </motion.h1>
-
-        {/* Subtitle */}
-        <motion.p
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.7, delay: 0.15, ease: [0.4, 0, 0.2, 1] }}
-          className="font-sans text-white/70 mb-5 tracking-tight max-w-3xl"
-          style={{
-            fontSize: 'clamp(1.5rem, 3vw, 3rem)',
-            fontWeight: '400',
-            lineHeight: '1.2'
-          }}
-        >
-          S3 management that doesn't suck
-        </motion.p>
 
         {/* Description */}
         <motion.p
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.7, delay: 0.25, ease: [0.4, 0, 0.2, 1] }}
-          className="font-sans w-full max-w-xl mx-auto text-white/50 mb-8 leading-relaxed text-base sm:text-lg"
-          style={{ fontWeight: '400' }}
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.2, ease: [0.4, 0, 0.2, 1] }}
+          className="text-[clamp(1.05rem,1.575vw,1.3125rem)] text-white/60 font-normal mb-10 mx-auto leading-relaxed max-w-4xl"
         >
-          Because life's too short for the AWS Console. Fast uploads, drag-and-drop magic, and your secrets stay secret.
+          Experience lightning-fast uploads, intuitive drag-and-drop interface, and enterprise-grade security—all without leaving your browser. No account needed. No data leaves your browser. Just paste your AWS credentials and start managing your S3 buckets like a pro.
         </motion.p>
-
-        {/* Feature Pills */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.7, delay: 0.35, ease: [0.4, 0, 0.2, 1] }}
-          className="flex flex-wrap items-center justify-center gap-2 mb-10"
-        >
-          {features.map((feature, index) => (
-            <motion.div
-              key={index}
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.4, delay: 0.4 + index * 0.08, ease: [0.4, 0, 0.2, 1] }}
-              className="flex items-center gap-1.5 bg-white/[0.04] border border-white/[0.08] rounded-full px-3 py-1.5 hover:bg-white/[0.06] hover:border-white/[0.12] transition-colors duration-150"
-            >
-              <feature.icon className="w-3 h-3 text-white/60" />
-              <span className="text-xs text-white/70" style={{ fontWeight: '400' }}>
-                {feature.label}
-              </span>
-            </motion.div>
-          ))}
-        </motion.div>
 
         {/* CTA Buttons */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.7, delay: 0.5, ease: [0.4, 0, 0.2, 1] }}
-          className="flex flex-col sm:flex-row items-center justify-center gap-3 mb-10"
+          transition={{ duration: 0.6, delay: 0.4, ease: [0.4, 0, 0.2, 1] }}
+          className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-12"
         >
           <button
             onClick={onGetStarted}
-            className="group text-black rounded-xl bg-white hover:bg-white/90 transition-colors duration-150 shadow-lg flex items-center justify-center px-8 py-4 text-base font-medium focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white/80"
+            className="group bg-white text-black rounded-xl hover:bg-white/90 transition-colors duration-150 px-8 py-3.5 text-base font-medium shadow-lg flex items-center justify-center min-w-[160px]"
           >
             Get Started
             <ArrowRight01Icon className="w-4 h-4 ml-2 transition-transform duration-200 group-hover:translate-x-0.5" />
@@ -167,7 +103,7 @@ export const Hero = ({ onGetStarted }) => {
 
           <button
             onClick={scrollToSetupGuide}
-            className="text-white/80 hover:text-white bg-white/[0.04] hover:bg-white/[0.06] border border-white/[0.1] hover:border-white/[0.15] rounded-xl transition-colors duration-150 flex items-center justify-center px-6 py-4 text-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white/50"
+            className="bg-white/[0.05] text-white/90 border border-white/[0.1] rounded-xl hover:bg-white/[0.08] hover:border-white/[0.15] transition-colors duration-150 px-6 py-3.5 text-base flex items-center justify-center min-w-[160px]"
           >
             <Book02Icon className="w-4 h-4 mr-2" />
             Setup Guide
@@ -177,25 +113,64 @@ export const Hero = ({ onGetStarted }) => {
             href="https://github.com/ezDecode/S3Zen-CloudCore"
             target="_blank"
             rel="noopener noreferrer"
-            className="text-white/80 hover:text-white bg-white/[0.04] hover:bg-white/[0.06] border border-white/[0.1] hover:border-white/[0.15] rounded-xl transition-colors duration-150 flex items-center justify-center px-6 py-4 text-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white/50"
+            className="bg-white/[0.05] text-white/90 border border-white/[0.1] rounded-xl hover:bg-white/[0.08] hover:border-white/[0.15] transition-colors duration-150 px-6 py-3.5 text-base flex items-center justify-center min-w-[160px]"
           >
             <Github01Icon className="w-4 h-4 mr-2" />
-            Star on GitHub
+            See the Docs
           </a>
         </motion.div>
 
-        {/* Bottom Trust Badge */}
+        {/* Feature Pills */}
         <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.7, delay: 0.6, ease: [0.4, 0, 0.2, 1] }}
-          className="inline-flex items-center gap-2 px-4 py-2 bg-white/[0.02] border border-white/[0.06] rounded-full"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.5, ease: [0.4, 0, 0.2, 1] }}
+          className="flex flex-wrap items-center justify-center gap-2 mb-10"
         >
-          <span className="w-1.5 h-1.5 bg-emerald-400 rounded-full animate-pulse" />
-          <span className="text-xs text-white/50">
-            No account • Runs in browser • 100% Private
-          </span>
+          {features.map((feature, index) => (
+            <div
+              key={index}
+              className="flex items-center gap-1.5 bg-white/[0.03] border border-white/[0.06] rounded-full px-3 py-1.5"
+            >
+              <feature.icon className="w-3 h-3 text-white/50" />
+              <span className="text-xs text-white/60">{feature.label}</span>
+            </div>
+          ))}
         </motion.div>
+
+        {/* Stats Row */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.6, ease: [0.4, 0, 0.2, 1] }}
+          className="flex flex-wrap items-center justify-center gap-6 sm:gap-8"
+        >
+          <div className="flex items-center gap-2">
+            <Github01Icon className="w-4 h-4 text-white/40" />
+            <span className="text-sm text-white/60">
+              <span className="text-white font-medium">{githubStars ? `${githubStars}+` : '...'}</span> stars
+            </span>
+          </div>
+          
+          <div className="w-px h-4 bg-white/[0.1]" />
+          
+          <div className="flex items-center gap-2">
+            <Download04Icon className="w-4 h-4 text-white/40" />
+            <span className="text-sm text-white/60">
+              <span className="text-white font-medium">100%</span> free
+            </span>
+          </div>
+          
+          <div className="w-px h-4 bg-white/[0.1]" />
+          
+          <div className="flex items-center gap-2">
+            <CheckmarkCircle02Icon className="w-4 h-4 text-white/40" />
+            <span className="text-sm text-white/60">
+              <span className="text-white font-medium">Open</span> source
+            </span>
+          </div>
+        </motion.div>
+
       </main>
     </div>
   );
