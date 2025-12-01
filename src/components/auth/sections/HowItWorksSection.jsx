@@ -94,7 +94,7 @@ export const HowItWorksSection = () => {
                                     {/* Top Row - Number & Icon */}
                                     <div className="flex items-start justify-between mb-6">
                                         {/* Step Number */}
-                                        <span className="text-5xl sm:text-6xl font-bold text-white/[0.08]">
+                                        <span className="text-5xl sm:text-6xl font-normal text-white/[0.08]">
                                             {step.number}
                                         </span>
                                         
@@ -105,7 +105,7 @@ export const HowItWorksSection = () => {
                                     </div>
 
                                     {/* Title */}
-                                    <h3 className="text-xl sm:text-2xl font-semibold text-white mb-3 tracking-tight">
+                                    <h3 className="text-xl sm:text-2xl font-normal text-white mb-3 tracking-tight">
                                         {step.title}
                                     </h3>
 
@@ -117,7 +117,7 @@ export const HowItWorksSection = () => {
                                     {/* Highlight Badge */}
                                     <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-white/[0.05] border border-white/[0.08] rounded-full">
                                         <span className="w-1.5 h-1.5 bg-emerald-400 rounded-full" />
-                                        <span className="text-xs font-medium text-white/60">
+                                        <span className="text-xs font-normal text-white/60">
                                             {step.highlight}
                                         </span>
                                     </div>

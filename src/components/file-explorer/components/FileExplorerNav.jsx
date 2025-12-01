@@ -42,7 +42,7 @@ export const FileExplorerNav = forwardRef(({
         <nav className="flex flex-row items-center px-3 sm:px-6 py-3 sm:py-4 border-b border-white/[0.06] bg-[#0a0a0a]/80 backdrop-blur-xl z-10 gap-2 sm:gap-4">
             {/* Premium Logo */}
             <div className="hidden lg:flex items-center gap-2 shrink-0 mr-2">
-                <span className="font-semibold text-lg tracking-tight">CloudCore</span>
+                <span className="font-normal text-lg tracking-tight">CloudCore</span>
             </div>
 
             {/* Breadcrumb */}

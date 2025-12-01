@@ -24,17 +24,17 @@ const setupSteps = [
         title: 'Getting AWS Credentials',
         content: (
             <div className="space-y-4">
-                <p className="text-white/80 font-medium">Follow these steps to create AWS Access Keys:</p>
+                <p className="text-white/80 font-normal">Follow these steps to create AWS Access Keys:</p>
                 <ol className="list-decimal list-inside space-y-2.5 text-white/60">
                     <li>Sign in to the <a href="https://console.aws.amazon.com/" target="_blank" rel="noopener noreferrer" className="text-white/90 hover:text-white underline underline-offset-2 decoration-white/30">AWS Management Console</a></li>
                     <li>Click on your account name in the top-right corner</li>
                     <li>Select <code className="font-mono bg-white/10 px-2 py-0.5 rounded text-white/80 text-xs">Security credentials</code></li>
-                    <li>Scroll down to <span className="font-semibold text-white/80">Access keys</span> section</li>
+                    <li>Scroll down to <span className="font-normal text-white/80">Access keys</span> section</li>
                     <li>Click <code className="font-mono bg-white/10 px-2 py-0.5 rounded text-white/80 text-xs">Create access key</code></li>
                     <li>Select use case: <code className="font-mono bg-white/10 px-2 py-0.5 rounded text-white/80 text-xs">Command Line Interface (CLI)</code></li>
-                    <li>Check the confirmation checkbox and click <span className="font-semibold text-white/80">Next</span></li>
-                    <li>Add a description tag (optional) and click <span className="font-semibold text-white/80">Create access key</span></li>
-                    <li className="text-amber-400/90 font-medium">⚠️ Download or copy both the Access Key ID and Secret Access Key - you won't be able to see the secret again!</li>
+                    <li>Check the confirmation checkbox and click <span className="font-normal text-white/80">Next</span></li>
+                    <li>Add a description tag (optional) and click <span className="font-normal text-white/80">Create access key</span></li>
+                    <li className="text-amber-400/90 font-normal">⚠️ Download or copy both the Access Key ID and Secret Access Key - you won't be able to see the secret again!</li>
                 </ol>
                 <div className="bg-emerald-500/10 border border-emerald-500/20 rounded-xl p-4 mt-4">
                     <p className="text-sm text-emerald-200/90">
@@ -56,9 +56,9 @@ const setupSteps = [
                     <li>Enter a unique bucket name (e.g., <code className="font-mono text-white/80">my-cloudcore-files</code>)</li>
                     <li>Select your preferred AWS Region</li>
                     <li>
-                        <span className="font-semibold text-white/80">Block Public Access settings:</span>
+                        <span className="font-normal text-white/80">Block Public Access settings:</span>
                         <ul className="list-disc list-inside ml-5 mt-2 space-y-1.5">
-                            <li>Keep "Block all public access" <span className="text-emerald-400 font-medium">ENABLED</span></li>
+                            <li>Keep "Block all public access" <span className="text-emerald-400 font-normal">ENABLED</span></li>
                             <li>CloudCore uses your credentials for private access</li>
                         </ul>
                     </li>
@@ -80,7 +80,7 @@ const setupSteps = [
                 <ol className="list-decimal list-inside space-y-2.5 text-white/60">
                     <li>Open your bucket in the S3 Console</li>
                     <li>Go to the <code className="font-mono bg-white/10 px-2 py-0.5 rounded text-white/80 text-xs">Permissions</code> tab</li>
-                    <li>Scroll down to <span className="font-semibold text-white/80">Cross-origin resource sharing (CORS)</span></li>
+                    <li>Scroll down to <span className="font-normal text-white/80">Cross-origin resource sharing (CORS)</span></li>
                     <li>Click <code className="font-mono bg-white/10 px-2 py-0.5 rounded text-white/80 text-xs">Edit</code></li>
                     <li>Paste the following CORS configuration:</li>
                 </ol>
@@ -112,12 +112,12 @@ const setupSteps = [
                 <p className="text-white/80">
                     For better security, create a dedicated IAM user with limited permissions instead of using root credentials.
                 </p>
-                <p className="text-white/80 font-medium mt-4">Creating an IAM User:</p>
+                <p className="text-white/80 font-normal mt-4">Creating an IAM User:</p>
                 <ol className="list-decimal list-inside space-y-2.5 text-white/60">
                     <li>Go to <a href="https://console.aws.amazon.com/iam/" target="_blank" rel="noopener noreferrer" className="text-white/90 hover:text-white underline underline-offset-2 decoration-white/30">IAM Console</a></li>
                     <li>Click <code className="font-mono bg-white/10 px-2 py-0.5 rounded text-white/80 text-xs">Users</code> → <code className="font-mono bg-white/10 px-2 py-0.5 rounded text-white/80 text-xs">Create user</code></li>
                     <li>Enter a username (e.g., <code className="font-mono text-white/80">cloudcore-user</code>)</li>
-                    <li>Click <span className="font-semibold text-white/80">Next</span></li>
+                    <li>Click <span className="font-normal text-white/80">Next</span></li>
                     <li>Select <code className="font-mono bg-white/10 px-2 py-0.5 rounded text-white/80 text-xs">Attach policies directly</code></li>
                     <li>Click <code className="font-mono bg-white/10 px-2 py-0.5 rounded text-white/80 text-xs">Create policy</code> (opens new tab)</li>
                     <li>Switch to the <code className="font-mono bg-white/10 px-2 py-0.5 rounded text-white/80 text-xs">JSON</code> tab</li>
@@ -151,7 +151,7 @@ const setupSteps = [
 }`}
                 </pre>
                 <div className="bg-white/5 border border-white/10 rounded-xl p-4 mt-3">
-                    <p className="text-sm text-white/70 font-medium mb-2">What this policy allows:</p>
+                    <p className="text-sm text-white/70 font-normal mb-2">What this policy allows:</p>
                     <ul className="list-disc list-inside space-y-1.5 text-sm text-white/60">
                         <li>List bucket contents and get bucket information</li>
                         <li>Upload, download, and delete files</li>
@@ -249,7 +249,7 @@ export const FAQSection = () => {
                                     <AccordionTrigger className="w-full flex items-center justify-between px-6 sm:px-8 py-5 sm:py-6 text-left hover:bg-white/[0.02] transition-colors">
                                         <div className="flex items-center gap-4">
                                             <span className="text-sm font-mono text-white/30">{step.number}</span>
-                                            <span className="text-base sm:text-lg font-medium text-white/90">
+                                            <span className="text-base sm:text-lg font-normal text-white/90">
                                                 {step.title}
                                             </span>
                                         </div>

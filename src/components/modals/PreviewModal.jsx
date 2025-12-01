@@ -72,7 +72,7 @@ export const PreviewModal = ({
                     <div className="flex items-center justify-between px-6 py-4">
                         {/* File Info */}
                         <div className="flex-1 min-w-0">
-                            <h2 className="text-lg font-bold text-white truncate">
+                            <h2 className="text-lg font-normal text-white truncate">
                                 {item.name}
                             </h2>
                             <p className="text-sm text-zinc-400">

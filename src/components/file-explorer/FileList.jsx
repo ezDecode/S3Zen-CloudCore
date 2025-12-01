@@ -92,7 +92,7 @@ export const FileList = memo(({
                     transition={{ delay: 0.2 }}
                     className="text-center space-y-3"
                 >
-                    <h3 className="text-2xl font-bold text-white">This folder is empty</h3>
+                    <h3 className="text-2xl font-normal text-white">This folder is empty</h3>
                     <p className="text-sm text-zinc-400 max-w-md leading-relaxed">
                         Upload files or create a new folder to get started with your cloud storage
                     </p>
@@ -106,7 +106,7 @@ export const FileList = memo(({
                     className="mt-8 flex items-center gap-2 px-4 py-2 bg-white/5 border border-white/10 rounded-lg"
                 >
                     <SparklesIcon className="w-4 h-4 text-zinc-500" />
-                    <span className="text-sm text-zinc-500 font-medium">Drag and drop files here to upload</span>
+                    <span className="text-sm text-zinc-500 font-normal">Drag and drop files here to upload</span>
                 </motion.div>
             </motion.div>
         );
@@ -150,7 +150,7 @@ export const FileList = memo(({
             ) : (
                 <div className="space-y-1">
                     {/* List Header */}
-                    <div className="grid grid-cols-12 gap-4 px-4 py-3 text-xs font-bold uppercase tracking-wider text-zinc-400 bg-white/5 border border-white/10 rounded-lg mb-3 sticky top-0 backdrop-blur-sm z-10">
+                    <div className="grid grid-cols-12 gap-4 px-4 py-3 text-xs font-normal uppercase tracking-wider text-zinc-400 bg-white/5 border border-white/10 rounded-lg mb-3 sticky top-0 backdrop-blur-sm z-10">
                         <div
                             className="col-span-8 sm:col-span-6 cursor-pointer hover:text-white flex flex-row items-center gap-2 transition-colors group select-none"
                             onClick={() => onSort && onSort('name')}

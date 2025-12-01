@@ -110,7 +110,7 @@ export const FeaturesSection = () => {
                                     </div>
 
                                     {/* Title & Description */}
-                                    <h3 className="text-lg sm:text-xl font-semibold text-white mb-2 sm:mb-3 tracking-tight group-hover:text-white transition-colors duration-300">
+                                    <h3 className="text-lg sm:text-xl font-normal text-white mb-2 sm:mb-3 tracking-tight group-hover:text-white transition-colors duration-300">
                                         {feature.title}
                                     </h3>
                                     <p className="text-white/50 leading-relaxed text-sm sm:text-base group-hover:text-white/60 transition-colors duration-300">

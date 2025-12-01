@@ -95,7 +95,7 @@ export const ImagePreview = ({ item }) => {
                     <MinusSignIcon className="w-5 h-5" />
                 </motion.button>
 
-                <span className="text-white text-sm font-medium min-w-[60px] text-center">
+                <span className="text-white text-sm font-normal min-w-[60px] text-center">
                     {Math.round(scale * 100)}%
                 </span>
 

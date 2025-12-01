@@ -35,7 +35,7 @@ export const Modal = ({
                         <div className="flex items-center justify-between p-5 border-b border-white/8">
                             <div className="flex items-center gap-2.5">
                                 {Icon && <Icon className={`w-5 h-5 ${iconColor}`} />}
-                                <h2 className="text-lg font-semibold text-white tracking-tight">{title}</h2>
+                                <h2 className="text-lg font-normal text-white tracking-tight">{title}</h2>
                             </div>
                             <button
                                 onClick={onClose}

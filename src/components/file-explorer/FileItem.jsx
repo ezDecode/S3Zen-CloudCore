@@ -218,10 +218,10 @@ export const FileItem = memo(({
                     </motion.div>
 
                     <div className="w-full min-h-10">
-                        <p className="text-sm font-semibold text-white truncate leading-tight mb-1">
+                        <p className="text-sm font-normal text-white truncate leading-tight mb-1">
                             {item.name}
                         </p>
-                        <p className="text-xs text-zinc-500 font-medium">
+                        <p className="text-xs text-zinc-500 font-normal">
                             {isFolder ? 'Folder' : formatFileSize(item.size)}
                         </p>
                     </div>
@@ -262,18 +262,18 @@ export const FileItem = memo(({
                 </motion.div>
 
                 {/* Name */}
-                <span className="truncate font-semibold text-sm text-white">
+                <span className="truncate font-normal text-sm text-white">
                     {item.name}
                 </span>
             </div>
 
             {/* Size Column */}
-            <div className="col-span-2 hidden sm:block text-sm font-medium text-zinc-400 tabular-nums">
+            <div className="col-span-2 hidden sm:block text-sm font-normal text-zinc-400 tabular-nums">
                 {isFolder ? '—' : formatFileSize(item.size)}
             </div>
 
             {/* Date Column */}
-            <div className="col-span-3 hidden sm:block text-sm font-medium text-zinc-400">
+            <div className="col-span-3 hidden sm:block text-sm font-normal text-zinc-400">
                 {isFolder ? '—' : formatExactDateTime(item.lastModified)}
             </div>
 

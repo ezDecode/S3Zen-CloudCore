@@ -119,7 +119,7 @@ export const UploadProgressPanel = ({ uploadingFiles, onCancel }) => {
                                 {isAllComplete ? (
                                     <CheckmarkCircle02Icon className="w-5 h-5 text-green-400" />
                                 ) : (
-                                    <span className="text-xs font-bold text-white">{Math.round(overallProgress)}%</span>
+                                    <span className="text-xs font-normal text-white">{Math.round(overallProgress)}%</span>
                                 )}
                             </div>
                             
@@ -166,7 +166,7 @@ export const UploadProgressPanel = ({ uploadingFiles, onCancel }) => {
                                             )}
                                         </motion.div>
                                         <div>
-                                            <h3 className="text-sm font-semibold text-white">
+                                            <h3 className="text-sm font-normal text-white">
                                                 {isAllComplete ? 'Upload Complete!' : 'Uploading...'}
                                             </h3>
                                             <p className="text-xs text-zinc-400">
@@ -201,12 +201,12 @@ export const UploadProgressPanel = ({ uploadingFiles, onCancel }) => {
                                         animate={isAllComplete ? { scale: [1, 1.05, 1] } : {}}
                                         transition={{ duration: 0.5 }}
                                     >
-                                        <span className={`text-5xl font-bold tabular-nums ${
+                                        <span className={`text-5xl font-normal tabular-nums ${
                                             isAllComplete ? 'text-green-400' : 'text-white'
                                         }`}>
                                             <AnimatedNumber value={Math.round(overallProgress)} />
                                         </span>
-                                        <span className={`text-2xl font-medium ${
+                                        <span className={`text-2xl font-normal ${
                                             isAllComplete ? 'text-green-400/70' : 'text-zinc-500'
                                         }`}>%</span>
                                     </motion.div>
@@ -277,7 +277,7 @@ export const UploadProgressPanel = ({ uploadingFiles, onCancel }) => {
                                             completedCount > 0 ? 'bg-green-400' : 'bg-zinc-600'
                                         }`} />
                                         <span className="text-xs text-zinc-300">
-                                            <AnimatedNumber value={completedCount} className="font-medium" /> completed
+                                            <AnimatedNumber value={completedCount} className="font-normal" /> completed
                                         </span>
                                     </motion.div>
                                     
@@ -316,11 +316,11 @@ export const UploadProgressPanel = ({ uploadingFiles, onCancel }) => {
                                             </motion.div>
                                             <div className="flex-1 min-w-0">
                                                 <p className="text-xs text-zinc-500 mb-0.5">Currently uploading</p>
-                                                <p className="text-sm text-white truncate font-medium">
+                                                <p className="text-sm text-white truncate font-normal">
                                                     {currentFile.name}
                                                 </p>
                                             </div>
-                                            <span className="text-sm font-bold text-blue-400 tabular-nums">
+                                            <span className="text-sm font-normal text-blue-400 tabular-nums">
                                                 {Math.round(currentFile.progress)}%
                                             </span>
                                         </div>
@@ -377,7 +377,7 @@ export const UploadProgressPanel = ({ uploadingFiles, onCancel }) => {
                                                             <span className="text-xs text-zinc-300 truncate flex-1">
                                                                 {file.name}
                                                             </span>
-                                                            <span className={`text-xs font-medium tabular-nums ${
+                                                            <span className={`text-xs font-normal tabular-nums ${
                                                                 isComplete ? 'text-green-400' : 'text-zinc-500'
                                                             }`}>
                                                                 {Math.round(file.progress)}%
@@ -400,7 +400,7 @@ export const UploadProgressPanel = ({ uploadingFiles, onCancel }) => {
                                 >
                                     <div className="flex items-center justify-center gap-2 text-sm text-green-400">
                                         <CheckmarkCircle02Icon className="w-4 h-4" />
-                                        <span className="font-medium">All files uploaded successfully!</span>
+                                        <span className="font-normal">All files uploaded successfully!</span>
                                     </div>
                                 </motion.div>
                             )}

@@ -70,7 +70,7 @@ export const DeleteConfirmModal = ({ isOpen, onClose, items, onSuccess }) => {
                         <div className="flex items-center justify-between p-5 border-b border-white/12">
                             <div className="flex items-center gap-2">
                                 <Alert01Icon className="w-5 h-5 text-red-400" />
-                                <h2 className="text-lg font-bold text-white">Confirm Deletion</h2>
+                                <h2 className="text-lg font-normal text-white">Confirm Deletion</h2>
                             </div>
                             <button
                                 onClick={handleCloseModal}
@@ -103,7 +103,7 @@ export const DeleteConfirmModal = ({ isOpen, onClose, items, onSuccess }) => {
                             {/* Confirmation Input for Single Item */}
                             {isSingleItem && (
                                 <div className="space-y-2">
-                                    <label className="text-sm text-white/80 font-medium">
+                                    <label className="text-sm text-white/80 font-normal">
                                         Type <span className="font-mono text-red-400">{items[0].name}</span> to confirm
                                     </label>
                                     <input
@@ -130,7 +130,7 @@ export const DeleteConfirmModal = ({ isOpen, onClose, items, onSuccess }) => {
                                 <button
                                     onClick={handleDelete}
                                     disabled={isDeleting || !canDelete}
-                                    className="flex-1 py-2.5 px-4 text-sm bg-red-500 hover:bg-red-600 text-white font-semibold rounded-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                                    className="flex-1 py-2.5 px-4 text-sm bg-red-500 hover:bg-red-600 text-white font-normal rounded-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                                 >
                                     {isDeleting ? 'Deleting...' : 'Delete'}
                                 </button>

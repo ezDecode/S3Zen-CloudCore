@@ -42,7 +42,7 @@ export const LandingPage = ({ onGetStarted }) => {
                     <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
                         {/* Premium Brand */}
                         <div className="text-sm text-white/25">
-                            <span className="font-semibold text-white/40">CloudCore</span> — Enterprise S3 Management
+                            <span className="font-normal text-white/40">CloudCore</span> — Enterprise S3 Management
                         </div>
 
                         {/* Premium Attribution */}

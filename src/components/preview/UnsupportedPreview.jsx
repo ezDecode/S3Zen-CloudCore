@@ -21,7 +21,7 @@ export const UnsupportedPreview = ({ item, onDownload }) => {
                 </div>
 
                 {/* File Info */}
-                <h3 className="text-xl font-bold text-white mb-2">
+                <h3 className="text-xl font-normal text-white mb-2">
                     {item.name}
                 </h3>
                 <p className="text-zinc-400 mb-6">
@@ -39,7 +39,7 @@ export const UnsupportedPreview = ({ item, onDownload }) => {
                         whileHover={{ scale: 1.05 }}
                         whileTap={{ scale: 0.95 }}
                         onClick={() => onDownload(item)}
-                        className="flex items-center gap-2 px-6 py-3 bg-blue-500 hover:bg-blue-600 text-white font-semibold rounded-lg transition-colors mx-auto"
+                        className="flex items-center gap-2 px-6 py-3 bg-blue-500 hover:bg-blue-600 text-white font-normal rounded-lg transition-colors mx-auto"
                     >
                         <Download01Icon className="w-5 h-5" />
                         Download File

@@ -95,7 +95,7 @@ export const AuthModal = ({ isOpen, onClose, onAuthenticate }) => {
                             {/* Premium Header */}
                             <div className="flex items-start justify-between p-6 pb-4">
                                 <div>
-                                    <h2 className="text-2xl font-semibold text-white tracking-tight">Connect to S3</h2>
+                                    <h2 className="text-2xl font-normal text-white tracking-tight">Connect to S3</h2>
                                     <p className="text-sm text-white/50 mt-1.5">
                                         Enter your AWS credentials to continue
                                     </p>
@@ -126,7 +126,7 @@ export const AuthModal = ({ isOpen, onClose, onAuthenticate }) => {
 
                                 {/* Premium Access Key ID */}
                                 <div className="space-y-2">
-                                    <label className="flex items-center gap-2 text-xs font-medium text-white/50 uppercase tracking-wider">
+                                    <label className="flex items-center gap-2 text-xs font-normal text-white/50 uppercase tracking-wider">
                                         <Key01Icon className="w-4 h-4 text-white/40" />
                                         Access Key ID
                                     </label>
@@ -142,7 +142,7 @@ export const AuthModal = ({ isOpen, onClose, onAuthenticate }) => {
 
                                 {/* Premium Secret Access Key */}
                                 <div className="space-y-2">
-                                    <label className="flex items-center gap-2 text-xs font-medium text-white/50 uppercase tracking-wider">
+                                    <label className="flex items-center gap-2 text-xs font-normal text-white/50 uppercase tracking-wider">
                                         <LockIcon className="w-4 h-4 text-white/40" />
                                         Secret Access Key
                                     </label>
@@ -159,7 +159,7 @@ export const AuthModal = ({ isOpen, onClose, onAuthenticate }) => {
 
                                 {/* Premium Bucket Name */}
                                 <div className="space-y-2">
-                                    <label className="flex items-center gap-2 text-xs font-medium text-white/50 uppercase tracking-wider">
+                                    <label className="flex items-center gap-2 text-xs font-normal text-white/50 uppercase tracking-wider">
                                         <Database01Icon className="w-4 h-4 text-white/40" />
                                         Bucket Name
                                     </label>
@@ -175,7 +175,7 @@ export const AuthModal = ({ isOpen, onClose, onAuthenticate }) => {
 
                                 {/* Premium Region Select */}
                                 <div className="space-y-2">
-                                    <label className="flex items-center gap-2 text-xs font-medium text-white/50 uppercase tracking-wider">
+                                    <label className="flex items-center gap-2 text-xs font-normal text-white/50 uppercase tracking-wider">
                                         <Location01Icon className="w-4 h-4 text-white/40" />
                                         AWS Region
                                     </label>
@@ -207,7 +207,7 @@ export const AuthModal = ({ isOpen, onClose, onAuthenticate }) => {
                                 <button
                                     type="submit"
                                     disabled={isLoading}
-                                    className="w-full mt-2 px-6 py-4 font-semibold text-black bg-white hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-150 shadow-lg rounded-xl flex items-center justify-center gap-2 active:scale-[0.99] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white/80 touch-target-lg"
+                                    className="w-full mt-2 px-6 py-4 font-normal text-black bg-white hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-150 shadow-lg rounded-xl flex items-center justify-center gap-2 active:scale-[0.99] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white/80 touch-target-lg"
                                 >
                                     {isLoading ? (
                                         <>

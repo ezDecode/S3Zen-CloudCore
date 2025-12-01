@@ -29,7 +29,7 @@ export const DownloadManager = ({ downloads, onRemove, onClear }) => {
                 <div className="px-4 py-3 border-b border-white/10 flex items-center justify-between bg-zinc-950/50">
                     <div className="flex items-center gap-2">
                         <div className="w-2 h-2 rounded-full bg-blue-500 animate-pulse" />
-                        <h4 className="text-sm font-semibold text-white">
+                        <h4 className="text-sm font-normal text-white">
                             Downloads {activeDownloads.length > 0 && `(${activeDownloads.length})`}
                         </h4>
                     </div>
@@ -37,7 +37,7 @@ export const DownloadManager = ({ downloads, onRemove, onClear }) => {
                         {downloads.length > 0 && (
                             <button
                                 onClick={onClear}
-                                className="p-1.5 text-zinc-400 hover:text-white hover:bg-white/5 rounded-lg transition-all text-xs font-medium"
+                                className="p-1.5 text-zinc-400 hover:text-white hover:bg-white/5 rounded-lg transition-all text-xs font-normal"
                                 title="Clear all"
                             >
                                 Clear
@@ -74,12 +74,12 @@ export const DownloadManager = ({ downloads, onRemove, onClear }) => {
                                     <div className="flex justify-between items-start gap-2">
                                         <div className="flex items-center gap-2 flex-1 min-w-0">
                                             <Download01Icon className="w-4 h-4 text-blue-400 shrink-0" />
-                                            <span className="text-sm font-medium text-white truncate">
+                                            <span className="text-sm font-normal text-white truncate">
                                                 {download.name}
                                             </span>
                                         </div>
                                         <div className="flex items-center gap-2 shrink-0">
-                                            <span className="text-xs font-bold text-zinc-400 tabular-nums">
+                                            <span className="text-xs font-normal text-zinc-400 tabular-nums">
                                                 {download.progress}%
                                             </span>
                                             <button

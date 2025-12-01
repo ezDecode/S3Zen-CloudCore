@@ -22,7 +22,7 @@ export const DetailsModal = ({ isOpen, onClose, item }) => {
             <div className="space-y-4">
                 {/* File Name */}
                 <div className="space-y-1">
-                    <label className="text-xs text-zinc-500 uppercase tracking-wider font-semibold">Name</label>
+                    <label className="text-xs text-zinc-500 uppercase tracking-wider font-normal">Name</label>
                     <p className="text-white text-sm break-all bg-white/5 p-3 rounded-lg border border-white/10">
                         {item.name}
                     </p>
@@ -30,7 +30,7 @@ export const DetailsModal = ({ isOpen, onClose, item }) => {
 
                 {/* File Size */}
                 <div className="space-y-1">
-                    <label className="text-xs text-zinc-500 uppercase tracking-wider font-semibold">Size</label>
+                    <label className="text-xs text-zinc-500 uppercase tracking-wider font-normal">Size</label>
                     <p className="text-white text-sm bg-white/5 p-3 rounded-lg border border-white/10">
                         {item.type === 'folder' ? '-' : formatBytes(item.size)}
                     </p>
@@ -38,7 +38,7 @@ export const DetailsModal = ({ isOpen, onClose, item }) => {
 
                 {/* Last Modified */}
                 <div className="space-y-1">
-                    <label className="text-xs text-zinc-500 uppercase tracking-wider font-semibold">Last Modified</label>
+                    <label className="text-xs text-zinc-500 uppercase tracking-wider font-normal">Last Modified</label>
                     <p className="text-white text-sm bg-white/5 p-3 rounded-lg border border-white/10">
                         {item.lastModified ? formatDate(item.lastModified) : '-'}
                     </p>
@@ -46,7 +46,7 @@ export const DetailsModal = ({ isOpen, onClose, item }) => {
 
                 {/* Type */}
                 <div className="space-y-1">
-                    <label className="text-xs text-zinc-500 uppercase tracking-wider font-semibold">Type</label>
+                    <label className="text-xs text-zinc-500 uppercase tracking-wider font-normal">Type</label>
                     <p className="text-white text-sm bg-white/5 p-3 rounded-lg border border-white/10 capitalize">
                         {item.type}
                     </p>

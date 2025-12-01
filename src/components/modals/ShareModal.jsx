@@ -80,7 +80,7 @@ export const ShareModal = ({ isOpen, onClose, item }) => {
                         <div className="flex items-center justify-between p-5 border-b border-white/10">
                             <div className="flex items-center gap-2">
                                 <Link01Icon className="w-5 h-5 text-purple-400" />
-                                <h2 className="text-lg font-bold text-white">Share File</h2>
+                                <h2 className="text-lg font-normal text-white">Share File</h2>
                             </div>
                             <button
                                 onClick={handleClose}
@@ -93,12 +93,12 @@ export const ShareModal = ({ isOpen, onClose, item }) => {
                         {/* Content */}
                         <div className="p-5 space-y-4">
                             <div>
-                                <p className="text-sm text-white/70">File: <span className="font-medium text-white">{item.name}</span></p>
+                                <p className="text-sm text-white/70">File: <span className="font-normal text-white">{item.name}</span></p>
                             </div>
 
                             {/* Expiration */}
                             <div>
-                                <label className="block text-xs font-medium text-white/70 mb-1.5">
+                                <label className="block text-xs font-normal text-white/70 mb-1.5">
                                     Link expires in
                                 </label>
                                 <div className="relative">
@@ -126,7 +126,7 @@ export const ShareModal = ({ isOpen, onClose, item }) => {
                                 <button
                                     onClick={handleGenerate}
                                     disabled={isLoading}
-                                    className="w-full py-2.5 px-4 text-sm bg-gradient-to-r from-purple-600 to-pink-600 text-white font-semibold rounded-lg hover:from-purple-700 hover:to-pink-700 hover:shadow-lg hover:shadow-purple-500/20 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                                    className="w-full py-2.5 px-4 text-sm bg-gradient-to-r from-purple-600 to-pink-600 text-white font-normal rounded-lg hover:from-purple-700 hover:to-pink-700 hover:shadow-lg hover:shadow-purple-500/20 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                                 >
                                     {isLoading ? 'Generating...' : 'Generate Link'}
                                 </button>
@@ -149,7 +149,7 @@ export const ShareModal = ({ isOpen, onClose, item }) => {
                                     <div className="flex gap-2">
                                         <button
                                             onClick={handleCopy}
-                                            className="flex-1 flex items-center justify-center gap-2 py-2.5 px-4 text-sm bg-white/10 hover:bg-white/15 text-white rounded-lg transition-all hover:scale-[1.02] font-medium"
+                                            className="flex-1 flex items-center justify-center gap-2 py-2.5 px-4 text-sm bg-white/10 hover:bg-white/15 text-white rounded-lg transition-all hover:scale-[1.02] font-normal"
                                         >
                                             {copied ? (
                                                 <>
@@ -167,7 +167,7 @@ export const ShareModal = ({ isOpen, onClose, item }) => {
                                         <button
                                             onClick={handleGenerate}
                                             disabled={isLoading}
-                                            className="px-4 py-2.5 text-sm bg-white/10 hover:bg-white/15 text-white rounded-lg transition-all font-medium"
+                                            className="px-4 py-2.5 text-sm bg-white/10 hover:bg-white/15 text-white rounded-lg transition-all font-normal"
                                         >
                                             Regenerate
                                         </button>

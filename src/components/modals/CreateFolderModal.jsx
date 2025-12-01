@@ -70,7 +70,7 @@ export const CreateFolderModal = ({ isOpen, onClose, currentPath, onSuccess }) =
         >
             {/* Folder Name Input */}
             <div className="space-y-2">
-                <label htmlFor="folder-name" className="text-sm text-white/80 font-medium">
+                <label htmlFor="folder-name" className="text-sm text-white/80 font-normal">
                     Folder Name
                 </label>
                 <input
@@ -101,7 +101,7 @@ export const CreateFolderModal = ({ isOpen, onClose, currentPath, onSuccess }) =
                 <button
                     onClick={handleCreate}
                     disabled={isCreating || !folderName.trim()}
-                    className="flex-1 py-3.5 px-4 text-sm bg-blue-500 hover:bg-blue-600 text-white font-semibold rounded-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed touch-target focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-400"
+                    className="flex-1 py-3.5 px-4 text-sm bg-blue-500 hover:bg-blue-600 text-white font-normal rounded-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed touch-target focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-400"
                 >
                     {isCreating ? 'Creating...' : 'Create Folder'}
                 </button>

@@ -35,7 +35,7 @@ export const Hero = ({ onGetStarted }) => {
             className="inline-flex items-center gap-2.5 px-5 py-2.5 bg-white/4 backdrop-blur-md border border-white/8 rounded-full mb-6 sm:mb-8 md:mb-10 hover:bg-white/6 hover:border-white/12 transition-all duration-300"
           >
             <span className="w-1.5 h-1.5 bg-white rounded-full animate-pulse" aria-hidden="true" />
-            <span className="text-xs sm:text-sm font-medium text-white/90 tracking-wide">
+            <span className="text-xs sm:text-sm font-sans text-white/90 tracking-wide" style={{ fontWeight: '400' }}>
               v2.0 Now Available
             </span>
           </motion.div>
@@ -45,7 +45,7 @@ export const Hero = ({ onGetStarted }) => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.7, ease: [0.4, 0, 0.2, 1] }}
-            className="font-regular mb-4 sm:mb-6 md:mb-8"
+            className="font-sans mb-4 sm:mb-6 md:mb-8"
             style={{
               fontSize: 'clamp(3rem, 10vw + 1rem, 11rem)',
               lineHeight: '0.95',
@@ -62,10 +62,10 @@ export const Hero = ({ onGetStarted }) => {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.7, delay: 0.15, ease: [0.4, 0, 0.2, 1] }}
-            className="font-regular text-white/70 mb-3 sm:mb-4 tracking-tight"
+            className="font-sans text-white/70 mb-3 sm:mb-4 tracking-tight"
             style={{
               fontSize: 'clamp(1.3rem, 2.5vw + 0.5rem, 2.5rem)',
-              fontWeight: '500'
+              fontWeight: '400'
             }}
           >
             S3 management that doesn't suck
@@ -76,7 +76,7 @@ export const Hero = ({ onGetStarted }) => {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.7, delay: 0.25, ease: [0.4, 0, 0.2, 1] }}
-            className="w-full max-w-2xl mx-auto text-white/50 mb-8 sm:mb-10 md:mb-12 leading-relaxed"
+            className="font-sans w-full max-w-2xl mx-auto text-white/50 mb-8 sm:mb-10 md:mb-12 leading-relaxed"
             style={{
               fontSize: 'clamp(1.05rem, 1.6vw + 0.3rem, 1.4rem)',
               fontWeight: '400',
@@ -107,8 +107,8 @@ export const Hero = ({ onGetStarted }) => {
             >
               <feature.icon className="w-4 h-4 text-white/60" aria-hidden="true" />
               <span
-                className="font-medium text-white/70"
-                style={{ fontSize: 'clamp(0.9rem, 1.1vw + 0.2rem, 1.05rem)', letterSpacing: '-0.01em' }}
+                className="font-sans text-white/70"
+                style={{ fontSize: 'clamp(0.9rem, 1.1vw + 0.2rem, 1.05rem)', letterSpacing: '-0.01em', fontWeight: '400' }}
               >
                 {feature.label}
               </span>
@@ -129,7 +129,7 @@ export const Hero = ({ onGetStarted }) => {
             className="group w-full sm:w-auto text-black rounded-xl bg-white hover:bg-gray-100 transition-all duration-150 shadow-lg flex items-center justify-center px-5 sm:px-6 py-3 sm:py-3.5 active:scale-[0.99] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white/80"
             aria-label="Get started with CloudCore"
           >
-            <span className="text-sm font-semibold whitespace-nowrap">Get Started</span>
+            <span className="text-sm font-sans whitespace-nowrap" style={{ fontWeight: '400' }}>Get Started</span>
             <ArrowRight01Icon className="w-4 h-4 ml-2 transition-transform duration-200 group-hover:translate-x-0.5" aria-hidden="true" />
           </button>
 
@@ -142,8 +142,8 @@ export const Hero = ({ onGetStarted }) => {
               aria-label="View AWS setup guide"
             >
               <Book02Icon className="w-4 h-4" aria-hidden="true" />
-              <span className="ml-2 text-sm font-medium sm:hidden">Guide</span>
-              <span className="ml-2 text-sm font-medium hidden sm:inline whitespace-nowrap">Setup Guide</span>
+              <span className="ml-2 text-sm font-sans sm:hidden" style={{ fontWeight: '400' }}>Guide</span>
+              <span className="ml-2 text-sm font-sans hidden sm:inline whitespace-nowrap" style={{ fontWeight: '400' }}>Setup Guide</span>
             </button>
 
             {/* GitHub Button */}
@@ -155,8 +155,8 @@ export const Hero = ({ onGetStarted }) => {
               aria-label="Star CloudCore on GitHub"
             >
               <Github01Icon className="w-4 h-4" aria-hidden="true" />
-              <span className="ml-2 text-sm font-medium sm:hidden">GitHub</span>
-              <span className="ml-2 text-sm font-medium hidden sm:inline whitespace-nowrap">Star on GitHub</span>
+              <span className="ml-2 text-sm font-sans sm:hidden" style={{ fontWeight: '400' }}>GitHub</span>
+              <span className="ml-2 text-sm font-sans hidden sm:inline whitespace-nowrap" style={{ fontWeight: '400' }}>Star on GitHub</span>
             </a>
           </div>
         </motion.div>

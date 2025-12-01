@@ -77,7 +77,7 @@ export const AudioPreview = ({ item }) => {
                 </motion.div>
 
                 {/* File Name */}
-                <h3 className="text-xl font-bold text-white text-center mb-6">
+                <h3 className="text-xl font-normal text-white text-center mb-6">
                     {item.name}
                 </h3>
 

@@ -47,7 +47,7 @@ export const StorageStatsWidget = memo(({
             <div className="flex items-center justify-between mb-4">
                 <div className="flex items-center gap-2">
                     <HardDriveIcon className="w-5 h-5 text-blue-400" />
-                    <h3 className="text-sm font-bold text-white">Storage Stats</h3>
+                    <h3 className="text-sm font-normal text-white">Storage Stats</h3>
                 </div>
                 <button
                     onClick={onRefresh}
@@ -74,7 +74,7 @@ export const StorageStatsWidget = memo(({
                     {/* Total Storage Used */}
                     <div className="mb-4 p-3 bg-gradient-to-r from-blue-500/20 to-purple-500/20 rounded-lg border border-white/10">
                         <p className="text-xs text-zinc-400 mb-1">Total Used</p>
-                        <p className="text-2xl font-bold text-white tabular-nums">
+                        <p className="text-2xl font-normal text-white tabular-nums">
                             {isLoading ? '...' : formatFileSize(totalSize)}
                         </p>
                     </div>
@@ -86,7 +86,7 @@ export const StorageStatsWidget = memo(({
                                 <File01Icon className="w-4 h-4 text-green-400" />
                                 <span className="text-xs text-zinc-400">Files</span>
                             </div>
-                            <p className="text-lg font-bold text-white tabular-nums">
+                            <p className="text-lg font-normal text-white tabular-nums">
                                 {isLoading ? '...' : fileCount.toLocaleString()}
                             </p>
                         </div>
@@ -95,7 +95,7 @@ export const StorageStatsWidget = memo(({
                                 <Folder01Icon className="w-4 h-4 text-yellow-400" />
                                 <span className="text-xs text-zinc-400">Folders</span>
                             </div>
-                            <p className="text-lg font-bold text-white tabular-nums">
+                            <p className="text-lg font-normal text-white tabular-nums">
                                 {isLoading ? '...' : folderCount.toLocaleString()}
                             </p>
                         </div>

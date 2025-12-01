@@ -48,12 +48,12 @@ export const DuplicateFileModal = ({ isOpen, onClose, fileName, onResolve }) => 
         >
             <div className="space-y-4">
                 <p className="text-sm text-zinc-400">
-                    A file with the name <span className="font-semibold text-white">{fileName}</span> already exists in this folder.
+                    A file with the name <span className="font-normal text-white">{fileName}</span> already exists in this folder.
                 </p>
 
                 {/* Custom Name Input */}
                 <div className="space-y-2">
-                    <label htmlFor="rename-input" className="text-sm text-white/80 font-medium">
+                    <label htmlFor="rename-input" className="text-sm text-white/80 font-normal">
                         Rename to:
                     </label>
                     <input
@@ -70,7 +70,7 @@ export const DuplicateFileModal = ({ isOpen, onClose, fileName, onResolve }) => 
                     <button
                         onClick={handleRename}
                         disabled={!newFileName.trim()}
-                        className="w-full py-2.5 px-4 text-sm bg-blue-500 hover:bg-blue-600 text-white font-semibold rounded-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                        className="w-full py-2.5 px-4 text-sm bg-blue-500 hover:bg-blue-600 text-white font-normal rounded-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                         Rename & Upload
                     </button>

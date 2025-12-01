@@ -250,7 +250,7 @@ export const FileExplorer = ({
                                 <Upload02Icon className="w-12 h-12 text-blue-400" />
                             </div>
                             <div className="text-center">
-                                <h3 className="text-xl font-bold text-white">Drop files to upload</h3>
+                                <h3 className="text-xl font-normal text-white">Drop files to upload</h3>
                                 <p className="text-zinc-400 mt-1">Files will be uploaded to the current folder</p>
                             </div>
                         </div>

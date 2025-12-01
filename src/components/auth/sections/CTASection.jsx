@@ -57,7 +57,7 @@ export const CTASection = ({ onGetStarted }) => {
                             onClick={onGetStarted}
                             whileHover={{ scale: 1.02 }}
                             whileTap={{ scale: 0.98 }}
-                            className="group w-full sm:w-auto px-6 sm:px-8 py-3 sm:py-4 bg-white text-black font-semibold rounded-xl hover:bg-white/95 transition-colors duration-200 flex items-center justify-center gap-2 shadow-2xl shadow-white/10"
+                            className="group w-full sm:w-auto px-6 sm:px-8 py-3 sm:py-4 bg-white text-black font-normal rounded-xl hover:bg-white/95 transition-colors duration-200 flex items-center justify-center gap-2 shadow-2xl shadow-white/10"
                         >
                             <span className="text-sm sm:text-base">Get Started Free</span>
                             <ArrowRight01Icon className="w-4 h-4 transition-transform duration-200 group-hover:translate-x-1" />
@@ -70,7 +70,7 @@ export const CTASection = ({ onGetStarted }) => {
                             rel="noopener noreferrer"
                             whileHover={{ scale: 1.02 }}
                             whileTap={{ scale: 0.98 }}
-                            className="group w-full sm:w-auto px-6 sm:px-8 py-3 sm:py-4 text-white/80 hover:text-white font-semibold rounded-xl border border-white/10 hover:border-white/20 hover:bg-white/[0.04] transition-all duration-200 flex items-center justify-center gap-2"
+                            className="group w-full sm:w-auto px-6 sm:px-8 py-3 sm:py-4 text-white/80 hover:text-white font-normal rounded-xl border border-white/10 hover:border-white/20 hover:bg-white/[0.04] transition-all duration-200 flex items-center justify-center gap-2"
                         >
                             <Github01Icon className="w-4 h-4" />
                             <span className="text-sm sm:text-base">View on GitHub</span>

@@ -33,7 +33,7 @@ export const FavoritesPanel = memo(({
             >
                 <div className="flex items-center gap-2">
                     <FavouriteIcon className="w-4 h-4 text-yellow-400" />
-                    <span className="text-sm font-semibold text-white">Favorites</span>
+                    <span className="text-sm font-normal text-white">Favorites</span>
                     <span className="text-xs text-zinc-500 bg-white/5 px-2 py-0.5 rounded-full">
                         {favorites.length}
                     </span>

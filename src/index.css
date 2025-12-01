@@ -1,10 +1,25 @@
 @import "tailwindcss";
 
+/* Aeonik Pro Font Face - Regular Only */
+@font-face {
+  font-family: 'Aeonik Pro';
+  src: url('/fonts/AeonikPro-Regular.otf') format('opentype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Aeonik Pro';
+  src: url('/fonts/AeonikPro-RegularItalic.otf') format('opentype');
+  font-weight: 400;
+  font-style: italic;
+  font-display: swap;
+}
 
 @theme {
-  --font-sans: "Inter Tight", sans-serif;
+  --font-sans: "Aeonik Pro", sans-serif;
   --font-serif: "Instrument Serif", serif;
-  --font-display: "Uncut Sans", sans-serif;
 
   /* Spacing System */
   --space-xs: 0.25rem;

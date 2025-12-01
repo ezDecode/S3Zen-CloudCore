@@ -66,7 +66,7 @@ export const FileExplorerActionBar = ({
                     <div className="hidden sm:block">
                         <DropdownMenu>
                             <DropdownMenuTrigger asChild>
-                                <Button variant="default" className="gap-2 bg-white text-black hover:bg-zinc-200 font-bold">
+                                <Button variant="default" className="gap-2 bg-white text-black hover:bg-zinc-200 font-normal">
                                     <PlusSignIcon className="w-4.5 h-4.5" />
                                     New
                                 </Button>
@@ -116,7 +116,7 @@ export const FileExplorerActionBar = ({
                                         onClick={() => document.getElementById('mobile-file-upload').click()}
                                     >
                                         <Upload02Icon className="w-8 h-8 mb-2" />
-                                        <span className="text-sm font-medium">Tap to upload files</span>
+                                        <span className="text-sm font-normal">Tap to upload files</span>
                                         <input
                                             id="mobile-file-upload"
                                             type="file"
@@ -155,7 +155,7 @@ export const FileExplorerActionBar = ({
                         whileHover={{ scale: 1.02 }}
                         whileTap={{ scale: 0.98 }}
                         onClick={onSelectAll}
-                        className={`touch-target flex items-center gap-1.5 sm:gap-2 px-2 sm:px-4 py-2 sm:py-2.5 border rounded-lg text-xs sm:text-sm font-medium transition-all shrink-0 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white/50 ${
+                        className={`touch-target flex items-center gap-1.5 sm:gap-2 px-2 sm:px-4 py-2 sm:py-2.5 border rounded-lg text-xs sm:text-sm font-normal transition-all shrink-0 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white/50 ${
                             selectedItems.length === items.length && items.length > 0
                                 ? 'bg-blue-500 border-blue-500 text-white'
                                 : 'bg-[rgba(255,255,255,0.05)] border-white/10 text-zinc-300 hover:text-white hover:bg-[rgba(255,255,255,0.1)]'
@@ -185,7 +185,7 @@ export const FileExplorerActionBar = ({
                                 exit={{ opacity: 0, x: -10 }}
                                 className="flex items-center gap-1.5 sm:gap-2 shrink-0 min-w-0"
                             >
-                                <span className="hidden md:inline text-xs text-zinc-400 font-medium px-2 whitespace-nowrap">
+                                <span className="hidden md:inline text-xs text-zinc-400 font-normal px-2 whitespace-nowrap">
                                     {selectedItems.length} selected
                                 </span>
 
@@ -194,7 +194,7 @@ export const FileExplorerActionBar = ({
                                         whileHover={{ scale: 1.02 }}
                                         whileTap={{ scale: 0.98 }}
                                         onClick={onDownloadSelected}
-                                        className="touch-target flex items-center gap-1 sm:gap-1.5 px-2.5 sm:px-3 py-2 sm:py-2.5 bg-[rgba(59,130,246,0.15)] border border-blue-500/30 text-blue-400 rounded-lg text-xs font-semibold hover:bg-[rgba(59,130,246,0.25)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-400/50 transition-all shrink-0"
+                                        className="touch-target flex items-center gap-1 sm:gap-1.5 px-2.5 sm:px-3 py-2 sm:py-2.5 bg-[rgba(59,130,246,0.15)] border border-blue-500/30 text-blue-400 rounded-lg text-xs font-normal hover:bg-[rgba(59,130,246,0.25)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-400/50 transition-all shrink-0"
                                     >
                                         <Download01Icon className="w-4 h-4" />
                                         <span className="hidden sm:inline">Download</span>
@@ -206,7 +206,7 @@ export const FileExplorerActionBar = ({
                                         whileHover={{ scale: 1.02 }}
                                         whileTap={{ scale: 0.98 }}
                                         onClick={onShareSelected}
-                                        className="touch-target flex items-center gap-1 sm:gap-1.5 px-2.5 sm:px-3 py-2 sm:py-2.5 bg-[rgba(34,197,94,0.15)] border border-green-500/30 text-green-400 rounded-lg text-xs font-semibold hover:bg-[rgba(34,197,94,0.25)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-400/50 transition-all shrink-0"
+                                        className="touch-target flex items-center gap-1 sm:gap-1.5 px-2.5 sm:px-3 py-2 sm:py-2.5 bg-[rgba(34,197,94,0.15)] border border-green-500/30 text-green-400 rounded-lg text-xs font-normal hover:bg-[rgba(34,197,94,0.25)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-400/50 transition-all shrink-0"
                                     >
                                         <Share01Icon className="w-4 h-4" />
                                         <span className="hidden sm:inline">Share</span>
@@ -217,7 +217,7 @@ export const FileExplorerActionBar = ({
                                     whileHover={{ scale: 1.02 }}
                                     whileTap={{ scale: 0.98 }}
                                     onClick={() => onDelete(selectedItems)}
-                                    className="touch-target flex items-center gap-1 sm:gap-1.5 px-2.5 sm:px-3 py-2 sm:py-2.5 bg-[rgba(239,68,68,0.15)] border border-red-500/30 text-red-400 rounded-lg text-xs font-semibold hover:bg-[rgba(239,68,68,0.25)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-400/50 transition-all shrink-0"
+                                    className="touch-target flex items-center gap-1 sm:gap-1.5 px-2.5 sm:px-3 py-2 sm:py-2.5 bg-[rgba(239,68,68,0.15)] border border-red-500/30 text-red-400 rounded-lg text-xs font-normal hover:bg-[rgba(239,68,68,0.25)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-400/50 transition-all shrink-0"
                                 >
                                     <Delete02Icon className="w-4 h-4" />
                                     <span className="hidden sm:inline">Delete</span>
