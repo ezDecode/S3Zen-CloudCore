@@ -133,17 +133,26 @@ export const FileExplorerNav = forwardRef(({
 
             {/* Right Actions */}
             <div className="flex items-center gap-1.5 sm:gap-2 shrink-0 ml-auto">
-                {/* Premium Search */}
-                <div className="relative w-32 sm:w-48 md:w-64">
+                {/* Premium Search with Keyboard Hint */}
+                <div className="relative w-32 sm:w-48 md:w-64 group">
                     <Search01Icon className="absolute left-2 sm:left-3 top-1/2 -translate-y-1/2 w-4 sm:w-4 h-4 sm:h-4 text-white/30 pointer-events-none" />
                     <input
                         ref={searchInputRef}
                         type="text"
-                        placeholder="Search... (Ctrl+F)"
+                        placeholder="Search..."
                         value={searchQuery}
                         onChange={(e) => onSearchChange(e.target.value)}
-                        className="w-full pl-8 sm:pl-10 pr-2 sm:pr-4 py-1.5 sm:py-2 bg-white/[0.03] border border-white/[0.08] rounded-lg text-xs sm:text-sm text-white placeholder:text-white/30 focus:outline-none focus:border-white/[0.15] focus:bg-white/[0.05] transition-all duration-150"
+                        className="w-full pl-8 sm:pl-10 pr-16 sm:pr-20 py-1.5 sm:py-2 bg-white/[0.03] border border-white/[0.08] rounded-lg text-xs sm:text-sm text-white placeholder:text-white/30 focus:outline-none focus:border-white/[0.15] focus:bg-white/[0.05] transition-colors duration-150"
                     />
+                    {/* Keyboard hint */}
+                    <div className="absolute right-2 sm:right-3 top-1/2 -translate-y-1/2 hidden sm:flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity duration-150">
+                        <kbd className="px-1.5 py-0.5 text-[10px] text-white/40 bg-white/[0.04] border border-white/[0.08] rounded">
+                            {navigator.platform.toUpperCase().indexOf('MAC') >= 0 ? '⌘' : 'Ctrl'}
+                        </kbd>
+                        <kbd className="px-1.5 py-0.5 text-[10px] text-white/40 bg-white/[0.04] border border-white/[0.08] rounded">
+                            F
+                        </kbd>
+                    </div>
                 </div>
 
                 {/* Premium Refresh */}

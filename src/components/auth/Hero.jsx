@@ -26,12 +26,20 @@ export const Hero = ({ onGetStarted }) => {
 
   return (
     <div className="hero-page-wrapper relative flex flex-col items-center justify-center w-full h-screen overflow-hidden bg-black">
-      {/* Premium Monochromatic Background */}
-      <div className="absolute w-[800px] h-[800px] bg-white/2 rounded-full blur-3xl top-0 left-1/4 -translate-x-1/2 -translate-y-1/2 pointer-events-none z-0" />
-      <div className="absolute w-[600px] h-[600px] bg-white/3 rounded-full blur-3xl bottom-0 right-1/4 translate-x-1/2 translate-y-1/2 pointer-events-none z-0" />
+      {/* Enhanced Linear-inspired Background */}
+      <div className="absolute inset-0 pointer-events-none z-0">
+        {/* Primary gradient orb */}
+        <div className="absolute w-[1000px] h-[1000px] bg-gradient-to-br from-purple-500/[0.08] via-blue-500/[0.05] to-transparent rounded-full blur-3xl top-0 left-1/4 -translate-x-1/2 -translate-y-1/2 animate-pulse-slow" />
+        
+        {/* Secondary gradient orb */}
+        <div className="absolute w-[800px] h-[800px] bg-gradient-to-tl from-cyan-500/[0.06] via-emerald-500/[0.04] to-transparent rounded-full blur-3xl bottom-0 right-1/4 translate-x-1/2 translate-y-1/2 animate-pulse-slow" style={{ animationDelay: '1s' }} />
+        
+        {/* Accent orb */}
+        <div className="absolute w-[600px] h-[600px] bg-white/[0.02] rounded-full blur-2xl top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2" />
+      </div>
 
       {/* Subtle Grid Pattern */}
-      <div className="absolute inset-0 opacity-[0.03] pointer-events-none z-0 bg-[linear-gradient(rgba(255,255,255,0.5)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.5)_1px,transparent_1px)] bg-size-[60px_60px]" />
+      <div className="absolute inset-0 opacity-[0.02] pointer-events-none z-0 bg-[linear-gradient(rgba(255,255,255,0.5)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.5)_1px,transparent_1px)] bg-size-[60px_60px]" />
 
       <main className="relative z-10 flex flex-col items-center justify-center w-full max-w-7xl mx-auto text-center h-full overflow-y-auto px-4 sm:px-6 lg:px-8">
         <header className="w-full">
