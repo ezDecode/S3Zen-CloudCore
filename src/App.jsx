@@ -16,6 +16,7 @@ import { ShareModal, DeleteConfirmModal, CreateFolderModal, RenameModal, Details
 import { useAuth } from './hooks/useAuth';
 import { useModals } from './hooks/useModals';
 import { useSessionTimeout } from './hooks/useSessionTimeout';
+import { useLenis } from './hooks/useLenis';
 import { Toaster } from './components/ui/sonner';
 import { initializePreviewService } from './services/previewService';
 import { downloadFile, getS3Client, getCurrentBucket } from './services/aws/s3Service';
@@ -25,6 +26,9 @@ import { downloadFile, getS3Client, getCurrentBucket } from './services/aws/s3Se
  * Handles routing between Hero/Login and File Explorer
  */
 function AppContent() {
+  // Initialize site-wide smooth scrolling
+  useLenis();
+
   // Authentication state and handlers
   const {
     isLoggedIn,

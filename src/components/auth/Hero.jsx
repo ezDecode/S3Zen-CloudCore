@@ -1,4 +1,3 @@
-
 import { motion } from 'framer-motion';
 import { ArrowRight01Icon, Github01Icon, ZapIcon, Shield01Icon, CloudIcon, Book02Icon } from 'hugeicons-react';
 
@@ -12,7 +11,16 @@ export const Hero = ({ onGetStarted }) => {
   const scrollToSetupGuide = () => {
     const faqSection = document.getElementById('setup-guide');
     if (faqSection) {
-      faqSection.scrollIntoView({ behavior: 'smooth' });
+      // Use Lenis scrollTo if available, fallback to native smooth scroll
+      if (window.lenis) {
+        window.lenis.scrollTo(faqSection, {
+          offset: 0,
+          duration: 1.5,
+          easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+        });
+      } else {
+        faqSection.scrollIntoView({ behavior: 'smooth' });
+      }
     }
   };
 
