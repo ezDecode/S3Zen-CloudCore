@@ -138,13 +138,14 @@ export const useFileOperations = (currentPath, items, setItems, loadFiles, onNav
         
         // Store the original path before navigation
         const originalPath = currentPath;
+        let targetFolderPath = null;
         
         // If uploading a folder, navigate into the first folder
         if (isUploadingFolder && onNavigateToFolder) {
             // Get the root folder name from the first file
             const firstFile = uploadQueue[0].fileName;
             const rootFolderName = firstFile.split('/')[0];
-            const targetFolderPath = currentPath + rootFolderName + '/';
+            targetFolderPath = currentPath + rootFolderName + '/';
             
             // Navigate to the folder
             onNavigateToFolder(targetFolderPath);
@@ -162,15 +163,15 @@ export const useFileOperations = (currentPath, items, setItems, loadFiles, onNav
             ));
         }
 
-        // Only refresh if not uploading to current folder (optimistic updates handle it)
-        const needsRefresh = uploadQueue.some(({ fileName }) => {
-            const fileFolder = fileName.includes('/') 
-                ? fileName.substring(0, fileName.lastIndexOf('/') + 1)
-                : '';
-            return fileFolder !== currentPath;
-        });
+        // Wait a moment for S3 to be consistent
+        await new Promise(resolve => setTimeout(resolve, 300));
 
-        if (needsRefresh && !isUploadingFolder) {
+        // Refresh file list - use targetFolderPath for folder uploads, current path otherwise
+        if (isUploadingFolder && targetFolderPath) {
+            // Load files for the navigated folder path
+            await loadFiles(true, targetFolderPath);
+        } else {
+            // For regular uploads, refresh current view
             await loadFiles(true);
         }
 
@@ -178,7 +179,7 @@ export const useFileOperations = (currentPath, items, setItems, loadFiles, onNav
         if (onRefreshStats) {
             onRefreshStats();
         }
-    }, [items, uploadSingleFile, loadFiles, onRefreshStats]);
+    }, [items, currentPath, uploadSingleFile, loadFiles, onNavigateToFolder, onRefreshStats]);
 
     // Download single file
     const handleSingleDownload = useCallback(async (item) => {

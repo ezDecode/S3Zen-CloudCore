@@ -99,7 +99,17 @@ export const FileExplorer = ({
 
     // Load files
     const loadFilesRef = useRef(null);
-    const loadFiles = useCallback(async (skipLoading = false) => {
+    const currentPathRef = useRef(currentPath);
+    
+    // Keep ref in sync with state
+    useEffect(() => {
+        currentPathRef.current = currentPath;
+    }, [currentPath]);
+    
+    const loadFiles = useCallback(async (skipLoading = false, pathOverride = null) => {
+        // Use pathOverride if provided, otherwise use the ref for latest path
+        const pathToLoad = pathOverride !== null ? pathOverride : currentPathRef.current;
+        
         if (loadFilesRef.current) {
             loadFilesRef.current.cancelled = true;
         }
@@ -110,7 +120,7 @@ export const FileExplorer = ({
         if (!skipLoading) setIsLoading(true);
 
         try {
-            const result = await listObjects(currentPath);
+            const result = await listObjects(pathToLoad);
 
             if (currentRequest.cancelled) return;
 
@@ -128,12 +138,12 @@ export const FileExplorer = ({
                 setIsLoading(false);
             }
         }
-    }, [currentPath]);
+    }, []);
 
     // Load files when path changes
     useEffect(() => {
-        loadFiles();
-    }, [loadFiles]);
+        loadFiles(false, currentPath);
+    }, [currentPath, loadFiles]);
 
     // File Operations
     const {
