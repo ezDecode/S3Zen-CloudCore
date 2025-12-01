@@ -1,49 +1,39 @@
 import { Hero } from './Hero';
 import { FeaturesSection } from './sections/FeaturesSection';
 import { HowItWorksSection } from './sections/HowItWorksSection';
-import { SocialProofSection } from './sections/SocialProofSection';
 import { FAQSection } from './sections/FAQSection';
 import { CTASection } from './sections/CTASection';
-import { StickyHeader } from '../common/StickyHeader';
 
 /**
  * LANDING PAGE - Complete User Journey
  * 
  * PURPOSE: Guide visitor from awareness → understanding → conversion
  * 
- * OPTIMIZED STRUCTURE (Linear-inspired):
- * 0. Sticky Header: Always accessible navigation
- * 1. Hero: Grab attention, communicate value (5 seconds)
- * 2. Social Proof: Build trust with metrics
- * 3. Features: Build credibility, prove capability (scan)
- * 4. How It Works: Show simplicity, remove barriers (3 easy steps)
- * 5. Setup Guide: Detailed AWS configuration for those ready to dive in
- * 6. CTA: Final push, convert (act)
- * 7. Footer: Brand touchpoint, attribution (close)
+ * OPTIMIZED STRUCTURE:
+ * 1. Hero: Grab attention, communicate value (includes social proof)
+ * 2. Features: Build credibility, prove capability (scan)
+ * 3. How It Works: Show simplicity, remove barriers (3 easy steps)
+ * 4. Setup Guide: Detailed AWS configuration for those ready to dive in
+ * 5. CTA: Final push, convert (act)
+ * 6. Footer: Brand touchpoint, attribution (close)
  */
 
 export const LandingPage = ({ onGetStarted }) => {
     return (
         <div className="w-full min-h-screen bg-black">
-            {/* 0. Sticky Header - Linear-inspired navigation */}
-            <StickyHeader onGetStarted={onGetStarted} />
-
             {/* 1. Hero - First impression, value proposition */}
             <Hero onGetStarted={onGetStarted} />
 
-            {/* 2. Social Proof - Build trust with metrics */}
-            <SocialProofSection />
-
-            {/* 3. Features - Build credibility with capabilities */}
+            {/* 2. Features - Build credibility with capabilities */}
             <FeaturesSection />
 
-            {/* 4. How It Works - Show the 3-step simplicity */}
+            {/* 3. How It Works - Show the 3-step simplicity */}
             <HowItWorksSection />
 
-            {/* 5. Setup Guide - Detailed AWS configuration steps */}
+            {/* 4. Setup Guide - Detailed AWS configuration steps */}
             <FAQSection />
 
-            {/* 6. Final CTA - Convert visitors to users */}
+            {/* 5. Final CTA - Convert visitors to users */}
             <CTASection onGetStarted={onGetStarted} />
 
             {/* Premium Footer */}

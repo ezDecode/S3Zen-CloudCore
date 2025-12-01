@@ -62,3 +62,18 @@ export const SkeletonCard = ({ className = '' }) => (
 export const SkeletonButton = ({ className = '' }) => (
     <SkeletonLoader variant="button" width="120px" className={className} />
 );
+
+export const FileListSkeleton = ({ count = 5 }) => (
+    <div className="space-y-2">
+        {Array.from({ length: count }).map((_, i) => (
+            <div key={i} className="flex items-center gap-4 p-4 bg-white/[0.02] border border-white/[0.06] rounded-xl">
+                <SkeletonLoader variant="circle" width="40px" height="40px" />
+                <div className="flex-1 space-y-2">
+                    <SkeletonLoader variant="text" width="30%" height="16px" />
+                    <SkeletonLoader variant="text" width="50%" height="12px" />
+                </div>
+                <SkeletonLoader variant="text" width="80px" height="12px" />
+            </div>
+        ))}
+    </div>
+);
