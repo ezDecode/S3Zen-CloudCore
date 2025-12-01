@@ -4,9 +4,9 @@
  * Only renders visible items for better performance
  */
 
-import { FixedSizeList as List } from 'react-window';
+import React, { useMemo, useRef, useEffect } from 'react';
+import { List } from 'react-window';
 import { FileItem } from './FileItem';
-import { useMemo, useRef, useEffect } from 'react';
 
 const ITEM_HEIGHT_GRID = 140; // Height of grid item
 const ITEM_HEIGHT_LIST = 60;  // Height of list item
