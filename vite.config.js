@@ -26,8 +26,10 @@ export default defineConfig({
     rollupOptions: {
       output: {
         manualChunks: (id) => {
-          // React core - highest priority
-          if (id.includes('node_modules/react/') || id.includes('node_modules/react-dom/')) {
+          // React core - MUST include react-window with React
+          if (id.includes('node_modules/react/') || 
+              id.includes('node_modules/react-dom/') ||
+              id.includes('node_modules/react-window/')) {
             return 'react-vendor';
           }
           

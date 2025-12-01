@@ -11,9 +11,9 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { FileItem } from './FileItem';
 import { FolderOpenIcon, SparklesIcon } from 'hugeicons-react';
 import { FileListSkeleton } from '../common/SkeletonLoader';
-import { VirtualFileList } from './VirtualFileList';
+// import { VirtualFileList } from './VirtualFileList'; // Temporarily disabled
 
-import { memo, useMemo, useRef, useEffect, useState } from 'react';
+import { memo, useMemo } from 'react';
 
 // OPTIMIZED: Memoize FileList to prevent unnecessary re-renders
 export const FileList = memo(({
@@ -36,29 +36,10 @@ export const FileList = memo(({
     favorites = [],
     onToggleFavorite
 }) => {
-    const containerRef = useRef(null);
-    const [containerSize, setContainerSize] = useState({ width: 0, height: 0 });
-
-    // PERFORMANCE: Use virtual scrolling for large lists (>100 items)
-    const useVirtualScrolling = items.length > 100;
-
-    // Measure container size for virtual scrolling
-    useEffect(() => {
-        if (!useVirtualScrolling || !containerRef.current) return;
-
-        const updateSize = () => {
-            if (containerRef.current) {
-                setContainerSize({
-                    width: containerRef.current.offsetWidth,
-                    height: containerRef.current.offsetHeight
-                });
-            }
-        };
-
-        updateSize();
-        window.addEventListener('resize', updateSize);
-        return () => window.removeEventListener('resize', updateSize);
-    }, [useVirtualScrolling]);
+    // PERFORMANCE: Virtual scrolling temporarily disabled
+    // const containerRef = useRef(null);
+    // const [containerSize, setContainerSize] = useState({ width: 0, height: 0 });
+    // const useVirtualScrolling = items.length > 100;
 
     // OPTIMIZED: Create a Set for O(1) lookup instead of array.some() for each item
     const selectedKeys = useMemo(() => 
@@ -137,32 +118,33 @@ export const FileList = memo(({
         );
     }
 
-    // PERFORMANCE: Use virtual scrolling for large lists
-    if (useVirtualScrolling) {
-        return (
-            <div ref={containerRef} className="flex-1 overflow-hidden">
-                {containerSize.height > 0 && (
-                    <VirtualFileList
-                        items={items}
-                        selectedItems={selectedItems}
-                        onSelectItem={onSelectItem}
-                        onOpenFolder={onOpenFolder}
-                        onDownload={onDownload}
-                        onShare={onShare}
-                        onRename={onRename}
-                        onDelete={onDelete}
-                        onPreview={onPreview}
-                        onDetails={onDetails}
-                        viewMode={viewMode}
-                        favorites={favorites}
-                        onToggleFavorite={onToggleFavorite}
-                        containerHeight={containerSize.height}
-                        containerWidth={containerSize.width}
-                    />
-                )}
-            </div>
-        );
-    }
+    // PERFORMANCE: Virtual scrolling temporarily disabled due to build issues
+    // Will be re-enabled after fixing chunk loading order
+    // if (useVirtualScrolling) {
+    //     return (
+    //         <div ref={containerRef} className="flex-1 overflow-hidden">
+    //             {containerSize.height > 0 && (
+    //                 <VirtualFileList
+    //                     items={items}
+    //                     selectedItems={selectedItems}
+    //                     onSelectItem={onSelectItem}
+    //                     onOpenFolder={onOpenFolder}
+    //                     onDownload={onDownload}
+    //                     onShare={onShare}
+    //                     onRename={onRename}
+    //                     onDelete={onDelete}
+    //                     onPreview={onPreview}
+    //                     onDetails={onDetails}
+    //                     viewMode={viewMode}
+    //                     favorites={favorites}
+    //                     onToggleFavorite={onToggleFavorite}
+    //                     containerHeight={containerSize.height}
+    //                     containerWidth={containerSize.width}
+    //                 />
+    //             )}
+    //         </div>
+    //     );
+    // }
 
     return (
         <div className="flex-1 overflow-y-auto overflow-x-hidden px-3 sm:px-6 py-3 sm:py-6 custom-scrollbar">
