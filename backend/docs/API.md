@@ -401,6 +401,446 @@ The service logs to stdout/stderr:
 
 ---
 
+## Bucket Management API
+
+The Bucket Management API allows authenticated users to manage their AWS S3 bucket configurations securely. All credentials are encrypted server-side using AES-256-GCM before storage.
+
+### Authentication
+
+All bucket management endpoints require a valid Supabase JWT token in the Authorization header:
+
+```
+Authorization: Bearer <supabase-access-token>
+```
+
+### Error Responses
+
+All endpoints return standardized error responses:
+
+```json
+{
+  "error": {
+    "code": "ERROR_CODE",
+    "message": "Human-readable error message",
+    "status": 401
+  }
+}
+```
+
+**Common Error Codes**:
+- `MISSING_TOKEN` (401): No Authorization header provided
+- `TOKEN_EXPIRED` (401): JWT has expired
+- `INVALID_TOKEN` (401): JWT is malformed or invalid
+- `SESSION_REVOKED` (401): Session has been invalidated
+- `EMAIL_NOT_VERIFIED` (403): Email verification required
+- `FORBIDDEN` (403): User doesn't own the resource
+- `NOT_FOUND` (404): Resource doesn't exist
+- `VALIDATION_ERROR` (400): Request validation failed
+
+---
+
+### 1. Create Bucket Configuration
+
+Add a new bucket configuration with encrypted credentials.
+
+**Endpoint**: `POST /api/buckets`
+
+**Authentication**: Required (verified email)
+
+**Request Body**:
+```json
+{
+  "accessKeyId": "AKIAIOSFODNN7EXAMPLE",
+  "secretAccessKey": "wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY",
+  "sessionToken": "optional-session-token",
+  "region": "us-east-1",
+  "bucketName": "my-s3-bucket",
+  "displayName": "My Production Bucket",
+  "isDefault": true
+}
+```
+
+**Field Descriptions**:
+- `accessKeyId` (string, required): AWS Access Key ID
+- `secretAccessKey` (string, required): AWS Secret Access Key
+- `sessionToken` (string, optional): STS session token for temporary credentials
+- `region` (string, required): AWS region (e.g., us-east-1, eu-west-1)
+- `bucketName` (string, required): S3 bucket name
+- `displayName` (string, required): User-friendly name for the bucket
+- `isDefault` (boolean, optional): Set as default bucket (default: false)
+
+**Response** (201 Created):
+```json
+{
+  "success": true,
+  "bucket": {
+    "id": "123e4567-e89b-12d3-a456-426614174000",
+    "displayName": "My Production Bucket",
+    "bucketName": "my-s3-bucket",
+    "region": "us-east-1",
+    "isDefault": true,
+    "createdAt": "2024-12-03T10:30:00.000Z",
+    "updatedAt": "2024-12-03T10:30:00.000Z"
+  }
+}
+```
+
+**Error Responses**:
+
+400 Bad Request (validation failed):
+```json
+{
+  "error": {
+    "code": "VALIDATION_ERROR",
+    "message": "Invalid bucket name format",
+    "status": 400
+  }
+}
+```
+
+400 Bad Request (bucket access failed):
+```json
+{
+  "error": {
+    "code": "BUCKET_ACCESS_DENIED",
+    "message": "Cannot access bucket. Check credentials and bucket permissions.",
+    "status": 400
+  }
+}
+```
+
+409 Conflict (duplicate bucket):
+```json
+{
+  "error": {
+    "code": "DUPLICATE_BUCKET",
+    "message": "A bucket configuration with this name already exists",
+    "status": 409
+  }
+}
+```
+
+**Example**:
+```bash
+curl -X POST http://localhost:3001/api/buckets \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer <token>" \
+  -d '{
+    "accessKeyId": "AKIAIOSFODNN7EXAMPLE",
+    "secretAccessKey": "wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY",
+    "region": "us-east-1",
+    "bucketName": "my-bucket",
+    "displayName": "My Bucket",
+    "isDefault": true
+  }'
+```
+
+---
+
+### 2. List Bucket Configurations
+
+Get all bucket configurations for the authenticated user. Returns metadata only (no credentials).
+
+**Endpoint**: `GET /api/buckets`
+
+**Authentication**: Required
+
+**Response** (200 OK):
+```json
+{
+  "success": true,
+  "buckets": [
+    {
+      "id": "123e4567-e89b-12d3-a456-426614174000",
+      "displayName": "Production Bucket",
+      "bucketName": "my-prod-bucket",
+      "region": "us-east-1",
+      "isDefault": true,
+      "createdAt": "2024-12-03T10:30:00.000Z",
+      "updatedAt": "2024-12-03T10:30:00.000Z"
+    },
+    {
+      "id": "987fcdeb-51a2-34c5-b678-426614174001",
+      "displayName": "Development Bucket",
+      "bucketName": "my-dev-bucket",
+      "region": "eu-west-1",
+      "isDefault": false,
+      "createdAt": "2024-12-02T14:20:00.000Z",
+      "updatedAt": "2024-12-02T14:20:00.000Z"
+    }
+  ]
+}
+```
+
+**Example**:
+```bash
+curl -X GET http://localhost:3001/api/buckets \
+  -H "Authorization: Bearer <token>"
+```
+
+---
+
+### 3. Get Bucket Credentials
+
+Retrieve decrypted credentials for a specific bucket. Only the bucket owner can access credentials.
+
+**Endpoint**: `GET /api/buckets/:id/credentials`
+
+**Authentication**: Required (must be bucket owner)
+
+**URL Parameters**:
+- `id` (UUID, required): Bucket configuration ID
+
+**Response** (200 OK):
+```json
+{
+  "success": true,
+  "credentials": {
+    "accessKeyId": "AKIAIOSFODNN7EXAMPLE",
+    "secretAccessKey": "wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY",
+    "sessionToken": null,
+    "region": "us-east-1",
+    "bucketName": "my-s3-bucket"
+  }
+}
+```
+
+**Error Responses**:
+
+403 Forbidden:
+```json
+{
+  "error": {
+    "code": "FORBIDDEN",
+    "message": "You do not have permission to access this resource",
+    "status": 403
+  }
+}
+```
+
+404 Not Found:
+```json
+{
+  "error": {
+    "code": "NOT_FOUND",
+    "message": "Bucket configuration not found",
+    "status": 404
+  }
+}
+```
+
+**Example**:
+```bash
+curl -X GET http://localhost:3001/api/buckets/123e4567-e89b-12d3-a456-426614174000/credentials \
+  -H "Authorization: Bearer <token>"
+```
+
+---
+
+### 4. Update Bucket Configuration
+
+Update an existing bucket configuration. Credentials can be updated if provided.
+
+**Endpoint**: `PUT /api/buckets/:id`
+
+**Authentication**: Required (must be bucket owner)
+
+**URL Parameters**:
+- `id` (UUID, required): Bucket configuration ID
+
+**Request Body** (all fields optional):
+```json
+{
+  "displayName": "New Display Name",
+  "region": "eu-west-1",
+  "accessKeyId": "AKIANEWKEYEXAMPLE",
+  "secretAccessKey": "newSecretKeyExample",
+  "isDefault": true
+}
+```
+
+**Response** (200 OK):
+```json
+{
+  "success": true,
+  "bucket": {
+    "id": "123e4567-e89b-12d3-a456-426614174000",
+    "displayName": "New Display Name",
+    "bucketName": "my-s3-bucket",
+    "region": "eu-west-1",
+    "isDefault": true,
+    "createdAt": "2024-12-03T10:30:00.000Z",
+    "updatedAt": "2024-12-03T11:45:00.000Z"
+  }
+}
+```
+
+**Notes**:
+- `bucketName` cannot be changed (delete and recreate instead)
+- Setting `isDefault: true` automatically unsets other defaults
+
+**Example**:
+```bash
+curl -X PUT http://localhost:3001/api/buckets/123e4567-e89b-12d3-a456-426614174000 \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer <token>" \
+  -d '{
+    "displayName": "Updated Name",
+    "isDefault": true
+  }'
+```
+
+---
+
+### 5. Delete Bucket Configuration
+
+Delete a bucket configuration. If the deleted bucket was the default, another bucket will be automatically assigned as default.
+
+**Endpoint**: `DELETE /api/buckets/:id`
+
+**Authentication**: Required (must be bucket owner)
+
+**URL Parameters**:
+- `id` (UUID, required): Bucket configuration ID
+
+**Response** (200 OK):
+```json
+{
+  "success": true,
+  "message": "Bucket configuration deleted",
+  "newDefault": {
+    "id": "987fcdeb-51a2-34c5-b678-426614174001",
+    "displayName": "Development Bucket"
+  }
+}
+```
+
+**Notes**:
+- If deleted bucket was the default, response includes `newDefault` with the newly assigned default bucket
+- If no other buckets exist, `newDefault` will be `null`
+
+**Example**:
+```bash
+curl -X DELETE http://localhost:3001/api/buckets/123e4567-e89b-12d3-a456-426614174000 \
+  -H "Authorization: Bearer <token>"
+```
+
+---
+
+### 6. Validate Bucket Access
+
+Test bucket access with provided credentials without saving them.
+
+**Endpoint**: `POST /api/buckets/validate`
+
+**Authentication**: Required
+
+**Request Body**:
+```json
+{
+  "accessKeyId": "AKIAIOSFODNN7EXAMPLE",
+  "secretAccessKey": "wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY",
+  "sessionToken": "optional-session-token",
+  "region": "us-east-1",
+  "bucketName": "my-s3-bucket"
+}
+```
+
+**Response** (200 OK):
+```json
+{
+  "success": true,
+  "message": "Bucket access validated successfully",
+  "bucketInfo": {
+    "name": "my-s3-bucket",
+    "region": "us-east-1",
+    "location": "us-east-1"
+  }
+}
+```
+
+**Error Responses**:
+
+400 Bad Request (access denied):
+```json
+{
+  "error": {
+    "code": "ACCESS_DENIED",
+    "message": "Access denied. Check your credentials and bucket permissions.",
+    "status": 400
+  }
+}
+```
+
+400 Bad Request (bucket not found):
+```json
+{
+  "error": {
+    "code": "BUCKET_NOT_FOUND",
+    "message": "Bucket does not exist or you don't have access to it.",
+    "status": 400
+  }
+}
+```
+
+**Example**:
+```bash
+curl -X POST http://localhost:3001/api/buckets/validate \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer <token>" \
+  -d '{
+    "accessKeyId": "AKIAIOSFODNN7EXAMPLE",
+    "secretAccessKey": "wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY",
+    "region": "us-east-1",
+    "bucketName": "my-bucket"
+  }'
+```
+
+---
+
+### 7. Get Default Bucket
+
+Get the user's default bucket configuration with decrypted credentials.
+
+**Endpoint**: `GET /api/buckets/default`
+
+**Authentication**: Required
+
+**Response** (200 OK):
+```json
+{
+  "success": true,
+  "bucket": {
+    "id": "123e4567-e89b-12d3-a456-426614174000",
+    "displayName": "My Default Bucket",
+    "bucketName": "my-s3-bucket",
+    "region": "us-east-1",
+    "credentials": {
+      "accessKeyId": "AKIAIOSFODNN7EXAMPLE",
+      "secretAccessKey": "wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY",
+      "sessionToken": null
+    }
+  }
+}
+```
+
+**Response** (200 OK, no buckets):
+```json
+{
+  "success": true,
+  "bucket": null,
+  "message": "No bucket configurations found. Please add a bucket."
+}
+```
+
+**Example**:
+```bash
+curl -X GET http://localhost:3001/api/buckets/default \
+  -H "Authorization: Bearer <token>"
+```
+
+---
+
 ## Troubleshooting
 
 ### Database Locked
@@ -424,6 +864,22 @@ If you're being rate limited:
 2. Implement client-side caching
 3. Contact admin for rate limit increase
 
+### Authentication Errors
+
+If you're getting 401 errors:
+1. Check that the token is included in the Authorization header
+2. Verify the token hasn't expired (default: 1 hour)
+3. Ensure the token is from the correct Supabase project
+4. Check if the session has been revoked
+
+### Bucket Access Issues
+
+If bucket validation fails:
+1. Verify AWS credentials are correct
+2. Check bucket exists and is in the specified region
+3. Ensure IAM policy allows HeadBucket and ListBucket operations
+4. Check for bucket policies that might deny access
+
 ---
 
 ## Support
@@ -435,4 +891,5 @@ For issues and questions:
 
 ---
 
-Last Updated: December 1, 2025
+Last Updated: December 3, 2024
+
