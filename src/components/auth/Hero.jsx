@@ -51,14 +51,14 @@ export const Hero = ({ onGetStarted }) => {
       {/* Subtle Grid Pattern */}
       <div className="absolute inset-0 opacity-[0.02] pointer-events-none z-0 bg-[linear-gradient(rgba(255,255,255,0.5)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.5)_1px,transparent_1px)] bg-size-[60px_60px]" />
 
-      <main className="relative z-10 flex flex-col items-center justify-center w-[80%] max-w-6xl mx-auto text-center h-full px-4 sm:px-6 lg:px-8 py-16 sm:py-20">
+      <main className="relative z-10 flex flex-col items-center justify-center w-full sm:w-[90%] lg:w-[80%] max-w-6xl mx-auto text-center h-full px-4 sm:px-6 lg:px-8 py-12 sm:py-16 lg:py-20">
         
         {/* Version Badge */}
         <motion.div
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, ease: [0.4, 0, 0.2, 1] }}
-          className="inline-flex items-center gap-2 px-3 py-1.5 bg-white/[0.03] border border-white/[0.08] rounded-full mb-8"
+          className="inline-flex items-center gap-2 px-3 py-1.5 bg-white/[0.03] border border-white/[0.08] rounded-full mb-6 sm:mb-8"
         >
           <span className="w-1.5 h-1.5 bg-emerald-400 rounded-full animate-pulse" />
           <span className="text-xs text-white/70">v2.0 Now Available</span>
@@ -71,8 +71,9 @@ export const Hero = ({ onGetStarted }) => {
           transition={{ duration: 0.6, delay: 0.1, ease: [0.4, 0, 0.2, 1] }}
           className="mb-6 mx-auto max-w-5xl"
         >
-          <div className="text-[clamp(2.2rem,5.5vw,4.4rem)] leading-[1.15] tracking-[-0.02em] font-normal">
-            <span className="text-white">CloudCore is a purpose-built tool for managing AWS S3 storage</span>
+          <div className="text-[clamp(1.75rem,5.5vw,4.4rem)] leading-[1.15] tracking-[-0.02em] font-normal px-2">
+            <span className="text-white">CloudCore is a </span>
+            <span className="text-white">purpose-built tool for managing AWS S3 storage</span>
           </div>
         </motion.h1>
 
@@ -81,7 +82,7 @@ export const Hero = ({ onGetStarted }) => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.2, ease: [0.4, 0, 0.2, 1] }}
-          className="text-[clamp(1.05rem,1.575vw,1.3125rem)] text-white/60 font-normal mb-10 mx-auto leading-relaxed max-w-4xl"
+          className="text-[clamp(0.95rem,1.575vw,1.3125rem)] text-white/60 font-normal mb-8 sm:mb-10 mx-auto leading-relaxed max-w-4xl px-2"
         >
           Experience lightning-fast uploads, intuitive drag-and-drop interface, and enterprise-grade security—all without leaving your browser. No account needed. No data leaves your browser. Just paste your AWS credentials and start managing your S3 buckets like a pro.
         </motion.p>
@@ -91,11 +92,11 @@ export const Hero = ({ onGetStarted }) => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.4, ease: [0.4, 0, 0.2, 1] }}
-          className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-12"
+          className="flex flex-row items-center justify-center gap-3 w-full max-w-2xl px-4 sm:px-0 mb-10 sm:mb-12"
         >
           <button
             onClick={onGetStarted}
-            className="group bg-white text-black rounded-xl hover:bg-white/90 transition-colors duration-150 px-8 py-3.5 text-base font-medium shadow-lg flex items-center justify-center min-w-[160px]"
+            className="group bg-white text-black rounded-xl hover:bg-white/90 transition-colors duration-150 px-6 py-3.5 text-base font-medium shadow-lg flex items-center justify-center flex-1 min-[901px]:min-w-[160px]"
           >
             Get Started
             <ArrowRight01Icon className="w-4 h-4 ml-2 transition-transform duration-200 group-hover:translate-x-0.5" />
@@ -103,20 +104,20 @@ export const Hero = ({ onGetStarted }) => {
 
           <button
             onClick={scrollToSetupGuide}
-            className="bg-white/[0.05] text-white/90 border border-white/[0.1] rounded-xl hover:bg-white/[0.08] hover:border-white/[0.15] transition-colors duration-150 px-6 py-3.5 text-base flex items-center justify-center min-w-[160px]"
+            className="bg-white/[0.05] text-white/90 border border-white/[0.1] rounded-xl hover:bg-white/[0.08] hover:border-white/[0.15] transition-colors duration-150 px-6 max-[900px]:px-4 py-3.5 text-base flex items-center justify-center flex-1 max-[900px]:flex-initial max-[900px]:min-w-0 min-[901px]:min-w-[160px]"
           >
-            <Book02Icon className="w-4 h-4 mr-2" />
-            Setup Guide
+            <Book02Icon className="w-4 h-4 max-[900px]:mx-0 min-[901px]:mr-2" />
+            <span className="max-[900px]:hidden">Setup Guide</span>
           </button>
 
           <a
             href="https://github.com/ezDecode/S3Zen-CloudCore"
             target="_blank"
             rel="noopener noreferrer"
-            className="bg-white/[0.05] text-white/90 border border-white/[0.1] rounded-xl hover:bg-white/[0.08] hover:border-white/[0.15] transition-colors duration-150 px-6 py-3.5 text-base flex items-center justify-center min-w-[160px]"
+            className="bg-white/[0.05] text-white/90 border border-white/[0.1] rounded-xl hover:bg-white/[0.08] hover:border-white/[0.15] transition-colors duration-150 px-6 max-[900px]:px-4 py-3.5 text-base flex items-center justify-center flex-1 max-[900px]:flex-initial max-[900px]:min-w-0 min-[901px]:min-w-[160px]"
           >
-            <Github01Icon className="w-4 h-4 mr-2" />
-            See the Docs
+            <Github01Icon className="w-4 h-4 max-[900px]:mx-0 min-[901px]:mr-2" />
+            <span className="max-[900px]:hidden">See the Docs</span>
           </a>
         </motion.div>
 
@@ -125,7 +126,7 @@ export const Hero = ({ onGetStarted }) => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.5, ease: [0.4, 0, 0.2, 1] }}
-          className="flex flex-wrap items-center justify-center gap-2 mb-10"
+          className="flex flex-wrap items-center justify-center gap-2 mb-8 sm:mb-10 px-4"
         >
           {features.map((feature, index) => (
             <div
@@ -143,7 +144,7 @@ export const Hero = ({ onGetStarted }) => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.6, ease: [0.4, 0, 0.2, 1] }}
-          className="flex flex-wrap items-center justify-center gap-6 sm:gap-8"
+          className="flex flex-wrap items-center justify-center gap-4 sm:gap-6 lg:gap-8 px-4"
         >
           <div className="flex items-center gap-2">
             <Github01Icon className="w-4 h-4 text-white/40" />
