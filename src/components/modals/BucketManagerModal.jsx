@@ -30,6 +30,7 @@ export const BucketManagerModal = ({ isOpen, onClose, onBucketAdded }) => {
     const [editingId, setEditingId] = useState(null);
     const [showForm, setShowForm] = useState(false);
     const [showSecrets, setShowSecrets] = useState({});
+    const [deleteConfirm, setDeleteConfirm] = useState(null); // { id, name }
 
     const [formData, setFormData] = useState({
         name: '',
@@ -145,16 +146,24 @@ export const BucketManagerModal = ({ isOpen, onClose, onBucketAdded }) => {
                 description: formData.description
             };
             
+            let savedBucket;
             if (editingId) {
-                await bucketManagerService.updateBucket(editingId, bucketData);
+                const response = await bucketManagerService.updateBucket(editingId, bucketData);
+                savedBucket = response.bucket;
                 toast.success('Bucket updated');
             } else {
-                await bucketManagerService.createBucket(bucketData);
+                const response = await bucketManagerService.createBucket(bucketData);
+                savedBucket = response.bucket;
                 toast.success('Bucket added');
             }
+            
             resetForm();
-            loadBuckets();
-            onBucketAdded?.();
+            await loadBuckets();
+            
+            // Pass the saved bucket to parent for auto-selection
+            if (onBucketAdded && savedBucket) {
+                onBucketAdded(savedBucket);
+            }
         } catch (error) {
             console.error('Failed to save bucket:', error);
             toast.error(error.message || 'Failed to save bucket');
@@ -163,13 +172,14 @@ export const BucketManagerModal = ({ isOpen, onClose, onBucketAdded }) => {
         }
     };
 
-    const handleDeleteBucket = async (bucketId) => {
-        if (!confirm('Delete this bucket? This cannot be undone.')) return;
+    const handleDeleteBucket = async () => {
+        if (!deleteConfirm) return;
 
         try {
             setIsLoading(true);
-            await bucketManagerService.deleteBucket(bucketId);
+            await bucketManagerService.deleteBucket(deleteConfirm.id);
             toast.success('Bucket deleted');
+            setDeleteConfirm(null);
             loadBuckets();
         } catch (error) {
             console.error('Failed to delete bucket:', error);
@@ -234,7 +244,7 @@ export const BucketManagerModal = ({ isOpen, onClose, onBucketAdded }) => {
                                                         <Edit02Icon className="w-4 h-4" />
                                                     </button>
                                                     <button
-                                                        onClick={() => handleDeleteBucket(bucket.id)}
+                                                        onClick={() => setDeleteConfirm({ id: bucket.id, name: bucket.displayName })}
                                                         className="p-2 hover:bg-red-900/30 rounded transition-colors text-red-400"
                                                         title="Delete"
                                                     >
@@ -426,6 +436,35 @@ export const BucketManagerModal = ({ isOpen, onClose, onBucketAdded }) => {
                     </AnimatePresence>
                 </div>
             </DialogContent>
+
+            {/* Delete Confirmation Dialog */}
+            <Dialog open={!!deleteConfirm} onOpenChange={() => setDeleteConfirm(null)}>
+                <DialogContent className="max-w-md bg-zinc-900 border-zinc-800">
+                    <DialogHeader>
+                        <DialogTitle className="text-red-400">Delete Bucket</DialogTitle>
+                        <DialogDescription>
+                            Are you sure you want to delete "{deleteConfirm?.name}"? This action cannot be undone.
+                        </DialogDescription>
+                    </DialogHeader>
+                    <div className="flex gap-3 justify-end mt-4">
+                        <Button
+                            onClick={() => setDeleteConfirm(null)}
+                            variant="outline"
+                            disabled={isLoading}
+                        >
+                            Cancel
+                        </Button>
+                        <Button
+                            onClick={handleDeleteBucket}
+                            disabled={isLoading}
+                            className="bg-red-600 hover:bg-red-700 gap-2"
+                        >
+                            {isLoading && <Loading03Icon className="w-4 h-4 animate-spin" />}
+                            Delete
+                        </Button>
+                    </div>
+                </DialogContent>
+            </Dialog>
         </Dialog>
     );
 };

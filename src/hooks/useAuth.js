@@ -16,13 +16,17 @@ export const useAuth = () => {
 
     // Initialize Supabase auth session on mount
     useEffect(() => {
+        let mounted = true;
+
         const initAuth = async () => {
             try {
                 // Get current session
                 const { data: { session }, error } = await supabaseAuth.getSession();
                 
+                if (!mounted) return;
+
                 if (error) {
-                    console.error('Session error:', error);
+                    console.error('[Auth] Session error:', error);
                     setIsLoading(false);
                     return;
                 }
@@ -37,8 +41,10 @@ export const useAuth = () => {
                 
                 setIsLoading(false);
             } catch (error) {
-                console.error('Auth initialization error:', error);
-                setIsLoading(false);
+                console.error('[Auth] Initialization error:', error);
+                if (mounted) {
+                    setIsLoading(false);
+                }
             }
         };
 
@@ -46,26 +52,26 @@ export const useAuth = () => {
 
         // Listen for auth state changes
         const { data: { subscription } } = supabaseAuth.onAuthStateChange(async (event, session) => {
+            if (!mounted) return;
+
             console.log('[Auth] State changed:', event, session ? 'with session' : 'no session');
             
             // Handle all auth events consistently
-            if (event === 'SIGNED_IN' && session?.user) {
+            if (session?.user) {
+                // Any event with a valid session should keep user logged in
                 setUser(session.user);
                 setIsLoggedIn(true);
+                setIsLoading(false);
             } else if (event === 'SIGNED_OUT') {
+                // Only clear state on explicit sign out
                 setUser(null);
                 setIsLoggedIn(false);
-            } else if (event === 'TOKEN_REFRESHED' && session?.user) {
-                setUser(session.user);
-                setIsLoggedIn(true);
-            } else if (event === 'INITIAL_SESSION' && session?.user) {
-                // Handle INITIAL_SESSION to ensure state is set
-                setUser(session.user);
-                setIsLoggedIn(true);
+                setIsLoading(false);
             }
         });
 
         return () => {
+            mounted = false;
             subscription?.unsubscribe();
         };
     }, []);

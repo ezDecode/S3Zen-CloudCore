@@ -164,6 +164,11 @@ class BucketManagerService {
             body: JSON.stringify(data)
         });
     }
+
+    // Get bucket count for current user
+    async getBucketCount() {
+        return this.makeRequest('/api/buckets/count');
+    }
 }
 
 export default new BucketManagerService();

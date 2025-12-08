@@ -15,8 +15,9 @@
 
 import { useState, useCallback, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Upload02Icon } from 'hugeicons-react';
+import { Upload02Icon, Database02Icon } from 'hugeicons-react';
 import { toast } from 'sonner';
+import { Button } from '../ui/button';
 
 // Components
 import { FileExplorerNav } from './components/FileExplorerNav';
@@ -48,7 +49,8 @@ export const FileExplorer = ({
     onDeleteModal,
     onPreviewModal,
     onCreateFolderModal,
-    onDetailsModal
+    onDetailsModal,
+    onOpenBucketManager
 }) => {
     const [items, setItems] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
@@ -66,6 +68,8 @@ export const FileExplorer = ({
     });
     const [isConnectingBucket, setIsConnectingBucket] = useState(false);
     const [isS3Connected, setIsS3Connected] = useState(false);
+    const [bucketCount, setBucketCount] = useState(null);
+    const [isCheckingBuckets, setIsCheckingBuckets] = useState(true);
     const searchInputRef = useRef(null);
 
     // Navigation & Selection
@@ -119,6 +123,33 @@ export const FileExplorer = ({
     useEffect(() => {
         currentPathRef.current = currentPath;
     }, [currentPath]);
+
+    // Check bucket count on mount for onboarding flow
+    useEffect(() => {
+        const checkBucketCount = async () => {
+            if (!user) {
+                setIsCheckingBuckets(false);
+                return;
+            }
+
+            try {
+                setIsCheckingBuckets(true);
+                const response = await bucketManagerService.getBucketCount();
+                const count = response.count || 0;
+                setBucketCount(count);
+                
+                console.log('[FileExplorer] Bucket count:', count);
+            } catch (error) {
+                console.error('[FileExplorer] Failed to check bucket count:', error);
+                // On error, assume buckets might exist to avoid blocking
+                setBucketCount(null);
+            } finally {
+                setIsCheckingBuckets(false);
+            }
+        };
+
+        checkBucketCount();
+    }, [user]);
 
     // Persist bucket selection to localStorage
     useEffect(() => {
@@ -400,6 +431,7 @@ export const FileExplorer = ({
                 onSetMobileDrawerOpen={setMobileDrawerOpen}
                 onFileUpload={handleFileUpload}
                 onCreateFolder={handleCreateFolder}
+                disabled={!isS3Connected || bucketCount === 0}
             />
 
             {/* Main Content Area with Sidebar */}
@@ -442,25 +474,48 @@ export const FileExplorer = ({
 
                 {/* File List */}
                 <main className="flex-1 flex flex-col overflow-hidden">
-                    <FileList
-                        items={sortedItems}
-                        sortBy={sortBy}
-                        sortOrder={sortOrder}
-                        onSort={handleSort}
-                        selectedItems={selectedItems}
-                        onSelectItem={handleSelectItem}
-                        onOpenFolder={handleOpenFolder}
-                        onDownload={handleSingleDownload}
-                        onShare={onShareModal}
-                        onRename={(item) => onRenameModal(item, handleRename)}
-                        onDelete={(item) => handleDelete([item])}
-                        onPreview={(item) => handlePreview(item)}
-                        onDetails={onDetailsModal}
-                        isLoading={isLoading || isConnectingBucket}
-                        viewMode={viewMode}
-                        favorites={favorites}
-                        onToggleFavorite={toggleFavorite}
-                    />
+                    {/* Onboarding message when no buckets configured */}
+                    {bucketCount === 0 && !isCheckingBuckets ? (
+                        <div className="flex-1 flex items-center justify-center p-8">
+                            <div className="text-center max-w-md">
+                                <div className="mb-4">
+                                    <Database02Icon className="w-16 h-16 mx-auto text-zinc-600" />
+                                </div>
+                                <h3 className="text-xl font-medium mb-2">No bucket added</h3>
+                                <p className="text-zinc-400 mb-6">
+                                    Configure your first S3 bucket to start managing files.
+                                </p>
+                                {onOpenBucketManager && (
+                                    <Button
+                                        onClick={onOpenBucketManager}
+                                        className="bg-emerald-600 hover:bg-emerald-700"
+                                    >
+                                        Configure Bucket
+                                    </Button>
+                                )}
+                            </div>
+                        </div>
+                    ) : (
+                        <FileList
+                            items={sortedItems}
+                            sortBy={sortBy}
+                            sortOrder={sortOrder}
+                            onSort={handleSort}
+                            selectedItems={selectedItems}
+                            onSelectItem={handleSelectItem}
+                            onOpenFolder={handleOpenFolder}
+                            onDownload={handleSingleDownload}
+                            onShare={onShareModal}
+                            onRename={(item) => onRenameModal(item, handleRename)}
+                            onDelete={(item) => handleDelete([item])}
+                            onPreview={(item) => handlePreview(item)}
+                            onDetails={onDetailsModal}
+                            isLoading={isLoading || isConnectingBucket || isCheckingBuckets}
+                            viewMode={viewMode}
+                            favorites={favorites}
+                            onToggleFavorite={toggleFavorite}
+                        />
+                    )}
                 </main>
             </div>
 

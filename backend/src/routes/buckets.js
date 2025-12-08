@@ -240,6 +240,28 @@ router.get('/', requireAuth(), async (req, res) => {
     }
 });
 
+// Get bucket count for current user (must be before /:id route)
+router.get('/count', requireAuth(), async (req, res) => {
+    try {
+        const userId = req.user.id;
+        const count = await bucketService.getBucketCount(userId);
+
+        res.json({
+            success: true,
+            count
+        });
+    } catch (error) {
+        console.error('[BucketRoutes] Get count error:', error.message);
+        res.status(500).json({
+            error: {
+                code: 'SERVER_ERROR',
+                message: 'An error occurred while fetching bucket count',
+                status: 500
+            }
+        });
+    }
+});
+
 router.get('/default', requireAuth(), async (req, res) => {
     try {
         const userId = req.user.id;

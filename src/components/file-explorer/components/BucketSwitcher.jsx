@@ -17,7 +17,7 @@ import {
 } from '../../ui/dropdown-menu';
 import bucketManagerService from '../../../services/bucketManagerService';
 
-export const BucketSwitcher = ({ currentBucket, onBucketChange, onOpenManager, isAuthenticated }) => {
+export const BucketSwitcher = ({ currentBucket, onBucketChange, onOpenManager, isAuthenticated, refreshTrigger }) => {
     const [buckets, setBuckets] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
     const hasLoadedOnceRef = useRef(false);
@@ -37,14 +37,22 @@ export const BucketSwitcher = ({ currentBucket, onBucketChange, onOpenManager, i
         }
     }, [isAuthenticated]);
 
-    const loadBuckets = async () => {
+    // Refresh buckets when refreshTrigger changes
+    useEffect(() => {
+        if (refreshTrigger && hasLoadedOnceRef.current) {
+            console.log('[BucketSwitcher] Refresh triggered, reloading buckets');
+            loadBuckets(true); // Force reload
+        }
+    }, [refreshTrigger]);
+
+    const loadBuckets = async (forceReload = false) => {
         if (!isAuthenticated) {
             console.log('[BucketSwitcher] Not authenticated, skipping bucket load');
             return;
         }
 
-        // Prevent duplicate requests
-        if (loadingRef.current || hasLoadedOnceRef.current) {
+        // Prevent duplicate requests unless force reload
+        if (!forceReload && (loadingRef.current || hasLoadedOnceRef.current)) {
             console.log('[BucketSwitcher] Already loading or loaded, skipping');
             return;
         }
@@ -115,17 +123,17 @@ export const BucketSwitcher = ({ currentBucket, onBucketChange, onOpenManager, i
                         <ArrowDown01Icon className="w-4 h-4 opacity-50" />
                     </button>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="w-64 bg-zinc-900 border-zinc-800">
-                    <DropdownMenuLabel className="text-zinc-400">
+                <DropdownMenuContent align="end" className="w-64 bg-zinc-900 border-zinc-800 p-2">
+                    <DropdownMenuLabel className="text-zinc-400 px-2 py-1.5">
                         {isLoading ? 'Loading buckets...' : `${buckets.length} buckets`}
                     </DropdownMenuLabel>
-                    <DropdownMenuSeparator className="bg-zinc-800" />
+                    <DropdownMenuSeparator className="bg-zinc-800 my-2" />
 
                     {buckets.length > 0 ? (
                         buckets.map((bucket) => (
                             <DropdownMenuItem
                                 key={bucket.id}
-                                className="cursor-pointer hover:bg-zinc-800 focus:bg-zinc-800"
+                                className="cursor-pointer hover:bg-zinc-800 focus:bg-zinc-800 rounded-md px-3 py-2 mb-1"
                                 onSelect={() => handleSelectBucket(bucket)}
                             >
                                 <div className="flex items-center gap-2 w-full">
@@ -147,9 +155,9 @@ export const BucketSwitcher = ({ currentBucket, onBucketChange, onOpenManager, i
                         </div>
                     )}
 
-                    <DropdownMenuSeparator className="bg-zinc-800" />
+                    <DropdownMenuSeparator className="bg-zinc-800 my-2" />
                     <DropdownMenuItem
-                        className="cursor-pointer hover:bg-zinc-800 focus:bg-zinc-800 text-emerald-400"
+                        className="cursor-pointer hover:bg-zinc-800 focus:bg-zinc-800 text-emerald-400 rounded-md px-3 py-2"
                         onSelect={onOpenManager}
                     >
                         + Add or Manage Buckets

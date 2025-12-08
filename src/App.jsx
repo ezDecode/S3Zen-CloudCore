@@ -14,6 +14,7 @@ import { LandingPage } from './components/auth/LandingPage';
 import { SupabaseAuthModal } from './components/auth/SupabaseAuthModal';
 import { FileExplorer } from './components/file-explorer/FileExplorer';
 import { ShareModal, DeleteConfirmModal, CreateFolderModal, RenameModal, DetailsModal, PreviewModal } from './components/modals';
+import { BucketManagerModal } from './components/modals/BucketManagerModal';
 import { useAuth } from './hooks/useAuth';
 import { useModals } from './hooks/useModals';
 import { useSessionTimeout } from './hooks/useSessionTimeout';
@@ -42,6 +43,9 @@ function AppContent() {
     handleLogout,
     handleGetStarted
   } = useAuth();
+
+  // Bucket Manager Modal state
+  const [showBucketManager, setShowBucketManager] = useState(false);
 
   // Preview Modal state
   const [previewState, setPreviewState] = useState({
@@ -158,6 +162,7 @@ function AppContent() {
           onRenameModal={handleRenameModal}
           onPreviewModal={handlePreviewModal}
           onDetailsModal={handleDetailsModal}
+          onOpenBucketManager={() => setShowBucketManager(true)}
         />
       )}
 
@@ -216,6 +221,16 @@ function AppContent() {
         onPrevious={previousPreviewFile}
         currentIndex={previewState.currentIndex}
         totalFiles={previewState.items.length}
+      />
+
+      {/* Bucket Manager Modal */}
+      <BucketManagerModal
+        isOpen={showBucketManager}
+        onClose={() => setShowBucketManager(false)}
+        onBucketAdded={(newBucket) => {
+          setShowBucketManager(false);
+          // FileExplorer will auto-select the new bucket via BucketSwitcher
+        }}
       />
 
       {/* Toaster for notifications */}

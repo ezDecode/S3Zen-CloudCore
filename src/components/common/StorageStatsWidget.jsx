@@ -65,9 +65,9 @@ export const StorageStatsWidget = memo(({
             </div>
 
             {error ? (
-                <div className="flex items-center gap-2 text-red-400 text-sm">
+                <div className="flex items-center gap-2 text-zinc-500 text-sm">
                     <AlertCircleIcon className="w-4 h-4" />
-                    <span>Failed to load stats</span>
+                    <span>No files uploaded</span>
                 </div>
             ) : (
                 <>

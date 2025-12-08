@@ -54,7 +54,8 @@ export const FileExplorerActionBar = ({
     onSetViewMode,
     onSetMobileDrawerOpen,
     onFileUpload,
-    onCreateFolder
+    onCreateFolder,
+    disabled = false
 }) => {
     return (
         <div className="flex flex-row items-center justify-between px-3 sm:px-6 py-2 sm:py-3 border-b border-white/5 bg-zinc-950/50 z-10 gap-2">
@@ -66,7 +67,11 @@ export const FileExplorerActionBar = ({
                     <div className="hidden sm:block">
                         <DropdownMenu>
                             <DropdownMenuTrigger asChild>
-                                <Button variant="default" className="gap-2 bg-white text-black hover:bg-zinc-200 font-normal">
+                                <Button 
+                                    variant="default" 
+                                    className="gap-2 bg-white text-black hover:bg-zinc-200 font-normal disabled:opacity-50 disabled:cursor-not-allowed"
+                                    disabled={disabled}
+                                >
                                     <PlusSignIcon className="w-4.5 h-4.5" />
                                     New
                                 </Button>
@@ -75,6 +80,7 @@ export const FileExplorerActionBar = ({
                                 <DropdownMenuItem
                                     className="cursor-pointer hover:bg-zinc-800 focus:bg-zinc-800"
                                     onSelect={() => document.getElementById('desktop-file-upload').click()}
+                                    disabled={disabled}
                                 >
                                     <Upload02Icon className="w-4 h-4 mr-2" />
                                     Upload File
@@ -82,6 +88,7 @@ export const FileExplorerActionBar = ({
                                 <DropdownMenuItem
                                     className="cursor-pointer hover:bg-zinc-800 focus:bg-zinc-800"
                                     onSelect={onCreateFolder}
+                                    disabled={disabled}
                                 >
                                     <FolderAddIcon className="w-4 h-4 mr-2" />
                                     New Folder
@@ -94,6 +101,7 @@ export const FileExplorerActionBar = ({
                             multiple
                             onChange={onFileUpload}
                             className="hidden"
+                            disabled={disabled}
                         />
                     </div>
 
@@ -101,7 +109,12 @@ export const FileExplorerActionBar = ({
                     <div className="sm:hidden">
                         <Drawer open={mobileDrawerOpen} onOpenChange={onSetMobileDrawerOpen}>
                             <DrawerTrigger asChild>
-                                <Button variant="default" size="icon" className="bg-white text-black hover:bg-zinc-200 rounded-lg">
+                                <Button 
+                                    variant="default" 
+                                    size="icon" 
+                                    className="bg-white text-black hover:bg-zinc-200 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed"
+                                    disabled={disabled}
+                                >
                                     <PlusSignIcon className="w-4.5 h-4.5" />
                                 </Button>
                             </DrawerTrigger>

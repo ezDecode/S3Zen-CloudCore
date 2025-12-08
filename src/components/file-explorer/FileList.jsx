@@ -98,7 +98,7 @@ export const FileList = memo(({
                     transition={{ delay: 0.2 }}
                     className="text-center space-y-3"
                 >
-                    <h3 className="text-2xl font-normal text-white">This folder is empty</h3>
+                    <h3 className="text-2xl font-normal text-white">No files uploaded</h3>
                     <p className="text-sm text-zinc-400 max-w-md leading-relaxed">
                         Upload files or create a new folder to get started with your cloud storage
                     </p>

@@ -43,6 +43,7 @@ export const FileExplorerNav = forwardRef(({
 }, ref) => {
     const pathParts = currentPath.split('/').filter(Boolean);
     const [showBucketManager, setShowBucketManager] = useState(false);
+    const [bucketRefreshTrigger, setBucketRefreshTrigger] = useState(0);
 
     return (
         <>
@@ -54,6 +55,7 @@ export const FileExplorerNav = forwardRef(({
                         onBucketChange={onBucketChange}
                         onOpenManager={() => setShowBucketManager(true)}
                         isAuthenticated={isAuthenticated}
+                        refreshTrigger={bucketRefreshTrigger}
                     />
                 </div>
 
@@ -191,9 +193,14 @@ export const FileExplorerNav = forwardRef(({
             <BucketManagerModal
                 isOpen={showBucketManager}
                 onClose={() => setShowBucketManager(false)}
-                onBucketAdded={() => {
+                onBucketAdded={(newBucket) => {
                     setShowBucketManager(false);
-                    // Reload buckets
+                    // Trigger bucket list refresh
+                    setBucketRefreshTrigger(prev => prev + 1);
+                    // Auto-select the newly added bucket
+                    if (newBucket && onBucketChange) {
+                        onBucketChange(newBucket);
+                    }
                 }}
             />
         </>
