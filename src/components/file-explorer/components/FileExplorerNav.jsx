@@ -115,7 +115,7 @@ export const FileExplorerNav = forwardRef(({
                                             <DropdownMenuTrigger className="flex items-center gap-1 outline-none">
                                                 <BreadcrumbEllipsis className="h-4 w-4" />
                                             </DropdownMenuTrigger>
-                                            <DropdownMenuContent align="start" className="w-56 bg-[#0a0a0a]/95 backdrop-blur-xl border-white/[0.08]">
+                                            <DropdownMenuContent align="start" className="w-56 bg-[#0a0a0a]/95 backdrop-blur-xl border-white/8">
                                                 {pathParts.slice(1, -1).map((part, index) => {
                                                     const actualIndex = index + 1;
                                                     const path = pathParts.slice(0, actualIndex + 1).join('/') + '/';
@@ -123,7 +123,7 @@ export const FileExplorerNav = forwardRef(({
                                                         <DropdownMenuItem
                                                             key={path}
                                                             onClick={() => onNavigate(path)}
-                                                            className="cursor-pointer hover:bg-white/[0.04] focus:bg-white/[0.04]"
+                                                            className="cursor-pointer hover:bg-white/4 focus:bg-white/4"
                                                         >
                                                             {part}
                                                         </DropdownMenuItem>
@@ -158,10 +158,10 @@ export const FileExplorerNav = forwardRef(({
                         />
                         {/* Keyboard hint */}
                         <div className="absolute right-2 sm:right-3 top-1/2 -translate-y-1/2 hidden sm:flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity duration-150">
-                            <kbd className="px-1.5 py-0.5 text-[10px] text-white/40 bg-white/[0.04] border border-white/[0.08] rounded">
+                            <kbd className="px-1.5 py-0.5 text-[10px] text-white/40 bg-white/4 border border-white/8 rounded">
                                 {navigator.platform.toUpperCase().indexOf('MAC') >= 0 ? '⌘' : 'Ctrl'}
                             </kbd>
-                            <kbd className="px-1.5 py-0.5 text-[10px] text-white/40 bg-white/[0.04] border border-white/[0.08] rounded">
+                            <kbd className="px-1.5 py-0.5 text-[10px] text-white/40 bg-white/4 border border-white/8 rounded">
                                 F
                             </kbd>
                         </div>
@@ -170,7 +170,7 @@ export const FileExplorerNav = forwardRef(({
                     {/* Premium Refresh */}
                     <button
                         onClick={onRefresh}
-                        className="hidden sm:flex p-1.5 sm:p-2 rounded-lg text-white/40 hover:text-white/70 hover:bg-white/[0.04] transition-colors duration-150 shrink-0"
+                        className="hidden sm:flex p-1.5 sm:p-2 rounded-lg text-white/40 hover:text-white/70 hover:bg-white/4 transition-colors duration-150 shrink-0"
                         title="Refresh"
                     >
                         <Loading03Icon className="w-4.5 h-4.5" />
@@ -179,7 +179,7 @@ export const FileExplorerNav = forwardRef(({
                     {/* Premium Logout */}
                     <button
                         onClick={onLogout}
-                        className="p-1.5 sm:p-2 rounded-lg text-white/40 hover:text-white/70 hover:bg-white/[0.04] transition-colors duration-150 shrink-0"
+                        className="p-1.5 sm:p-2 rounded-lg text-white/40 hover:text-white/70 hover:bg-white/4 transition-colors duration-150 shrink-0"
                         title="Logout"
                     >
                         <Logout01Icon className="w-4 sm:w-4.5 h-4 sm:h-4.5" />

@@ -42,7 +42,7 @@ export const Hero = ({ onGetStarted }) => {
         <div className="absolute w-[1000px] h-[1000px] bg-gradient-to-br from-purple-500/[0.08] via-blue-500/[0.05] to-transparent rounded-full blur-3xl top-0 left-1/4 -translate-x-1/2 -translate-y-1/2 animate-pulse-slow" />
         
         {/* Secondary gradient orb */}
-        <div className="absolute w-[800px] h-[800px] bg-gradient-to-tl from-cyan-500/[0.06] via-emerald-500/[0.04] to-transparent rounded-full blur-3xl bottom-0 right-1/4 translate-x-1/2 translate-y-1/2 animate-pulse-slow" style={{ animationDelay: '1s' }} />
+        <div className="absolute w-[800px] h-[800px] bg-gradient-to-tl from-cyan-500/[0.06] via-emerald-500/4 to-transparent rounded-full blur-3xl bottom-0 right-1/4 translate-x-1/2 translate-y-1/2 animate-pulse-slow" style={{ animationDelay: '1s' }} />
         
         {/* Accent orb */}
         <div className="absolute w-[600px] h-[600px] bg-white/[0.02] rounded-full blur-2xl top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2" />

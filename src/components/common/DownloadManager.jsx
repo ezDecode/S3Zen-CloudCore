@@ -37,7 +37,7 @@ export const DownloadManager = ({ downloads, onRemove, onClear }) => {
                         {downloads.length > 0 && (
                             <button
                                 onClick={onClear}
-                                className="p-1.5 text-zinc-400 hover:text-white hover:bg-white/[0.04] rounded-lg transition-colors duration-150 text-xs font-normal"
+                                className="p-1.5 text-zinc-400 hover:text-white hover:bg-white/4 rounded-lg transition-colors duration-150 text-xs font-normal"
                                 title="Clear all"
                             >
                                 Clear
@@ -92,7 +92,7 @@ export const DownloadManager = ({ downloads, onRemove, onClear }) => {
                                     </div>
                                     <div className="h-1.5 w-full bg-white/5 rounded-full overflow-hidden">
                                         <motion.div
-                                            className="h-full bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 rounded-full"
+                                            className="h-full bg-linear-to-r from-blue-500 via-purple-500 to-pink-500 rounded-full"
                                             initial={{ width: 0 }}
                                             animate={{ width: `${download.progress}%` }}
                                             transition={{ duration: 0.3, ease: 'easeOut' }}

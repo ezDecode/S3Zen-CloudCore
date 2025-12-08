@@ -60,7 +60,7 @@ export const FavoritesPanel = memo(({
                             {favorites.map((item) => (
                                 <motion.div
                                     key={item.key}
-                                    className="group flex items-center gap-2 px-2 py-2 rounded-lg hover:bg-white/[0.04] cursor-pointer transition-colors duration-150"
+                                    className="group flex items-center gap-2 px-2 py-2 rounded-lg hover:bg-white/4 cursor-pointer transition-colors duration-150"
                                     onClick={() => onOpenFile?.(item)}
                                 >
                                     <FileIcon 

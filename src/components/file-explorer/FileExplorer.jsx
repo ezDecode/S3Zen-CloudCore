@@ -378,7 +378,7 @@ export const FileExplorer = ({
                             className="hidden lg:flex flex-col border-r border-white/5 bg-zinc-950/50 overflow-hidden"
                         >
                             {/* Favorites Panel */}
-                            <div className="flex-shrink-0">
+                            <div className="shrink-0">
                                 <FavoritesPanel
                                     favorites={getSortedFavorites()}
                                     onOpenFile={handleOpenFavorite}

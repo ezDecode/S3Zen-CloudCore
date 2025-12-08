@@ -114,7 +114,7 @@ export const BucketSwitcher = ({ currentBucket, onBucketChange, onOpenManager, i
                                         <div className="text-xs text-zinc-500">{bucket.bucketName}</div>
                                     </div>
                                     {bucket.isDefault && (
-                                        <Tick01Icon className="w-4 h-4 text-emerald-500 flex-shrink-0" />
+                                        <Tick01Icon className="w-4 h-4 text-emerald-500 shrink-0" />
                                     )}
                                 </div>
                             </DropdownMenuItem>
