@@ -11,7 +11,7 @@
 import { useState, useEffect } from 'react';
 import ErrorBoundary from './components/ErrorBoundary';
 import { LandingPage } from './components/auth/LandingPage';
-import { AuthModal } from './components/auth/AuthModal';
+import { SupabaseAuthModal } from './components/auth/SupabaseAuthModal';
 import { FileExplorer } from './components/file-explorer/FileExplorer';
 import { ShareModal, DeleteConfirmModal, CreateFolderModal, RenameModal, DetailsModal, PreviewModal } from './components/modals';
 import { useAuth } from './hooks/useAuth';
@@ -32,10 +32,13 @@ function AppContent() {
 
   // Authentication state and handlers
   const {
+    user,
     isLoggedIn,
+    isLoading,
     showAuthModal,
     setShowAuthModal,
-    handleAuthenticate,
+    handleSignUp,
+    handleSignIn,
     handleLogout,
     handleGetStarted
   } = useAuth();
@@ -129,19 +132,25 @@ function AppContent() {
       {/* ============================================
           MAIN VIEW - Hero or File Explorer
           ============================================ */}
-      {!isLoggedIn ? (
+      {isLoading ? (
+        <div className="min-h-screen bg-black flex items-center justify-center">
+          <div className="text-white/50">Loading...</div>
+        </div>
+      ) : !isLoggedIn ? (
         <>
           <LandingPage
             onGetStarted={handleGetStarted}
           />
-          <AuthModal
+          <SupabaseAuthModal
             isOpen={showAuthModal}
             onClose={() => setShowAuthModal(false)}
-            onAuthenticate={handleAuthenticate}
+            onSignUp={handleSignUp}
+            onSignIn={handleSignIn}
           />
         </>
       ) : (
         <FileExplorer
+          user={user}
           onLogout={handleLogout}
           onShareModal={handleShareModal}
           onDeleteModal={handleDeleteModal}

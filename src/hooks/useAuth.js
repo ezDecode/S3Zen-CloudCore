@@ -1,150 +1,163 @@
 /**
- * useAuth Hook - Secure Authentication Management
- * Manages authentication state with encrypted storage
+ * useAuth Hook - Supabase Authentication Management
+ * Manages user authentication with Supabase Auth
+ * Bucket configurations are managed separately after login
  */
 
 import { useState, useEffect, useCallback } from 'react';
 import { toast } from 'sonner';
-import {
-    initializeS3Client,
-    validateCredentials
-} from '../services/aws/s3Service';
-import {
-    initializeAuth,
-    isAuthenticated,
-    saveCredentials,
-    saveBucketConfig,
-    getCredentials,
-    getBucketConfig,
-    clearAuth,
-    isCryptoInitialized
-} from '../utils/authUtils';
+import { supabaseAuth } from '../services/supabaseClient';
 
 export const useAuth = () => {
+    const [user, setUser] = useState(null);
     const [isLoggedIn, setIsLoggedIn] = useState(false);
     const [showAuthModal, setShowAuthModal] = useState(false);
-    const [authInitialized, setAuthInitialized] = useState(false);
+    const [isLoading, setIsLoading] = useState(true);
 
-    // Initialize secure auth system on mount
+    // Initialize Supabase auth session on mount
     useEffect(() => {
-        const init = async () => {
+        const initAuth = async () => {
             try {
-                // Initialize encryption system
-                const result = await initializeAuth();
-                if (!result.success) {
-                    console.error('Failed to initialize auth system:', result.error);
-                    toast.error('Security system initialization failed');
+                // Get current session
+                const { data: { session }, error } = await supabaseAuth.getSession();
+                
+                if (error) {
+                    console.error('Session error:', error);
+                    setIsLoading(false);
                     return;
                 }
 
-                setAuthInitialized(true);
-
-                // Check if user was previously authenticated
-                if (isAuthenticated()) {
-                    const credentials = getCredentials();
-                    const bucketConfig = getBucketConfig();
-
-                    if (credentials && bucketConfig) {
-                        // Re-initialize S3 client with stored credentials
-                        initializeS3Client(
-                            credentials,
-                            bucketConfig.region,
-                            bucketConfig.bucketName
-                        );
-                        setIsLoggedIn(true);
-                    } else {
-                        // Clear invalid session
-                        clearAuth();
-                    }
+                if (session?.user) {
+                    setUser(session.user);
+                    setIsLoggedIn(true);
                 }
+                
+                setIsLoading(false);
             } catch (error) {
                 console.error('Auth initialization error:', error);
-                toast.error('Failed to initialize secure storage');
+                setIsLoading(false);
             }
         };
 
-        init();
+        initAuth();
+
+        // Listen for auth state changes
+        const { data: { subscription } } = supabaseAuth.onAuthStateChange(async (event, session) => {
+            console.log('Auth state changed:', event);
+            
+            // Only update state for actual sign in/out events, not initial session
+            if (event === 'SIGNED_IN' && session?.user) {
+                setUser(session.user);
+                setIsLoggedIn(true);
+            } else if (event === 'SIGNED_OUT') {
+                setUser(null);
+                setIsLoggedIn(false);
+            } else if (event === 'TOKEN_REFRESHED' && session?.user) {
+                setUser(session.user);
+                setIsLoggedIn(true);
+            }
+            // Ignore INITIAL_SESSION to prevent premature logout
+        });
+
+        return () => {
+            subscription?.unsubscribe();
+        };
     }, []);
 
-    // Handle authentication
-    const handleAuthenticate = useCallback(async (formData) => {
-        // Ensure auth system is initialized (re-init if needed after logout)
-        if (!authInitialized || !isCryptoInitialized()) {
-            console.log('Re-initializing auth system...');
-            const result = await initializeAuth();
-            if (!result.success) {
-                throw new Error('Failed to initialize security system. Please refresh.');
-            }
-            setAuthInitialized(true);
-        }
-
+    // Sign up new user
+    const handleSignUp = useCallback(async (email, password) => {
         try {
-            const credentials = {
-                accessKeyId: formData.accessKeyId,
-                secretAccessKey: formData.secretAccessKey,
-                sessionToken: formData.sessionToken || null
-            };
+            const { data, error } = await supabaseAuth.signUp({
+                email,
+                password,
+                options: {
+                    // Skip email confirmation for development
+                    emailRedirectTo: window.location.origin,
+                }
+            });
 
-            // Initialize S3 client
-            const initResult = initializeS3Client(
-                credentials,
-                formData.region,
-                formData.bucketName
-            );
+            if (error) throw error;
 
-            if (!initResult.success) {
-                throw new Error(initResult.error);
+            if (data?.user) {
+                // Check if email confirmation is required
+                if (data.session) {
+                    toast.success('Account created successfully!');
+                    setShowAuthModal(false);
+                } else {
+                    toast.success('Account created! Please check your email to verify.');
+                }
+                return { success: true, user: data.user };
             }
-
-            // Validate credentials with bucket access + STS identity check
-            const validateResult = await validateCredentials();
-            if (!validateResult.success) {
-                throw new Error(validateResult.error);
-            }
-
-            // Display identity information
-            if (validateResult.identity) {
-                console.log('✓ Authenticated as:', validateResult.identity.arn);
-            }
-
-            // Save credentials securely (encrypted in memory)
-            await saveCredentials(credentials);
-            saveBucketConfig(formData.bucketName, formData.region);
-
-            // Success
-            setIsLoggedIn(true);
-            setShowAuthModal(false);
-            toast.success('Connected securely!');
         } catch (error) {
-            // Clear any partial state on error
-            clearAuth();
-            throw new Error(error.message || 'Authentication failed');
+            const message = error.message || 'Sign up failed';
+            toast.error(message);
+            throw new Error(message);
         }
-    }, [authInitialized]);
+    }, []);
+
+    // Sign in existing user
+    const handleSignIn = useCallback(async (email, password) => {
+        try {
+            const { data, error } = await supabaseAuth.signInWithPassword({
+                email,
+                password,
+            });
+
+            if (error) throw error;
+
+            if (data?.user) {
+                toast.success('Welcome back!');
+                setShowAuthModal(false);
+                return { success: true, user: data.user };
+            }
+        } catch (error) {
+            const message = error.message || 'Sign in failed';
+            toast.error(message);
+            throw new Error(message);
+        }
+    }, []);
 
     // Handle logout
-    const handleLogout = useCallback(() => {
-        clearAuth();
-        setIsLoggedIn(false);
-        toast.info('Logged out - credentials securely cleared');
+    const handleLogout = useCallback(async () => {
+        try {
+            const { error } = await supabaseAuth.signOut();
+            if (error) throw error;
+            
+            setUser(null);
+            setIsLoggedIn(false);
+            toast.info('Logged out successfully');
+        } catch (error) {
+            console.error('Logout error:', error);
+            toast.error('Logout failed');
+        }
     }, []);
 
     // Handle get started
     const handleGetStarted = useCallback(() => {
-        if (!authInitialized) {
-            toast.error('Please wait for security system to initialize');
-            return;
-        }
         setShowAuthModal(true);
-    }, [authInitialized]);
+    }, []);
+
+    // Get current user JWT token for API calls
+    const getAuthToken = useCallback(async () => {
+        try {
+            const { data: { session } } = await supabaseAuth.getSession();
+            return session?.access_token || null;
+        } catch (error) {
+            console.error('Failed to get auth token:', error);
+            return null;
+        }
+    }, []);
 
     return {
+        user,
         isLoggedIn,
+        isLoading,
         showAuthModal,
         setShowAuthModal,
-        handleAuthenticate,
+        handleSignUp,
+        handleSignIn,
         handleLogout,
         handleGetStarted,
-        authInitialized
+        getAuthToken
     };
 };

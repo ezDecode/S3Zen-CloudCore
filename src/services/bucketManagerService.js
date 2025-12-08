@@ -13,18 +13,21 @@ class BucketManagerService {
         try {
             const { data: { session } } = await supabaseAuth.getSession();
             if (!session?.access_token) {
-                throw new Error('No active session');
+                return null; // Return null instead of throwing
             }
             return session.access_token;
         } catch (error) {
             console.error('Failed to get auth token:', error);
-            throw error;
+            return null;
         }
     }
 
     async makeRequest(endpoint, options = {}) {
         try {
             const token = await this.getAuthToken();
+            if (!token) {
+                throw new Error('No active session');
+            }
             const response = await fetch(`${API_BASE}${endpoint}`, {
                 headers: {
                     'Authorization': `Bearer ${token}`,

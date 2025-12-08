@@ -17,22 +17,30 @@ import {
 } from '../../ui/dropdown-menu';
 import bucketManagerService from '../../../services/bucketManagerService';
 
-export const BucketSwitcher = ({ currentBucket, onBucketChange, onOpenManager }) => {
+export const BucketSwitcher = ({ currentBucket, onBucketChange, onOpenManager, isAuthenticated }) => {
     const [buckets, setBuckets] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
 
     useEffect(() => {
-        loadBuckets();
-    }, []);
+        // Only load buckets if user is authenticated
+        if (isAuthenticated) {
+            loadBuckets();
+        }
+    }, [isAuthenticated]);
 
     const loadBuckets = async () => {
+        if (!isAuthenticated) return;
+        
         setIsLoading(true);
         try {
             const response = await bucketManagerService.getBuckets();
             setBuckets(response.data || []);
         } catch (error) {
             console.error('Failed to load buckets:', error);
-            toast.error('Failed to load buckets');
+            // Only show error if it's not an auth issue
+            if (!error.message?.includes('No active session')) {
+                toast.error('Failed to load buckets');
+            }
         } finally {
             setIsLoading(false);
         }

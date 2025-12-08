@@ -40,6 +40,7 @@ import { listObjects } from '../../services/aws/s3Service';
 import { clearAuth } from '../../utils/authUtils';
 
 export const FileExplorer = ({
+    user,
     onLogout,
     onShareModal,
     onRenameModal,
@@ -280,6 +281,7 @@ export const FileExplorer = ({
                 searchInputRef={searchInputRef}
                 currentBucket={currentBucket}
                 onBucketChange={setCurrentBucket}
+                isAuthenticated={!!user}
             />
 
             {/* Action Bar */}

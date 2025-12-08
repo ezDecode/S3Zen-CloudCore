@@ -38,7 +38,8 @@ export const FileExplorerNav = forwardRef(({
     onLogout,
     searchInputRef,
     currentBucket,
-    onBucketChange
+    onBucketChange,
+    isAuthenticated
 }, ref) => {
     const pathParts = currentPath.split('/').filter(Boolean);
     const [showBucketManager, setShowBucketManager] = useState(false);
@@ -52,6 +53,7 @@ export const FileExplorerNav = forwardRef(({
                         currentBucket={currentBucket}
                         onBucketChange={onBucketChange}
                         onOpenManager={() => setShowBucketManager(true)}
+                        isAuthenticated={isAuthenticated}
                     />
                 </div>
 
