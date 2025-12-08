@@ -287,6 +287,9 @@ export const clearAuth = () => {
         ];
         legacyKeys.forEach(key => localStorage.removeItem(key));
 
+        // Clear current bucket selection
+        localStorage.removeItem('cloudcore_current_bucket');
+
         sessionToken = null;
 
         return { success: true };

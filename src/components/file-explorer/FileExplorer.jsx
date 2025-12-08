@@ -54,8 +54,18 @@ export const FileExplorer = ({
     const [isLoading, setIsLoading] = useState(false);
     const [mobileDrawerOpen, setMobileDrawerOpen] = useState(false);
     const [showSidebar, setShowSidebar] = useState(true);
-    const [currentBucket, setCurrentBucket] = useState(null);
+    const [currentBucket, setCurrentBucket] = useState(() => {
+        // Restore selected bucket from localStorage on mount
+        try {
+            const saved = localStorage.getItem('cloudcore_current_bucket');
+            return saved ? JSON.parse(saved) : null;
+        } catch (error) {
+            console.error('Failed to restore bucket from localStorage:', error);
+            return null;
+        }
+    });
     const [isConnectingBucket, setIsConnectingBucket] = useState(false);
+    const [isS3Connected, setIsS3Connected] = useState(false);
     const searchInputRef = useRef(null);
 
     // Navigation & Selection
@@ -110,15 +120,27 @@ export const FileExplorer = ({
         currentPathRef.current = currentPath;
     }, [currentPath]);
 
+    // Persist bucket selection to localStorage
+    useEffect(() => {
+        if (currentBucket) {
+            localStorage.setItem('cloudcore_current_bucket', JSON.stringify(currentBucket));
+        } else {
+            localStorage.removeItem('cloudcore_current_bucket');
+        }
+    }, [currentBucket]);
+
     // Initialize S3 client when bucket changes
     useEffect(() => {
         const connectToBucket = async () => {
             if (!currentBucket) {
                 console.log('[FileExplorer] No bucket selected');
+                setIsS3Connected(false);
+                setItems([]); // Clear items when no bucket
                 return;
             }
 
             setIsConnectingBucket(true);
+            setIsS3Connected(false);
             console.log('[FileExplorer] Connecting to bucket:', currentBucket.displayName);
 
             try {
@@ -153,13 +175,15 @@ export const FileExplorer = ({
                 console.log('[FileExplorer] Successfully connected to bucket');
                 toast.success(`Connected to ${currentBucket.displayName}`);
 
-                // Load files from root of the bucket
+                // Reset to root path and mark as connected
                 setCurrentPath('');
+                setIsS3Connected(true); // This will trigger file loading
                 
             } catch (error) {
                 console.error('[FileExplorer] Failed to connect to bucket:', error);
                 toast.error(`Failed to connect: ${error.message}`);
                 setCurrentBucket(null);
+                setIsS3Connected(false);
             } finally {
                 setIsConnectingBucket(false);
             }
@@ -169,6 +193,12 @@ export const FileExplorer = ({
     }, [currentBucket]);
     
     const loadFiles = useCallback(async (skipLoading = false, pathOverride = null) => {
+        // Don't load if S3 is not connected
+        if (!isS3Connected) {
+            console.log('[FileExplorer] S3 not connected, skipping file load');
+            return;
+        }
+
         // Use pathOverride if provided, otherwise use the ref for latest path
         const pathToLoad = pathOverride !== null ? pathOverride : currentPathRef.current;
         
@@ -182,17 +212,21 @@ export const FileExplorer = ({
         if (!skipLoading) setIsLoading(true);
 
         try {
+            console.log('[FileExplorer] Loading files from path:', pathToLoad);
             const result = await listObjects(pathToLoad);
 
             if (currentRequest.cancelled) return;
 
             if (result.success) {
+                console.log('[FileExplorer] Files loaded:', result.items.length);
                 setItems(result.items);
             } else {
+                console.error('[FileExplorer] Failed to load files:', result.error);
                 toast.error(`Failed to load files: ${result.error}`);
             }
         } catch (error) {
             if (!currentRequest.cancelled) {
+                console.error('[FileExplorer] Error loading files:', error);
                 toast.error('Failed to load files');
             }
         } finally {
@@ -200,12 +234,15 @@ export const FileExplorer = ({
                 setIsLoading(false);
             }
         }
-    }, []);
+    }, [isS3Connected]);
 
-    // Load files when path changes
+    // Load files when path changes OR when S3 connection is established
     useEffect(() => {
-        loadFiles(false, currentPath);
-    }, [currentPath, loadFiles]);
+        if (isS3Connected) {
+            console.log('[FileExplorer] Path or S3 connection changed, loading files for path:', currentPath);
+            loadFiles(false, currentPath);
+        }
+    }, [currentPath, isS3Connected, loadFiles]);
 
     // File Operations
     const {

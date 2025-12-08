@@ -4,7 +4,7 @@
  * Shows default bucket indicator
  */
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { ArrowDown01Icon, Tick01Icon, Database02Icon, AlertCircleIcon } from 'hugeicons-react';
 import { toast } from 'sonner';
 import {
@@ -20,11 +20,12 @@ import bucketManagerService from '../../../services/bucketManagerService';
 export const BucketSwitcher = ({ currentBucket, onBucketChange, onOpenManager, isAuthenticated }) => {
     const [buckets, setBuckets] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
-    const [hasLoadedOnce, setHasLoadedOnce] = useState(false);
+    const hasLoadedOnceRef = useRef(false);
+    const loadingRef = useRef(false);
 
     useEffect(() => {
         // Add delay to ensure session is fully restored before loading buckets
-        if (isAuthenticated && !hasLoadedOnce) {
+        if (isAuthenticated && !hasLoadedOnceRef.current && !loadingRef.current) {
             console.log('[BucketSwitcher] Auth detected, scheduling bucket load');
             
             // Wait longer for session to be fully available and validated
@@ -34,25 +35,44 @@ export const BucketSwitcher = ({ currentBucket, onBucketChange, onOpenManager, i
             
             return () => clearTimeout(timer);
         }
-    }, [isAuthenticated, hasLoadedOnce]);
+    }, [isAuthenticated]);
 
     const loadBuckets = async () => {
         if (!isAuthenticated) {
             console.log('[BucketSwitcher] Not authenticated, skipping bucket load');
             return;
         }
+
+        // Prevent duplicate requests
+        if (loadingRef.current || hasLoadedOnceRef.current) {
+            console.log('[BucketSwitcher] Already loading or loaded, skipping');
+            return;
+        }
         
         console.log('[BucketSwitcher] Loading buckets...');
+        loadingRef.current = true;
         setIsLoading(true);
         
         try {
             const response = await bucketManagerService.getBuckets();
             console.log('[BucketSwitcher] Buckets loaded:', response.buckets?.length || 0);
             setBuckets(response.buckets || []);
-            setHasLoadedOnce(true);
+            hasLoadedOnceRef.current = true;
             
+            // Validate persisted bucket still exists
+            if (currentBucket && response.buckets?.length > 0) {
+                const bucketStillExists = response.buckets.find(b => b.id === currentBucket.id);
+                if (!bucketStillExists) {
+                    console.log('[BucketSwitcher] Persisted bucket no longer exists, selecting default');
+                    const defaultBucket = response.buckets.find(b => b.isDefault) || response.buckets[0];
+                    if (defaultBucket && defaultBucket.id !== currentBucket.id) {
+                        onBucketChange(defaultBucket);
+                    }
+                }
+            }
             // Auto-select default bucket if none selected
-            if (!currentBucket && response.buckets?.length > 0) {
+            else if (!currentBucket && response.buckets?.length > 0) {
+                console.log('[BucketSwitcher] No bucket selected, auto-selecting default');
                 const defaultBucket = response.buckets.find(b => b.isDefault) || response.buckets[0];
                 onBucketChange(defaultBucket);
             }
@@ -67,6 +87,7 @@ export const BucketSwitcher = ({ currentBucket, onBucketChange, onOpenManager, i
             }
         } finally {
             setIsLoading(false);
+            loadingRef.current = false;
         }
     };
 
