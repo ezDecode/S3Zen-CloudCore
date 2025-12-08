@@ -48,7 +48,11 @@ export const BucketManagerModal = ({ isOpen, onClose, onBucketAdded }) => {
 
     useEffect(() => {
         if (isOpen) {
-            loadBuckets();
+            // Small delay to ensure session is available
+            const timer = setTimeout(() => {
+                loadBuckets();
+            }, 100);
+            return () => clearTimeout(timer);
         }
     }, [isOpen]);
 
@@ -56,10 +60,14 @@ export const BucketManagerModal = ({ isOpen, onClose, onBucketAdded }) => {
         setIsLoading(true);
         try {
             const response = await bucketManagerService.getBuckets();
-            setBuckets(response.data || []);
+            setBuckets(response.buckets || []);
         } catch (error) {
-            console.error('Failed to load buckets:', error);
-            toast.error('Failed to load buckets');
+            console.error('[BucketManager] Failed to load buckets:', error);
+            
+            // Only show error for non-auth issues
+            if (error.code !== 'NO_AUTH_TOKEN' && error.code !== 'UNAUTHORIZED') {
+                toast.error('Failed to load buckets');
+            }
         } finally {
             setIsLoading(false);
         }
@@ -83,6 +91,7 @@ export const BucketManagerModal = ({ isOpen, onClose, onBucketAdded }) => {
         setValidationState({ isValidating: true, isValid: null, error: null });
         try {
             const result = await bucketManagerService.validateBucket({
+                displayName: formData.name || 'Test Bucket',
                 bucketName: formData.bucketName,
                 region: formData.region,
                 accessKeyId: formData.accessKeyId,
@@ -125,11 +134,22 @@ export const BucketManagerModal = ({ isOpen, onClose, onBucketAdded }) => {
 
         try {
             setIsLoading(true);
+            
+            // Map frontend field names to backend expected names
+            const bucketData = {
+                displayName: formData.name,
+                bucketName: formData.bucketName,
+                region: formData.region,
+                accessKeyId: formData.accessKeyId,
+                secretAccessKey: formData.secretAccessKey,
+                description: formData.description
+            };
+            
             if (editingId) {
-                await bucketManagerService.updateBucket(editingId, formData);
+                await bucketManagerService.updateBucket(editingId, bucketData);
                 toast.success('Bucket updated');
             } else {
-                await bucketManagerService.createBucket(formData);
+                await bucketManagerService.createBucket(bucketData);
                 toast.success('Bucket added');
             }
             resetForm();
@@ -161,7 +181,7 @@ export const BucketManagerModal = ({ isOpen, onClose, onBucketAdded }) => {
 
     const handleEditBucket = (bucket) => {
         setFormData({
-            name: bucket.name,
+            name: bucket.displayName,
             bucketName: bucket.bucketName,
             region: bucket.region,
             accessKeyId: '',
@@ -199,7 +219,7 @@ export const BucketManagerModal = ({ isOpen, onClose, onBucketAdded }) => {
                                                 className="flex items-center justify-between p-3 rounded-lg bg-zinc-800/50 hover:bg-zinc-800 transition-colors"
                                             >
                                                 <div className="flex-1 min-w-0">
-                                                    <div className="font-medium">{bucket.name}</div>
+                                                    <div className="font-medium">{bucket.displayName}</div>
                                                     <div className="text-sm text-zinc-400">{bucket.bucketName} • {bucket.region}</div>
                                                     {bucket.isDefault && (
                                                         <div className="text-xs text-emerald-400 mt-1">Default</div>

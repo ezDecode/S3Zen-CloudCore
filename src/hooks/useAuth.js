@@ -28,8 +28,11 @@ export const useAuth = () => {
                 }
 
                 if (session?.user) {
+                    console.log('[Auth] Session restored:', session.user.id);
                     setUser(session.user);
                     setIsLoggedIn(true);
+                } else {
+                    console.log('[Auth] No active session');
                 }
                 
                 setIsLoading(false);
@@ -43,9 +46,9 @@ export const useAuth = () => {
 
         // Listen for auth state changes
         const { data: { subscription } } = supabaseAuth.onAuthStateChange(async (event, session) => {
-            console.log('Auth state changed:', event);
+            console.log('[Auth] State changed:', event, session ? 'with session' : 'no session');
             
-            // Only update state for actual sign in/out events, not initial session
+            // Handle all auth events consistently
             if (event === 'SIGNED_IN' && session?.user) {
                 setUser(session.user);
                 setIsLoggedIn(true);
@@ -55,8 +58,11 @@ export const useAuth = () => {
             } else if (event === 'TOKEN_REFRESHED' && session?.user) {
                 setUser(session.user);
                 setIsLoggedIn(true);
+            } else if (event === 'INITIAL_SESSION' && session?.user) {
+                // Handle INITIAL_SESSION to ensure state is set
+                setUser(session.user);
+                setIsLoggedIn(true);
             }
-            // Ignore INITIAL_SESSION to prevent premature logout
         });
 
         return () => {

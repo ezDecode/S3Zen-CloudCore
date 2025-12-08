@@ -128,12 +128,20 @@ async function verifyToken(token) {
     const jwks = await getJWKS();
 
     try {
+        // Try with /auth/v1 issuer first (standard Supabase format)
         const { payload } = await jwtVerify(token, jwks, {
             issuer: `${SUPABASE_URL}/auth/v1`,
         });
 
         return payload;
     } catch (error) {
+        authLogger.error('JWT verification error details', {
+            errorCode: error.code,
+            errorMessage: error.message,
+            claim: error.claim,
+            reason: error.reason
+        });
+
         if (error.code === 'ERR_JWT_EXPIRED') {
             const expiredError = new Error('Token has expired');
             expiredError.code = 'TOKEN_EXPIRED';
@@ -147,6 +155,12 @@ async function verifyToken(token) {
         }
 
         if (error.code === 'ERR_JWT_CLAIM_VALIDATION_FAILED') {
+            // Log which claim failed
+            authLogger.warn('JWT claim validation failed', {
+                claim: error.claim,
+                reason: error.reason
+            });
+            
             const claimError = new Error('Token claim validation failed');
             claimError.code = 'INVALID_CLAIMS';
             throw claimError;
@@ -225,17 +239,72 @@ function requireAuth(options = {}) {
         try {
             validateConfiguration();
 
-            const token = extractToken(req.headers.authorization);
-
-            if (!token) {
+            const authHeader = req.headers.authorization;
+            
+            if (!authHeader) {
+                authLogger.warn('Missing Authorization header', { 
+                    path: req.path,
+                    method: req.method 
+                });
                 return sendAuthError(res, 401, 'MISSING_TOKEN', 
                     'Authentication required. Please provide a valid Bearer token.');
             }
 
+            const token = extractToken(authHeader);
+
+            if (!token) {
+                authLogger.warn('Invalid Authorization header format', { 
+                    path: req.path,
+                    method: req.method,
+                    headerPreview: authHeader?.substring(0, 20) + '...'
+                });
+                return sendAuthError(res, 401, 'MISSING_TOKEN', 
+                    'Authentication required. Please provide a valid Bearer token.');
+            }
+
+            // Log token preview for debugging
+            const tokenPreview = `${token.substring(0, 10)}...${token.substring(token.length - 10)}`;
+            authLogger.info('Verifying token', { 
+                path: req.path,
+                tokenPreview 
+            });
+
             let payload;
             try {
-                payload = await verifyToken(token);
+                // Try Supabase's built-in validation first (more reliable)
+                const adminClient = getAdminClient();
+                const { data: { user }, error: userError } = await adminClient.auth.getUser(token);
+                
+                if (userError || !user) {
+                    authLogger.warn('Supabase getUser failed, falling back to JWT verification', {
+                        error: userError?.message
+                    });
+                    
+                    // Fallback to manual JWT verification
+                    payload = await verifyToken(token);
+                } else {
+                    // Use Supabase's validated user data
+                    authLogger.info('Token verified via Supabase', {
+                        userId: user.id?.substring(0, 8) + '...',
+                        path: req.path
+                    });
+                    
+                    payload = {
+                        sub: user.id,
+                        email: user.email,
+                        email_confirmed_at: user.email_confirmed_at,
+                        role: user.role,
+                        session_id: user.session_id
+                    };
+                }
             } catch (error) {
+                authLogger.error('Token verification failed', {
+                    path: req.path,
+                    errorCode: error.code,
+                    errorMessage: error.message,
+                    tokenPreview
+                });
+                
                 if (error.code === 'TOKEN_EXPIRED') {
                     return sendAuthError(res, 401, 'TOKEN_EXPIRED',
                         'Your session has expired. Please sign in again.');

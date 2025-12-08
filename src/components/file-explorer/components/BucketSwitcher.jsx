@@ -20,26 +20,50 @@ import bucketManagerService from '../../../services/bucketManagerService';
 export const BucketSwitcher = ({ currentBucket, onBucketChange, onOpenManager, isAuthenticated }) => {
     const [buckets, setBuckets] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
+    const [hasLoadedOnce, setHasLoadedOnce] = useState(false);
 
     useEffect(() => {
-        // Only load buckets if user is authenticated
-        if (isAuthenticated) {
-            loadBuckets();
+        // Add delay to ensure session is fully restored before loading buckets
+        if (isAuthenticated && !hasLoadedOnce) {
+            console.log('[BucketSwitcher] Auth detected, scheduling bucket load');
+            
+            // Wait longer for session to be fully available and validated
+            const timer = setTimeout(() => {
+                loadBuckets();
+            }, 800); // Increased delay to ensure session is fully ready
+            
+            return () => clearTimeout(timer);
         }
-    }, [isAuthenticated]);
+    }, [isAuthenticated, hasLoadedOnce]);
 
     const loadBuckets = async () => {
-        if (!isAuthenticated) return;
+        if (!isAuthenticated) {
+            console.log('[BucketSwitcher] Not authenticated, skipping bucket load');
+            return;
+        }
         
+        console.log('[BucketSwitcher] Loading buckets...');
         setIsLoading(true);
+        
         try {
             const response = await bucketManagerService.getBuckets();
-            setBuckets(response.data || []);
+            console.log('[BucketSwitcher] Buckets loaded:', response.buckets?.length || 0);
+            setBuckets(response.buckets || []);
+            setHasLoadedOnce(true);
+            
+            // Auto-select default bucket if none selected
+            if (!currentBucket && response.buckets?.length > 0) {
+                const defaultBucket = response.buckets.find(b => b.isDefault) || response.buckets[0];
+                onBucketChange(defaultBucket);
+            }
         } catch (error) {
-            console.error('Failed to load buckets:', error);
-            // Only show error if it's not an auth issue
-            if (!error.message?.includes('No active session')) {
+            console.error('[BucketSwitcher] Failed to load buckets:', error);
+            
+            // Only show error toast for non-auth errors
+            if (error.code !== 'NO_AUTH_TOKEN' && error.code !== 'UNAUTHORIZED') {
                 toast.error('Failed to load buckets');
+            } else {
+                console.warn('[BucketSwitcher] Auth error, user may need to sign in again');
             }
         } finally {
             setIsLoading(false);
@@ -51,7 +75,7 @@ export const BucketSwitcher = ({ currentBucket, onBucketChange, onOpenManager, i
             // Update default bucket
             await bucketManagerService.updateBucket(bucket.id, { isDefault: true });
             onBucketChange(bucket);
-            toast.success(`Switched to ${bucket.name}`);
+            toast.success(`Switched to ${bucket.displayName}`);
         } catch (error) {
             console.error('Failed to switch bucket:', error);
             toast.error('Failed to switch bucket');
@@ -65,7 +89,7 @@ export const BucketSwitcher = ({ currentBucket, onBucketChange, onOpenManager, i
                     <button className="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-zinc-800 transition-colors border border-zinc-800">
                         <Database02Icon className="w-4 h-4" />
                         <span className="text-sm font-medium truncate max-w-[150px]">
-                            {currentBucket?.name || 'Select Bucket'}
+                            {currentBucket?.displayName || 'Select Bucket'}
                         </span>
                         <ArrowDown01Icon className="w-4 h-4 opacity-50" />
                     </button>
@@ -86,7 +110,7 @@ export const BucketSwitcher = ({ currentBucket, onBucketChange, onOpenManager, i
                                 <div className="flex items-center gap-2 w-full">
                                     <Database02Icon className="w-4 h-4" />
                                     <div className="flex-1 min-w-0">
-                                        <div className="text-sm font-medium truncate">{bucket.name}</div>
+                                        <div className="text-sm font-medium truncate">{bucket.displayName}</div>
                                         <div className="text-xs text-zinc-500">{bucket.bucketName}</div>
                                     </div>
                                     {bucket.isDefault && (

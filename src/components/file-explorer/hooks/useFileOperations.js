@@ -23,6 +23,13 @@ export const useFileOperations = (currentPath, items, setItems, loadFiles, onNav
 
     // Upload single file
     const uploadSingleFile = useCallback(async (file, fileName, originalCurrentPath) => {
+        // Check if S3 client is initialized
+        const { isS3ClientInitialized } = await import('../../../services/aws/s3Service');
+        if (!isS3ClientInitialized()) {
+            toast.error('S3 client not initialized. Please select a bucket.');
+            return;
+        }
+
         // Use the original path when upload started, not the current path
         const uploadBasePath = originalCurrentPath !== undefined ? originalCurrentPath : currentPath;
         const key = buildS3Key(uploadBasePath, fileName);
@@ -98,6 +105,13 @@ export const useFileOperations = (currentPath, items, setItems, loadFiles, onNav
     // Process multiple uploads with concurrency control
     const processUploads = useCallback(async (files) => {
         if (files.length === 0) return;
+
+        // Check if S3 client is initialized
+        const { isS3ClientInitialized } = await import('../../../services/aws/s3Service');
+        if (!isS3ClientInitialized()) {
+            toast.error('Please select a bucket first');
+            return;
+        }
 
         // OPTIMIZED: Increased from 3 to 6 for better throughput
         // Modern browsers support 6-8 concurrent connections per domain

@@ -36,8 +36,9 @@ import { useFavorites } from '../../hooks/useFavorites';
 import { useStorageStats } from '../../hooks/useStorageStats';
 
 // Services
-import { listObjects } from '../../services/aws/s3Service';
+import { listObjects, initializeS3Client, validateCredentials } from '../../services/aws/s3Service';
 import { clearAuth } from '../../utils/authUtils';
+import bucketManagerService from '../../services/bucketManagerService';
 
 export const FileExplorer = ({
     user,
@@ -54,6 +55,7 @@ export const FileExplorer = ({
     const [mobileDrawerOpen, setMobileDrawerOpen] = useState(false);
     const [showSidebar, setShowSidebar] = useState(true);
     const [currentBucket, setCurrentBucket] = useState(null);
+    const [isConnectingBucket, setIsConnectingBucket] = useState(false);
     const searchInputRef = useRef(null);
 
     // Navigation & Selection
@@ -107,6 +109,64 @@ export const FileExplorer = ({
     useEffect(() => {
         currentPathRef.current = currentPath;
     }, [currentPath]);
+
+    // Initialize S3 client when bucket changes
+    useEffect(() => {
+        const connectToBucket = async () => {
+            if (!currentBucket) {
+                console.log('[FileExplorer] No bucket selected');
+                return;
+            }
+
+            setIsConnectingBucket(true);
+            console.log('[FileExplorer] Connecting to bucket:', currentBucket.displayName);
+
+            try {
+                // Fetch bucket credentials from backend
+                const response = await bucketManagerService.getBucketCredentials(currentBucket.id);
+                
+                if (!response.credentials) {
+                    throw new Error('No credentials returned from server');
+                }
+
+                const { accessKeyId, secretAccessKey } = response.credentials;
+                const { bucketName, region } = currentBucket;
+
+                // Initialize S3 client with credentials
+                const initResult = initializeS3Client(
+                    { accessKeyId, secretAccessKey },
+                    region,
+                    bucketName
+                );
+
+                if (!initResult.success) {
+                    throw new Error(initResult.error || 'Failed to initialize S3 client');
+                }
+
+                // Validate credentials and bucket access
+                const validateResult = await validateCredentials();
+                
+                if (!validateResult.success) {
+                    throw new Error(validateResult.error || 'Failed to validate bucket access');
+                }
+
+                console.log('[FileExplorer] Successfully connected to bucket');
+                toast.success(`Connected to ${currentBucket.displayName}`);
+
+                // Load files from root of the bucket
+                setCurrentPath('');
+                
+            } catch (error) {
+                console.error('[FileExplorer] Failed to connect to bucket:', error);
+                toast.error(`Failed to connect: ${error.message}`);
+                setCurrentBucket(null);
+            } finally {
+                setIsConnectingBucket(false);
+            }
+        };
+
+        connectToBucket();
+    }, [currentBucket]);
     
     const loadFiles = useCallback(async (skipLoading = false, pathOverride = null) => {
         // Use pathOverride if provided, otherwise use the ref for latest path
@@ -359,7 +419,7 @@ export const FileExplorer = ({
                         onDelete={(item) => handleDelete([item])}
                         onPreview={(item) => handlePreview(item)}
                         onDetails={onDetailsModal}
-                        isLoading={isLoading}
+                        isLoading={isLoading || isConnectingBucket}
                         viewMode={viewMode}
                         favorites={favorites}
                         onToggleFavorite={toggleFavorite}
