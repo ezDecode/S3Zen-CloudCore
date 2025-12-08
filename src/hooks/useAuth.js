@@ -70,54 +70,52 @@ export const useAuth = () => {
         };
     }, []);
 
-    // Sign up new user
-    const handleSignUp = useCallback(async (email, password) => {
+    // Send OTP to email
+    // NOTE: By default, this sends a Magic Link. To send 6-digit OTP codes,
+    // modify the email template in Supabase Dashboard to include {{ .Token }}
+    // See: docs/SUPABASE_OTP_SETUP.md
+    const handleSendOTP = useCallback(async (email) => {
         try {
-            const { data, error } = await supabaseAuth.signUp({
+            // Use signInWithOtp with shouldCreateUser: true
+            // This will handle both new and existing users with a single OTP
+            const { data, error } = await supabaseAuth.signInWithOtp({
                 email,
-                password,
                 options: {
-                    // Skip email confirmation for development
-                    emailRedirectTo: window.location.origin,
+                    shouldCreateUser: true,
+                    // Use email type to ensure only one email is sent
+                    emailRedirectTo: undefined,
                 }
             });
 
             if (error) throw error;
 
-            if (data?.user) {
-                // Check if email confirmation is required
-                if (data.session) {
-                    toast.success('Account created successfully!');
-                    setShowAuthModal(false);
-                } else {
-                    toast.success('Account created! Please check your email to verify.');
-                }
-                return { success: true, user: data.user };
-            }
+            toast.success('Verification code sent! Check your email.');
+            return { success: true, data };
         } catch (error) {
-            const message = error.message || 'Sign up failed';
+            const message = error.message || 'Failed to send code';
             toast.error(message);
             throw new Error(message);
         }
     }, []);
 
-    // Sign in existing user
-    const handleSignIn = useCallback(async (email, password) => {
+    // Verify OTP and sign in
+    const handleVerifyOTP = useCallback(async (email, token) => {
         try {
-            const { data, error } = await supabaseAuth.signInWithPassword({
+            const { data, error } = await supabaseAuth.verifyOtp({
                 email,
-                password,
+                token,
+                type: 'email',
             });
 
             if (error) throw error;
 
-            if (data?.user) {
-                toast.success('Welcome back!');
+            if (data?.session) {
+                toast.success('Welcome to CloudCore!');
                 setShowAuthModal(false);
-                return { success: true, user: data.user };
+                return { success: true, session: data.session };
             }
         } catch (error) {
-            const message = error.message || 'Sign in failed';
+            const message = error.message || 'Invalid verification code';
             toast.error(message);
             throw new Error(message);
         }
@@ -160,8 +158,8 @@ export const useAuth = () => {
         isLoading,
         showAuthModal,
         setShowAuthModal,
-        handleSignUp,
-        handleSignIn,
+        handleSendOTP,
+        handleVerifyOTP,
         handleLogout,
         handleGetStarted,
         getAuthToken

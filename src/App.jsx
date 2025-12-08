@@ -37,8 +37,8 @@ function AppContent() {
     isLoading,
     showAuthModal,
     setShowAuthModal,
-    handleSignUp,
-    handleSignIn,
+    handleSendOTP,
+    handleVerifyOTP,
     handleLogout,
     handleGetStarted
   } = useAuth();
@@ -144,8 +144,8 @@ function AppContent() {
           <SupabaseAuthModal
             isOpen={showAuthModal}
             onClose={() => setShowAuthModal(false)}
-            onSignUp={handleSignUp}
-            onSignIn={handleSignIn}
+            onSendOTP={handleSendOTP}
+            onVerifyOTP={handleVerifyOTP}
           />
         </>
       ) : (
