@@ -25,6 +25,7 @@
         "helmet": "^8.0.0",
         "jose": "^5.9.6",
         "nanoid": "^3.3.7",
+        "sqlite3": "^5.1.7",
         "uuid": "^11.0.3"
     },
     "devDependencies": {
