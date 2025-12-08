@@ -52,6 +52,7 @@ export const FileExplorer = ({
     const [isLoading, setIsLoading] = useState(false);
     const [mobileDrawerOpen, setMobileDrawerOpen] = useState(false);
     const [showSidebar, setShowSidebar] = useState(true);
+    const [currentBucket, setCurrentBucket] = useState(null);
     const searchInputRef = useRef(null);
 
     // Navigation & Selection
@@ -277,6 +278,8 @@ export const FileExplorer = ({
                 onRefresh={loadFiles}
                 onLogout={handleLogout}
                 searchInputRef={searchInputRef}
+                currentBucket={currentBucket}
+                onBucketChange={setCurrentBucket}
             />
 
             {/* Action Bar */}

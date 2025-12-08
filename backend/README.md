@@ -102,7 +102,7 @@ npm run dev
 npm start
 ```
 
-Server starts on `http://localhost:3001` (or configured PORT).
+Server starts on `http://localhost:3000` (or configured PORT).
 
 ## API Endpoints
 
@@ -180,7 +180,7 @@ backend/
 | Variable | Required | Description |
 |----------|----------|-------------|
 | `NODE_ENV` | No | Environment (development/production) |
-| `PORT` | No | Server port (default: 3001) |
+| `PORT` | No | Server port (default: 3000) |
 | `BASE_URL` | No | Base URL for short URLs |
 | `ALLOWED_ORIGINS` | No | CORS allowed origins (comma-separated) |
 | `SUPABASE_URL` | Yes | Supabase project URL |
@@ -232,7 +232,7 @@ Request:
 Response:
 ```json
 {
-  "shortUrl": "http://localhost:3001/s/abc123",
+  "shortUrl": "http://localhost:3000/s/abc123",
   "shortCode": "abc123"
 }
 ```
@@ -243,7 +243,7 @@ Response:
 
 Redirects (302) to the original URL.
 
-Example: `http://localhost:3001/s/abc123` → `https://example.com/some/very/long/path`
+Example: `http://localhost:3000/s/abc123` → `https://example.com/some/very/long/path`
 
 ### 3. Health Check
 
@@ -304,20 +304,20 @@ backend/
 
 Create a short URL:
 ```bash
-curl -X POST http://localhost:3001/shorten \
+curl -X POST http://localhost:3000/shorten \
   -H "Content-Type: application/json" \
   -d '{"longUrl":"https://github.com"}'
 ```
 
 Test redirect:
 ```bash
-curl -L http://localhost:3001/s/abc123
+curl -L http://localhost:3000/s/abc123
 ```
 
 ### Using browser
 
 1. Create short URL via API
-2. Visit `http://localhost:3001/s/abc123` in browser
+2. Visit `http://localhost:3000/s/abc123` in browser
 3. Should redirect to original URL
 
 ## Dependencies

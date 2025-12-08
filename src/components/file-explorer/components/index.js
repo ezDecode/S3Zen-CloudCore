@@ -6,3 +6,4 @@
 export { FileExplorerNav } from './FileExplorerNav';
 export { FileExplorerActionBar } from './FileExplorerActionBar';
 export { UploadProgressPanel } from './UploadProgressPanel';
+export { BucketSwitcher } from './BucketSwitcher';

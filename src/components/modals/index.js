@@ -11,3 +11,4 @@ export { RenameModal } from './RenameModal';
 export { DetailsModal } from './DetailsModal';
 export { DuplicateFileModal } from './DuplicateFileModal';
 export { PreviewModal } from './PreviewModal';
+export { BucketManagerModal } from './BucketManagerModal';

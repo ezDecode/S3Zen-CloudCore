@@ -522,7 +522,7 @@ Add a new bucket configuration with encrypted credentials.
 
 **Example**:
 ```bash
-curl -X POST http://localhost:3001/api/buckets \
+curl -X POST http://localhost:3000/api/buckets \
   -H "Content-Type: application/json" \
   -H "Authorization: Bearer <token>" \
   -d '{
@@ -574,7 +574,7 @@ Get all bucket configurations for the authenticated user. Returns metadata only 
 
 **Example**:
 ```bash
-curl -X GET http://localhost:3001/api/buckets \
+curl -X GET http://localhost:3000/api/buckets \
   -H "Authorization: Bearer <token>"
 ```
 
@@ -631,7 +631,7 @@ Retrieve decrypted credentials for a specific bucket. Only the bucket owner can 
 
 **Example**:
 ```bash
-curl -X GET http://localhost:3001/api/buckets/123e4567-e89b-12d3-a456-426614174000/credentials \
+curl -X GET http://localhost:3000/api/buckets/123e4567-e89b-12d3-a456-426614174000/credentials \
   -H "Authorization: Bearer <token>"
 ```
 
@@ -681,7 +681,7 @@ Update an existing bucket configuration. Credentials can be updated if provided.
 
 **Example**:
 ```bash
-curl -X PUT http://localhost:3001/api/buckets/123e4567-e89b-12d3-a456-426614174000 \
+curl -X PUT http://localhost:3000/api/buckets/123e4567-e89b-12d3-a456-426614174000 \
   -H "Content-Type: application/json" \
   -H "Authorization: Bearer <token>" \
   -d '{
@@ -721,7 +721,7 @@ Delete a bucket configuration. If the deleted bucket was the default, another bu
 
 **Example**:
 ```bash
-curl -X DELETE http://localhost:3001/api/buckets/123e4567-e89b-12d3-a456-426614174000 \
+curl -X DELETE http://localhost:3000/api/buckets/123e4567-e89b-12d3-a456-426614174000 \
   -H "Authorization: Bearer <token>"
 ```
 
@@ -785,7 +785,7 @@ Test bucket access with provided credentials without saving them.
 
 **Example**:
 ```bash
-curl -X POST http://localhost:3001/api/buckets/validate \
+curl -X POST http://localhost:3000/api/buckets/validate \
   -H "Content-Type: application/json" \
   -H "Authorization: Bearer <token>" \
   -d '{
@@ -835,7 +835,7 @@ Get the user's default bucket configuration with decrypted credentials.
 
 **Example**:
 ```bash
-curl -X GET http://localhost:3001/api/buckets/default \
+curl -X GET http://localhost:3000/api/buckets/default \
   -H "Authorization: Bearer <token>"
 ```
 
