@@ -6,10 +6,24 @@ export const Hero = ({ onGetStarted }) => {
   const [githubStars, setGithubStars] = useState(null);
 
   useEffect(() => {
-    fetch('https://api.github.com/repos/ezDecode/S3Zen-CloudCore')
-      .then(res => res.json())
-      .then(data => setGithubStars(data.stargazers_count))
-      .catch(() => setGithubStars(null));
+    // Skip GitHub fetch in dev to avoid noisy CORS blocks; enable with VITE_ENABLE_GITHUB_FETCH_DEV=true
+    if (import.meta.env.DEV && import.meta.env.VITE_ENABLE_GITHUB_FETCH_DEV !== 'true') {
+      return;
+    }
+
+    let aborted = false;
+    fetch('https://api.github.com/repos/ezDecode/S3Zen-CloudCore', {
+      headers: { Accept: 'application/vnd.github+json' }
+    })
+      .then(res => res.ok ? res.json() : Promise.reject(new Error('Failed to fetch stars')))
+      .then(data => {
+        if (!aborted) setGithubStars(data.stargazers_count);
+      })
+      .catch(() => {
+        if (!aborted) setGithubStars(null);
+      });
+
+    return () => { aborted = true; };
   }, []);
 
   const features = [

@@ -28,6 +28,14 @@ export const useSessionTimeout = (onTimeout, isEnabled = true) => {
     const checkSession = useCallback(() => {
         if (!isEnabled) return;
 
+        // Only check AWS credential session expiry if credentials exist
+        // Don't logout Supabase users who haven't configured AWS yet
+        const hasSessionTimestamp = localStorage.getItem('cc_session_ts');
+        if (!hasSessionTimestamp) {
+            // No AWS session to check, skip
+            return;
+        }
+
         if (isSessionExpired()) {
             clearAuth();
             if (onTimeout) {

@@ -155,6 +155,7 @@ function AppContent() {
       ) : (
         <FileExplorer
           user={user}
+          isLoggedIn={isLoggedIn}
           onLogout={handleLogout}
           onShareModal={handleShareModal}
           onDeleteModal={handleDeleteModal}

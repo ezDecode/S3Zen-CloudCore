@@ -86,7 +86,7 @@ function validateBucketData(data, isUpdate = false) {
     if (!isUpdate) {
         if (!data.accessKeyId) {
             errors.push('accessKeyId is required');
-        } else if (!/^[A-Z0-9]{16,128}$/.test(data.accessKeyId)) {
+        } else if (!/^(AKIA|ASIA)[A-Z0-9]{16}$/.test(data.accessKeyId)) {
             errors.push('Invalid accessKeyId format');
         }
 

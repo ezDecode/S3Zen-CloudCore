@@ -43,6 +43,7 @@ import bucketManagerService from '../../services/bucketManagerService';
 
 export const FileExplorer = ({
     user,
+    isLoggedIn = false,
     onLogout,
     onShareModal,
     onRenameModal,
@@ -70,6 +71,7 @@ export const FileExplorer = ({
     const [isS3Connected, setIsS3Connected] = useState(false);
     const [bucketCount, setBucketCount] = useState(null);
     const [isCheckingBuckets, setIsCheckingBuckets] = useState(true);
+    const bucketAttemptCountRef = useRef({});
     const searchInputRef = useRef(null);
 
     // Navigation & Selection
@@ -124,10 +126,10 @@ export const FileExplorer = ({
         currentPathRef.current = currentPath;
     }, [currentPath]);
 
-    // Check bucket count on mount for onboarding flow
+    // Check bucket count when user is authenticated
     useEffect(() => {
         const checkBucketCount = async () => {
-            if (!user) {
+            if (!user || !isLoggedIn) {
                 setIsCheckingBuckets(false);
                 return;
             }
@@ -137,19 +139,23 @@ export const FileExplorer = ({
                 const response = await bucketManagerService.getBucketCount();
                 const count = response.count || 0;
                 setBucketCount(count);
-                
                 console.log('[FileExplorer] Bucket count:', count);
             } catch (error) {
                 console.error('[FileExplorer] Failed to check bucket count:', error);
-                // On error, assume buckets might exist to avoid blocking
-                setBucketCount(null);
+                // Don't set bucket count to null on error to avoid showing onboarding
+                // when there might be buckets but we just couldn't check
             } finally {
                 setIsCheckingBuckets(false);
             }
         };
 
-        checkBucketCount();
-    }, [user]);
+        // Add a small delay to ensure auth state is fully settled
+        const timer = setTimeout(() => {
+            checkBucketCount();
+        }, 500);
+
+        return () => clearTimeout(timer);
+    }, [user, isLoggedIn]); // Only re-run when user or isLoggedIn changes
 
     // Persist bucket selection to localStorage
     useEffect(() => {
@@ -169,6 +175,17 @@ export const FileExplorer = ({
                 setItems([]); // Clear items when no bucket
                 return;
             }
+
+            const attempts = bucketAttemptCountRef.current[currentBucket.id] || 0;
+            const MAX_AUTO_CONNECT_ATTEMPTS = 2;
+            if (attempts >= MAX_AUTO_CONNECT_ATTEMPTS) {
+                console.warn('[FileExplorer] Max auto connect attempts reached for bucket', currentBucket.displayName);
+                toast.error(`Failed to connect to ${currentBucket.displayName}. Please retry manually.`);
+                setIsS3Connected(false);
+                return;
+            }
+
+            bucketAttemptCountRef.current[currentBucket.id] = attempts + 1;
 
             setIsConnectingBucket(true);
             setIsS3Connected(false);
@@ -206,6 +223,9 @@ export const FileExplorer = ({
                 console.log('[FileExplorer] Successfully connected to bucket');
                 toast.success(`Connected to ${currentBucket.displayName}`);
 
+                // Reset attempt counter on success
+                bucketAttemptCountRef.current[currentBucket.id] = 0;
+
                 // Reset to root path and mark as connected
                 setCurrentPath('');
                 setIsS3Connected(true); // This will trigger file loading
@@ -213,7 +233,6 @@ export const FileExplorer = ({
             } catch (error) {
                 console.error('[FileExplorer] Failed to connect to bucket:', error);
                 toast.error(`Failed to connect: ${error.message}`);
-                setCurrentBucket(null);
                 setIsS3Connected(false);
             } finally {
                 setIsConnectingBucket(false);

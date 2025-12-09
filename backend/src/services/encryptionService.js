@@ -200,7 +200,7 @@ function encryptCredentials(credentials) {
         throw new Error('secretAccessKey is required and must be a string');
     }
 
-    if (!/^[A-Z0-9]{16,128}$/.test(credentials.accessKeyId)) {
+    if (!/^(AKIA|ASIA)[A-Z0-9]{16}$/.test(credentials.accessKeyId)) {
         throw new Error('Invalid accessKeyId format');
     }
 

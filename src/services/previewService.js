@@ -5,6 +5,7 @@
 
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 import { GetObjectCommand } from '@aws-sdk/client-s3';
+import { normalizeKey, sanitizeS3Path, validateKey } from '../utils/validationUtils';
 
 // LRU Cache for presigned URLs with size limit
 const MAX_CACHE_SIZE = 100;
@@ -88,8 +89,20 @@ export const getPreviewUrl = async (s3Key, expiresIn = 3600) => {
         throw new Error('Preview service not initialized');
     }
 
+    // Validate input
+    if (!s3Key || typeof s3Key !== 'string') {
+        throw new Error('Invalid file path');
+    }
+
+    // SECURITY: normalize, sanitize, validate server-side
+    const normalizedKey = normalizeKey(s3Key);
+    const sanitizedKey = sanitizeS3Path(normalizedKey);
+    if (!sanitizedKey || validateKey(sanitizedKey)) {
+        throw new Error('Invalid file path');
+    }
+
     // Check cache
-    const cached = urlCache.get(s3Key);
+    const cached = urlCache.get(sanitizedKey);
     if (cached) {
         return cached.url;
     }
@@ -97,16 +110,19 @@ export const getPreviewUrl = async (s3Key, expiresIn = 3600) => {
     try {
         const s3Client = s3ClientGetter();
         const bucket = bucketGetter();
+        if (!bucket) {
+            throw new Error('No bucket selected');
+        }
 
         const command = new GetObjectCommand({
             Bucket: bucket,
-            Key: s3Key
+            Key: sanitizedKey
         });
 
         const url = await getSignedUrl(s3Client, command, { expiresIn });
 
         // Cache the URL
-        urlCache.set(s3Key, {
+        urlCache.set(sanitizedKey, {
             url,
             timestamp: Date.now()
         });

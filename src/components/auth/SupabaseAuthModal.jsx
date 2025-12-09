@@ -60,12 +60,19 @@ export const SupabaseAuthModal = ({ isOpen, onClose, onSendOTP, onVerifyOTP }) =
         setError('');
 
         try {
-            await onVerifyOTP(email, otpString);
-            setEmail('');
-            setOtp(['', '', '', '', '', '']);
-            setStep('email');
+            const result = await onVerifyOTP(email, otpString);
+            // Only reset form on successful verification
+            if (result?.success) {
+                setEmail('');
+                setOtp(['', '', '', '', '', '']);
+                setStep('email');
+            }
         } catch (err) {
-            setError(err.message || 'Invalid code');
+            // Show error inline, do NOT trigger logout
+            setError(err.message || 'Invalid code. Please try again.');
+            // Clear OTP fields for retry
+            setOtp(['', '', '', '', '', '']);
+            document.getElementById('otp-0')?.focus();
         } finally {
             setIsLoading(false);
         }

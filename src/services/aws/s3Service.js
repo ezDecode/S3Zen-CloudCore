@@ -29,7 +29,8 @@ import {
     isDangerousPath,
     isValidFolderName,
     isValidFileSize,
-    preserveFileExtension
+    preserveFileExtension,
+    normalizeKey
 } from '../../utils/validationUtils.js';
 
 let s3Client = null;
@@ -221,7 +222,7 @@ export const uploadFile = async (file, key, onProgress) => {
 
         // SECURITY PIPELINE: rawKey → normalizeKey → sanitizeKey → validateKey → upload
         // 1. Normalize: replace multiple slashes with one, preserve trailing slash
-        const normalizedKey = key; // normalizeKey is done by frontend buildS3Key
+        const normalizedKey = normalizeKey(key);
 
         // 2. Sanitize: sanitize ONLY name segments, preserve trailing slash
         const sanitizedKey = sanitizeS3Path(normalizedKey);
@@ -275,7 +276,7 @@ export const uploadLargeFile = async (file, key, onProgress) => {
 
         // SECURITY PIPELINE: rawKey → normalizeKey → sanitizeKey → validateKey → upload
         // 1. Normalize: replace multiple slashes with one, preserve trailing slash
-        const normalizedKey = key; // normalizeKey is done by frontend buildS3Key
+        const normalizedKey = normalizeKey(key);
 
         // 2. Sanitize: sanitize ONLY name segments, preserve trailing slash
         const sanitizedKey = sanitizeS3Path(normalizedKey);
@@ -477,10 +478,19 @@ export const deleteObjects = async (keys) => {
             return await s3Client.send(command);
         });
 
+        const deleted = (response.Deleted || []).map(entry => entry.Key).filter(Boolean);
+        const failed = (response.Errors || []).map(err => ({
+            key: err.Key,
+            code: err.Code,
+            message: err.Message
+        })).filter(f => f.key || f.message || f.code);
+
+        const success = failed.length === 0 && deleted.length === sanitizedKeys.length;
+
         return {
-            success: true,
-            deleted: response.Deleted || [],
-            errors: response.Errors || []
+            success,
+            deleted,
+            failed
         };
     } catch (error) {
         console.error('Failed to delete objects:', error);
@@ -543,18 +553,31 @@ export const deleteItems = async (items) => {
             deletePromises.push(deleteObjects(batch));
         }
         
-        // Execute all delete batches in parallel with proper error handling
+        // Execute all delete batches in parallel and aggregate results
         const results = await Promise.allSettled(deletePromises);
-        const failures = results.filter(r => r.status === 'rejected');
-        if (failures.length > 0) {
-            console.warn(`${failures.length} delete batch(es) failed:`, failures);
-            // Still return success if at least some batches succeeded
-            if (failures.length === results.length) {
-                throw new Error('All delete batches failed');
-            }
-        }
+        const deleted = [];
+        const failed = [];
 
-        return { success: true };
+        results.forEach(result => {
+            if (result.status === 'fulfilled') {
+                const value = result.value || {};
+                if (Array.isArray(value.deleted)) {
+                    deleted.push(...value.deleted);
+                }
+                if (Array.isArray(value.failed)) {
+                    failed.push(...value.failed);
+                }
+                // If a batch reported overall failure without specifics
+                if (value.success === false && (!value.failed || value.failed.length === 0)) {
+                    failed.push({ key: 'batch', message: value.error || 'Batch delete failed' });
+                }
+            } else {
+                failed.push({ key: 'batch', message: result.reason?.message || 'Batch delete failed' });
+            }
+        });
+
+        const success = failed.length === 0 && deleted.length === keysArray.length;
+        return { success, deleted, failed };
     } catch (error) {
         console.error('Failed to delete items:', error);
         return { success: false, error: error.message };
@@ -746,9 +769,16 @@ export const getPreviewUrl = async (key, expiresIn = 3600) => {
     }
 
     try {
+        // SECURITY: normalize, sanitize, validate server-side
+        const normalizedKey = normalizeKey(key);
+        const sanitizedKey = sanitizeS3Path(normalizedKey);
+        if (!sanitizedKey || validateKey(sanitizedKey)) {
+            return { success: false, error: 'Invalid file path' };
+        }
+
         const command = new GetObjectCommand({
             Bucket: currentBucket,
-            Key: key
+            Key: sanitizedKey
         });
 
         const url = await getSignedUrl(s3Client, command, { expiresIn });
