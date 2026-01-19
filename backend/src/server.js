@@ -17,7 +17,7 @@ const app = express();
 // Validate required configurations on startup
 const startupValidation = () => {
     console.log('🔍 Validating configuration...');
-    
+
     // Validate encryption configuration
     const encryptionResult = validateEncryption();
     if (!encryptionResult.success) {
@@ -95,7 +95,7 @@ app.use(cors({
 const limiter = rateLimit({
     windowMs: parseInt(process.env.RATE_LIMIT_WINDOW_MS) || 15 * 60 * 1000, // 15 minutes
     max: parseInt(process.env.RATE_LIMIT_MAX) || 100, // requests per window
-    message: { 
+    message: {
         error: {
             code: 'RATE_LIMITED',
             message: 'Too many requests, please try again later',
@@ -132,13 +132,17 @@ app.use(express.json({ limit: '10kb' }));
 // Routes
 // ============================================================================
 
-// URL Shortener routes (existing)
+// URL Shortener routes
 const shortenerRouter = require('./routes/shortener');
 app.use('/', shortenerRouter);
 
-// Bucket management routes (new)
+// Bucket management routes
 const bucketsRouter = require('./routes/buckets');
 app.use('/api/buckets', authLimiter, bucketsRouter);
+
+// File upload routes (NEW)
+const filesRouter = require('./routes/files');
+app.use('/api/files', filesRouter);
 
 // ============================================================================
 // Health Check
@@ -191,8 +195,8 @@ app.use((err, req, res, next) => {
     res.status(err.status || 500).json({
         error: {
             code: err.code || 'SERVER_ERROR',
-            message: process.env.NODE_ENV === 'production' 
-                ? 'An unexpected error occurred' 
+            message: process.env.NODE_ENV === 'production'
+                ? 'An unexpected error occurred'
                 : err.message,
             status: err.status || 500
         }
@@ -223,5 +227,6 @@ app.listen(PORT, () => {
     console.log('   PUT  /api/buckets/:id     - Update bucket config');
     console.log('   DELETE /api/buckets/:id   - Delete bucket config');
     console.log('   POST /api/buckets/validate - Validate bucket access');
+    console.log('   POST /api/files/upload     - Upload file (compress + store)');
     console.log('');
 });

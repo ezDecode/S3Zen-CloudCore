@@ -4,62 +4,26 @@ import { HowItWorksSection } from './sections/HowItWorksSection';
 import { FAQSection } from './sections/FAQSection';
 import { CTASection } from './sections/CTASection';
 
-/**
- * LANDING PAGE - Complete User Journey
- * 
- * PURPOSE: Guide visitor from awareness → understanding → conversion
- * 
- * OPTIMIZED STRUCTURE:
- * 1. Hero: Grab attention, communicate value (includes social proof)
- * 2. Features: Build credibility, prove capability (scan)
- * 3. How It Works: Show simplicity, remove barriers (3 easy steps)
- * 4. Setup Guide: Detailed AWS configuration for those ready to dive in
- * 5. CTA: Final push, convert (act)
- * 6. Footer: Brand touchpoint, attribution (close)
- */
+export const LandingPage = ({ onGetStarted }) => (
+    <div className="w-full min-h-screen bg-black">
+        <Hero onGetStarted={onGetStarted} />
+        <FeaturesSection />
+        <HowItWorksSection />
+        <FAQSection />
+        <CTASection onGetStarted={onGetStarted} />
 
-export const LandingPage = ({ onGetStarted }) => {
-    return (
-        <div className="w-full min-h-screen bg-black">
-            {/* 1. Hero - First impression, value proposition */}
-            <Hero onGetStarted={onGetStarted} />
-
-            {/* 2. Features - Build credibility with capabilities */}
-            <FeaturesSection />
-
-            {/* 3. How It Works - Show the 3-step simplicity */}
-            <HowItWorksSection />
-
-            {/* 4. Setup Guide - Detailed AWS configuration steps */}
-            <FAQSection />
-
-            {/* 5. Final CTA - Convert visitors to users */}
-            <CTASection onGetStarted={onGetStarted} />
-
-            {/* Premium Footer */}
-            <footer className="relative w-full py-12 bg-black border-t border-white/6">
-                <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12">
-                    <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
-                        {/* Premium Brand */}
-                        <div className="text-sm text-white/25">
-                            <span className="font-normal text-white/40">CloudCore</span> — Enterprise S3 Management
-                        </div>
-
-                        {/* Premium Attribution */}
-                        <div className="flex items-center gap-6 text-sm text-white/25">
-                            <a
-                                href="https://github.com/ezDecode"
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="hover:text-white/40 transition-colors duration-300"
-                            >
-                                Built by @ezDecode
-                            </a>
-                            <span>© {new Date().getFullYear()}</span>
-                        </div>
-                    </div>
+        <footer className="relative w-full py-12 bg-black border-t border-white/6">
+            <div className="max-w-7xl mx-auto px-6 flex flex-col sm:flex-row items-center justify-between gap-4">
+                <div className="text-sm text-white/25">
+                    <span className="text-white/40">CloudCore</span> — S3 Manager
                 </div>
-            </footer>
-        </div>
-    );
-};
+                <div className="flex items-center gap-6 text-sm text-white/25">
+                    <a href="https://github.com/ezDecode" target="_blank" rel="noopener noreferrer" className="hover:text-white/40">
+                        @ezDecode
+                    </a>
+                    <span>© {new Date().getFullYear()}</span>
+                </div>
+            </div>
+        </footer>
+    </div>
+);
