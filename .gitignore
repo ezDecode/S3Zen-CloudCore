@@ -63,3 +63,4 @@ Desktop.ini
 
 # Debug
 .vscode-test/
+/.agent

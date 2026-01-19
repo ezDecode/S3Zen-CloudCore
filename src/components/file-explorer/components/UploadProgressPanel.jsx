@@ -13,6 +13,7 @@ import {
     ArrowUp02Icon,
     Minimize01Icon
 } from 'hugeicons-react';
+import { Button } from '../../ui/button';
 
 // Format file size
 const formatSize = (bytes) => {
@@ -176,18 +177,22 @@ export const UploadProgressPanel = ({ uploadingFiles, onCancel }) => {
                                     </div>
                                     
                                     <div className="flex items-center gap-1">
-                                        <button
+                                        <Button
                                             onClick={() => setIsMinimized(true)}
-                                            className="p-1.5 rounded-lg hover:bg-white/10 transition-colors text-zinc-400 hover:text-white"
+                                            variant="ghost"
+                                            size="icon"
+                                            className="h-7 w-7 text-zinc-400"
                                         >
                                             <Minimize01Icon className="w-4 h-4" />
-                                        </button>
-                                        <button
+                                        </Button>
+                                        <Button
                                             onClick={onCancel}
-                                            className="p-1.5 rounded-lg hover:bg-white/10 transition-colors text-zinc-400 hover:text-white"
+                                            variant="ghost"
+                                            size="icon"
+                                            className="h-7 w-7 text-zinc-400"
                                         >
                                             <Cancel01Icon className="w-4 h-4" />
-                                        </button>
+                                        </Button>
                                     </div>
                                 </div>
                             </div>

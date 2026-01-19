@@ -6,6 +6,7 @@
 import { InformationCircleIcon } from 'hugeicons-react';
 import { Modal } from './Modal';
 import { formatBytes, formatDate } from '../../lib/utils';
+import { Button } from '../ui/button';
 
 export const DetailsModal = ({ isOpen, onClose, item }) => {
     if (!item) return null;
@@ -54,12 +55,13 @@ export const DetailsModal = ({ isOpen, onClose, item }) => {
             </div>
 
             <div className="pt-4">
-                <button
+                <Button
                     onClick={onClose}
-                    className="w-full py-2.5 px-4 text-sm bg-white/10 hover:bg-white/[0.15] text-white rounded-lg transition-colors duration-150"
+                    variant="secondary"
+                    className="w-full"
                 >
                     Close
-                </button>
+                </Button>
             </div>
         </Modal>
     );

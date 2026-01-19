@@ -9,6 +9,22 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { toast } from 'sonner';
 import { generateShareableLink } from '../../services/aws/s3Service';
 import { shortenUrl } from '../../services/urlShortener';
+import { Button } from '../ui/button';
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuTrigger,
+} from '../ui/dropdown-menu';
+
+const EXPIRATION_OPTIONS = [
+    { value: 3600, label: '1 hour' },
+    { value: 10800, label: '3 hours' },
+    { value: 21600, label: '6 hours' },
+    { value: 43200, label: '12 hours' },
+    { value: 86400, label: '24 hours' },
+    { value: 604800, label: '7 days' }
+];
 
 export const ShareModal = ({ isOpen, onClose, item }) => {
 
@@ -91,12 +107,14 @@ export const ShareModal = ({ isOpen, onClose, item }) => {
                                 <Link01Icon className="w-5 h-5 text-purple-400" />
                                 <h2 className="text-lg font-normal text-white">Share File</h2>
                             </div>
-                            <button
+                            <Button
                                 onClick={handleClose}
-                                className="p-1.5 text-zinc-400 hover:text-white hover:bg-white/4 rounded-lg transition-colors duration-150"
+                                variant="ghost"
+                                size="icon"
+                                className="h-8 w-8"
                             >
                                 <Cancel01Icon className="w-5 h-5" />
-                            </button>
+                            </Button>
                         </div>
 
                         {/* Content */}
@@ -110,35 +128,41 @@ export const ShareModal = ({ isOpen, onClose, item }) => {
                                 <label className="block text-xs font-normal text-white/70 mb-1.5">
                                     Link expires in
                                 </label>
-                                <div className="relative">
-                                    <select
-                                        value={expiresIn}
-                                        onChange={(e) => setExpiresIn(parseInt(e.target.value))}
-                                        className="w-full px-4 py-3 pr-10 text-sm bg-white/5 border border-white/10 rounded-lg text-white appearance-none cursor-pointer focus:outline-none focus:border-purple-500/50 focus:bg-white/10 focus:ring-2 focus:ring-purple-500/10 transition-colors duration-150"
-                                        style={{
-                                            backgroundImage: 'none'
-                                        }}
-                                    >
-                                        <option value={3600} className="bg-zinc-900 text-white py-2">1 hour</option>
-                                        <option value={10800} className="bg-zinc-900 text-white py-2">3 hours</option>
-                                        <option value={21600} className="bg-zinc-900 text-white py-2">6 hours</option>
-                                        <option value={43200} className="bg-zinc-900 text-white py-2">12 hours</option>
-                                        <option value={86400} className="bg-zinc-900 text-white py-2">24 hours</option>
-                                        <option value={604800} className="bg-zinc-900 text-white py-2">7 days</option>
-                                    </select>
-                                    <ArrowDown01Icon className="absolute right-3 top-1/2 -translate-y-1/2 text-white/40 pointer-events-none w-4 h-4" />
-                                </div>
+                                <DropdownMenu>
+                                    <DropdownMenuTrigger asChild>
+                                        <Button
+                                            variant="outline"
+                                            className="w-full justify-between bg-white/5 border-white/10 hover:border-purple-500/50 hover:bg-white/10"
+                                        >
+                                            <span className="text-sm">
+                                                {EXPIRATION_OPTIONS.find(opt => opt.value === expiresIn)?.label || '1 hour'}
+                                            </span>
+                                            <ArrowDown01Icon className="w-4 h-4 opacity-40" />
+                                        </Button>
+                                    </DropdownMenuTrigger>
+                                    <DropdownMenuContent className="w-[var(--radix-dropdown-menu-trigger-width)] bg-zinc-900 border-zinc-800 p-2">
+                                        {EXPIRATION_OPTIONS.map((option) => (
+                                            <DropdownMenuItem
+                                                key={option.value}
+                                                className="cursor-pointer hover:bg-zinc-800 focus:bg-zinc-800 rounded-md px-3 py-2 mb-1 last:mb-0"
+                                                onSelect={() => setExpiresIn(option.value)}
+                                            >
+                                                {option.label}
+                                            </DropdownMenuItem>
+                                        ))}
+                                    </DropdownMenuContent>
+                                </DropdownMenu>
                             </div>
 
                             {/* Generate Button */}
                             {!url && (
-                                <button
+                                <Button
                                     onClick={handleGenerate}
                                     disabled={isLoading}
-                                    className="w-full py-2.5 px-4 text-sm bg-gradient-to-r from-purple-600 to-pink-600 text-white font-normal rounded-lg hover:from-purple-700 hover:to-pink-700 transition-colors duration-150 disabled:opacity-50 disabled:cursor-not-allowed"
+                                    className="w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700"
                                 >
                                     {isLoading ? 'Generating...' : 'Generate Link'}
-                                </button>
+                                </Button>
                             )}
 
                             {/* Generated URL */}
@@ -156,10 +180,11 @@ export const ShareModal = ({ isOpen, onClose, item }) => {
                                     </div>
 
                                     <div className="flex gap-2">
-                                        <button
+                                        <Button
                                             onClick={handleCopy}
                                             disabled={isCopying}
-                                            className="flex-1 flex items-center justify-center gap-2 py-2.5 px-4 text-sm bg-white/10 hover:bg-white/[0.13] text-white rounded-lg transition-colors duration-150 font-normal disabled:opacity-50 disabled:cursor-not-allowed"
+                                            variant="secondary"
+                                            className="flex-1"
                                         >
                                             {isCopying ? (
                                                 <>
@@ -181,15 +206,15 @@ export const ShareModal = ({ isOpen, onClose, item }) => {
                                                     <span>Copy Link</span>
                                                 </>
                                             )}
-                                        </button>
+                                        </Button>
 
-                                        <button
+                                        <Button
                                             onClick={handleGenerate}
                                             disabled={isLoading}
-                                            className="px-4 py-2.5 text-sm bg-white/10 hover:bg-white/[0.13] text-white rounded-lg transition-colors duration-150 font-normal"
+                                            variant="secondary"
                                         >
                                             Regenerate
-                                        </button>
+                                        </Button>
                                     </div>
                                 </motion.div>
                             )}

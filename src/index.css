@@ -1,5 +1,9 @@
 @import "tailwindcss";
 
+/* Geist Font from npm package */
+@import "geist/font/sans.css";
+@import "geist/font/mono.css";
+
 /* Lenis Smooth Scroll */
 html.lenis, html.lenis body {
   height: auto;
@@ -21,25 +25,9 @@ html.lenis, html.lenis body {
   pointer-events: none;
 }
 
-/* Aeonik Pro Font Face - Regular Only */
-@font-face {
-  font-family: 'Aeonik Pro';
-  src: url('/fonts/AeonikPro-Regular.otf') format('opentype');
-  font-weight: 400;
-  font-style: normal;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: 'Aeonik Pro';
-  src: url('/fonts/AeonikPro-RegularItalic.otf') format('opentype');
-  font-weight: 400;
-  font-style: italic;
-  font-display: swap;
-}
-
 @theme {
-  --font-sans: "Aeonik Pro", sans-serif;
+  --font-sans: "Geist", system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-mono: "Geist Mono", ui-monospace, "Cascadia Code", "Source Code Pro", monospace;
   --font-serif: "Instrument Serif", serif;
 
   /* Spacing System */

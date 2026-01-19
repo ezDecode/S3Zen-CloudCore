@@ -8,6 +8,7 @@ import { useState } from 'react';
 import { toast } from 'sonner';
 import { createFolder } from '../../services/aws/s3Service';
 import { Modal } from './Modal';
+import { Button } from '../ui/button';
 
 export const CreateFolderModal = ({ isOpen, onClose, currentPath, onSuccess }) => {
 
@@ -91,20 +92,21 @@ export const CreateFolderModal = ({ isOpen, onClose, currentPath, onSuccess }) =
 
             {/* Action Buttons */}
             <div className="flex gap-3 pt-3">
-                <button
+                <Button
                     onClick={handleClose}
                     disabled={isCreating}
-                    className="flex-1 py-3.5 px-4 text-sm bg-white/8 hover:bg-white/[0.1] border border-white/10 text-white rounded-lg transition-colors duration-150 disabled:opacity-50 touch-target focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white/50"
+                    variant="outline"
+                    className="flex-1 h-auto py-3.5"
                 >
                     Cancel
-                </button>
-                <button
+                </Button>
+                <Button
                     onClick={handleCreate}
                     disabled={isCreating || !folderName.trim()}
-                    className="flex-1 py-3.5 px-4 text-sm bg-blue-500 hover:bg-blue-600 text-white font-normal rounded-lg transition-colors duration-150 disabled:opacity-50 disabled:cursor-not-allowed touch-target focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-400"
+                    className="flex-1 h-auto py-3.5 bg-blue-500 hover:bg-blue-600"
                 >
                     {isCreating ? 'Creating...' : 'Create Folder'}
-                </button>
+                </Button>
             </div>
         </Modal>
     );

@@ -26,6 +26,7 @@ import {
     DropdownMenuItem,
     DropdownMenuTrigger,
 } from "../../ui/dropdown-menu";
+import { Button } from "../../ui/button";
 import { BucketSwitcher } from "./BucketSwitcher";
 import { BucketManagerModal } from "../../modals/BucketManagerModal";
 
@@ -170,22 +171,26 @@ export const FileExplorerNav = forwardRef(({
                     </div>
 
                     {/* Premium Refresh */}
-                    <button
+                    <Button
                         onClick={onRefresh}
-                        className="hidden sm:flex p-1.5 sm:p-2 rounded-lg text-white/40 hover:text-white/70 hover:bg-white/4 transition-colors duration-150 shrink-0"
+                        variant="ghost"
+                        size="icon"
+                        className="hidden sm:flex h-8 w-8"
                         title="Refresh"
                     >
                         <Loading03Icon className="w-4.5 h-4.5" />
-                    </button>
+                    </Button>
 
                     {/* Premium Logout */}
-                    <button
+                    <Button
                         onClick={onLogout}
-                        className="p-1.5 sm:p-2 rounded-lg text-white/40 hover:text-white/70 hover:bg-white/4 transition-colors duration-150 shrink-0"
+                        variant="ghost"
+                        size="icon"
+                        className="h-8 w-8"
                         title="Logout"
                     >
                         <Logout01Icon className="w-4 sm:w-4.5 h-4 sm:h-4.5" />
-                    </button>
+                    </Button>
                 </div>
             </nav>
 

@@ -8,6 +8,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useState } from 'react';
 import { toast } from 'sonner';
 import { deleteItems } from '../../services/aws/s3Service';
+import { Button } from '../ui/button';
 
 export const DeleteConfirmModal = ({ isOpen, onClose, items, onSuccess }) => {
 
@@ -72,12 +73,14 @@ export const DeleteConfirmModal = ({ isOpen, onClose, items, onSuccess }) => {
                                 <Alert01Icon className="w-5 h-5 text-red-400" />
                                 <h2 className="text-lg font-normal text-white">Confirm Deletion</h2>
                             </div>
-                            <button
+                            <Button
                                 onClick={handleCloseModal}
-                                className="touch-target-lg p-2 text-white/50 hover:text-white hover:bg-white/8 rounded-lg transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white/50"
+                                variant="ghost"
+                                size="icon"
+                                className="h-9 w-9"
                             >
                                 <Cancel01Icon className="w-5 h-5" />
-                            </button>
+                            </Button>
                         </div>
 
                         {/* Content */}
@@ -120,20 +123,21 @@ export const DeleteConfirmModal = ({ isOpen, onClose, items, onSuccess }) => {
 
                             {/* Actions */}
                             <div className="flex gap-2 pt-3">
-                                <button
+                                <Button
                                     onClick={handleCloseModal}
                                     disabled={isDeleting}
-                                    className="flex-1 py-2.5 px-4 text-sm bg-white/10 hover:bg-white/[0.15] text-white rounded-lg transition-colors duration-150 disabled:opacity-50"
+                                    variant="secondary"
+                                    className="flex-1"
                                 >
                                     Cancel
-                                </button>
-                                <button
+                                </Button>
+                                <Button
                                     onClick={handleDelete}
                                     disabled={isDeleting || !canDelete}
-                                    className="flex-1 py-2.5 px-4 text-sm bg-red-500 hover:bg-red-600 text-white font-normal rounded-lg transition-colors duration-150 disabled:opacity-50 disabled:cursor-not-allowed"
+                                    className="flex-1 bg-red-500 hover:bg-red-600"
                                 >
                                     {isDeleting ? 'Deleting...' : 'Delete'}
-                                </button>
+                                </Button>
                             </div>
                         </div>
                     </motion.div>

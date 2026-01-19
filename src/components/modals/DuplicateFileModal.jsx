@@ -6,6 +6,7 @@
 import { Alert02Icon } from 'hugeicons-react';
 import { useState } from 'react';
 import { Modal } from './Modal';
+import { Button } from '../ui/button';
 
 export const DuplicateFileModal = ({ isOpen, onClose, fileName, onResolve }) => {
     const [newFileName, setNewFileName] = useState(fileName);
@@ -67,31 +68,34 @@ export const DuplicateFileModal = ({ isOpen, onClose, fileName, onResolve }) => 
 
                 {/* Action Buttons */}
                 <div className="space-y-2 pt-2">
-                    <button
+                    <Button
                         onClick={handleRename}
                         disabled={!newFileName.trim()}
-                        className="w-full py-2.5 px-4 text-sm bg-blue-500 hover:bg-blue-600 text-white font-normal rounded-lg transition-colors duration-150 disabled:opacity-50 disabled:cursor-not-allowed"
+                        className="w-full bg-blue-500 hover:bg-blue-600"
                     >
                         Rename & Upload
-                    </button>
-                    <button
+                    </Button>
+                    <Button
                         onClick={handleKeepBoth}
-                        className="w-full py-2.5 px-4 text-sm bg-white/10 hover:bg-white/[0.15] text-white rounded-lg transition-colors duration-150"
+                        variant="secondary"
+                        className="w-full"
                     >
                         Keep Both (Add "1")
-                    </button>
-                    <button
+                    </Button>
+                    <Button
                         onClick={handleReplace}
-                        className="w-full py-2.5 px-4 text-sm bg-yellow-600/20 hover:bg-yellow-600/30 text-yellow-400 border border-yellow-600/40 rounded-lg transition-colors duration-150"
+                        variant="outline"
+                        className="w-full bg-yellow-600/20 hover:bg-yellow-600/30 text-yellow-400 border-yellow-600/40"
                     >
                         Replace Existing
-                    </button>
-                    <button
+                    </Button>
+                    <Button
                         onClick={handleCancel}
-                        className="w-full py-2.5 px-4 text-sm bg-white/5 hover:bg-white/[0.08] text-zinc-400 rounded-lg transition-colors duration-150"
+                        variant="ghost"
+                        className="w-full text-zinc-400"
                     >
                         Cancel Upload
-                    </button>
+                    </Button>
                 </div>
             </div>
         </Modal>

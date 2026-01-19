@@ -2,6 +2,13 @@ import { useState } from 'react';
 import { Cancel01Icon, ArrowDown01Icon, LockIcon, Key01Icon, Database01Icon, Location01Icon } from 'hugeicons-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { isValidAccessKeyId, isValidSecretAccessKey, isValidBucketName } from '../../utils/validationUtils';
+import { Button } from '../ui/button';
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuTrigger,
+} from '../ui/dropdown-menu';
 
 const AWS_REGIONS = [
     { value: 'us-east-1', label: 'US East (N. Virginia)' },
@@ -121,13 +128,15 @@ export const AuthModal = ({ isOpen, onClose, onAuthenticate }) => {
                                         Enter your AWS credentials to continue
                                     </p>
                                 </div>
-                                <button
+                                <Button
                                     onClick={onClose}
-                                    className="touch-target-lg p-2 text-white/40 hover:text-white/70 hover:bg-white/[0.05] focus-visible:outline-2 focus-visible:outline-white/50 focus-visible:outline-offset-2 transition-colors duration-150 rounded-lg -mr-2 -mt-1"
+                                    variant="ghost"
+                                    size="icon"
+                                    className="h-9 w-9 -mr-2 -mt-1"
                                     aria-label="Close modal"
                                 >
                                     <Cancel01Icon className="w-5 h-5" />
-                                </button>
+                                </Button>
                             </div>
 
                             {/* Form */}
@@ -200,38 +209,44 @@ export const AuthModal = ({ isOpen, onClose, onAuthenticate }) => {
                                         <Location01Icon className="w-4 h-4 text-white/40" />
                                         AWS Region
                                     </label>
-                                    <div className="relative">
-                                        <select
-                                            name="region"
-                                            value={formData.region}
-                                            onChange={handleChange}
-                                            className="w-full px-4 py-3.5 pr-10 text-sm bg-white/4 border border-white/12 text-white appearance-none cursor-pointer rounded-lg outline-none focus:border-white/30 focus:bg-white/6 focus:ring-2 focus:ring-white/20 transition-all duration-300"
-                                            style={{
-                                                backgroundImage: 'none'
-                                            }}
+                                    <DropdownMenu>
+                                        <DropdownMenuTrigger asChild>
+                                            <Button
+                                                variant="outline"
+                                                className="w-full justify-between bg-white/4 border-white/12 hover:border-white/30 hover:bg-white/6 h-auto py-3.5"
+                                            >
+                                                <span className="text-sm">
+                                                    {AWS_REGIONS.find(r => r.value === formData.region)?.label || 'Select Region'}
+                                                </span>
+                                                <ArrowDown01Icon className="w-5 h-5 opacity-30" />
+                                            </Button>
+                                        </DropdownMenuTrigger>
+                                        <DropdownMenuContent 
+                                            className="w-[var(--radix-dropdown-menu-trigger-width)] bg-[#0a0a0a] border-white/12 p-2 max-h-[300px]"
+                                            align="start"
+                                            sideOffset={4}
                                         >
                                             {AWS_REGIONS.map((region) => (
-                                                <option
+                                                <DropdownMenuItem
                                                     key={region.value}
-                                                    value={region.value}
-                                                    className="bg-[#0a0a0a] text-white py-2"
+                                                    className="cursor-pointer hover:bg-white/10 focus:bg-white/10 rounded-md px-3 py-2 mb-1 last:mb-0"
+                                                    onSelect={() => setFormData({ ...formData, region: region.value })}
                                                 >
                                                     {region.label}
-                                                </option>
+                                                </DropdownMenuItem>
                                             ))}
-                                        </select>
-                                        <ArrowDown01Icon className="absolute right-3 top-1/2 -translate-y-1/2 text-white/30 pointer-events-none w-5 h-5" />
-                                    </div>
+                                        </DropdownMenuContent>
+                                    </DropdownMenu>
                                     <p className="text-xs text-white/40 mt-2">
                                         💡 Choose a region close to your users for better performance
                                     </p>
                                 </div>
 
                                 {/* Premium Submit Button - High Contrast */}
-                                <button
+                                <Button
                                     type="submit"
                                     disabled={isLoading}
-                                    className="w-full mt-2 px-6 py-4 font-normal text-black bg-white hover:bg-white/90 disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-150 shadow-lg rounded-xl flex items-center justify-center gap-2 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white/80 touch-target-lg"
+                                    className="w-full mt-2 h-auto py-4 text-black bg-white hover:bg-white/90 shadow-lg rounded-xl"
                                 >
                                     {isLoading ? (
                                         <>
@@ -245,7 +260,7 @@ export const AuthModal = ({ isOpen, onClose, onAuthenticate }) => {
                                     ) : (
                                         <span>Connect to Bucket</span>
                                     )}
-                                </button>
+                                </Button>
 
                                 {/* Premium Help Text */}
                                 <p className="text-xs text-center text-white/30 pt-1">

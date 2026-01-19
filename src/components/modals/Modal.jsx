@@ -3,8 +3,9 @@
  * Reusable modal base component with consistent styling
  */
 
-import { X } from 'lucide-react';
+import { Cancel01Icon } from 'hugeicons-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { Button } from '../ui/button';
 
 export const Modal = ({
     isOpen,
@@ -37,12 +38,14 @@ export const Modal = ({
                                 {Icon && <Icon className={`w-5 h-5 ${iconColor}`} />}
                                 <h2 className="text-lg font-normal text-white tracking-tight">{title}</h2>
                             </div>
-                            <button
+                            <Button
                                 onClick={onClose}
-                                className="touch-target-lg p-2 text-white/40 hover:text-white/80 hover:bg-white/6 rounded-lg transition-all duration-300 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white/50"
+                                variant="ghost"
+                                size="icon"
+                                className="h-9 w-9"
                             >
-                                <X className="w-5 h-5" />
-                            </button>
+                                <Cancel01Icon className="w-5 h-5" />
+                            </Button>
                         </div>
 
                         {/* Content */}

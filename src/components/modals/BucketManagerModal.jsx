@@ -11,7 +11,8 @@ import {
     CheckmarkCircle01Icon,
     AlertCircleIcon,
     Loading03Icon,
-    EyeIcon
+    EyeIcon,
+    ArrowDown01Icon
 } from 'hugeicons-react';
 import { toast } from 'sonner';
 import { Button } from '../ui/button';
@@ -22,7 +23,45 @@ import {
     DialogHeader,
     DialogTitle,
 } from '../ui/dialog';
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuTrigger,
+} from '../ui/dropdown-menu';
 import bucketManagerService from '../../services/bucketManagerService';
+
+const AWS_REGIONS = [
+    { value: 'us-east-1', label: 'US East (N. Virginia)' },
+    { value: 'us-east-2', label: 'US East (Ohio)' },
+    { value: 'us-west-1', label: 'US West (N. California)' },
+    { value: 'us-west-2', label: 'US West (Oregon)' },
+    { value: 'af-south-1', label: 'Africa (Cape Town)' },
+    { value: 'ap-east-1', label: 'Asia Pacific (Hong Kong)' },
+    { value: 'ap-south-1', label: 'Asia Pacific (Mumbai)' },
+    { value: 'ap-south-2', label: 'Asia Pacific (Hyderabad)' },
+    { value: 'ap-southeast-1', label: 'Asia Pacific (Singapore)' },
+    { value: 'ap-southeast-2', label: 'Asia Pacific (Sydney)' },
+    { value: 'ap-southeast-3', label: 'Asia Pacific (Jakarta)' },
+    { value: 'ap-southeast-4', label: 'Asia Pacific (Melbourne)' },
+    { value: 'ap-northeast-1', label: 'Asia Pacific (Tokyo)' },
+    { value: 'ap-northeast-2', label: 'Asia Pacific (Seoul)' },
+    { value: 'ap-northeast-3', label: 'Asia Pacific (Osaka)' },
+    { value: 'ca-central-1', label: 'Canada (Central)' },
+    { value: 'ca-west-1', label: 'Canada West (Calgary)' },
+    { value: 'eu-central-1', label: 'Europe (Frankfurt)' },
+    { value: 'eu-central-2', label: 'Europe (Zurich)' },
+    { value: 'eu-west-1', label: 'Europe (Ireland)' },
+    { value: 'eu-west-2', label: 'Europe (London)' },
+    { value: 'eu-west-3', label: 'Europe (Paris)' },
+    { value: 'eu-north-1', label: 'Europe (Stockholm)' },
+    { value: 'eu-south-1', label: 'Europe (Milan)' },
+    { value: 'eu-south-2', label: 'Europe (Spain)' },
+    { value: 'il-central-1', label: 'Israel (Tel Aviv)' },
+    { value: 'me-south-1', label: 'Middle East (Bahrain)' },
+    { value: 'me-central-1', label: 'Middle East (UAE)' },
+    { value: 'sa-east-1', label: 'South America (São Paulo)' }
+];
 
 export const BucketManagerModal = ({ isOpen, onClose, onBucketAdded }) => {
     const [buckets, setBuckets] = useState([]);
@@ -236,20 +275,24 @@ export const BucketManagerModal = ({ isOpen, onClose, onBucketAdded }) => {
                                                     )}
                                                 </div>
                                                 <div className="flex items-center gap-2">
-                                                    <button
+                                                    <Button
                                                         onClick={() => handleEditBucket(bucket)}
-                                                        className="p-2 hover:bg-zinc-700 rounded transition-colors"
+                                                        variant="ghost"
+                                                        size="icon"
+                                                        className="h-8 w-8"
                                                         title="Edit"
                                                     >
                                                         <Edit02Icon className="w-4 h-4" />
-                                                    </button>
-                                                    <button
+                                                    </Button>
+                                                    <Button
                                                         onClick={() => setDeleteConfirm({ id: bucket.id, name: bucket.displayName })}
-                                                        className="p-2 hover:bg-red-900/30 rounded transition-colors text-red-400"
+                                                        variant="ghost"
+                                                        size="icon"
+                                                        className="h-8 w-8 text-red-400 hover:bg-red-900/30"
                                                         title="Delete"
                                                     >
                                                         <Delete01Icon className="w-4 h-4" />
-                                                    </button>
+                                                    </Button>
                                                 </div>
                                             </div>
                                         ))
@@ -295,41 +338,34 @@ export const BucketManagerModal = ({ isOpen, onClose, onBucketAdded }) => {
 
                                     <div>
                                         <label className="block text-sm font-medium mb-2">Region</label>
-                                        <select
-                                            value={formData.region}
-                                            onChange={(e) => setFormData({ ...formData, region: e.target.value })}
-                                            className="w-full px-3 py-2 rounded-lg bg-zinc-800 border border-zinc-700 focus:border-emerald-500 outline-none transition-colors"
-                                        >
-                                            <option value="us-east-1">US East (N. Virginia)</option>
-                                            <option value="us-east-2">US East (Ohio)</option>
-                                            <option value="us-west-1">US West (N. California)</option>
-                                            <option value="us-west-2">US West (Oregon)</option>
-                                            <option value="af-south-1">Africa (Cape Town)</option>
-                                            <option value="ap-east-1">Asia Pacific (Hong Kong)</option>
-                                            <option value="ap-south-1">Asia Pacific (Mumbai)</option>
-                                            <option value="ap-south-2">Asia Pacific (Hyderabad)</option>
-                                            <option value="ap-southeast-1">Asia Pacific (Singapore)</option>
-                                            <option value="ap-southeast-2">Asia Pacific (Sydney)</option>
-                                            <option value="ap-southeast-3">Asia Pacific (Jakarta)</option>
-                                            <option value="ap-southeast-4">Asia Pacific (Melbourne)</option>
-                                            <option value="ap-northeast-1">Asia Pacific (Tokyo)</option>
-                                            <option value="ap-northeast-2">Asia Pacific (Seoul)</option>
-                                            <option value="ap-northeast-3">Asia Pacific (Osaka)</option>
-                                            <option value="ca-central-1">Canada (Central)</option>
-                                            <option value="ca-west-1">Canada West (Calgary)</option>
-                                            <option value="eu-central-1">Europe (Frankfurt)</option>
-                                            <option value="eu-central-2">Europe (Zurich)</option>
-                                            <option value="eu-west-1">Europe (Ireland)</option>
-                                            <option value="eu-west-2">Europe (London)</option>
-                                            <option value="eu-west-3">Europe (Paris)</option>
-                                            <option value="eu-north-1">Europe (Stockholm)</option>
-                                            <option value="eu-south-1">Europe (Milan)</option>
-                                            <option value="eu-south-2">Europe (Spain)</option>
-                                            <option value="il-central-1">Israel (Tel Aviv)</option>
-                                            <option value="me-south-1">Middle East (Bahrain)</option>
-                                            <option value="me-central-1">Middle East (UAE)</option>
-                                            <option value="sa-east-1">South America (São Paulo)</option>
-                                        </select>
+                                        <DropdownMenu>
+                                            <DropdownMenuTrigger asChild>
+                                                <Button
+                                                    variant="outline"
+                                                    className="w-full justify-between bg-zinc-800 border-zinc-700 hover:border-emerald-500 hover:bg-zinc-800"
+                                                >
+                                                    <span className="text-sm">
+                                                        {AWS_REGIONS.find(r => r.value === formData.region)?.label || 'Select Region'}
+                                                    </span>
+                                                    <ArrowDown01Icon className="w-4 h-4 opacity-50" />
+                                                </Button>
+                                            </DropdownMenuTrigger>
+                                            <DropdownMenuContent 
+                                                className="w-[var(--radix-dropdown-menu-trigger-width)] bg-zinc-900 border-zinc-800 p-2 max-h-[300px]"
+                                                align="start"
+                                                sideOffset={4}
+                                            >
+                                                {AWS_REGIONS.map((region) => (
+                                                    <DropdownMenuItem
+                                                        key={region.value}
+                                                        className="cursor-pointer hover:bg-zinc-800 focus:bg-zinc-800 rounded-md px-3 py-2 mb-1 last:mb-0"
+                                                        onSelect={() => setFormData({ ...formData, region: region.value })}
+                                                    >
+                                                        {region.label}
+                                                    </DropdownMenuItem>
+                                                ))}
+                                            </DropdownMenuContent>
+                                        </DropdownMenu>
                                     </div>
 
                                     <div>
@@ -353,19 +389,17 @@ export const BucketManagerModal = ({ isOpen, onClose, onBucketAdded }) => {
                                                 onChange={(e) => setFormData({ ...formData, secretAccessKey: e.target.value })}
                                                 className="flex-1 px-3 py-2 rounded-lg bg-zinc-800 border border-zinc-700 focus:border-emerald-500 outline-none transition-colors font-mono text-sm"
                                             />
-                                            <button
+                                            <Button
                                                 onClick={() => setShowSecrets({
                                                     ...showSecrets,
                                                     [editingId]: !showSecrets[editingId]
                                                 })}
-                                                className="p-2 hover:bg-zinc-700 rounded transition-colors"
+                                                variant="ghost"
+                                                size="icon"
+                                                className="h-10 w-10"
                                             >
-                                                {showSecrets[editingId] ? (
-                                                    <EyeIcon className="w-4 h-4" />
-                                                ) : (
-                                                    <EyeIcon className="w-4 h-4" />
-                                                )}
-                                            </button>
+                                                <EyeIcon className="w-4 h-4" />
+                                            </Button>
                                         </div>
                                     </div>
 
