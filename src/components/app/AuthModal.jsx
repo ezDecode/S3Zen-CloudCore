@@ -1,10 +1,10 @@
 /**
- * Neo-Brutalism Auth Modal
- * Simple OTP-based authentication
+ * Auth Modal
+ * Terracotta-themed OTP authentication with ncdai design system
  */
 
 import { useState, useEffect, useRef } from 'react';
-import { X, Mail, ArrowRight, Loader2, CheckCircle } from 'lucide-react';
+import { X, Mail, ArrowRight, Loader2, CheckCircle, Cloud } from 'lucide-react';
 
 export const AuthModal = ({ isOpen, onClose, onSendOTP, onVerifyOTP }) => {
     const [step, setStep] = useState('email'); // 'email' | 'otp' | 'success'
@@ -49,10 +49,10 @@ export const AuthModal = ({ isOpen, onClose, onSendOTP, onVerifyOTP }) => {
                 setStep('otp');
                 setTimeout(() => otpRefs.current[0]?.focus(), 100);
             } else {
-                setError(result?.error || 'Failed to send code');
+                setError(result?.error || 'failed to send code');
             }
         } catch (err) {
-            setError('Failed to send code. Please try again.');
+            setError('failed to send code. please try again.');
         } finally {
             setLoading(false);
         }
@@ -104,13 +104,12 @@ export const AuthModal = ({ isOpen, onClose, onSendOTP, onVerifyOTP }) => {
                 setStep('success');
                 setTimeout(() => onClose(), 1500);
             } else {
-                setError(result?.error || 'Invalid code');
+                setError(result?.error || 'invalid code');
                 setOtp(['', '', '', '', '', '']);
                 otpRefs.current[0]?.focus();
             }
         } catch (err) {
-            // Handle both thrown errors and error messages
-            const errorMessage = err?.message || err?.error || 'Verification failed. Please try again.';
+            const errorMessage = err?.message || err?.error || 'verification failed. please try again.';
             setError(errorMessage);
             setOtp(['', '', '', '', '', '']);
             otpRefs.current[0]?.focus();
@@ -123,46 +122,59 @@ export const AuthModal = ({ isOpen, onClose, onSendOTP, onVerifyOTP }) => {
 
     return (
         <div className="modal-overlay" onClick={(e) => e.target === e.currentTarget && onClose()}>
-            <div className="modal">
+            <div className="modal bg-card shadow-xl">
                 {/* Header */}
-                <div className="modal-header">
-                    <h2 className="modal-title">
-                        {step === 'email' && 'Sign In'}
-                        {step === 'otp' && 'Enter Code'}
-                        {step === 'success' && 'Welcome!'}
-                    </h2>
+                <div className="modal-header px-6 py-5 flex items-center justify-between bg-secondary/30">
+                    <div className="flex items-center gap-3">
+                        <div className="w-8 h-8 rounded-lg bg-brand/10 flex items-center justify-center">
+                            <Cloud className="w-4 h-4 text-brand" />
+                        </div>
+                        <div>
+                            <h2 className="font-semibold text-base text-foreground lowercase">
+                                {step === 'email' && 'sign in'}
+                                {step === 'otp' && 'verify code'}
+                                {step === 'success' && 'welcome back'}
+                            </h2>
+                            <p className="text-xs text-muted-foreground lowercase">cloudcore secure access</p>
+                        </div>
+                    </div>
                     <button
                         onClick={onClose}
-                        className="w-10 h-10 border-3 border-[var(--border-color)] bg-white flex items-center justify-center hover:bg-[var(--color-pink)] hover:text-white transition-colors"
+                        className="rounded-lg w-8 h-8 flex items-center justify-center text-muted-foreground hover:bg-secondary hover:text-foreground transition-colors"
                     >
-                        <X className="w-5 h-5" />
+                        <X className="w-4 h-4" />
                     </button>
                 </div>
 
                 {/* Body */}
-                <div className="modal-body">
+                <div className="modal-body p-6">
                     {/* Email Step */}
                     {step === 'email' && (
-                        <form onSubmit={handleSendOTP}>
-                            <p className="text-[var(--color-text-secondary)] mb-6">
-                                Enter your email address. We'll send you a magic code.
+                        <form onSubmit={handleSendOTP} className="space-y-6">
+                            <p className="text-sm text-muted-foreground lowercase leading-relaxed">
+                                enter your email address and we'll send you a secure one-time code to access your account.
                             </p>
 
-                            <div className="relative mb-4">
-                                <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-[var(--color-text-muted)]" />
-                                <input
-                                    ref={emailInputRef}
-                                    type="email"
-                                    value={email}
-                                    onChange={(e) => setEmail(e.target.value)}
-                                    placeholder="you@email.com"
-                                    className="input pl-12"
-                                    required
-                                />
+                            <div className="space-y-2">
+                                <label className="text-xs tracking-widest text-muted-foreground lowercase font-medium px-1">
+                                    email address
+                                </label>
+                                <div className="relative">
+                                    <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                                    <input
+                                        ref={emailInputRef}
+                                        type="email"
+                                        value={email}
+                                        onChange={(e) => setEmail(e.target.value)}
+                                        placeholder="you@company.com"
+                                        className="input pl-10 lowercase"
+                                        required
+                                    />
+                                </div>
                             </div>
 
                             {error && (
-                                <div className="badge badge-error mb-4 w-full justify-center">
+                                <div className="p-3 rounded-lg bg-destructive/5 border border-destructive/20 text-destructive text-xs lowercase font-medium">
                                     {error}
                                 </div>
                             )}
@@ -170,77 +182,102 @@ export const AuthModal = ({ isOpen, onClose, onSendOTP, onVerifyOTP }) => {
                             <button
                                 type="submit"
                                 disabled={loading || !email}
-                                className="btn btn-primary w-full"
+                                className="btn btn-brand w-full h-11 rounded-lg text-sm lowercase font-medium"
                             >
                                 {loading ? (
-                                    <Loader2 className="w-5 h-5 animate-spin" />
+                                    <Loader2 className="w-4 h-4 animate-spin" />
                                 ) : (
                                     <>
-                                        Send Magic Code
-                                        <ArrowRight className="w-5 h-5" />
+                                        send verification code
+                                        <ArrowRight className="w-4 h-4" />
                                     </>
                                 )}
                             </button>
+
+                            <p className="text-[10px] text-muted-foreground/60 text-center lowercase">
+                                by continuing, you agree to our terms of service
+                            </p>
                         </form>
                     )}
 
                     {/* OTP Step */}
                     {step === 'otp' && (
-                        <div>
-                            <p className="text-[var(--color-text-secondary)] mb-2">
-                                We sent a 6-digit code to
-                            </p>
-                            <p className="font-bold text-[var(--color-ink)] mb-6">
-                                {email}
-                            </p>
+                        <div className="space-y-6">
+                            <div>
+                                <p className="text-sm text-muted-foreground lowercase mb-1">
+                                    we sent a 6-digit code to
+                                </p>
+                                <p className="font-semibold text-foreground text-base lowercase">
+                                    {email}
+                                </p>
+                            </div>
 
-                            <div className="flex gap-2 justify-center mb-6" onPaste={handleOtpPaste}>
-                                {otp.map((digit, index) => (
-                                    <input
-                                        key={index}
-                                        ref={(el) => (otpRefs.current[index] = el)}
-                                        type="text"
-                                        inputMode="numeric"
-                                        maxLength={1}
-                                        value={digit}
-                                        onChange={(e) => handleOtpChange(index, e.target.value)}
-                                        onKeyDown={(e) => handleOtpKeyDown(index, e)}
-                                        className="w-12 h-14 text-center text-2xl font-bold border-3 border-[var(--border-color)] bg-white focus:border-[var(--color-primary)] focus:outline-none transition-colors"
-                                    />
-                                ))}
+                            <div className="space-y-2">
+                                <label className="text-xs tracking-widest text-muted-foreground lowercase font-medium px-1">
+                                    verification code
+                                </label>
+                                <div className="flex gap-2 justify-center" onPaste={handleOtpPaste}>
+                                    {otp.map((digit, index) => (
+                                        <input
+                                            key={index}
+                                            ref={(el) => (otpRefs.current[index] = el)}
+                                            type="text"
+                                            inputMode="numeric"
+                                            maxLength={1}
+                                            value={digit}
+                                            onChange={(e) => handleOtpChange(index, e.target.value)}
+                                            onKeyDown={(e) => handleOtpKeyDown(index, e)}
+                                            className="w-11 h-13 text-center text-xl font-bold rounded-lg border-2 border-edge bg-card focus:border-brand focus:ring-2 focus:ring-brand/20 outline-none transition-all"
+                                            style={{ borderStyle: digit ? 'solid' : 'dotted' }}
+                                        />
+                                    ))}
+                                </div>
                             </div>
 
                             {error && (
-                                <div className="badge badge-error mb-4 w-full justify-center">
+                                <div className="p-3 rounded-lg bg-destructive/5 border border-destructive/20 text-destructive text-xs lowercase font-medium text-center">
                                     {error}
                                 </div>
                             )}
 
                             {loading && (
-                                <div className="flex items-center justify-center gap-2 text-[var(--color-text-secondary)]">
-                                    <Loader2 className="w-5 h-5 animate-spin" />
-                                    <span>Verifying...</span>
+                                <div className="flex items-center justify-center gap-2 text-muted-foreground text-sm lowercase">
+                                    <Loader2 className="w-4 h-4 animate-spin" />
+                                    <span>verifying...</span>
                                 </div>
                             )}
 
-                            <button
-                                type="button"
-                                onClick={() => setStep('email')}
-                                className="btn btn-ghost w-full mt-4"
-                            >
-                                Use Different Email
-                            </button>
+                            <div className="flex flex-col gap-2">
+                                <button
+                                    type="button"
+                                    onClick={() => setStep('email')}
+                                    className="btn btn-ghost w-full h-10 rounded-lg text-sm lowercase font-medium"
+                                >
+                                    use different email
+                                </button>
+                                <button
+                                    type="button"
+                                    onClick={() => handleSendOTP({ preventDefault: () => { } })}
+                                    disabled={loading}
+                                    className="text-xs text-brand hover:text-brand/80 transition-colors lowercase font-medium"
+                                >
+                                    resend code
+                                </button>
+                            </div>
                         </div>
                     )}
 
                     {/* Success Step */}
                     {step === 'success' && (
                         <div className="text-center py-8">
-                            <div className="w-20 h-20 bg-[var(--color-success)] border-4 border-[var(--border-color)] flex items-center justify-center mx-auto mb-6">
-                                <CheckCircle className="w-10 h-10 text-[var(--color-ink)]" />
+                            <div className="w-16 h-16 bg-brand/10 rounded-2xl flex items-center justify-center mx-auto mb-6">
+                                <CheckCircle className="w-8 h-8 text-brand" />
                             </div>
-                            <p className="font-display text-xl font-bold uppercase">
-                                You're in!
+                            <p className="text-xl font-semibold text-foreground lowercase mb-2">
+                                you're in!
+                            </p>
+                            <p className="text-sm text-muted-foreground lowercase">
+                                redirecting to your dashboard...
                             </p>
                         </div>
                     )}

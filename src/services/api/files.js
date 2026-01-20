@@ -1,15 +1,17 @@
-/**
- * Files API Module
- * All file operations via backend (credentials never in browser)
- */
-
 import { apiRequest, apiUpload } from './client.js';
+import { mockFileService } from '../mockFileService.js';
+import bucketManagerService from '../bucketManagerService.js';
 
 export const files = {
     /**
      * Upload file via backend (with compression for images)
      */
     upload: async (file, options = {}) => {
+        // Fallback to mock if switching is active
+        if (bucketManagerService.useMock) {
+            return mockFileService.upload(file, options);
+        }
+
         const { bucketId, makePublic, path, onProgress } = options;
 
         const formData = new FormData();
@@ -31,6 +33,9 @@ export const files = {
      * @param {string[]} keys - Array of S3 keys to delete
      */
     delete: async (keys, bucketId = null) => {
+        if (bucketManagerService.useMock) {
+            return mockFileService.delete(keys);
+        }
         try {
             const result = await apiRequest('/api/files/delete', {
                 method: 'POST',
@@ -92,6 +97,9 @@ export const files = {
      * @param {Object} options - { limit, offset }
      */
     getHistory: async (options = {}) => {
+        if (bucketManagerService.useMock) {
+            return { success: true, files: [], total: 0 };
+        }
         try {
             const { limit = 50, offset = 0 } = options;
             const result = await apiRequest(`/api/files/history?limit=${limit}&offset=${offset}`);

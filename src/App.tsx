@@ -15,6 +15,14 @@ import { Toaster } from './components/app/Toaster';
 import { useAuth } from './hooks/useAuth';
 import bucketManagerService from './services/bucketManagerService';
 
+interface Bucket {
+  id?: string;
+  bucket_name?: string;
+  bucketName?: string;
+  region: string;
+  is_default?: boolean;
+}
+
 /**
  * Main Application Content
  */
@@ -33,9 +41,11 @@ function AppContent() {
 
   // App states
   const [hasBucket, setHasBucket] = useState(false);
-  const [currentBucket, setCurrentBucket] = useState(null);
+  const [currentBucket, setCurrentBucket] = useState<Bucket | null>(null);
   const [checkingBucket, setCheckingBucket] = useState(true);
   const [showBucketSetup, setShowBucketSetup] = useState(false);
+
+
 
   // Check if user has a bucket configured
   useEffect(() => {
@@ -55,7 +65,7 @@ function AppContent() {
 
         if (result.success && result.buckets && result.buckets.length > 0) {
           // User has at least one bucket
-          const defaultBucket = result.buckets.find(b => b.is_default) || result.buckets[0];
+          const defaultBucket = result.buckets.find((b: Bucket) => b.is_default) || result.buckets[0];
           setCurrentBucket(defaultBucket);
           setHasBucket(true);
         } else {
@@ -65,8 +75,9 @@ function AppContent() {
       } catch (error) {
         if (isCancelled) return;
         console.error('Failed to check buckets:', error);
+        const err = error as { code?: string; message?: string };
         // Don't force bucket setup on error - could be temporary
-        if (error.code === 'NO_AUTH' || error.message?.includes('sign in')) {
+        if (err.code === 'NO_AUTH' || err.message?.includes('sign in')) {
           // Auth issue - let auth flow handle it
           setHasBucket(false);
         }
@@ -83,7 +94,7 @@ function AppContent() {
   }, [isLoggedIn, user]);
 
   // Handle bucket creation success
-  const handleBucketCreated = useCallback((bucket) => {
+  const handleBucketCreated = useCallback((bucket: Bucket) => {
     setCurrentBucket(bucket);
     setHasBucket(true);
     setShowBucketSetup(false);
@@ -99,10 +110,10 @@ function AppContent() {
   // Loading state
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-[var(--color-cream)] flex items-center justify-center">
-        <div className="text-center">
-          <div className="w-16 h-16 border-4 border-[var(--border-color)] border-t-[var(--color-primary)] rounded-full animate-spin mx-auto mb-4"></div>
-          <p className="font-display text-lg font-bold uppercase tracking-wide">Loading...</p>
+      <div className="min-h-screen bg-background flex items-center justify-center relative overflow-hidden">
+        <div className="text-center z-10">
+          <div className="w-12 h-12 border-2 border-border border-t-primary rounded-full animate-spin mx-auto mb-4"></div>
+          <p className="text-muted-foreground text-sm font-medium animate-pulse">Loading...</p>
         </div>
       </div>
     );
@@ -127,10 +138,10 @@ function AppContent() {
   // Checking bucket status
   if (checkingBucket) {
     return (
-      <div className="min-h-screen bg-[var(--color-cream)] flex items-center justify-center">
-        <div className="text-center">
-          <div className="w-16 h-16 border-4 border-[var(--border-color)] border-t-[var(--color-secondary)] rounded-full animate-spin mx-auto mb-4"></div>
-          <p className="font-display text-lg font-bold uppercase tracking-wide">Setting things up...</p>
+      <div className="min-h-screen bg-background flex items-center justify-center relative overflow-hidden">
+        <div className="text-center z-10">
+          <div className="w-12 h-12 border-2 border-border border-t-primary rounded-full animate-spin mx-auto mb-4"></div>
+          <p className="text-muted-foreground text-sm font-medium animate-pulse">Setting things up...</p>
         </div>
       </div>
     );
@@ -142,10 +153,7 @@ function AppContent() {
       <>
         <BucketSetup
           user={user}
-          onBucketCreated={handleBucketCreated}
-          onLogout={handleFullLogout}
-          onSkip={() => setShowBucketSetup(false)}
-          isFirstTime={!hasBucket}
+          onComplete={handleBucketCreated}
         />
         <Toaster />
       </>

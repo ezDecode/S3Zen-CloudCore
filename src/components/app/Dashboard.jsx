@@ -1,23 +1,17 @@
 /**
- * Dashboard
- * The main upload and file management interface
- * Simple: Upload → Get Link → Done
- * 
- * Features:
- * - Cross-device sync via backend history API
- * - localStorage cache for fast initial load
+ * dashboard
+ * ncdai design system with terracotta palette
+ * main upload and file management interface with grid lines
  */
 
 import { useState, useCallback, useRef, useEffect } from 'react';
 import {
-    Cloud, Upload, Link, Copy, Check, Trash2, LogOut,
-    Settings, FileIcon, Image, FileCode, FileText,
-    Loader2, X, Download, ExternalLink, RefreshCw
+    Cloud, Upload, Trash2, LogOut, Settings, FileIcon, Image, FileCode, FileText,
+    Loader2, RefreshCw, ExternalLink, HardDrive, TrendingUp, Clock, Shield
 } from 'lucide-react';
 import { files as filesApi } from '../../services/api/files';
 import { toast } from 'sonner';
 
-// File type icons mapping
 const getFileIcon = (mimeType, fileName) => {
     if (mimeType?.startsWith('image/')) return Image;
     if (mimeType?.includes('javascript') || mimeType?.includes('json') ||
@@ -30,37 +24,66 @@ const getFileIcon = (mimeType, fileName) => {
     return FileIcon;
 };
 
-// Format file size
 const formatSize = (bytes) => {
-    if (!bytes) return '0 B';
-    const sizes = ['B', 'KB', 'MB', 'GB'];
+    if (!bytes) return '0 b';
+    const sizes = ['b', 'kb', 'mb', 'gb'];
     const i = Math.floor(Math.log(bytes) / Math.log(1024));
     return `${(bytes / Math.pow(1024, i)).toFixed(1)} ${sizes[i]}`;
 };
 
-// Local cache for fast initial load (cross-device sync comes from backend)
-const CACHE_KEY = 'cloudcore_files_cache';
+const formatDate = (dateString) => {
+    const date = new Date(dateString);
+    const now = new Date();
+    const diffMs = now - date;
+    const diffMins = Math.floor(diffMs / 60000);
+    const diffHours = Math.floor(diffMs / 3600000);
+    const diffDays = Math.floor(diffMs / 86400000);
 
+    if (diffMins < 1) return 'just now';
+    if (diffMins < 60) return `${diffMins}m ago`;
+    if (diffHours < 24) return `${diffHours}h ago`;
+    if (diffDays < 7) return `${diffDays}d ago`;
+    return date.toLocaleDateString();
+};
+
+const CACHE_KEY = 'cloudcore_files_cache';
 const getLocalCache = () => {
     try {
         return JSON.parse(localStorage.getItem(CACHE_KEY) || '[]');
-    } catch {
-        return [];
-    }
+    } catch { return []; }
+};
+const setLocalCache = (files) => {
+    try { localStorage.setItem(CACHE_KEY, JSON.stringify(files.slice(0, 50))); } catch { }
 };
 
-const setLocalCache = (files) => {
-    try {
-        localStorage.setItem(CACHE_KEY, JSON.stringify(files.slice(0, 50)));
-    } catch {
-        // localStorage full or unavailable
-    }
-};
+/**
+ * Separator component - diagonal striped pattern
+ */
+function Separator({ className = '' }) {
+    return (
+        <div
+            className={`relative flex h-10 w-full border-x border-edge ${className}`}
+            style={{
+                backgroundImage: 'repeating-linear-gradient(315deg, var(--pattern-foreground) 0, var(--pattern-foreground) 1px, transparent 0, transparent 50%)',
+                backgroundSize: '10px 10px',
+            }}
+        >
+            <div
+                className="absolute -left-[100vw] top-0 w-[200vw] h-full -z-1"
+                style={{
+                    backgroundImage: 'repeating-linear-gradient(315deg, var(--pattern-foreground) 0, var(--pattern-foreground) 1px, transparent 0, transparent 50%)',
+                    backgroundSize: '10px 10px',
+                    opacity: 0.56,
+                }}
+            />
+        </div>
+    );
+}
 
 export const Dashboard = ({ user, bucket, onLogout, onManageBucket }) => {
     const [isDragging, setIsDragging] = useState(false);
-    const [uploads, setUploads] = useState([]); // Current uploads in progress
-    const [recentFiles, setRecentFiles] = useState(getLocalCache()); // Start with cache
+    const [uploads, setUploads] = useState([]);
+    const [recentFiles, setRecentFiles] = useState(getLocalCache());
     const [copiedUrl, setCopiedUrl] = useState(null);
     const [deleting, setDeleting] = useState(null);
     const [isSyncing, setIsSyncing] = useState(false);
@@ -68,487 +91,318 @@ export const Dashboard = ({ user, bucket, onLogout, onManageBucket }) => {
     const fileInputRef = useRef(null);
     const dropZoneRef = useRef(null);
 
-    // Sync files from backend on mount
-    useEffect(() => {
-        const syncHistory = async () => {
-            setIsSyncing(true);
-            try {
-                const result = await filesApi.getHistory({ limit: 50 });
-                if (result.success && result.files) {
-                    setRecentFiles(result.files);
-                    setLocalCache(result.files);
-                }
-                // If API fails, we just use cached data (already set from getLocalCache)
-            } catch (e) {
-                // Silently fail - localStorage cache is used as fallback
-                console.warn('[Dashboard] History sync unavailable:', e.message);
-            } finally {
-                setIsSyncing(false);
-            }
-        };
+    // Calculate stats
+    const totalFiles = recentFiles.length;
+    const totalSize = recentFiles.reduce((acc, f) => acc + (f.size || 0), 0);
+    const totalSaved = recentFiles.reduce((acc, f) => acc + ((f.originalSize || f.size) - (f.size || 0)), 0);
 
+    const syncHistory = async () => {
+        setIsSyncing(true);
+        try {
+            const result = await filesApi.getHistory({ limit: 50 });
+            if (result.success && result.files) {
+                setRecentFiles(result.files);
+                setLocalCache(result.files);
+            }
+        } catch (e) {
+            console.warn('[dashboard] sync unavailable');
+        } finally {
+            setIsSyncing(false);
+        }
+    };
+
+    useEffect(() => {
         syncHistory();
     }, []);
 
-    // Handle drag events
-    const handleDragEnter = useCallback((e) => {
-        e.preventDefault();
-        e.stopPropagation();
-        setIsDragging(true);
-    }, []);
-
-    const handleDragLeave = useCallback((e) => {
-        e.preventDefault();
-        e.stopPropagation();
-        if (e.currentTarget === dropZoneRef.current) {
-            setIsDragging(false);
-        }
-    }, []);
-
-    const handleDragOver = useCallback((e) => {
-        e.preventDefault();
-        e.stopPropagation();
-    }, []);
-
-    // Upload file
     const uploadFile = async (file) => {
         const uploadId = Date.now() + '-' + file.name;
-
-        // Add to uploads list
-        setUploads(prev => [...prev, {
-            id: uploadId,
-            name: file.name,
-            size: file.size,
-            type: file.type,
-            progress: 0,
-            status: 'uploading'
-        }]);
+        setUploads(prev => [...prev, { id: uploadId, name: file.name, progress: 0, status: 'uploading' }]);
 
         try {
             const result = await filesApi.upload(file, {
                 bucketId: bucket?.id,
                 onProgress: (progress) => {
-                    setUploads(prev => prev.map(u =>
-                        u.id === uploadId ? { ...u, progress } : u
-                    ));
+                    const percent = typeof progress === 'object' ? Math.round(progress.percentage || 0) : progress;
+                    setUploads(prev => prev.map(u => u.id === uploadId ? { ...u, progress: percent } : u));
                 }
             });
 
             if (result.success) {
-                // Update upload status
-                setUploads(prev => prev.map(u =>
-                    u.id === uploadId ? { ...u, status: 'complete', url: result.file.url, key: result.file.key } : u
-                ));
-
-                // Add to recent files (backend already recorded it for cross-device sync)
-                const newFile = {
-                    key: result.file.key,
-                    name: result.file.originalName,
-                    size: result.file.size,
-                    originalSize: result.file.originalSize,
-                    type: result.file.type,
-                    url: result.file.url,
-                    s3Bucket: result.file.s3Bucket,
-                    s3Region: result.file.s3Region,
-                    compressed: result.file.compressed,
-                    uploadedAt: new Date().toISOString()
-                };
-
-                // Update local state and cache
+                const newFile = { ...result.file, uploadedAt: new Date().toISOString() };
                 setRecentFiles(prev => {
                     const updated = [newFile, ...prev.filter(f => f.key !== newFile.key)].slice(0, 50);
                     setLocalCache(updated);
                     return updated;
                 });
 
-                toast.success(`${file.name} uploaded!`);
+                // Show savings if compressed
+                if (result.file.compressed && result.file.originalSize) {
+                    const saved = result.file.originalSize - result.file.size;
+                    const savedPercent = Math.round((saved / result.file.originalSize) * 100);
+                    toast.success(`${file.name} uploaded • ${savedPercent}% smaller`);
+                } else {
+                    toast.success(`${file.name} uploaded`);
+                }
 
-                // Remove from uploads after a delay
-                setTimeout(() => {
-                    setUploads(prev => prev.filter(u => u.id !== uploadId));
-                }, 3000);
+                setTimeout(() => setUploads(prev => prev.filter(u => u.id !== uploadId)), 2000);
             } else {
-                setUploads(prev => prev.map(u =>
-                    u.id === uploadId ? { ...u, status: 'error', error: result.error } : u
-                ));
-                toast.error(`Failed to upload ${file.name}`);
+                setUploads(prev => prev.map(u => u.id === uploadId ? { ...u, status: 'error' } : u));
+                toast.error(`error: ${file.name}`);
             }
-        } catch (error) {
-            setUploads(prev => prev.map(u =>
-                u.id === uploadId ? { ...u, status: 'error', error: error.message } : u
-            ));
-            toast.error(`Failed to upload ${file.name}`);
+        } catch {
+            setUploads(prev => prev.map(u => u.id === uploadId ? { ...u, status: 'error' } : u));
         }
     };
 
-    // Handle drop
-    const handleDrop = useCallback(async (e) => {
-        e.preventDefault();
-        e.stopPropagation();
-        setIsDragging(false);
-
+    const handleDrop = useCallback((e) => {
+        e.preventDefault(); setIsDragging(false);
         const files = Array.from(e.dataTransfer?.files || []);
-        if (files.length === 0) return;
-
-        // Upload each file
         files.forEach(file => uploadFile(file));
     }, [bucket]);
 
-    // Handle file input change
-    const handleFileSelect = (e) => {
-        const files = Array.from(e.target.files || []);
-        files.forEach(file => uploadFile(file));
-        e.target.value = ''; // Reset input
-    };
-
-    // Copy URL to clipboard
     const copyUrl = async (url, key) => {
         try {
             await navigator.clipboard.writeText(url);
             setCopiedUrl(key);
-            toast.success('Link copied!');
+            toast.success('link copied to clipboard');
             setTimeout(() => setCopiedUrl(null), 2000);
-        } catch {
-            toast.error('Failed to copy');
-        }
+        } catch { toast.error('failed to copy'); }
     };
 
-    // Delete file
     const handleDelete = async (file) => {
         if (deleting) return;
-
         setDeleting(file.key);
-
         try {
             const result = await filesApi.delete([file.key], bucket?.id);
-
             if (result.success) {
-                // Update local state and cache (backend handles history cleanup)
                 setRecentFiles(prev => {
                     const updated = prev.filter(f => f.key !== file.key);
                     setLocalCache(updated);
                     return updated;
                 });
-                toast.success(`${file.name} deleted`);
-            } else {
-                toast.error(result.error || 'Failed to delete');
+                toast.success('file deleted');
             }
-        } catch (error) {
-            toast.error('Failed to delete file');
-        } finally {
-            setDeleting(null);
-        }
-    };
-
-    // Cancel upload
-    const cancelUpload = (uploadId) => {
-        setUploads(prev => prev.filter(u => u.id !== uploadId));
+        } finally { setDeleting(null); }
     };
 
     return (
-        <div className="min-h-screen bg-[var(--color-cream)]">
-            {/* Header */}
-            <header className="sticky top-0 z-50 bg-[var(--color-cream)] border-b-4 border-[var(--border-color)]">
-                <div className="max-w-5xl mx-auto px-6 py-4 flex items-center justify-between">
-                    <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 bg-[var(--color-primary)] border-3 border-[var(--border-color)] flex items-center justify-center shadow-[3px_3px_0_var(--border-color)]">
-                            <Cloud className="w-5 h-5 text-white" />
+        <div className="max-w-screen overflow-x-hidden px-2">
+            <div className="mx-auto border-x border-edge md:max-w-3xl">
+                {/* top diagonal separator */}
+                <Separator />
+
+                {/* header */}
+                <header className="sticky top-0 z-50 bg-background/80 backdrop-blur-md">
+                    <div className="screen-line-after px-4 py-4 flex items-center justify-between">
+                        <div className="flex items-center gap-3">
+                            <div className="w-9 h-9 rounded-lg bg-brand/10 flex items-center justify-center">
+                                <Cloud className="w-5 h-5 text-brand" />
+                            </div>
+                            <div className="flex flex-col">
+                                <span className="text-base leading-none lowercase font-semibold">cloudcore</span>
+                                <span className="text-[11px] text-muted-foreground mt-1 lowercase font-medium">
+                                    {(bucket?.bucket_name || bucket?.bucketName || 'no bucket connected').toLowerCase()}
+                                </span>
+                            </div>
                         </div>
-                        <div>
-                            <span className="font-display font-bold text-xl">CloudCore</span>
-                            <div className="text-xs text-[var(--color-text-muted)] font-mono truncate max-w-[180px]">
-                                {user?.email || 'Dashboard'}
+
+                        <div className="flex items-center gap-4">
+                            <span className="text-xs text-muted-foreground hidden md:block lowercase font-medium">
+                                {user?.email?.toLowerCase()}
+                            </span>
+                            <div className="flex items-center gap-1">
+                                <button
+                                    onClick={onManageBucket}
+                                    className="w-9 h-9 flex items-center justify-center text-muted-foreground hover:text-foreground hover:bg-secondary transition-colors rounded-lg"
+                                    title="bucket settings"
+                                >
+                                    <Settings className="w-4 h-4" />
+                                </button>
+                                <button
+                                    onClick={onLogout}
+                                    className="w-9 h-9 flex items-center justify-center text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors rounded-lg"
+                                    title="sign out"
+                                >
+                                    <LogOut className="w-4 h-4" />
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </header>
+
+                {/* stats bar */}
+                <div className="relative">
+                    <div className="absolute inset-0 -z-1 grid grid-cols-3 max-sm:hidden">
+                        <div className="border-r border-edge"></div>
+                        <div className="border-r border-edge"></div>
+                        <div></div>
+                    </div>
+
+                    <div className="grid grid-cols-3 screen-line-after">
+                        <div className="p-4 flex items-center gap-3">
+                            <HardDrive className="w-4 h-4 text-brand" />
+                            <div>
+                                <div className="text-sm font-semibold lowercase">{totalFiles}</div>
+                                <div className="text-[10px] text-muted-foreground lowercase">files stored</div>
+                            </div>
+                        </div>
+                        <div className="p-4 flex items-center gap-3">
+                            <TrendingUp className="w-4 h-4 text-brand" />
+                            <div>
+                                <div className="text-sm font-semibold lowercase">{formatSize(totalSize)}</div>
+                                <div className="text-[10px] text-muted-foreground lowercase">total storage</div>
+                            </div>
+                        </div>
+                        <div className="p-4 flex items-center gap-3">
+                            <Shield className="w-4 h-4 text-brand" />
+                            <div>
+                                <div className="text-sm font-semibold lowercase">{formatSize(totalSaved)}</div>
+                                <div className="text-[10px] text-muted-foreground lowercase">space saved</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <main className="min-h-[calc(100vh-350px)]">
+                    {/* activity feed (uploads) */}
+                    {uploads.length > 0 && (
+                        <>
+                            <div className="screen-line-after px-4 py-2">
+                                <span className="text-xs tracking-widest text-muted-foreground lowercase font-medium">uploading</span>
+                            </div>
+                            <div className="p-4 space-y-3">
+                                {uploads.map(upload => (
+                                    <div key={upload.id} className="card p-4 flex items-center gap-4">
+                                        <div className="w-10 h-10 rounded-lg bg-brand/10 flex items-center justify-center">
+                                            <Loader2 className="w-5 h-5 animate-spin text-brand" />
+                                        </div>
+                                        <div className="flex-1">
+                                            <div className="flex justify-between items-center mb-2">
+                                                <span className="text-sm lowercase font-medium truncate max-w-[200px]">{upload.name.toLowerCase()}</span>
+                                                <span className="text-xs text-brand font-semibold">{upload.progress}%</span>
+                                            </div>
+                                            <div className="progress">
+                                                <div className="progress-bar" style={{ width: `${upload.progress}%` }} />
+                                            </div>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                            <Separator />
+                        </>
+                    )}
+
+                    {/* upload zone section */}
+                    <div className="screen-line-after px-4 py-2">
+                        <span className="text-xs tracking-widest text-muted-foreground lowercase font-medium">upload files</span>
+                    </div>
+
+                    <div className="p-4">
+                        <div
+                            ref={dropZoneRef}
+                            onDragEnter={(e) => { e.preventDefault(); setIsDragging(true); }}
+                            onDragLeave={(e) => { e.preventDefault(); setIsDragging(false); }}
+                            onDragOver={(e) => e.preventDefault()}
+                            onDrop={handleDrop}
+                            onClick={() => fileInputRef.current?.click()}
+                            className={`upload-zone ${isDragging ? 'dragging' : ''}`}
+                        >
+                            <input ref={fileInputRef} type="file" multiple onChange={(e) => {
+                                Array.from(e.target.files).forEach(f => uploadFile(f));
+                                e.target.value = '';
+                            }} className="hidden" />
+                            <div className={`w-14 h-14 rounded-2xl flex items-center justify-center transition-colors ${isDragging ? 'bg-brand/20' : 'bg-secondary'}`}>
+                                <Upload className={`w-7 h-7 transition-colors ${isDragging ? 'text-brand' : 'text-muted-foreground'}`} />
+                            </div>
+                            <div className="text-center">
+                                <h3 className="text-base lowercase font-semibold mb-1">
+                                    {isDragging ? 'drop files here' : 'drag files to upload'}
+                                </h3>
+                                <p className="text-xs text-muted-foreground lowercase">
+                                    or click to browse • images auto-compressed
+                                </p>
                             </div>
                         </div>
                     </div>
 
-                    <div className="flex items-center gap-2">
+                    {/* diagonal separator */}
+                    <Separator />
+
+                    {/* inventory section */}
+                    <div className="screen-line-after px-4 py-2 flex items-center justify-between">
+                        <span className="text-xs tracking-widest text-muted-foreground lowercase font-medium">recent uploads</span>
                         <button
-                            onClick={onManageBucket}
-                            className="btn btn-ghost btn-sm"
-                            title="Bucket Settings"
+                            onClick={syncHistory}
+                            disabled={isSyncing}
+                            className="flex items-center gap-2 text-xs text-muted-foreground hover:text-brand transition-colors lowercase font-medium"
                         >
-                            <Settings className="w-4 h-4" />
+                            <RefreshCw className={`w-3.5 h-3.5 ${isSyncing ? 'animate-spin' : ''}`} />
+                            {isSyncing ? 'syncing...' : 'refresh'}
                         </button>
-                        <button
-                            onClick={onLogout}
-                            className="btn btn-ghost btn-sm"
-                            title="Sign Out"
-                        >
-                            <LogOut className="w-4 h-4" />
-                        </button>
-                    </div>
-                </div>
-            </header>
-
-            {/* Main Content */}
-            <main className="max-w-5xl mx-auto px-6 py-8">
-                {/* Upload Zone */}
-                <div
-                    ref={dropZoneRef}
-                    onDragEnter={handleDragEnter}
-                    onDragLeave={handleDragLeave}
-                    onDragOver={handleDragOver}
-                    onDrop={handleDrop}
-                    onClick={() => fileInputRef.current?.click()}
-                    className={`upload-zone mb-8 cursor-pointer transition-all ${isDragging ? 'dragging' : ''
-                        }`}
-                >
-                    <input
-                        ref={fileInputRef}
-                        type="file"
-                        multiple
-                        onChange={handleFileSelect}
-                        className="hidden"
-                    />
-
-                    <div className="flex flex-col items-center">
-                        <div className={`w-20 h-20 bg-[var(--color-primary)] border-4 border-[var(--border-color)] flex items-center justify-center mb-4 transition-transform ${isDragging ? 'scale-110 rotate-3' : ''
-                            }`}>
-                            <Upload className="w-10 h-10 text-white" />
-                        </div>
-                        <h2 className="font-display text-2xl font-bold uppercase mb-2">
-                            {isDragging ? 'Drop it!' : 'Drop files here'}
-                        </h2>
-                        <p className="text-[var(--color-text-secondary)]">
-                            or click to browse • Images auto-compress
-                        </p>
-                    </div>
-                </div>
-
-                {/* Bucket Info Card */}
-                <div className="mb-6 card p-4">
-                    <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-3">
-                            {/* Status Indicator */}
-                            <div className={`w-3 h-3 rounded-full ${bucket ? 'bg-[var(--color-success)]' : 'bg-[var(--color-error)]'} animate-pulse`} />
-
-                            {bucket ? (
-                                <div className="flex items-center gap-4">
-                                    <div>
-                                        <div className="text-xs font-bold uppercase text-[var(--color-text-muted)]">Connected Bucket</div>
-                                        <div className="font-mono text-sm font-medium">{bucket.bucket_name || bucket.bucketName}</div>
-                                    </div>
-                                    <div className="hidden sm:block border-l-2 border-[var(--border-color)] pl-4">
-                                        <div className="text-xs font-bold uppercase text-[var(--color-text-muted)]">Region</div>
-                                        <div className="font-mono text-sm">{bucket.region || 'us-east-1'}</div>
-                                    </div>
-                                    {bucket.display_name && bucket.display_name !== bucket.bucket_name && (
-                                        <div className="hidden md:block border-l-2 border-[var(--border-color)] pl-4">
-                                            <div className="text-xs font-bold uppercase text-[var(--color-text-muted)]">Display Name</div>
-                                            <div className="font-mono text-sm">{bucket.display_name}</div>
-                                        </div>
-                                    )}
-                                </div>
-                            ) : (
-                                <div>
-                                    <div className="text-xs font-bold uppercase text-[var(--color-error)]">No Bucket Connected</div>
-                                    <div className="text-sm text-[var(--color-text-muted)]">Configure your S3 bucket to start uploading</div>
-                                </div>
-                            )}
-                        </div>
-
-                        <button
-                            onClick={onManageBucket}
-                            className="btn btn-sm btn-ghost flex items-center gap-1"
-                        >
-                            <Settings className="w-4 h-4" />
-                            <span className="hidden sm:inline">{bucket ? 'Manage' : 'Setup'}</span>
-                        </button>
-                    </div>
-                </div>
-
-                {/* Active Uploads */}
-                {uploads.length > 0 && (
-                    <div className="mb-8">
-                        <h3 className="font-display font-bold uppercase text-sm mb-4 flex items-center gap-2">
-                            <Loader2 className="w-4 h-4 animate-spin" />
-                            Uploading ({uploads.length})
-                        </h3>
-                        <div className="space-y-3">
-                            {uploads.map(upload => (
-                                <div key={upload.id} className="file-item">
-                                    <div className="w-10 h-10 bg-[var(--color-yellow)] border-2 border-[var(--border-color)] flex items-center justify-center flex-shrink-0">
-                                        <Upload className="w-5 h-5 text-[var(--color-ink)]" />
-                                    </div>
-
-                                    <div className="flex-1 min-w-0">
-                                        <div className="flex items-center justify-between mb-1">
-                                            <span className="font-medium truncate">{upload.name}</span>
-                                            <span className="text-sm text-[var(--color-text-muted)]">
-                                                {upload.status === 'uploading' && `${upload.progress || 0}%`}
-                                                {upload.status === 'complete' && '✓'}
-                                                {upload.status === 'error' && '✗'}
-                                            </span>
-                                        </div>
-
-                                        {upload.status === 'uploading' && (
-                                            <div className="progress">
-                                                <div
-                                                    className="progress-bar"
-                                                    style={{ width: `${upload.progress || 0}%` }}
-                                                />
-                                            </div>
-                                        )}
-
-                                        {upload.status === 'complete' && upload.url && (
-                                            <button
-                                                onClick={(e) => {
-                                                    e.stopPropagation();
-                                                    copyUrl(upload.url, upload.key);
-                                                }}
-                                                className="text-sm text-[var(--color-primary)] hover:underline flex items-center gap-1"
-                                            >
-                                                <Copy className="w-3 h-3" />
-                                                Copy link
-                                            </button>
-                                        )}
-
-                                        {upload.status === 'error' && (
-                                            <span className="text-sm text-[var(--color-error)]">
-                                                {upload.error || 'Upload failed'}
-                                            </span>
-                                        )}
-                                    </div>
-
-                                    {upload.status === 'uploading' && (
-                                        <button
-                                            onClick={(e) => {
-                                                e.stopPropagation();
-                                                cancelUpload(upload.id);
-                                            }}
-                                            className="w-8 h-8 flex items-center justify-center text-[var(--color-text-muted)] hover:text-[var(--color-error)]"
-                                        >
-                                            <X className="w-4 h-4" />
-                                        </button>
-                                    )}
-                                </div>
-                            ))}
-                        </div>
-                    </div>
-                )}
-
-                {/* Recent Files */}
-                <div>
-                    <div className="flex items-center justify-between mb-4">
-                        <h3 className="font-display font-bold uppercase text-sm flex items-center gap-2">
-                            <Link className="w-4 h-4" />
-                            Recent Uploads ({recentFiles.length})
-                            {isSyncing && (
-                                <RefreshCw className="w-3 h-3 animate-spin text-[var(--color-primary)]" />
-                            )}
-                        </h3>
-                        <div className="flex items-center gap-2">
-                            <button
-                                onClick={async () => {
-                                    setIsSyncing(true);
-                                    try {
-                                        const result = await filesApi.getHistory({ limit: 50 });
-                                        if (result.success && result.files) {
-                                            setRecentFiles(result.files);
-                                            setLocalCache(result.files);
-                                            toast.success('Synced from cloud');
-                                        }
-                                    } catch {
-                                        toast.error('Sync failed');
-                                    } finally {
-                                        setIsSyncing(false);
-                                    }
-                                }}
-                                disabled={isSyncing}
-                                className="text-sm text-[var(--color-text-muted)] hover:text-[var(--color-primary)] flex items-center gap-1 disabled:opacity-50"
-                                title="Sync from cloud"
-                            >
-                                <RefreshCw className={`w-3 h-3 ${isSyncing ? 'animate-spin' : ''}`} />
-                                Sync
-                            </button>
-                            {recentFiles.length > 0 && (
-                                <button
-                                    onClick={() => {
-                                        localStorage.removeItem(CACHE_KEY);
-                                        setRecentFiles([]);
-                                    }}
-                                    className="text-sm text-[var(--color-text-muted)] hover:text-[var(--color-error)] flex items-center gap-1"
-                                >
-                                    <Trash2 className="w-3 h-3" />
-                                    Clear
-                                </button>
-                            )}
-                        </div>
                     </div>
 
                     {recentFiles.length === 0 ? (
-                        <div className="card text-center py-12 text-[var(--color-text-muted)]">
-                            <FileIcon className="w-12 h-12 mx-auto mb-4 opacity-50" />
-                            <p className="font-display font-bold uppercase">No uploads yet</p>
-                            <p className="text-sm mt-1">Drop a file above to get started</p>
+                        <div className="py-16 text-center px-4">
+                            <div className="w-16 h-16 rounded-2xl bg-secondary flex items-center justify-center mx-auto mb-4">
+                                <Cloud className="w-8 h-8 text-muted-foreground" />
+                            </div>
+                            <h3 className="text-base font-semibold lowercase mb-2">no files yet</h3>
+                            <p className="text-sm text-muted-foreground lowercase max-w-xs mx-auto">
+                                upload your first file to get started. all files are securely stored in your connected s3 bucket.
+                            </p>
                         </div>
                     ) : (
-                        <div className="space-y-0">
+                        <div className="px-4">
                             {recentFiles.map((file, index) => {
-                                const IconComponent = getFileIcon(file.type, file.name);
-                                const isCompressed = file.compressed && file.originalSize > file.size;
-                                const savings = isCompressed
-                                    ? Math.round((1 - file.size / file.originalSize) * 100)
-                                    : 0;
-
+                                const Icon = getFileIcon(file.type, file.name);
                                 return (
                                     <div key={file.key || index} className="file-item group">
-                                        {/* File Icon */}
-                                        <div className="w-10 h-10 bg-[var(--color-mint)] border-2 border-[var(--border-color)] flex items-center justify-center flex-shrink-0">
-                                            <IconComponent className="w-5 h-5 text-[var(--color-ink)]" />
+                                        <div className="w-11 h-11 bg-secondary rounded-lg flex items-center justify-center transition-colors group-hover:bg-brand/10">
+                                            <Icon className="w-5 h-5 text-muted-foreground group-hover:text-brand transition-colors" />
                                         </div>
 
-                                        {/* File Info */}
                                         <div className="flex-1 min-w-0">
-                                            <div className="flex items-center gap-2">
-                                                <span className="font-medium truncate">{file.name}</span>
-                                                {isCompressed && (
-                                                    <span className="badge badge-success text-[10px] py-0">
-                                                        -{savings}%
-                                                    </span>
+                                            <div className="flex items-center gap-3">
+                                                <span className="text-sm truncate lowercase font-medium">{file.name?.toLowerCase()}</span>
+                                                {file.compressed && (
+                                                    <span className="badge badge-brand">compressed</span>
                                                 )}
                                             </div>
-                                            <div className="text-sm text-[var(--color-text-muted)]">
-                                                {formatSize(file.size)}
-                                                {file.uploadedAt && (
-                                                    <> • {new Date(file.uploadedAt).toLocaleDateString()}</>
-                                                )}
+                                            <div className="flex items-center gap-3 text-[11px] text-muted-foreground mt-1 lowercase">
+                                                <span className="flex items-center gap-1">
+                                                    <HardDrive className="w-3 h-3" />
+                                                    {formatSize(file.size)}
+                                                </span>
+                                                <span className="w-1 h-1 rounded-full bg-muted-foreground/30" />
+                                                <span className="flex items-center gap-1">
+                                                    <Clock className="w-3 h-3" />
+                                                    {formatDate(file.uploadedAt)}
+                                                </span>
                                             </div>
                                         </div>
 
-                                        {/* Actions */}
-                                        <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                                        <div className="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
                                             <button
                                                 onClick={() => copyUrl(file.url, file.key)}
-                                                className={`w-9 h-9 border-2 border-[var(--border-color)] flex items-center justify-center transition-colors ${copiedUrl === file.key
-                                                    ? 'bg-[var(--color-success)] text-white'
-                                                    : 'bg-white hover:bg-[var(--color-yellow)]'
-                                                    }`}
-                                                title="Copy link"
+                                                className={`btn h-8 px-4 text-xs rounded-lg lowercase font-medium ${copiedUrl === file.key ? 'btn-brand' : 'btn-secondary'}`}
                                             >
-                                                {copiedUrl === file.key ? (
-                                                    <Check className="w-4 h-4" />
-                                                ) : (
-                                                    <Copy className="w-4 h-4" />
-                                                )}
+                                                {copiedUrl === file.key ? 'copied!' : 'copy link'}
                                             </button>
-
                                             <a
                                                 href={file.url}
                                                 target="_blank"
                                                 rel="noopener noreferrer"
-                                                className="w-9 h-9 border-2 border-[var(--border-color)] bg-white hover:bg-[var(--color-blue)] hover:text-white flex items-center justify-center transition-colors"
-                                                title="Open in new tab"
+                                                className="w-8 h-8 flex items-center justify-center text-muted-foreground hover:text-foreground hover:bg-secondary transition-colors rounded-lg"
+                                                title="open file"
                                             >
                                                 <ExternalLink className="w-4 h-4" />
                                             </a>
-
                                             <button
                                                 onClick={() => handleDelete(file)}
                                                 disabled={deleting === file.key}
-                                                className="w-9 h-9 border-2 border-[var(--border-color)] bg-white hover:bg-[var(--color-error)] hover:text-white flex items-center justify-center transition-colors disabled:opacity-50"
-                                                title="Delete"
+                                                className="w-8 h-8 flex items-center justify-center text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors rounded-lg"
+                                                title="delete file"
                                             >
                                                 {deleting === file.key ? (
                                                     <Loader2 className="w-4 h-4 animate-spin" />
@@ -562,23 +416,26 @@ export const Dashboard = ({ user, bucket, onLogout, onManageBucket }) => {
                             })}
                         </div>
                     )}
-                </div>
-            </main>
+                </main>
 
-            {/* Footer */}
-            <footer className="border-t-4 border-[var(--border-color)] py-4 mt-8">
-                <div className="max-w-5xl mx-auto px-6 flex items-center justify-between text-sm text-[var(--color-text-muted)]">
-                    <span>Connected to: <span className="font-mono">{bucket?.bucket_name}</span></span>
-                    <a
-                        href="https://github.com/ezDecode/CloudCore"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="hover:text-[var(--color-primary)]"
-                    >
-                        @ezDecode
-                    </a>
-                </div>
-            </footer>
+                {/* diagonal separator */}
+                <Separator />
+
+                {/* footer */}
+                <footer className="screen-line-before">
+                    <div className="px-4 py-6 flex items-center justify-between">
+                        <div className="status-indicator">
+                            <span className="text-xs lowercase font-medium">system operational</span>
+                        </div>
+                        <div className="text-xs text-muted-foreground lowercase font-medium">
+                            © {new Date().getFullYear()} cloudcore lab
+                        </div>
+                    </div>
+                </footer>
+
+                {/* bottom spacing */}
+                <div className="h-4" />
+            </div>
         </div>
     );
 };

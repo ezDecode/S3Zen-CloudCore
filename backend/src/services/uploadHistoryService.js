@@ -61,6 +61,7 @@ async function recordUpload(userId, data) {
             s3_key: data.key,
             original_name: data.originalName,
             size: data.size,
+            original_size: data.originalSize || data.size, // Track original size for compression stats
             mime_type: data.mimeType || null,
             short_url: data.shortUrl || null,
             s3_bucket: data.s3Bucket || null,
@@ -120,11 +121,11 @@ async function getHistory(userId, limit = 50, offset = 0) {
         }
 
         // Transform to frontend format
-        // Transform to frontend format
         const files = (uploads || []).map(u => ({
             key: u.s3_key,
             name: u.original_name,
             size: u.size,
+            originalSize: u.original_size || u.size, // Include original size for savings calculation
             type: u.mime_type,
             url: u.short_url,
             s3Bucket: u.s3_bucket,

@@ -121,7 +121,13 @@ async function getBuckets(userId) {
 
         if (error) {
             dbLogger.error('Failed to get buckets', { error: error.message, userId });
-            return { success: false, error: 'Failed to retrieve bucket configurations' };
+
+            // Helpful hint for missing tables
+            if (error.message?.includes('Could not find the table') || error.code === 'PGRST116') {
+                dbLogger.warn('Database schema may not be initialized. Please run the migrations in /backend/supabase/migrations in your Supabase SQL editor.');
+            }
+
+            return { success: false, error: 'Failed to retrieve bucket configurations. Is the database initialized?' };
         }
 
         dbLogger.info('Buckets retrieved', { userId, count: buckets.length });

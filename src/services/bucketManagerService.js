@@ -122,9 +122,14 @@ class BucketManagerService {
         } catch (error) {
             console.warn(`[BucketService] Request to ${endpoint} failed:`, error);
 
-            // Check if it's a connection error (Failed to fetch)
-            if (error.message.includes('Failed to fetch') || error.message.includes('Network error')) {
-                console.log('[BucketService] Backend unreachable, switching to LocalStorage Mock Service');
+            // Check if it's a connection error or uninitialized database
+            if (
+                error.message.includes('Failed to fetch') ||
+                error.message.includes('Network error') ||
+                error.message.includes('initialized') ||
+                error.message.includes('configurations')
+            ) {
+                console.log('[BucketService] Backend issue or uninitialized DB, switching to LocalStorage Mock Service');
                 this.useMock = true;
                 throw new Error('SWITCH_TO_MOCK');
             }

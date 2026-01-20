@@ -145,4 +145,13 @@ export const apiUpload = async (endpoint, formData, onProgress) => {
     });
 };
 
-export { API_BASE };
+// ... existing code ...
+
+const api = {
+    get: (endpoint, options = {}) => apiRequest(endpoint, { ...options, method: 'GET' }),
+    post: (endpoint, body, options = {}) => apiRequest(endpoint, { ...options, method: 'POST', body: JSON.stringify(body) }),
+    put: (endpoint, body, options = {}) => apiRequest(endpoint, { ...options, method: 'PUT', body: JSON.stringify(body) }),
+    delete: (endpoint, options = {}) => apiRequest(endpoint, { ...options, method: 'DELETE' }),
+};
+
+export { api, API_BASE };
