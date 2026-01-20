@@ -7,11 +7,11 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import ErrorBoundary from './components/ErrorBoundary';
-import { NeoLandingPage } from './components/neo/NeoLandingPage';
-import { NeoDashboard } from './components/neo/NeoDashboard';
-import { NeoAuthModal } from './components/neo/NeoAuthModal';
-import { NeoBucketSetup } from './components/neo/NeoBucketSetup';
-import { NeoToaster } from './components/neo/NeoToaster';
+import { LandingPage } from './components/app/LandingPage';
+import { Dashboard } from './components/app/Dashboard';
+import { AuthModal } from './components/app/AuthModal';
+import { BucketSetup } from './components/app/BucketSetup';
+import { Toaster } from './components/app/Toaster';
 import { useAuth } from './hooks/useAuth';
 import bucketManagerService from './services/bucketManagerService';
 
@@ -112,14 +112,14 @@ function AppContent() {
   if (!isLoggedIn) {
     return (
       <>
-        <NeoLandingPage onGetStarted={handleGetStarted} />
-        <NeoAuthModal
+        <LandingPage onGetStarted={handleGetStarted} />
+        <AuthModal
           isOpen={showAuthModal}
           onClose={() => setShowAuthModal(false)}
           onSendOTP={handleSendOTP}
           onVerifyOTP={handleVerifyOTP}
         />
-        <NeoToaster />
+        <Toaster />
       </>
     );
   }
@@ -140,14 +140,14 @@ function AppContent() {
   if (!hasBucket || showBucketSetup) {
     return (
       <>
-        <NeoBucketSetup
+        <BucketSetup
           user={user}
           onBucketCreated={handleBucketCreated}
           onLogout={handleFullLogout}
           onSkip={() => setShowBucketSetup(false)}
           isFirstTime={!hasBucket}
         />
-        <NeoToaster />
+        <Toaster />
       </>
     );
   }
@@ -155,13 +155,13 @@ function AppContent() {
   // Has bucket - show dashboard
   return (
     <>
-      <NeoDashboard
+      <Dashboard
         user={user}
         bucket={currentBucket}
         onLogout={handleFullLogout}
         onManageBucket={() => setShowBucketSetup(true)}
       />
-      <NeoToaster />
+      <Toaster />
     </>
   );
 }

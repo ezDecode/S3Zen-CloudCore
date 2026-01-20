@@ -6,7 +6,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { X, Mail, ArrowRight, Loader2, CheckCircle } from 'lucide-react';
 
-export const NeoAuthModal = ({ isOpen, onClose, onSendOTP, onVerifyOTP }) => {
+export const AuthModal = ({ isOpen, onClose, onSendOTP, onVerifyOTP }) => {
     const [step, setStep] = useState('email'); // 'email' | 'otp' | 'success'
     const [email, setEmail] = useState('');
     const [otp, setOtp] = useState(['', '', '', '', '', '']);
@@ -122,11 +122,11 @@ export const NeoAuthModal = ({ isOpen, onClose, onSendOTP, onVerifyOTP }) => {
     if (!isOpen) return null;
 
     return (
-        <div className="neo-modal-overlay" onClick={(e) => e.target === e.currentTarget && onClose()}>
-            <div className="neo-modal">
+        <div className="modal-overlay" onClick={(e) => e.target === e.currentTarget && onClose()}>
+            <div className="modal">
                 {/* Header */}
-                <div className="neo-modal-header">
-                    <h2 className="neo-modal-title">
+                <div className="modal-header">
+                    <h2 className="modal-title">
                         {step === 'email' && 'Sign In'}
                         {step === 'otp' && 'Enter Code'}
                         {step === 'success' && 'Welcome!'}
@@ -140,7 +140,7 @@ export const NeoAuthModal = ({ isOpen, onClose, onSendOTP, onVerifyOTP }) => {
                 </div>
 
                 {/* Body */}
-                <div className="neo-modal-body">
+                <div className="modal-body">
                     {/* Email Step */}
                     {step === 'email' && (
                         <form onSubmit={handleSendOTP}>
@@ -156,13 +156,13 @@ export const NeoAuthModal = ({ isOpen, onClose, onSendOTP, onVerifyOTP }) => {
                                     value={email}
                                     onChange={(e) => setEmail(e.target.value)}
                                     placeholder="you@email.com"
-                                    className="neo-input pl-12"
+                                    className="input pl-12"
                                     required
                                 />
                             </div>
 
                             {error && (
-                                <div className="neo-badge neo-badge-error mb-4 w-full justify-center">
+                                <div className="badge badge-error mb-4 w-full justify-center">
                                     {error}
                                 </div>
                             )}
@@ -170,7 +170,7 @@ export const NeoAuthModal = ({ isOpen, onClose, onSendOTP, onVerifyOTP }) => {
                             <button
                                 type="submit"
                                 disabled={loading || !email}
-                                className="neo-btn neo-btn-primary w-full"
+                                className="btn btn-primary w-full"
                             >
                                 {loading ? (
                                     <Loader2 className="w-5 h-5 animate-spin" />
@@ -211,7 +211,7 @@ export const NeoAuthModal = ({ isOpen, onClose, onSendOTP, onVerifyOTP }) => {
                             </div>
 
                             {error && (
-                                <div className="neo-badge neo-badge-error mb-4 w-full justify-center">
+                                <div className="badge badge-error mb-4 w-full justify-center">
                                     {error}
                                 </div>
                             )}
@@ -226,7 +226,7 @@ export const NeoAuthModal = ({ isOpen, onClose, onSendOTP, onVerifyOTP }) => {
                             <button
                                 type="button"
                                 onClick={() => setStep('email')}
-                                className="neo-btn neo-btn-ghost w-full mt-4"
+                                className="btn btn-ghost w-full mt-4"
                             >
                                 Use Different Email
                             </button>
@@ -250,4 +250,4 @@ export const NeoAuthModal = ({ isOpen, onClose, onSendOTP, onVerifyOTP }) => {
     );
 };
 
-export default NeoAuthModal;
+export default AuthModal;

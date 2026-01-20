@@ -1,5 +1,5 @@
 /**
- * Neo-Brutalism Dashboard
+ * Dashboard
  * The main upload and file management interface
  * Simple: Upload → Get Link → Done
  * 
@@ -57,7 +57,7 @@ const setLocalCache = (files) => {
     }
 };
 
-export const NeoDashboard = ({ user, bucket, onLogout, onManageBucket }) => {
+export const Dashboard = ({ user, bucket, onLogout, onManageBucket }) => {
     const [isDragging, setIsDragging] = useState(false);
     const [uploads, setUploads] = useState([]); // Current uploads in progress
     const [recentFiles, setRecentFiles] = useState(getLocalCache()); // Start with cache
@@ -265,14 +265,14 @@ export const NeoDashboard = ({ user, bucket, onLogout, onManageBucket }) => {
                     <div className="flex items-center gap-2">
                         <button
                             onClick={onManageBucket}
-                            className="neo-btn neo-btn-ghost neo-btn-sm"
+                            className="btn btn-ghost btn-sm"
                             title="Bucket Settings"
                         >
                             <Settings className="w-4 h-4" />
                         </button>
                         <button
                             onClick={onLogout}
-                            className="neo-btn neo-btn-ghost neo-btn-sm"
+                            className="btn btn-ghost btn-sm"
                             title="Sign Out"
                         >
                             <LogOut className="w-4 h-4" />
@@ -291,7 +291,7 @@ export const NeoDashboard = ({ user, bucket, onLogout, onManageBucket }) => {
                     onDragOver={handleDragOver}
                     onDrop={handleDrop}
                     onClick={() => fileInputRef.current?.click()}
-                    className={`neo-upload-zone mb-8 cursor-pointer transition-all ${isDragging ? 'dragging' : ''
+                    className={`upload-zone mb-8 cursor-pointer transition-all ${isDragging ? 'dragging' : ''
                         }`}
                 >
                     <input
@@ -317,7 +317,7 @@ export const NeoDashboard = ({ user, bucket, onLogout, onManageBucket }) => {
                 </div>
 
                 {/* Bucket Info Card */}
-                <div className="mb-6 neo-card p-4">
+                <div className="mb-6 card p-4">
                     <div className="flex items-center justify-between">
                         <div className="flex items-center gap-3">
                             {/* Status Indicator */}
@@ -350,7 +350,7 @@ export const NeoDashboard = ({ user, bucket, onLogout, onManageBucket }) => {
 
                         <button
                             onClick={onManageBucket}
-                            className="neo-btn neo-btn-sm neo-btn-ghost flex items-center gap-1"
+                            className="btn btn-sm btn-ghost flex items-center gap-1"
                         >
                             <Settings className="w-4 h-4" />
                             <span className="hidden sm:inline">{bucket ? 'Manage' : 'Setup'}</span>
@@ -367,7 +367,7 @@ export const NeoDashboard = ({ user, bucket, onLogout, onManageBucket }) => {
                         </h3>
                         <div className="space-y-3">
                             {uploads.map(upload => (
-                                <div key={upload.id} className="neo-file-item">
+                                <div key={upload.id} className="file-item">
                                     <div className="w-10 h-10 bg-[var(--color-yellow)] border-2 border-[var(--border-color)] flex items-center justify-center flex-shrink-0">
                                         <Upload className="w-5 h-5 text-[var(--color-ink)]" />
                                     </div>
@@ -383,9 +383,9 @@ export const NeoDashboard = ({ user, bucket, onLogout, onManageBucket }) => {
                                         </div>
 
                                         {upload.status === 'uploading' && (
-                                            <div className="neo-progress">
+                                            <div className="progress">
                                                 <div
-                                                    className="neo-progress-bar"
+                                                    className="progress-bar"
                                                     style={{ width: `${upload.progress || 0}%` }}
                                                 />
                                             </div>
@@ -478,7 +478,7 @@ export const NeoDashboard = ({ user, bucket, onLogout, onManageBucket }) => {
                     </div>
 
                     {recentFiles.length === 0 ? (
-                        <div className="neo-card text-center py-12 text-[var(--color-text-muted)]">
+                        <div className="card text-center py-12 text-[var(--color-text-muted)]">
                             <FileIcon className="w-12 h-12 mx-auto mb-4 opacity-50" />
                             <p className="font-display font-bold uppercase">No uploads yet</p>
                             <p className="text-sm mt-1">Drop a file above to get started</p>
@@ -493,7 +493,7 @@ export const NeoDashboard = ({ user, bucket, onLogout, onManageBucket }) => {
                                     : 0;
 
                                 return (
-                                    <div key={file.key || index} className="neo-file-item group">
+                                    <div key={file.key || index} className="file-item group">
                                         {/* File Icon */}
                                         <div className="w-10 h-10 bg-[var(--color-mint)] border-2 border-[var(--border-color)] flex items-center justify-center flex-shrink-0">
                                             <IconComponent className="w-5 h-5 text-[var(--color-ink)]" />
@@ -504,7 +504,7 @@ export const NeoDashboard = ({ user, bucket, onLogout, onManageBucket }) => {
                                             <div className="flex items-center gap-2">
                                                 <span className="font-medium truncate">{file.name}</span>
                                                 {isCompressed && (
-                                                    <span className="neo-badge neo-badge-success text-[10px] py-0">
+                                                    <span className="badge badge-success text-[10px] py-0">
                                                         -{savings}%
                                                     </span>
                                                 )}
@@ -583,4 +583,4 @@ export const NeoDashboard = ({ user, bucket, onLogout, onManageBucket }) => {
     );
 };
 
-export default NeoDashboard;
+export default Dashboard;

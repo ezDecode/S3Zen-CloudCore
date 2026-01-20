@@ -9,7 +9,7 @@ import bucketManagerService from '../../services/bucketManagerService';
 import { testS3Connection } from '../../services/aws/s3Client';
 import { AWS_REGIONS, DEFAULT_REGION } from '../../config/awsRegions';
 
-export const NeoBucketSetup = ({ user, onBucketCreated, onLogout, onSkip, isFirstTime }) => {
+export const BucketSetup = ({ user, onBucketCreated, onLogout, onSkip, isFirstTime }) => {
     const [form, setForm] = useState({
         bucketName: '',
         accessKeyId: '',
@@ -140,7 +140,7 @@ export const NeoBucketSetup = ({ user, onBucketCreated, onLogout, onSkip, isFirs
             <header className="sticky top-0 z-50 bg-[var(--color-cream)] border-b-4 border-[var(--border-color)]">
                 <div className="max-w-4xl mx-auto px-6 py-4 flex items-center justify-between">
                     <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 bg-[var(--color-primary)] border-3 border-[var(--border-color)] flex items-center justify-center shadow-brutalist">
+                        <div className="w-10 h-10 bg-[var(--color-primary)] border-3 border-[var(--border-color)] flex items-center justify-center shadow-[3px_3px_0_var(--border-color)]">
                             <Cloud className="w-5 h-5 text-white" />
                         </div>
                         <span className="font-display font-bold text-xl">CloudCore</span>
@@ -151,7 +151,7 @@ export const NeoBucketSetup = ({ user, onBucketCreated, onLogout, onSkip, isFirs
                         </span>
                         <button
                             onClick={onLogout}
-                            className="neo-btn neo-btn-ghost neo-btn-sm"
+                            className="btn btn-ghost btn-sm"
                         >
                             <LogOut className="w-4 h-4" />
                             <span className="hidden sm:inline">Sign Out</span>
@@ -176,7 +176,7 @@ export const NeoBucketSetup = ({ user, onBucketCreated, onLogout, onSkip, isFirs
                 </div>
 
                 {/* Help Card */}
-                <div className="neo-card mb-8">
+                <div className="card mb-8">
                     <button
                         onClick={() => setShowHelp(!showHelp)}
                         className="flex items-center gap-2 text-[var(--color-text-secondary)] hover:text-[var(--color-primary)] transition-colors w-full"
@@ -197,7 +197,7 @@ export const NeoBucketSetup = ({ user, onBucketCreated, onLogout, onSkip, isFirs
                 </div>
 
                 {/* Form */}
-                <form onSubmit={handleSubmit} className="neo-card-elevated">
+                <form onSubmit={handleSubmit} className="card-elevated">
                     {/* Bucket Name */}
                     <div className="mb-6">
                         <label className="block font-display font-bold uppercase text-sm mb-2">
@@ -209,7 +209,7 @@ export const NeoBucketSetup = ({ user, onBucketCreated, onLogout, onSkip, isFirs
                             value={form.bucketName}
                             onChange={(e) => handleChange('bucketName', e.target.value)}
                             placeholder="my-awesome-bucket"
-                            className="neo-input"
+                            className="input"
                             required
                         />
                     </div>
@@ -225,7 +225,7 @@ export const NeoBucketSetup = ({ user, onBucketCreated, onLogout, onSkip, isFirs
                             value={form.accessKeyId}
                             onChange={(e) => handleChange('accessKeyId', e.target.value)}
                             placeholder="AKIAIOSFODNN7EXAMPLE"
-                            className="neo-input font-mono"
+                            className="input font-mono"
                             required
                         />
                     </div>
@@ -241,7 +241,7 @@ export const NeoBucketSetup = ({ user, onBucketCreated, onLogout, onSkip, isFirs
                             value={form.secretAccessKey}
                             onChange={(e) => handleChange('secretAccessKey', e.target.value)}
                             placeholder="••••••••••••••••••••"
-                            className="neo-input font-mono"
+                            className="input font-mono"
                             required
                         />
                     </div>
@@ -255,7 +255,7 @@ export const NeoBucketSetup = ({ user, onBucketCreated, onLogout, onSkip, isFirs
                         <select
                             value={form.region}
                             onChange={(e) => handleChange('region', e.target.value)}
-                            className="neo-input cursor-pointer"
+                            className="input cursor-pointer"
                         >
                             <optgroup label="🌍 Europe">
                                 {AWS_REGIONS.filter(r => r.group === 'Europe').map(region => (
@@ -308,7 +308,7 @@ export const NeoBucketSetup = ({ user, onBucketCreated, onLogout, onSkip, isFirs
 
                     {/* Error */}
                     {error && (
-                        <div className="neo-badge neo-badge-error w-full justify-center mb-6">
+                        <div className="badge badge-error w-full justify-center mb-6">
                             {error}
                         </div>
                     )}
@@ -319,7 +319,7 @@ export const NeoBucketSetup = ({ user, onBucketCreated, onLogout, onSkip, isFirs
                             type="button"
                             onClick={handleTestConnection}
                             disabled={testing || loading}
-                            className="neo-btn neo-btn-outline flex-1"
+                            className="btn btn-outline flex-1"
                         >
                             {testing ? (
                                 <Loader2 className="w-5 h-5 animate-spin" />
@@ -330,7 +330,7 @@ export const NeoBucketSetup = ({ user, onBucketCreated, onLogout, onSkip, isFirs
                         <button
                             type="submit"
                             disabled={loading || testing}
-                            className="neo-btn neo-btn-primary flex-1"
+                            className="btn btn-primary flex-1"
                         >
                             {loading ? (
                                 <Loader2 className="w-5 h-5 animate-spin" />
@@ -345,7 +345,7 @@ export const NeoBucketSetup = ({ user, onBucketCreated, onLogout, onSkip, isFirs
                         <button
                             type="button"
                             onClick={onSkip}
-                            className="neo-btn neo-btn-ghost w-full mt-4"
+                            className="btn btn-ghost w-full mt-4"
                         >
                             Cancel
                         </button>
@@ -365,4 +365,4 @@ export const NeoBucketSetup = ({ user, onBucketCreated, onLogout, onSkip, isFirs
     );
 };
 
-export default NeoBucketSetup;
+export default BucketSetup;

@@ -6,7 +6,7 @@
 import { useState, useEffect } from 'react';
 import { Cloud, Upload, Link2, Zap, ArrowRight, Github, Sparkles } from 'lucide-react';
 
-export const NeoLandingPage = ({ onGetStarted }) => {
+export const LandingPage = ({ onGetStarted }) => {
     const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
 
     useEffect(() => {
@@ -42,7 +42,7 @@ export const NeoLandingPage = ({ onGetStarted }) => {
                         </a>
                         <button
                             onClick={onGetStarted}
-                            className="neo-btn neo-btn-primary neo-btn-sm hidden sm:flex"
+                            className="btn btn-primary btn-sm hidden sm:flex"
                         >
                             Get Started
                         </button>
@@ -107,7 +107,7 @@ export const NeoLandingPage = ({ onGetStarted }) => {
                     <div className="flex flex-col sm:flex-row gap-4 justify-center">
                         <button
                             onClick={onGetStarted}
-                            className="neo-btn neo-btn-primary text-lg px-10 py-5 group"
+                            className="btn btn-primary text-lg px-10 py-5 group"
                         >
                             Get Started Free
                             <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
@@ -116,7 +116,7 @@ export const NeoLandingPage = ({ onGetStarted }) => {
                             href="https://github.com/ezDecode/S3Zen-CloudCore"
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="neo-btn neo-btn-outline text-lg px-10 py-5"
+                            className="btn btn-outline text-lg px-10 py-5"
                         >
                             <Github className="w-5 h-5" />
                             View Source
@@ -249,7 +249,7 @@ export const NeoLandingPage = ({ onGetStarted }) => {
                     </p>
                     <button
                         onClick={onGetStarted}
-                        className="neo-btn neo-btn-primary text-xl px-12 py-6 group"
+                        className="btn btn-primary text-xl px-12 py-6 group"
                     >
                         Start Uploading Now
                         <ArrowRight className="w-6 h-6 group-hover:translate-x-1 transition-transform" />
@@ -278,4 +278,4 @@ export const NeoLandingPage = ({ onGetStarted }) => {
     );
 };
 
-export default NeoLandingPage;
+export default LandingPage;
