@@ -83,3 +83,64 @@ export const getCurrentBucket = () => currentBucket;
 export const getCurrentRegion = () => currentRegion;
 export const isS3ClientInitialized = () => !!(s3Client && currentBucket);
 export const isBucketVerified = () => bucketOwnerVerified;
+
+/**
+ * Test S3 Connection without modifying global state
+ * Accepts either (credentials, region, bucketName) or single config object
+ */
+export const testS3Connection = async (credentialsOrConfig, region, bucketName) => {
+    // Support both object format and individual params
+    let accessKeyId, secretAccessKey, regionToUse, bucket;
+
+    if (typeof credentialsOrConfig === 'object' && credentialsOrConfig.bucketName) {
+        // Object format: { accessKeyId, secretAccessKey, bucketName, region }
+        accessKeyId = credentialsOrConfig.accessKeyId;
+        secretAccessKey = credentialsOrConfig.secretAccessKey;
+        regionToUse = credentialsOrConfig.region;
+        bucket = credentialsOrConfig.bucketName;
+    } else {
+        // Individual params format
+        accessKeyId = credentialsOrConfig.accessKeyId;
+        secretAccessKey = credentialsOrConfig.secretAccessKey;
+        regionToUse = region;
+        bucket = bucketName;
+    }
+
+    try {
+        const tempS3 = new S3Client({
+            region: regionToUse,
+            credentials: {
+                accessKeyId,
+                secretAccessKey
+            },
+            maxAttempts: 1,
+            requestHandler: {
+                connectionTimeout: 5000,
+                socketTimeout: 5000
+            }
+        });
+
+        const tempSTS = new STSClient({
+            region: regionToUse,
+            credentials: {
+                accessKeyId,
+                secretAccessKey
+            },
+            maxAttempts: 1
+        });
+
+        await tempS3.send(new HeadBucketCommand({ Bucket: bucket }));
+        const identity = await tempSTS.send(new GetCallerIdentityCommand({}));
+
+        return { success: true, identity };
+    } catch (error) {
+        console.error('Test connection failed:', error);
+        let errorMessage = 'Connection failed';
+        if (error.name === 'NotFound') errorMessage = 'Bucket not found';
+        else if (error.name === 'Forbidden') errorMessage = 'Access Denied (Check CORS & Permissions)';
+        else if (error.name === 'NetworkingError') errorMessage = 'Network error';
+        else errorMessage = error.message;
+
+        return { success: false, error: errorMessage };
+    }
+};

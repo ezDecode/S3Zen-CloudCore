@@ -1,8 +1,12 @@
 @import "tailwindcss";
 
 /* ============================================
-   Geist Font - Variable Font (All Weights)
+   Neo-Brutalism Theme - CloudCore
+   Bold, Raw, Unapologetic Design
    ============================================ */
+
+/* Typography - Geist for body, Space Grotesk via Google Fonts */
+
 @font-face {
   font-family: 'Geist';
   src: url('/fonts/Geist-Variable.woff2') format('woff2');
@@ -20,37 +24,65 @@
 }
 
 /* ============================================
-   Lenis Smooth Scroll
-   ============================================ */
-html.lenis,
-html.lenis body {
-  height: auto;
-}
-
-.lenis.lenis-smooth {
-  scroll-behavior: auto !important;
-}
-
-.lenis.lenis-smooth [data-lenis-prevent] {
-  overscroll-behavior: contain;
-}
-
-.lenis.lenis-stopped {
-  overflow: hidden;
-}
-
-.lenis.lenis-scrolling iframe {
-  pointer-events: none;
-}
-
-/* ============================================
-   Tailwind v4 Theme Configuration
+   Neo-Brutalism Design Tokens
    ============================================ */
 @theme {
   /* Typography */
-  --font-sans: "Geist", system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
-  --font-mono: "Geist Mono", ui-monospace, "Cascadia Code", monospace;
-  --font-serif: "Instrument Serif", serif;
+  --font-sans: "Space Grotesk", "Geist", system-ui, sans-serif;
+  --font-mono: "Geist Mono", ui-monospace, monospace;
+  --font-display: "Space Grotesk", sans-serif;
+
+  /* Neo-Brutalism Color Palette - Vibrant & Bold */
+  --color-cream: #FDF7E4;
+  --color-cream-dark: #F5EED6;
+  --color-ink: #1A1A1A;
+  --color-ink-light: #2D2D2D;
+
+  /* Primary Accent - Electric Coral */
+  --color-primary: #FF6B35;
+  --color-primary-dark: #E55A28;
+  --color-primary-light: #FF8A5C;
+
+  /* Secondary - Vibrant Purple */
+  --color-secondary: #7B2CBF;
+  --color-secondary-dark: #5A189A;
+  --color-secondary-light: #9D4EDD;
+
+  /* Accent Colors */
+  --color-mint: #2EC4B6;
+  --color-mint-dark: #1B9A8E;
+  --color-yellow: #FFD166;
+  --color-yellow-dark: #E6B84D;
+  --color-pink: #EF476F;
+  --color-pink-dark: #D63D5C;
+  --color-blue: #118AB2;
+  --color-blue-dark: #0D6E8C;
+
+  /* Semantic Colors */
+  --color-success: #06D6A0;
+  --color-warning: #FFD166;
+  --color-error: #EF476F;
+
+  /* Text */
+  --color-text-primary: #1A1A1A;
+  --color-text-secondary: #4A4A4A;
+  --color-text-muted: #6B6B6B;
+  --color-text-inverse: #FDF7E4;
+
+  /* Borders - Neo-Brutalism uses thick, solid borders */
+  --border-width: 3px;
+  --border-width-thick: 4px;
+  --border-color: #1A1A1A;
+
+  /* Neo-Brutalism Shadows - Hard, offset, no blur */
+  --shadow-sm: 3px 3px 0 #1A1A1A;
+  --shadow-md: 5px 5px 0 #1A1A1A;
+  --shadow-lg: 8px 8px 0 #1A1A1A;
+  --shadow-xl: 12px 12px 0 #1A1A1A;
+
+  /* Colored shadows for interactive elements */
+  --shadow-primary: 5px 5px 0 #E55A28;
+  --shadow-secondary: 5px 5px 0 #5A189A;
 
   /* Spacing */
   --space-xs: 0.25rem;
@@ -58,53 +90,35 @@ html.lenis body {
   --space-md: 1rem;
   --space-lg: 1.5rem;
   --space-xl: 2rem;
+  --space-2xl: 3rem;
+  --space-3xl: 4rem;
 
-  /* Radius */
-  --radius-sm: 0.25rem;
-  --radius-md: 0.5rem;
-  --radius-lg: 0.75rem;
-  --radius-xl: 1rem;
-  --radius-full: 9999px;
-
-  /* Dark Theme Colors */
-  --color-surface-black: #000000;
-  --color-surface-dark: #0a0a0a;
-  --color-surface-elevated: #141414;
-  --color-surface-hover: #1a1a1a;
-  --color-border-subtle: #1f1f1f;
-  --color-border: #2a2a2a;
-  --color-border-strong: #3a3a3a;
-
-  /* Text Colors (WCAG AA compliant) */
-  --color-text-primary: #ffffff;
-  --color-text-secondary: #b8b8b8;
-  --color-text-muted: #8a8a8a;
-  --color-text-disabled: #666666;
-  --color-accent: #ffffff;
-  --color-accent-muted: #e0e0e0;
-
-  /* Focus States */
-  --color-focus-ring: rgba(255, 255, 255, 0.5);
+  /* Radius - Neo-Brutalism uses minimal radius */
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-xl: 16px;
 }
 
 /* ============================================
    Base Styles
    ============================================ */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
 html,
 body {
   height: 100%;
   min-height: 100vh;
-  min-height: -webkit-fill-available;
   font-family: var(--font-sans);
   color: var(--color-text-primary);
-  background: #000000;
+  background: var(--color-cream);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   overflow-x: hidden;
-}
-
-html {
-  height: -webkit-fill-available;
 }
 
 /* Touch optimization */
@@ -113,209 +127,525 @@ html {
 }
 
 /* ============================================
-   Scrollbar Styling
-   ============================================ */
-::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
-}
-
-::-webkit-scrollbar-track {
-  background: transparent;
-}
-
-::-webkit-scrollbar-thumb {
-  background: var(--color-border);
-  border-radius: 3px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: var(--color-border-strong);
-}
-
-.custom-scrollbar::-webkit-scrollbar {
-  width: 6px;
-}
-
-.custom-scrollbar::-webkit-scrollbar-track {
-  background: rgba(255, 255, 255, 0.02);
-}
-
-.custom-scrollbar::-webkit-scrollbar-thumb {
-  background: #52525b;
-  border-radius: 3px;
-}
-
-/* ============================================
-   Selection & Focus
+   Selection
    ============================================ */
 ::selection {
-  background: var(--color-accent);
-  color: var(--color-surface-black);
-}
-
-button:focus-visible,
-[role="button"]:focus-visible,
-a:focus-visible {
-  outline: 2px solid var(--color-focus-ring);
-  outline-offset: 2px;
+  background: var(--color-primary);
+  color: var(--color-cream);
 }
 
 /* ============================================
-   Surface Utilities
+   Neo-Brutalism Components
    ============================================ */
-.mono-border {
-  border: 1px solid var(--color-border);
+
+/* Brutalist Button Base */
+.neo-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.875rem 1.5rem;
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 1rem;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  border: var(--border-width-thick) solid var(--border-color);
+  cursor: pointer;
+  transition: transform 0.1s ease, box-shadow 0.1s ease;
+  position: relative;
 }
 
-.mono-surface {
-  background-color: var(--color-surface-dark);
+.neo-btn:hover {
+  transform: translate(-2px, -2px);
 }
 
-.mono-surface-elevated {
-  background-color: var(--color-surface-elevated);
+.neo-btn:active {
+  transform: translate(2px, 2px);
+  box-shadow: none !important;
 }
 
-.gradient-text {
-  background: linear-gradient(135deg, #ffffff 0%, #a0a0a0 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+/* Primary Button */
+.neo-btn-primary {
+  background: var(--color-primary);
+  color: var(--color-cream);
+  box-shadow: var(--shadow-md);
+}
+
+.neo-btn-primary:hover {
+  box-shadow: var(--shadow-lg);
+  background: var(--color-primary-light);
+}
+
+/* Secondary Button */
+.neo-btn-secondary {
+  background: var(--color-secondary);
+  color: var(--color-cream);
+  box-shadow: var(--shadow-md);
+}
+
+.neo-btn-secondary:hover {
+  box-shadow: var(--shadow-lg);
+  background: var(--color-secondary-light);
+}
+
+/* Outline Button */
+.neo-btn-outline {
+  background: var(--color-cream);
+  color: var(--color-ink);
+  box-shadow: var(--shadow-md);
+}
+
+.neo-btn-outline:hover {
+  background: var(--color-yellow);
+  box-shadow: var(--shadow-lg);
+}
+
+/* Ghost Button */
+.neo-btn-ghost {
+  background: transparent;
+  color: var(--color-ink);
+  border: var(--border-width) solid var(--border-color);
+  box-shadow: none;
+}
+
+.neo-btn-ghost:hover {
+  background: var(--color-ink);
+  color: var(--color-cream);
+}
+
+/* Small Button */
+.neo-btn-sm {
+  padding: 0.5rem 1rem;
+  font-size: 0.875rem;
+}
+
+/* Neo-Brutalism Card */
+.neo-card {
+  background: var(--color-cream);
+  border: var(--border-width-thick) solid var(--border-color);
+  box-shadow: var(--shadow-md);
+  padding: 1.5rem;
+}
+
+.neo-card-elevated {
+  background: white;
+  border: var(--border-width-thick) solid var(--border-color);
+  box-shadow: var(--shadow-lg);
+  padding: 2rem;
+}
+
+/* Neo-Brutalism Input */
+.neo-input {
+  width: 100%;
+  padding: 0.875rem 1rem;
+  font-family: var(--font-sans);
+  font-size: 1rem;
+  background: white;
+  border: var(--border-width) solid var(--border-color);
+  box-shadow: 3px 3px 0 var(--border-color);
+  transition: box-shadow 0.1s ease, transform 0.1s ease;
+}
+
+.neo-input:focus {
+  outline: none;
+  box-shadow: 5px 5px 0 var(--color-primary);
+  transform: translate(-1px, -1px);
+}
+
+.neo-input::placeholder {
+  color: var(--color-text-muted);
+}
+
+/* Neo-Brutalism Badge/Tag */
+.neo-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.25rem 0.75rem;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  border: 2px solid var(--border-color);
+  background: var(--color-yellow);
+}
+
+.neo-badge-success {
+  background: var(--color-success);
+  color: var(--color-ink);
+}
+
+.neo-badge-error {
+  background: var(--color-error);
+  color: white;
+}
+
+/* Neo-Brutalism Divider */
+.neo-divider {
+  height: 4px;
+  background: var(--border-color);
+  border: none;
+  margin: 2rem 0;
+}
+
+/* ============================================
+   Upload Zone - Drag & Drop
+   ============================================ */
+.neo-upload-zone {
+  border: 4px dashed var(--border-color);
+  background: repeating-linear-gradient(45deg,
+      transparent,
+      transparent 10px,
+      rgba(26, 26, 26, 0.03) 10px,
+      rgba(26, 26, 26, 0.03) 20px);
+  padding: 3rem;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.neo-upload-zone:hover {
+  border-color: var(--color-primary);
+  background: repeating-linear-gradient(45deg,
+      transparent,
+      transparent 10px,
+      rgba(255, 107, 53, 0.05) 10px,
+      rgba(255, 107, 53, 0.05) 20px);
+}
+
+.neo-upload-zone.dragging {
+  border-color: var(--color-primary);
+  background: var(--color-primary-light);
+  transform: scale(1.02);
+  box-shadow: var(--shadow-lg);
+}
+
+/* ============================================
+   File List Item
+   ============================================ */
+.neo-file-item {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem;
+  background: white;
+  border: 3px solid var(--border-color);
+  margin-bottom: -3px;
+  /* Stack borders */
+  transition: all 0.1s ease;
+}
+
+.neo-file-item:first-child {
+  border-radius: var(--radius-md) var(--radius-md) 0 0;
+}
+
+.neo-file-item:last-child {
+  border-radius: 0 0 var(--radius-md) var(--radius-md);
+}
+
+.neo-file-item:only-child {
+  border-radius: var(--radius-md);
+}
+
+.neo-file-item:hover {
+  background: var(--color-cream);
+  transform: translateX(4px);
+  box-shadow: -4px 0 0 var(--color-primary);
+}
+
+/* ============================================
+   Progress Bar
+   ============================================ */
+.neo-progress {
+  height: 24px;
+  background: white;
+  border: 3px solid var(--border-color);
+  overflow: hidden;
+}
+
+.neo-progress-bar {
+  height: 100%;
+  background: var(--color-mint);
+  transition: width 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  padding-right: 0.5rem;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--color-ink);
+}
+
+/* ============================================
+   Modal
+   ============================================ */
+.neo-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(26, 26, 26, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+  padding: 1rem;
+}
+
+.neo-modal {
+  background: var(--color-cream);
+  border: 4px solid var(--border-color);
+  box-shadow: 12px 12px 0 var(--border-color);
+  max-width: 500px;
+  width: 100%;
+  max-height: 90vh;
+  overflow-y: auto;
+  animation: modalEnter 0.2s ease;
+}
+
+@keyframes modalEnter {
+  from {
+    opacity: 0;
+    transform: scale(0.95) translateY(20px);
+  }
+
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+.neo-modal-header {
+  padding: 1.5rem;
+  border-bottom: 4px solid var(--border-color);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.neo-modal-title {
+  font-family: var(--font-display);
+  font-size: 1.5rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+}
+
+.neo-modal-body {
+  padding: 1.5rem;
+}
+
+.neo-modal-footer {
+  padding: 1.5rem;
+  border-top: 4px solid var(--border-color);
+  display: flex;
+  gap: 1rem;
+  justify-content: flex-end;
+}
+
+/* ============================================
+   Toast / Notification
+   ============================================ */
+.neo-toast {
+  position: fixed;
+  bottom: 2rem;
+  right: 2rem;
+  padding: 1rem 1.5rem;
+  background: var(--color-ink);
+  color: var(--color-cream);
+  border: 3px solid var(--border-color);
+  box-shadow: var(--shadow-md);
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  animation: toastSlide 0.3s ease;
+  z-index: 200;
+}
+
+@keyframes toastSlide {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+.neo-toast-success {
+  background: var(--color-success);
+  color: var(--color-ink);
+}
+
+.neo-toast-error {
+  background: var(--color-error);
+  color: white;
+}
+
+/* ============================================
+   Landing Page Hero
+   ============================================ */
+.neo-hero {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 2rem;
+  position: relative;
+  overflow: hidden;
+}
+
+.neo-hero::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(90deg, var(--border-color) 1px, transparent 1px),
+    linear-gradient(var(--border-color) 1px, transparent 1px);
+  background-size: 60px 60px;
+  opacity: 0.08;
+  pointer-events: none;
+}
+
+.neo-hero-title {
+  font-family: var(--font-display);
+  font-size: clamp(3rem, 10vw, 6rem);
+  font-weight: 700;
+  line-height: 1;
+  text-transform: uppercase;
+  letter-spacing: -0.02em;
+  margin-bottom: 1.5rem;
+  position: relative;
+}
+
+.neo-hero-title span {
+  color: var(--color-primary);
+  position: relative;
+}
+
+.neo-hero-title span::after {
+  content: '';
+  position: absolute;
+  bottom: 0.1em;
+  left: 0;
+  right: 0;
+  height: 0.15em;
+  background: var(--color-primary);
+  transform: skewX(-5deg);
+}
+
+.neo-hero-subtitle {
+  font-size: 1.25rem;
+  color: var(--color-text-secondary);
+  max-width: 500px;
+  margin-bottom: 2.5rem;
 }
 
 /* ============================================
    Animations
    ============================================ */
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(10px);
-  }
+@keyframes bounce {
 
-  to {
-    opacity: 1;
+  0%,
+  100% {
     transform: translateY(0);
   }
-}
 
-@keyframes scaleIn {
-  from {
-    opacity: 0;
-    transform: scale(0.95);
-  }
-
-  to {
-    opacity: 1;
-    transform: scale(1);
+  50% {
+    transform: translateY(-10px);
   }
 }
 
-@keyframes shimmer {
-  0% {
-    background-position: -1000px 0;
-  }
+@keyframes pulse {
 
+  0%,
   100% {
-    background-position: 1000px 0;
-  }
-}
-
-/* Accordion (Radix UI) */
-@keyframes accordion-down {
-  from {
-    height: 0;
-    opacity: 0;
-  }
-
-  to {
-    height: var(--radix-accordion-content-height);
-    opacity: 1;
-  }
-}
-
-@keyframes accordion-up {
-  from {
-    height: var(--radix-accordion-content-height);
     opacity: 1;
   }
 
-  to {
-    height: 0;
-    opacity: 0;
+  50% {
+    opacity: 0.6;
   }
 }
 
-.animate-accordion-down {
-  animation: accordion-down 0.35s cubic-bezier(0.32, 0.72, 0, 1);
+.animate-bounce {
+  animation: bounce 1s ease infinite;
 }
 
-.animate-accordion-up {
-  animation: accordion-up 0.3s cubic-bezier(0.32, 0.72, 0, 1);
-}
-
-.animate-fade-in {
-  animation: fadeIn 0.5s cubic-bezier(0.4, 0, 0.2, 1) forwards;
-}
-
-.animate-scale-in {
-  animation: scaleIn 0.4s cubic-bezier(0.4, 0, 0.2, 1) forwards;
-}
-
-.animate-shimmer {
-  animation: shimmer 2s linear infinite;
-  background-size: 200% 100%;
+.animate-pulse {
+  animation: pulse 2s ease infinite;
 }
 
 /* ============================================
-   Interactive States
+   Scrollbar
    ============================================ */
-.card-hover {
-  transition: background-color 0.15s ease-out, border-color 0.15s ease-out;
+::-webkit-scrollbar {
+  width: 12px;
 }
 
-.card-hover:hover {
-  background-color: rgba(255, 255, 255, 0.03);
-  border-color: rgba(255, 255, 255, 0.1);
+::-webkit-scrollbar-track {
+  background: var(--color-cream);
 }
 
-.btn-hover {
-  transition: background-color 0.15s ease-out, color 0.15s ease-out;
+::-webkit-scrollbar-thumb {
+  background: var(--border-color);
+  border: 3px solid var(--color-cream);
 }
 
-.btn-hover:hover {
-  background-color: rgba(255, 255, 255, 0.9);
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-text-secondary);
 }
 
 /* ============================================
-   Layout Isolation
+   Utilities
    ============================================ */
-.hero-page-wrapper,
-.file-explorer-wrapper {
-  isolation: isolate;
+.text-balance {
+  text-wrap: balance;
 }
 
-/* ============================================
-   Mobile Utilities
-   ============================================ */
-@supports (padding: max(0px)) {
-  .safe-bottom {
-    padding-bottom: max(env(safe-area-inset-bottom), 1rem);
-  }
+.font-display {
+  font-family: var(--font-display);
 }
 
-.touch-target {
-  min-width: 40px;
-  min-height: 40px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
+.border-brutalist {
+  border: var(--border-width-thick) solid var(--border-color);
 }
 
-.no-select {
-  -webkit-user-select: none;
-  user-select: none;
+.shadow-brutalist {
+  box-shadow: var(--shadow-md);
 }
 
+.shadow-brutalist-lg {
+  box-shadow: var(--shadow-lg);
+}
+
+/* Pattern backgrounds */
+.pattern-dots {
+  background-image: radial-gradient(var(--border-color) 1px, transparent 1px);
+  background-size: 16px 16px;
+}
+
+.pattern-stripes {
+  background: repeating-linear-gradient(-45deg,
+      transparent,
+      transparent 8px,
+      rgba(26, 26, 26, 0.05) 8px,
+      rgba(26, 26, 26, 0.05) 16px);
+}
+
+/* Focus states */
+button:focus-visible,
+[role="button"]:focus-visible,
+a:focus-visible,
+input:focus-visible {
+  outline: 4px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+/* Hide scrollbar utility */
 .hide-scrollbar {
   -ms-overflow-style: none;
   scrollbar-width: none;
@@ -325,7 +655,14 @@ a:focus-visible {
   display: none;
 }
 
-/* Prevent iOS zoom on input focus */
+/* Safe area for mobile */
+@supports (padding: max(0px)) {
+  .safe-bottom {
+    padding-bottom: max(env(safe-area-inset-bottom), 1rem);
+  }
+}
+
+/* Prevent iOS zoom on input */
 input,
 select,
 textarea {
@@ -337,17 +674,6 @@ textarea {
   input,
   select,
   textarea {
-    font-size: 14px;
-  }
-}
-
-/* ============================================
-   High Contrast Mode
-   ============================================ */
-@media (prefers-contrast: high) {
-  :root {
-    --color-text-secondary: #d0d0d0;
-    --color-text-muted: #a0a0a0;
-    --color-border: #4a4a4a;
+    font-size: inherit;
   }
 }

@@ -4,7 +4,5 @@
  */
 
 export { useAuth } from './useAuth';
-export { useModals } from './useModals';
 export { useSessionTimeout } from './useSessionTimeout';
-export { useFavorites } from './useFavorites';
-export { useStorageStats } from './useStorageStats';
+export { useKeyboardShortcut } from './useKeyboardShortcut';

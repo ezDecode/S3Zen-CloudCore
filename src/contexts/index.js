@@ -4,4 +4,3 @@
  */
 
 export { BucketProvider, useBucket } from './BucketContext';
-export { FileExplorerProvider, useFileExplorerContext } from './FileExplorerContext';

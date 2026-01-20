@@ -1,46 +1,36 @@
 /**
  * Buckets API Module
  * Handles all bucket CRUD operations
+ * Delegates to BucketManagerService which handles Auth + Offline fallback
  */
 
-import { apiRequest } from './client.js';
+import bucketManagerService from '../bucketManagerService';
 
 export const buckets = {
     /** List all buckets for current user */
-    list: () => apiRequest('/api/buckets'),
+    list: () => bucketManagerService.getBuckets(),
 
     /** Get single bucket by ID */
-    get: (bucketId) => apiRequest(`/api/buckets/${bucketId}`),
+    get: (bucketId) => bucketManagerService.getBucket(bucketId),
 
     /** Get default bucket */
-    getDefault: () => apiRequest('/api/buckets/default'),
+    getDefault: () => bucketManagerService.getDefaultBucket(),
 
-    /** Get bucket credentials (decrypted server-side) */
-    getCredentials: (bucketId) => apiRequest(`/api/buckets/${bucketId}/credentials`),
+    /** Get bucket credentials (decrypted server-side or from local) */
+    getCredentials: (bucketId) => bucketManagerService.getBucketCredentials(bucketId),
 
     /** Create new bucket */
-    create: (data) => apiRequest('/api/buckets', {
-        method: 'POST',
-        body: JSON.stringify(data)
-    }),
+    create: (data) => bucketManagerService.createBucket(data),
 
     /** Update bucket */
-    update: (bucketId, data) => apiRequest(`/api/buckets/${bucketId}`, {
-        method: 'PUT',
-        body: JSON.stringify(data)
-    }),
+    update: (bucketId, data) => bucketManagerService.updateBucket(bucketId, data),
 
     /** Delete bucket */
-    delete: (bucketId) => apiRequest(`/api/buckets/${bucketId}`, {
-        method: 'DELETE'
-    }),
+    delete: (bucketId) => bucketManagerService.deleteBucket(bucketId),
 
     /** Validate bucket access */
-    validate: (data) => apiRequest('/api/buckets/validate', {
-        method: 'POST',
-        body: JSON.stringify(data)
-    }),
+    validate: (data) => bucketManagerService.validateBucket(data),
 
     /** Get bucket count */
-    count: () => apiRequest('/api/buckets/count')
+    count: () => bucketManagerService.getBucketCount()
 };
