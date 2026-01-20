@@ -49,12 +49,11 @@ async function createShortlink(data) {
             .from(TABLE_NAME)
             .insert({
                 code,
-                url,
+                original_url: url,
                 s3_bucket: s3Bucket || null,
                 s3_key: s3Key || null,
                 s3_region: s3Region || null,
-                user_id: userId || null,
-                is_permanent: permanent || !!(s3Bucket && s3Key)
+                user_id: userId || null
             });
 
         if (error) {
@@ -91,6 +90,9 @@ async function getShortlink(code) {
         if (error || !data) {
             return { success: false, error: 'Short URL not found' };
         }
+
+        // Map original_url to url for compatibility
+        data.url = data.original_url;
 
         return { success: true, link: data };
     } catch (error) {

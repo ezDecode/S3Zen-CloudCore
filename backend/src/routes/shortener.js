@@ -102,6 +102,38 @@ router.post('/shorten', validate(shortenSchema), async (req, res) => {
     res.json({ shortUrl: result.shortUrl, shortCode: result.shortCode, permanent: result.permanent });
 });
 
+// GET /api/shortlinks/:code - Get shortlink metadata (for LinkButton component)
+router.get('/api/shortlinks/:code', async (req, res) => {
+    const { code } = req.params;
+
+    const result = await shortlinksService.getShortlink(code);
+
+    if (!result.success) {
+        return res.status(404).json({ error: 'Shortlink not found' });
+    }
+
+    const link = result.link;
+    const baseUrl = process.env.BASE_URL || 'http://localhost:3000';
+
+    // Compute AWS S3 URL from stored metadata
+    let awsUrl = null;
+    if (link.s3_bucket && link.s3_key) {
+        const region = link.s3_region || 'us-east-1';
+        awsUrl = `https://${link.s3_bucket}.s3.${region}.amazonaws.com/${link.s3_key}`;
+    }
+
+    res.json({
+        shortUrl: `${baseUrl}/s/${code}`,
+        shortCode: code,
+        awsUrl,
+        s3Bucket: link.s3_bucket || null,
+        s3Key: link.s3_key || null,
+        s3Region: link.s3_region || null,
+        isPermanent: link.is_permanent,
+        createdAt: link.created_at
+    });
+});
+
 // GET /s/:code - Redirect to original URL
 router.get('/s/:code', async (req, res) => {
     const { code } = req.params;

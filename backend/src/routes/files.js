@@ -5,6 +5,7 @@
  * - Rename
  * - Create folder
  * - Move
+ * - History (cross-device sync)
  */
 const express = require('express');
 const multer = require('multer');
@@ -20,6 +21,7 @@ const { requireAuth } = require('../middleware/authMiddleware');
 const bucketService = require('../services/bucketService');
 const { createS3Client } = require('../services/s3ClientFactory');
 const { processBuffer, isImageType } = require('../services/imageProcessor');
+const uploadHistoryService = require('../services/uploadHistoryService');
 
 const router = express.Router();
 const upload = multer({ storage: multer.memoryStorage(), limits: { fileSize: 5 * 1024 * 1024 * 1024 } });
@@ -86,9 +88,34 @@ router.post('/upload', requireAuth(), upload.single('file'), async (req, res) =>
 
         const url = await getSignedUrl(s3, new GetObjectCommand({ Bucket: creds.bucketName, Key: key }), { expiresIn: 3600 });
 
+        // Record upload to history for cross-device sync
+        // This is non-blocking - we don't wait for it
+        uploadHistoryService.recordUpload(userId, {
+            bucketId: bucketId || null,
+            key,
+            originalName: file.originalname,
+            size: processed.size,
+            originalSize: file.size,
+            mimeType: processed.mimeType,
+            shortUrl: url,
+            s3Bucket: creds.bucketName,
+            s3Region: creds.region,
+            compressed: processed.wasProcessed,
+        }).catch(e => console.error('[Files/Upload] History record failed:', e.message));
+
         res.json({
             success: true,
-            file: { key, originalName: file.originalname, size: processed.size, originalSize: file.size, type: processed.mimeType, compressed: processed.wasProcessed, url }
+            file: {
+                key,
+                originalName: file.originalname,
+                size: processed.size,
+                originalSize: file.size,
+                type: processed.mimeType,
+                compressed: processed.wasProcessed,
+                url,
+                s3Bucket: creds.bucketName,
+                s3Region: creds.region,
+            }
         });
     } catch (e) {
         console.error('[Files/Upload]', e.message);
@@ -144,6 +171,12 @@ router.post('/delete', requireAuth(), async (req, res) => {
             }));
             (result.Deleted || []).forEach(d => deleted.push(d.Key));
             (result.Errors || []).forEach(e => failed.push({ key: e.Key, error: e.Message }));
+        }
+
+        // Also remove from upload history (non-blocking)
+        if (deleted.length > 0) {
+            uploadHistoryService.deleteUploads(userId, deleted)
+                .catch(e => console.error('[Files/Delete] History cleanup failed:', e.message));
         }
 
         res.json({ success: failed.length === 0, deleted, failed });
@@ -283,6 +316,57 @@ router.post('/move', requireAuth(), async (req, res) => {
     } catch (e) {
         console.error('[Files/Move]', e.message);
         err(res, 500, 'MOVE_FAILED', 'Move operation failed');
+    }
+});
+
+// GET /history - Get upload history for cross-device sync
+router.get('/history', requireAuth(), async (req, res) => {
+    try {
+        const { id: userId } = req.user;
+        const limit = Math.min(parseInt(req.query.limit) || 50, 100);
+        const offset = parseInt(req.query.offset) || 0;
+
+        const result = await uploadHistoryService.getHistory(userId, limit, offset);
+
+        // Always return success with files array (graceful degradation)
+        res.json({
+            success: true,
+            files: result.files || [],
+            total: result.total || 0,
+            limit,
+            offset,
+        });
+    } catch (e) {
+        console.error('[Files/History]', e.message);
+        // Return empty array on error - graceful degradation
+        res.json({
+            success: true,
+            files: [],
+            total: 0,
+            limit: parseInt(req.query.limit) || 50,
+            offset: parseInt(req.query.offset) || 0,
+        });
+    }
+});
+
+// DELETE /history/:key - Remove item from history (without deleting from S3)
+router.delete('/history/:key(*)', requireAuth(), async (req, res) => {
+    try {
+        const { id: userId } = req.user;
+        const { key } = req.params;
+
+        if (!key) return err(res, 400, 'MISSING_KEY', 'Key is required');
+
+        const result = await uploadHistoryService.deleteUpload(userId, key);
+
+        if (!result.success) {
+            return err(res, 500, 'DELETE_HISTORY_FAILED', result.error || 'Failed to delete from history');
+        }
+
+        res.json({ success: true });
+    } catch (e) {
+        console.error('[Files/DeleteHistory]', e.message);
+        err(res, 500, 'DELETE_HISTORY_FAILED', 'Failed to delete from history');
     }
 });
 

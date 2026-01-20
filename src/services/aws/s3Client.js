@@ -1,6 +1,11 @@
 /**
  * S3 Client Module
  * Handles S3 and STS client initialization and validation
+ * 
+ * Includes:
+ * - Retry logic with exponential backoff
+ * - Configurable timeouts
+ * - Better error handling
  */
 
 import { S3Client, HeadBucketCommand } from '@aws-sdk/client-s3';
@@ -12,6 +17,12 @@ let stsClient = null;
 let currentBucket = null;
 let currentRegion = null;
 let bucketOwnerVerified = false;
+
+// Retry configuration for improved reliability
+const RETRY_CONFIG = {
+    maxAttempts: 5,
+    retryMode: 'adaptive', // Uses adaptive retry with token bucket
+};
 
 /**
  * Initialize S3 Client with credentials
@@ -25,7 +36,7 @@ export const initializeS3Client = (credentials, region, bucketName) => {
                 secretAccessKey: credentials.secretAccessKey,
                 ...(credentials.sessionToken && { sessionToken: credentials.sessionToken })
             },
-            maxAttempts: 3,
+            ...RETRY_CONFIG,
             requestHandler: {
                 connectionTimeout: 30000,
                 socketTimeout: 30000

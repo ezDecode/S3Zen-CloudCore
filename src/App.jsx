@@ -39,6 +39,8 @@ function AppContent() {
 
   // Check if user has a bucket configured
   useEffect(() => {
+    let isCancelled = false;
+
     const checkUserBucket = async () => {
       if (!isLoggedIn || !user) {
         setCheckingBucket(false);
@@ -48,6 +50,8 @@ function AppContent() {
       try {
         setCheckingBucket(true);
         const result = await bucketManagerService.getUserBuckets();
+
+        if (isCancelled) return;
 
         if (result.success && result.buckets && result.buckets.length > 0) {
           // User has at least one bucket
@@ -59,14 +63,23 @@ function AppContent() {
           setShowBucketSetup(true);
         }
       } catch (error) {
+        if (isCancelled) return;
         console.error('Failed to check buckets:', error);
-        setHasBucket(false);
+        // Don't force bucket setup on error - could be temporary
+        if (error.code === 'NO_AUTH' || error.message?.includes('sign in')) {
+          // Auth issue - let auth flow handle it
+          setHasBucket(false);
+        }
       } finally {
-        setCheckingBucket(false);
+        if (!isCancelled) {
+          setCheckingBucket(false);
+        }
       }
     };
 
     checkUserBucket();
+
+    return () => { isCancelled = true; };
   }, [isLoggedIn, user]);
 
   // Handle bucket creation success

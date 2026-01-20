@@ -28,9 +28,32 @@ export const NeoBucketSetup = ({ user, onBucketCreated, onLogout, onSkip, isFirs
         setTestResult(null);
     };
 
+    // Validate bucket name format (S3 naming rules)
+    const validateBucketName = (name) => {
+        if (!name || name.length < 3 || name.length > 63) {
+            return 'Bucket name must be 3-63 characters';
+        }
+        if (!/^[a-z0-9][a-z0-9.-]*[a-z0-9]$/.test(name)) {
+            return 'Bucket name must start/end with letter or number';
+        }
+        if (/\.\./.test(name) || /--/.test(name)) {
+            return 'Bucket name cannot have consecutive dots or hyphens';
+        }
+        if (/^\d+\.\d+\.\d+\.\d+$/.test(name)) {
+            return 'Bucket name cannot be an IP address';
+        }
+        return null;
+    };
+
     const handleTestConnection = async () => {
         if (!form.bucketName || !form.accessKeyId || !form.secretAccessKey) {
             setError('Please fill in all fields');
+            return;
+        }
+
+        const bucketError = validateBucketName(form.bucketName);
+        if (bucketError) {
+            setError(bucketError);
             return;
         }
 
@@ -63,6 +86,12 @@ export const NeoBucketSetup = ({ user, onBucketCreated, onLogout, onSkip, isFirs
 
         if (!form.bucketName || !form.accessKeyId || !form.secretAccessKey) {
             setError('Please fill in all required fields');
+            return;
+        }
+
+        const bucketError = validateBucketName(form.bucketName);
+        if (bucketError) {
+            setError(bucketError);
             return;
         }
 

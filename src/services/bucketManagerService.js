@@ -9,13 +9,18 @@ import { mockBucketService } from './mockBucketService';
 
 const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:3000';
 
+// Token refresh buffer (refresh if < 5 minutes remaining)
+const TOKEN_REFRESH_BUFFER_SECONDS = 300;
+
 class BucketManagerService {
     constructor() {
         this.maxRetries = 1;
         this.retryDelay = 500;
         this.useMock = false;
+        this._refreshPromise = null; // Prevent concurrent refreshes
     }
-    async getAuthToken() {
+
+    async getAuthToken(forceRefresh = false) {
         try {
             const { data: { session }, error } = await supabaseAuth.getSession();
 
@@ -29,14 +34,35 @@ class BucketManagerService {
                 return null;
             }
 
+            const now = Date.now() / 1000;
+            const expiresAt = session.expires_at;
+            const timeRemaining = expiresAt - now;
+
             // Log token info for debugging (first/last 10 chars only)
             const tokenPreview = `${session.access_token.substring(0, 10)}...${session.access_token.substring(session.access_token.length - 10)}`;
-            console.log('[BucketService] Token retrieved:', tokenPreview, 'expires:', new Date(session.expires_at * 1000).toISOString());
+            console.log('[BucketService] Token retrieved:', tokenPreview, 'expires:', new Date(expiresAt * 1000).toISOString());
 
-            // Verify token hasn't expired
-            const expiresAt = session.expires_at;
-            if (expiresAt && Date.now() / 1000 > expiresAt) {
-                console.warn('[BucketService] Token expired, attempting refresh');
+            // Proactively refresh if token is expired or near expiry
+            if (forceRefresh || timeRemaining < TOKEN_REFRESH_BUFFER_SECONDS) {
+                console.warn(`[BucketService] Token ${timeRemaining < 0 ? 'expired' : 'expiring soon'}, refreshing...`);
+                return await this._refreshToken();
+            }
+
+            return session.access_token;
+        } catch (error) {
+            console.error('[BucketService] Failed to get auth token:', error);
+            return null;
+        }
+    }
+
+    async _refreshToken() {
+        // Prevent concurrent refresh attempts
+        if (this._refreshPromise) {
+            return this._refreshPromise;
+        }
+
+        this._refreshPromise = (async () => {
+            try {
                 const { data: { session: refreshedSession }, error: refreshError } = await supabaseAuth.refreshSession();
 
                 if (refreshError || !refreshedSession?.access_token) {
@@ -46,13 +72,12 @@ class BucketManagerService {
 
                 console.log('[BucketService] Token refreshed successfully');
                 return refreshedSession.access_token;
+            } finally {
+                this._refreshPromise = null;
             }
+        })();
 
-            return session.access_token;
-        } catch (error) {
-            console.error('[BucketService] Failed to get auth token:', error);
-            return null;
-        }
+        return this._refreshPromise;
     }
 
     async makeRequest(endpoint, options = {}, retryCount = 0) {
@@ -64,23 +89,31 @@ class BucketManagerService {
         try {
             const token = await this.getAuthToken();
 
-            // Allow requests without token if we are testing connection or other public endpoints
-            // but usually we need auth. If no token and not mock, maybe just fail?
-            // For now, proceed.
+            if (!token) {
+                throw new Error('Invalid authentication token. Please sign in again.');
+            }
 
             const response = await fetch(`${API_BASE}${endpoint}`, {
                 headers: {
-                    'Authorization': token ? `Bearer ${token}` : '',
+                    'Authorization': `Bearer ${token}`,
                     'Content-Type': 'application/json',
                     ...options.headers
                 },
                 ...options
             });
 
+            // Handle 401 - try refresh and retry once
+            if (response.status === 401 && retryCount === 0) {
+                console.warn('[BucketService] Got 401, attempting token refresh and retry');
+                const newToken = await this.getAuthToken(true); // Force refresh
+
+                if (newToken) {
+                    return this.makeRequest(endpoint, options, retryCount + 1);
+                }
+                throw new Error('Invalid authentication token. Please sign in again.');
+            }
+
             if (!response.ok) {
-                // If connection refused (which fetch throws, not returns !ok usually, but let's handle 500s etc)
-                // fetch only throws on network failure.
-                // on 404/500 it returns response.
                 const error = await response.json().catch(() => ({}));
                 throw new Error(error.error?.message || error.message || `API error: ${response.status}`);
             }

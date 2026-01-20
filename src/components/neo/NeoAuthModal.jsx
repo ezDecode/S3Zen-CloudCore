@@ -109,7 +109,11 @@ export const NeoAuthModal = ({ isOpen, onClose, onSendOTP, onVerifyOTP }) => {
                 otpRefs.current[0]?.focus();
             }
         } catch (err) {
-            setError('Verification failed. Please try again.');
+            // Handle both thrown errors and error messages
+            const errorMessage = err?.message || err?.error || 'Verification failed. Please try again.';
+            setError(errorMessage);
+            setOtp(['', '', '', '', '', '']);
+            otpRefs.current[0]?.focus();
         } finally {
             setLoading(false);
         }

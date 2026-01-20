@@ -17,12 +17,12 @@ const dbLogger = {
 
 function sanitizeData(data) {
     if (!data || typeof data !== 'object') return data;
-    
+
     const sensitiveKeys = [
         'accessKeyId', 'secretAccessKey', 'sessionToken',
         'encrypted_credentials', 'credentials', 'iv', 'ciphertext'
     ];
-    
+
     const sanitized = {};
     for (const [key, value] of Object.entries(data)) {
         if (sensitiveKeys.some(sk => key.toLowerCase().includes(sk.toLowerCase()))) {
@@ -82,8 +82,8 @@ async function createBucket(userId, data) {
             .single();
 
         if (error) {
-            dbLogger.error('Failed to create bucket', { error: error.message, code: error.code });
-            
+            dbLogger.error('Failed to create bucket', { error: error.message, code: error.code, details: error.details });
+
             if (error.code === '23505') {
                 if (error.message.includes('unique_user_bucket')) {
                     return { success: false, error: 'A bucket with this name already exists', code: 'DUPLICATE_BUCKET' };
@@ -92,8 +92,9 @@ async function createBucket(userId, data) {
                     return { success: false, error: 'A bucket with this display name already exists', code: 'DUPLICATE_NAME' };
                 }
             }
-            
-            return { success: false, error: 'Failed to create bucket configuration' };
+
+            // Return more specific error message
+            return { success: false, error: error.message || 'Failed to create bucket configuration' };
         }
 
         dbLogger.info('Bucket created', { bucketId: bucket.id, userId });
@@ -166,7 +167,7 @@ async function getBucketById(bucketId, userId) {
 async function getBucketCredentials(bucketId, userId) {
     try {
         const result = await getBucketById(bucketId, userId);
-        
+
         if (!result.success) {
             return result;
         }
@@ -222,8 +223,8 @@ async function updateBucket(bucketId, userId, updates) {
             const newCredentials = {
                 accessKeyId: updates.accessKeyId || currentCredentials.accessKeyId,
                 secretAccessKey: updates.secretAccessKey || currentCredentials.secretAccessKey,
-                sessionToken: updates.sessionToken !== undefined 
-                    ? updates.sessionToken 
+                sessionToken: updates.sessionToken !== undefined
+                    ? updates.sessionToken
                     : currentCredentials.sessionToken
             };
 
@@ -250,11 +251,11 @@ async function updateBucket(bucketId, userId, updates) {
 
         if (error) {
             dbLogger.error('Failed to update bucket', { error: error.message, bucketId });
-            
+
             if (error.code === '23505') {
                 return { success: false, error: 'Display name already exists', code: 'DUPLICATE_NAME' };
             }
-            
+
             return { success: false, error: 'Failed to update bucket configuration' };
         }
 

@@ -2,6 +2,10 @@
  * Neo-Brutalism Dashboard
  * The main upload and file management interface
  * Simple: Upload → Get Link → Done
+ * 
+ * Features:
+ * - Cross-device sync via backend history API
+ * - localStorage cache for fast initial load
  */
 
 import { useState, useCallback, useRef, useEffect } from 'react';
@@ -34,40 +38,57 @@ const formatSize = (bytes) => {
     return `${(bytes / Math.pow(1024, i)).toFixed(1)} ${sizes[i]}`;
 };
 
-// Recent files storage
-const RECENT_FILES_KEY = 'cloudcore_recent_files';
-const MAX_RECENT_FILES = 20;
+// Local cache for fast initial load (cross-device sync comes from backend)
+const CACHE_KEY = 'cloudcore_files_cache';
 
-const getRecentFiles = () => {
+const getLocalCache = () => {
     try {
-        return JSON.parse(localStorage.getItem(RECENT_FILES_KEY) || '[]');
+        return JSON.parse(localStorage.getItem(CACHE_KEY) || '[]');
     } catch {
         return [];
     }
 };
 
-const saveRecentFile = (file) => {
-    const recent = getRecentFiles();
-    const newRecent = [file, ...recent.filter(f => f.key !== file.key)].slice(0, MAX_RECENT_FILES);
-    localStorage.setItem(RECENT_FILES_KEY, JSON.stringify(newRecent));
-    return newRecent;
-};
-
-const removeRecentFile = (key) => {
-    const recent = getRecentFiles().filter(f => f.key !== key);
-    localStorage.setItem(RECENT_FILES_KEY, JSON.stringify(recent));
-    return recent;
+const setLocalCache = (files) => {
+    try {
+        localStorage.setItem(CACHE_KEY, JSON.stringify(files.slice(0, 50)));
+    } catch {
+        // localStorage full or unavailable
+    }
 };
 
 export const NeoDashboard = ({ user, bucket, onLogout, onManageBucket }) => {
     const [isDragging, setIsDragging] = useState(false);
     const [uploads, setUploads] = useState([]); // Current uploads in progress
-    const [recentFiles, setRecentFiles] = useState(getRecentFiles());
+    const [recentFiles, setRecentFiles] = useState(getLocalCache()); // Start with cache
     const [copiedUrl, setCopiedUrl] = useState(null);
     const [deleting, setDeleting] = useState(null);
+    const [isSyncing, setIsSyncing] = useState(false);
 
     const fileInputRef = useRef(null);
     const dropZoneRef = useRef(null);
+
+    // Sync files from backend on mount
+    useEffect(() => {
+        const syncHistory = async () => {
+            setIsSyncing(true);
+            try {
+                const result = await filesApi.getHistory({ limit: 50 });
+                if (result.success && result.files) {
+                    setRecentFiles(result.files);
+                    setLocalCache(result.files);
+                }
+                // If API fails, we just use cached data (already set from getLocalCache)
+            } catch (e) {
+                // Silently fail - localStorage cache is used as fallback
+                console.warn('[Dashboard] History sync unavailable:', e.message);
+            } finally {
+                setIsSyncing(false);
+            }
+        };
+
+        syncHistory();
+    }, []);
 
     // Handle drag events
     const handleDragEnter = useCallback((e) => {
@@ -119,7 +140,7 @@ export const NeoDashboard = ({ user, bucket, onLogout, onManageBucket }) => {
                     u.id === uploadId ? { ...u, status: 'complete', url: result.file.url, key: result.file.key } : u
                 ));
 
-                // Save to recent files
+                // Add to recent files (backend already recorded it for cross-device sync)
                 const newFile = {
                     key: result.file.key,
                     name: result.file.originalName,
@@ -127,10 +148,18 @@ export const NeoDashboard = ({ user, bucket, onLogout, onManageBucket }) => {
                     originalSize: result.file.originalSize,
                     type: result.file.type,
                     url: result.file.url,
+                    s3Bucket: result.file.s3Bucket,
+                    s3Region: result.file.s3Region,
                     compressed: result.file.compressed,
                     uploadedAt: new Date().toISOString()
                 };
-                setRecentFiles(saveRecentFile(newFile));
+
+                // Update local state and cache
+                setRecentFiles(prev => {
+                    const updated = [newFile, ...prev.filter(f => f.key !== newFile.key)].slice(0, 50);
+                    setLocalCache(updated);
+                    return updated;
+                });
 
                 toast.success(`${file.name} uploaded!`);
 
@@ -194,7 +223,12 @@ export const NeoDashboard = ({ user, bucket, onLogout, onManageBucket }) => {
             const result = await filesApi.delete([file.key], bucket?.id);
 
             if (result.success) {
-                setRecentFiles(removeRecentFile(file.key));
+                // Update local state and cache (backend handles history cleanup)
+                setRecentFiles(prev => {
+                    const updated = prev.filter(f => f.key !== file.key);
+                    setLocalCache(updated);
+                    return updated;
+                });
                 toast.success(`${file.name} deleted`);
             } else {
                 toast.error(result.error || 'Failed to delete');
@@ -222,8 +256,8 @@ export const NeoDashboard = ({ user, bucket, onLogout, onManageBucket }) => {
                         </div>
                         <div>
                             <span className="font-display font-bold text-xl">CloudCore</span>
-                            <div className="text-xs text-[var(--color-text-muted)] font-mono">
-                                {bucket?.bucket_name || 'No bucket'}
+                            <div className="text-xs text-[var(--color-text-muted)] font-mono truncate max-w-[180px]">
+                                {user?.email || 'Dashboard'}
                             </div>
                         </div>
                     </div>
@@ -279,6 +313,48 @@ export const NeoDashboard = ({ user, bucket, onLogout, onManageBucket }) => {
                         <p className="text-[var(--color-text-secondary)]">
                             or click to browse • Images auto-compress
                         </p>
+                    </div>
+                </div>
+
+                {/* Bucket Info Card */}
+                <div className="mb-6 neo-card p-4">
+                    <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-3">
+                            {/* Status Indicator */}
+                            <div className={`w-3 h-3 rounded-full ${bucket ? 'bg-[var(--color-success)]' : 'bg-[var(--color-error)]'} animate-pulse`} />
+
+                            {bucket ? (
+                                <div className="flex items-center gap-4">
+                                    <div>
+                                        <div className="text-xs font-bold uppercase text-[var(--color-text-muted)]">Connected Bucket</div>
+                                        <div className="font-mono text-sm font-medium">{bucket.bucket_name || bucket.bucketName}</div>
+                                    </div>
+                                    <div className="hidden sm:block border-l-2 border-[var(--border-color)] pl-4">
+                                        <div className="text-xs font-bold uppercase text-[var(--color-text-muted)]">Region</div>
+                                        <div className="font-mono text-sm">{bucket.region || 'us-east-1'}</div>
+                                    </div>
+                                    {bucket.display_name && bucket.display_name !== bucket.bucket_name && (
+                                        <div className="hidden md:block border-l-2 border-[var(--border-color)] pl-4">
+                                            <div className="text-xs font-bold uppercase text-[var(--color-text-muted)]">Display Name</div>
+                                            <div className="font-mono text-sm">{bucket.display_name}</div>
+                                        </div>
+                                    )}
+                                </div>
+                            ) : (
+                                <div>
+                                    <div className="text-xs font-bold uppercase text-[var(--color-error)]">No Bucket Connected</div>
+                                    <div className="text-sm text-[var(--color-text-muted)]">Configure your S3 bucket to start uploading</div>
+                                </div>
+                            )}
+                        </div>
+
+                        <button
+                            onClick={onManageBucket}
+                            className="neo-btn neo-btn-sm neo-btn-ghost flex items-center gap-1"
+                        >
+                            <Settings className="w-4 h-4" />
+                            <span className="hidden sm:inline">{bucket ? 'Manage' : 'Setup'}</span>
+                        </button>
                     </div>
                 </div>
 
@@ -358,19 +434,47 @@ export const NeoDashboard = ({ user, bucket, onLogout, onManageBucket }) => {
                         <h3 className="font-display font-bold uppercase text-sm flex items-center gap-2">
                             <Link className="w-4 h-4" />
                             Recent Uploads ({recentFiles.length})
+                            {isSyncing && (
+                                <RefreshCw className="w-3 h-3 animate-spin text-[var(--color-primary)]" />
+                            )}
                         </h3>
-                        {recentFiles.length > 0 && (
+                        <div className="flex items-center gap-2">
                             <button
-                                onClick={() => {
-                                    localStorage.removeItem(RECENT_FILES_KEY);
-                                    setRecentFiles([]);
+                                onClick={async () => {
+                                    setIsSyncing(true);
+                                    try {
+                                        const result = await filesApi.getHistory({ limit: 50 });
+                                        if (result.success && result.files) {
+                                            setRecentFiles(result.files);
+                                            setLocalCache(result.files);
+                                            toast.success('Synced from cloud');
+                                        }
+                                    } catch {
+                                        toast.error('Sync failed');
+                                    } finally {
+                                        setIsSyncing(false);
+                                    }
                                 }}
-                                className="text-sm text-[var(--color-text-muted)] hover:text-[var(--color-error)] flex items-center gap-1"
+                                disabled={isSyncing}
+                                className="text-sm text-[var(--color-text-muted)] hover:text-[var(--color-primary)] flex items-center gap-1 disabled:opacity-50"
+                                title="Sync from cloud"
                             >
-                                <Trash2 className="w-3 h-3" />
-                                Clear all
+                                <RefreshCw className={`w-3 h-3 ${isSyncing ? 'animate-spin' : ''}`} />
+                                Sync
                             </button>
-                        )}
+                            {recentFiles.length > 0 && (
+                                <button
+                                    onClick={() => {
+                                        localStorage.removeItem(CACHE_KEY);
+                                        setRecentFiles([]);
+                                    }}
+                                    className="text-sm text-[var(--color-text-muted)] hover:text-[var(--color-error)] flex items-center gap-1"
+                                >
+                                    <Trash2 className="w-3 h-3" />
+                                    Clear
+                                </button>
+                            )}
+                        </div>
                     </div>
 
                     {recentFiles.length === 0 ? (
@@ -418,8 +522,8 @@ export const NeoDashboard = ({ user, bucket, onLogout, onManageBucket }) => {
                                             <button
                                                 onClick={() => copyUrl(file.url, file.key)}
                                                 className={`w-9 h-9 border-2 border-[var(--border-color)] flex items-center justify-center transition-colors ${copiedUrl === file.key
-                                                        ? 'bg-[var(--color-success)] text-white'
-                                                        : 'bg-white hover:bg-[var(--color-yellow)]'
+                                                    ? 'bg-[var(--color-success)] text-white'
+                                                    : 'bg-white hover:bg-[var(--color-yellow)]'
                                                     }`}
                                                 title="Copy link"
                                             >

@@ -147,6 +147,9 @@ app.use('/api/files', filesRouter);
 // ============================================================================
 // Health Check
 // ============================================================================
+// ============================================================================
+// Health Check
+// ============================================================================
 app.get('/health', async (req, res) => {
     const health = {
         status: 'ok',
@@ -227,6 +230,10 @@ app.listen(PORT, () => {
     console.log('   PUT  /api/buckets/:id     - Update bucket config');
     console.log('   DELETE /api/buckets/:id   - Delete bucket config');
     console.log('   POST /api/buckets/validate - Validate bucket access');
-    console.log('   POST /api/files/upload     - Upload file (compress + store)');
+    console.log('   POST /api/files/upload    - Upload file (compress + store)');
+    console.log('   POST /api/files/delete    - Delete files');
+    console.log('   GET  /api/files/history   - Get upload history (cross-device)');
+    console.log('   GET  /api/shortlinks/:code - Get shortlink metadata');
     console.log('');
 });
+

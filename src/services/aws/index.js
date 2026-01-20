@@ -46,3 +46,7 @@ export {
 
 // Statistics
 export { getBucketStats } from './s3Stats.js';
+
+// Retry utilities
+export { withRetry, createRetryableClient, retryable } from './s3Retry.js';
+

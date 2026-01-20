@@ -24,11 +24,19 @@
 - **Folder Navigation** — Browse your S3 bucket with an intuitive file explorer interface
 - **File Preview** — Preview images, videos, audio, PDFs, markdown, and code files directly in-browser
 - **Quick Search** — Instantly filter files by name with debounced search
+- **Image Compression** — Automatic image optimization on upload
 
 ### 🔗 Sharing & Collaboration
 - **Presigned URL Sharing** — Generate secure, time-limited shareable links for any file
 - **URL Shortening** — Automatically shorten long presigned URLs for easy sharing
 - **Configurable Expiration** — Set link expiry from 1 hour to 7 days
+- **LinkButton Component** — Interactive hover tooltip showing both short and S3 URLs with copy actions
+
+### 📱 Cross-Device Sync
+- **Cloud-Synced History** — Upload history syncs across all your devices
+- **Instant Access** — See your uploads anywhere you log in
+- **Local Cache** — Fast initial load with localStorage caching
+- **Manual Sync** — One-click sync button to refresh from cloud
 
 ### ⭐ Organization
 - **Favorites/Pins** — Pin frequently accessed files and folders for quick access
@@ -36,14 +44,16 @@
 - **Multiple View Modes** — Switch between grid and list views
 - **Sorting Options** — Sort by name, size, or date (ascending/descending)
 
-### 🔒 Security
+### 🔒 Security & Reliability
 - **Client-Side Encryption** — AWS credentials encrypted with AES-GCM in browser memory
 - **No Server Storage** — Your credentials never leave your browser
 - **Session Management** — Automatic session timeout with secure credential cleanup
 - **Input Validation** — Path traversal prevention and XSS protection
+- **Retry Logic** — Automatic retry with exponential backoff for S3 operations
+- **Concurrency Limiting** — Memory-safe image processing with parallelism controls
 
 ### 🎨 User Experience
-- **Modern Dark UI** — Beautiful, responsive interface with smooth animations
+- **Neo-Brutalism Design** — Bold, modern interface with smooth animations
 - **Progressive Web App** — Install as a mobile/desktop app
 - **SEO Optimized** — Full meta tags, Open Graph, and structured data
 - **Keyboard Shortcuts** — Power-user friendly navigation

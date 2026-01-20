@@ -85,5 +85,39 @@ export const files = {
         } catch (error) {
             return { success: false, error: error.message };
         }
+    },
+
+    /**
+     * Get upload history for cross-device sync
+     * @param {Object} options - { limit, offset }
+     */
+    getHistory: async (options = {}) => {
+        try {
+            const { limit = 50, offset = 0 } = options;
+            const result = await apiRequest(`/api/files/history?limit=${limit}&offset=${offset}`);
+            return {
+                success: true,
+                files: result.files,
+                total: result.total,
+                limit: result.limit,
+                offset: result.offset,
+            };
+        } catch (error) {
+            return { success: false, error: error.message, files: [] };
+        }
+    },
+
+    /**
+     * Remove item from history (doesn't delete from S3)
+     */
+    removeFromHistory: async (key) => {
+        try {
+            await apiRequest(`/api/files/history/${encodeURIComponent(key)}`, {
+                method: 'DELETE'
+            });
+            return { success: true };
+        } catch (error) {
+            return { success: false, error: error.message };
+        }
     }
 };

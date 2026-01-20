@@ -7,10 +7,41 @@ import { supabase } from '../supabaseClient';
 
 const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:3000';
 
+// Token refresh buffer (refresh if < 5 minutes remaining)
+const TOKEN_REFRESH_BUFFER_SECONDS = 300;
+
+// Prevent concurrent refresh attempts
+let refreshPromise = null;
+
 /**
- * Get auth token from Supabase session
+ * Refresh the auth token
  */
-const getAuthToken = async () => {
+const refreshToken = async () => {
+    if (refreshPromise) {
+        return refreshPromise;
+    }
+
+    refreshPromise = (async () => {
+        try {
+            const { data: { session: refreshed }, error } = await supabase.auth.refreshSession();
+            if (error || !refreshed?.access_token) {
+                console.error('[API] Token refresh failed:', error);
+                return null;
+            }
+            console.log('[API] Token refreshed successfully');
+            return refreshed.access_token;
+        } finally {
+            refreshPromise = null;
+        }
+    })();
+
+    return refreshPromise;
+};
+
+/**
+ * Get auth token from Supabase session (with proactive refresh)
+ */
+const getAuthToken = async (forceRefresh = false) => {
     const { data: { session } } = await supabase.auth.getSession();
 
     if (!session?.access_token) {
@@ -18,19 +49,23 @@ const getAuthToken = async () => {
         return null;
     }
 
-    // Check expiry
-    if (session.expires_at && Date.now() / 1000 > session.expires_at) {
-        const { data: { session: refreshed } } = await supabase.auth.refreshSession();
-        return refreshed?.access_token || null;
+    const now = Date.now() / 1000;
+    const expiresAt = session.expires_at;
+    const timeRemaining = expiresAt - now;
+
+    // Proactively refresh if token is expired or near expiry
+    if (forceRefresh || timeRemaining < TOKEN_REFRESH_BUFFER_SECONDS) {
+        console.warn(`[API] Token ${timeRemaining < 0 ? 'expired' : 'expiring soon'}, refreshing...`);
+        return await refreshToken();
     }
 
     return session.access_token;
 };
 
 /**
- * Make authenticated API request
+ * Make authenticated API request (with 401 retry)
  */
-export const apiRequest = async (endpoint, options = {}) => {
+export const apiRequest = async (endpoint, options = {}, retryCount = 0) => {
     const token = await getAuthToken();
 
     if (!token) {
@@ -45,6 +80,17 @@ export const apiRequest = async (endpoint, options = {}) => {
         },
         ...options
     });
+
+    // Handle 401 - try refresh and retry once
+    if (response.status === 401 && retryCount === 0) {
+        console.warn('[API] Got 401, attempting token refresh and retry');
+        const newToken = await getAuthToken(true); // Force refresh
+
+        if (newToken) {
+            return apiRequest(endpoint, options, retryCount + 1);
+        }
+        throw Object.assign(new Error('Authentication required'), { code: 'NO_AUTH', status: 401 });
+    }
 
     if (!response.ok) {
         const error = await response.json().catch(() => ({}));
