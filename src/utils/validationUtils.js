@@ -110,13 +110,15 @@ export const isValidBucketName = (bucketName) => {
 
 /**
  * Validate AWS region format
+ * Supports all AWS region formats including newer regions
  */
 export const isValidRegion = (region) => {
     if (!region || typeof region !== 'string') {
         return false;
     }
 
-    // AWS region format: xx-xxxx-N
+    // AWS region format: xx-xxxx-N or xx-xxxxxx-N
+    // Examples: us-east-1, eu-north-1, ap-southeast-3, me-central-1, af-south-1, il-central-1, ca-west-1
     const regionRegex = /^[a-z]{2}-(central|north|south|east|west|northeast|northwest|southeast|southwest)-\d+$/;
     return regionRegex.test(region);
 };

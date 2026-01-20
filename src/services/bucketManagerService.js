@@ -219,11 +219,12 @@ class BucketManagerService {
     // Simplified add bucket method for the new UI
     async addBucket(data) {
         const bucketData = {
-            bucket_name: data.bucketName,
-            access_key_id: data.accessKeyId,
-            secret_access_key: data.secretAccessKey,
-            region: data.region || 'us-east-1',
-            is_default: data.isDefault !== false
+            bucketName: data.bucketName,
+            displayName: data.displayName || data.bucketName, // Use bucket name as display name if not provided
+            accessKeyId: data.accessKeyId,
+            secretAccessKey: data.secretAccessKey,
+            region: data.region || 'eu-north-1',
+            isDefault: data.isDefault !== false
         };
         return this.createBucket(bucketData);
     }

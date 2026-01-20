@@ -7,28 +7,14 @@ import { useState } from 'react';
 import { Cloud, Key, Globe, LogOut, Loader2, CheckCircle, AlertCircle, HelpCircle } from 'lucide-react';
 import bucketManagerService from '../../services/bucketManagerService';
 import { testS3Connection } from '../../services/aws/s3Client';
-
-// Common AWS regions
-const AWS_REGIONS = [
-    { value: 'us-east-1', label: 'US East (N. Virginia)' },
-    { value: 'us-east-2', label: 'US East (Ohio)' },
-    { value: 'us-west-1', label: 'US West (N. California)' },
-    { value: 'us-west-2', label: 'US West (Oregon)' },
-    { value: 'eu-west-1', label: 'Europe (Ireland)' },
-    { value: 'eu-west-2', label: 'Europe (London)' },
-    { value: 'eu-central-1', label: 'Europe (Frankfurt)' },
-    { value: 'ap-south-1', label: 'Asia Pacific (Mumbai)' },
-    { value: 'ap-southeast-1', label: 'Asia Pacific (Singapore)' },
-    { value: 'ap-southeast-2', label: 'Asia Pacific (Sydney)' },
-    { value: 'ap-northeast-1', label: 'Asia Pacific (Tokyo)' },
-];
+import { AWS_REGIONS, DEFAULT_REGION } from '../../config/awsRegions';
 
 export const NeoBucketSetup = ({ user, onBucketCreated, onLogout, onSkip, isFirstTime }) => {
     const [form, setForm] = useState({
         bucketName: '',
         accessKeyId: '',
         secretAccessKey: '',
-        region: 'us-east-1'
+        region: DEFAULT_REGION
     });
     const [loading, setLoading] = useState(false);
     const [testing, setTesting] = useState(false);
@@ -242,19 +228,45 @@ export const NeoBucketSetup = ({ user, onBucketCreated, onLogout, onSkip, isFirs
                             onChange={(e) => handleChange('region', e.target.value)}
                             className="neo-input cursor-pointer"
                         >
-                            {AWS_REGIONS.map(region => (
-                                <option key={region.value} value={region.value}>
-                                    {region.label} ({region.value})
-                                </option>
-                            ))}
+                            <optgroup label="🌍 Europe">
+                                {AWS_REGIONS.filter(r => r.group === 'Europe').map(region => (
+                                    <option key={region.value} value={region.value}>
+                                        {region.label} ({region.value})
+                                    </option>
+                                ))}
+                            </optgroup>
+                            <optgroup label="🌎 Americas">
+                                {AWS_REGIONS.filter(r => r.group === 'Americas').map(region => (
+                                    <option key={region.value} value={region.value}>
+                                        {region.label} ({region.value})
+                                    </option>
+                                ))}
+                            </optgroup>
+                            <optgroup label="🌏 Asia Pacific">
+                                {AWS_REGIONS.filter(r => r.group === 'Asia Pacific').map(region => (
+                                    <option key={region.value} value={region.value}>
+                                        {region.label} ({region.value})
+                                    </option>
+                                ))}
+                            </optgroup>
+                            <optgroup label="🌍 Middle East & Africa">
+                                {AWS_REGIONS.filter(r => r.group === 'Middle East & Africa').map(region => (
+                                    <option key={region.value} value={region.value}>
+                                        {region.label} ({region.value})
+                                    </option>
+                                ))}
+                            </optgroup>
                         </select>
+                        <p className="text-xs text-[var(--color-text-muted)] mt-2">
+                            31 regions available worldwide
+                        </p>
                     </div>
 
                     {/* Test Connection Result */}
                     {testResult && (
                         <div className={`flex items-center gap-2 p-4 mb-6 border-3 border-[var(--border-color)] ${testResult.success
-                                ? 'bg-[var(--color-success)]/20'
-                                : 'bg-[var(--color-error)]/20'
+                            ? 'bg-[var(--color-success)]/20'
+                            : 'bg-[var(--color-error)]/20'
                             }`}>
                             {testResult.success ? (
                                 <CheckCircle className="w-5 h-5 text-[var(--color-success)]" />

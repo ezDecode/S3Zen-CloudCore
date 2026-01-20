@@ -124,7 +124,7 @@ function validateBucketData(data, isUpdate = false) {
             'eu-north-1', 'eu-south-1', 'eu-south-2',
             'ap-east-1', 'ap-south-1', 'ap-south-2',
             'ap-northeast-1', 'ap-northeast-2', 'ap-northeast-3',
-            'ap-southeast-1', 'ap-southeast-2', 'ap-southeast-3', 'ap-southeast-4',
+            'ap-southeast-1', 'ap-southeast-2', 'ap-southeast-3', 'ap-southeast-4', 'ap-southeast-5',
             'sa-east-1',
             'me-south-1', 'me-central-1',
             'af-south-1',
@@ -497,8 +497,8 @@ router.put('/:id', requireAuth({ requireEmailVerified: true }), async (req, res)
         const result = await bucketService.updateBucket(bucketId, userId, data);
 
         if (!result.success) {
-            const status = result.code === 'NOT_FOUND' ? 404 : 
-                           result.code === 'DUPLICATE_NAME' ? 409 : 500;
+            const status = result.code === 'NOT_FOUND' ? 404 :
+                result.code === 'DUPLICATE_NAME' ? 409 : 500;
             return res.status(status).json({
                 error: {
                     code: result.code || 'UPDATE_FAILED',

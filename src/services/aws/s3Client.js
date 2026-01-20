@@ -106,6 +106,14 @@ export const testS3Connection = async (credentialsOrConfig, region, bucketName) 
         bucket = bucketName;
     }
 
+    // Validate inputs first
+    if (!accessKeyId || !secretAccessKey || !bucket || !regionToUse) {
+        return {
+            success: false,
+            error: 'Missing credentials or bucket information'
+        };
+    }
+
     try {
         const tempS3 = new S3Client({
             region: regionToUse,
@@ -115,8 +123,8 @@ export const testS3Connection = async (credentialsOrConfig, region, bucketName) 
             },
             maxAttempts: 1,
             requestHandler: {
-                connectionTimeout: 5000,
-                socketTimeout: 5000
+                connectionTimeout: 10000,
+                socketTimeout: 10000
             }
         });
 
@@ -135,12 +143,56 @@ export const testS3Connection = async (credentialsOrConfig, region, bucketName) 
         return { success: true, identity };
     } catch (error) {
         console.error('Test connection failed:', error);
-        let errorMessage = 'Connection failed';
-        if (error.name === 'NotFound') errorMessage = 'Bucket not found';
-        else if (error.name === 'Forbidden') errorMessage = 'Access Denied (Check CORS & Permissions)';
-        else if (error.name === 'NetworkingError') errorMessage = 'Network error';
-        else errorMessage = error.message;
 
-        return { success: false, error: errorMessage };
+        // Build user-friendly error message
+        let errorMessage = 'Connection failed';
+        let errorCode = error.name || 'UnknownError';
+        const httpStatus = error.$metadata?.httpStatusCode;
+
+        // Check for CORS / Network errors first (TypeError: Failed to fetch)
+        if (error instanceof TypeError && error.message.includes('Failed to fetch')) {
+            errorMessage = 'CORS Error: Your S3 bucket needs CORS configuration. Go to S3 Console → Bucket → Permissions → CORS and add localhost:5173 to AllowedOrigins';
+            errorCode = 'CORSError';
+        }
+        // 403 Forbidden - Permission issues
+        else if (httpStatus === 403 || error.name === 'Forbidden' || error.name === 'AccessDenied') {
+            errorMessage = 'Access Denied: Your IAM user doesn\'t have S3 permissions. Add AmazonS3FullAccess policy to your IAM user.';
+            errorCode = 'AccessDenied';
+        }
+        // 404 Not Found - Bucket doesn't exist
+        else if (httpStatus === 404 || error.name === 'NotFound' || error.name === 'NoSuchBucket') {
+            errorMessage = `Bucket "${bucket}" not found in region ${regionToUse}. Check bucket name and region.`;
+            errorCode = 'BucketNotFound';
+        }
+        // Invalid credentials
+        else if (error.name === 'InvalidAccessKeyId') {
+            errorMessage = 'Invalid Access Key ID. Please check your credentials.';
+            errorCode = 'InvalidCredentials';
+        }
+        else if (error.name === 'SignatureDoesNotMatch') {
+            errorMessage = 'Invalid Secret Access Key. Please check your credentials.';
+            errorCode = 'InvalidCredentials';
+        }
+        // Network errors
+        else if (error.name === 'NetworkingError' || error.code === 'ENOTFOUND') {
+            errorMessage = 'Network error. Check your internet connection.';
+            errorCode = 'NetworkError';
+        }
+        // Generic error with the original message
+        else {
+            errorMessage = error.message || 'Unknown error occurred';
+        }
+
+        return {
+            success: false,
+            error: errorMessage,
+            code: errorCode,
+            details: {
+                bucket,
+                region: regionToUse,
+                httpStatus
+            }
+        };
     }
 };
+
