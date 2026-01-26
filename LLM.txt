@@ -1,0 +1,405 @@
+# CloudCore - LLM Context Document
+> A comprehensive reference for AI systems to understand the CloudCore project
+
+================================================================================
+## PROJECT OVERVIEW
+================================================================================
+
+CloudCore is a modern, full-stack cloud storage management application that allows
+users to connect their own AWS S3 buckets and manage files with features like:
+- Email-based OTP authentication via Supabase
+- Multi-bucket support with encrypted credential storage
+- Automatic image compression before upload (using Sharp)
+- Cross-device upload history sync
+- URL shortening for shared files
+- Real-time file management (upload, delete, rename, move, folder creation)
+
+The project follows a "bring your own storage" philosophy - users connect their
+own S3 buckets rather than using CloudCore's storage.
+
+================================================================================
+## TECH STACK
+================================================================================
+
+### Frontend (React + Vite)
+- Framework: React 19.2.0 with Vite 7.2.4
+- Styling: TailwindCSS 4.x with custom design system
+- UI Components: Custom components + Radix UI primitives
+- Icons: Lucide React, HugeIcons
+- Animation: Framer Motion
+- State Management: React hooks (useState, useEffect, useCallback)
+- Notifications: Sonner toast system
+- Font: "Saans" custom variable font + JetBrains Mono
+
+### Backend (Node.js + Express)
+- Runtime: Node.js 18+
+- Framework: Express 4.x
+- Database: Supabase (PostgreSQL) with SQLite fallback for URL shortener
+- AWS SDK: @aws-sdk/client-s3, @aws-sdk/s3-request-presigner
+- Image Processing: Sharp (for compression)
+- Security: Helmet, CORS, Rate Limiting, AES-256-GCM encryption
+- Authentication: Supabase Auth (JWT validation)
+
+### External Services
+- Auth Provider: Supabase Auth (OTP via email)
+- Database: Supabase (PostgreSQL)
+- Storage: AWS S3 (user-provided buckets)
+
+================================================================================
+## ARCHITECTURE
+================================================================================
+
+```
+CloudCore/
+├── src/                          # Frontend React application
+│   ├── App.tsx                   # Main app entry - routing between views
+│   ├── main.tsx                  # React DOM render entry
+│   ├── index.css                 # Global styles + design system
+│   ├── components/
+│   │   ├── app/                  # Application-specific components
+│   │   │   ├── LandingPage.jsx   # Marketing/landing page
+│   │   │   ├── Dashboard.jsx     # Main file management UI
+│   │   │   ├── AuthModal.jsx     # Email OTP authentication modal
+│   │   │   ├── BucketSetup.jsx   # AWS S3 bucket configuration
+│   │   │   └── Toaster.jsx       # Toast notification wrapper
+│   │   └── ui/                   # Reusable UI components
+│   ├── hooks/
+│   │   ├── useAuth.js            # Supabase auth state management
+│   │   ├── useSessionTimeout.js  # Session inactivity handling
+│   │   └── useKeyboardShortcut.js
+│   ├── services/
+│   │   ├── api/                  # Backend API clients
+│   │   │   ├── client.js         # HTTP client with auth token injection
+│   │   │   ├── files.js          # File operations API
+│   │   │   ├── buckets.js        # Bucket management API
+│   │   │   └── links.js          # URL shortener API
+│   │   ├── aws/                  # Direct S3 operations (legacy/fallback)
+│   │   ├── supabaseClient.js     # Supabase client initialization
+│   │   └── bucketManagerService.js # Bucket management abstraction
+│   └── lib/
+│       └── utils.ts              # Utility functions (cn, etc.)
+│
+├── backend/                      # Express.js API server
+│   ├── src/
+│   │   ├── server.js             # Express app entry point
+│   │   ├── config/
+│   │   │   └── supabase.js       # Supabase client config
+│   │   ├── middleware/
+│   │   │   └── authMiddleware.js # JWT validation middleware
+│   │   ├── routes/
+│   │   │   ├── buckets.js        # Bucket CRUD endpoints
+│   │   │   ├── files.js          # File operations endpoints
+│   │   │   └── shortener.js      # URL shortener endpoints
+│   │   ├── services/
+│   │   │   ├── bucketService.js  # Bucket DB operations
+│   │   │   ├── encryptionService.js # AES-256-GCM encryption
+│   │   │   ├── imageProcessor.js # Sharp image compression
+│   │   │   ├── uploadHistoryService.js # Cross-device sync
+│   │   │   ├── shortlinksService.js # URL shortener storage
+│   │   │   └── s3ClientFactory.js # S3 client instantiation
+│   │   └── utils/
+│   │       ├── validation.js     # Zod schema validation
+│   │       ├── validateUrl.js    # URL security validation
+│   │       ├── idGen.js          # Short code generation
+│   │       └── concurrency.js    # Semaphore for image processing
+│   └── supabase/
+│       └── migrations/           # Database schema migrations
+│
+├── public/
+│   └── fonts/                    # Custom fonts (Saans)
+│
+└── Configuration Files
+    ├── package.json              # Frontend dependencies
+    ├── vite.config.ts            # Vite bundler config
+    ├── tsconfig.json             # TypeScript config
+    ├── components.json           # shadcn/ui config
+    └── .env.local                # Environment variables
+```
+
+================================================================================
+## DATA FLOW
+================================================================================
+
+### Authentication Flow
+1. User enters email in AuthModal
+2. Frontend calls Supabase signInWithOtp()
+3. Supabase sends 6-digit OTP to email
+4. User enters OTP, frontend calls verifyOtp()
+5. On success, JWT token stored in Supabase session
+6. All API calls include JWT in Authorization header
+
+### File Upload Flow
+1. User drops file on Dashboard upload zone
+2. Frontend creates FormData with file + bucketId
+3. Backend /api/files/upload receives file via multer
+4. If image: Sharp processes/compresses the file
+5. Backend fetches user's bucket credentials (decrypted)
+6. Backend uploads to S3 using user's credentials
+7. Backend records upload in history table
+8. Backend returns presigned URL for immediate viewing
+
+### Bucket Configuration Flow
+1. User enters AWS credentials in BucketSetup
+2. Backend validates credentials by calling HeadBucket
+3. Credentials encrypted with AES-256-GCM
+4. Encrypted blob + IV stored in Supabase bucket_configurations
+5. On file operations, backend decrypts credentials just-in-time
+
+================================================================================
+## DATABASE SCHEMA
+================================================================================
+
+### bucket_configurations (Supabase PostgreSQL)
+```sql
+CREATE TABLE bucket_configurations (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  user_id UUID NOT NULL REFERENCES auth.users(id),
+  encrypted_credentials TEXT NOT NULL,  -- AES-256-GCM encrypted JSON
+  iv TEXT NOT NULL,                      -- Initialization vector
+  region VARCHAR(50) NOT NULL,
+  bucket_name VARCHAR(255) NOT NULL,
+  display_name VARCHAR(255) NOT NULL,
+  is_default BOOLEAN DEFAULT false,
+  created_at TIMESTAMPTZ DEFAULT now(),
+  updated_at TIMESTAMPTZ DEFAULT now(),
+  UNIQUE(user_id, bucket_name),
+  UNIQUE(user_id, display_name)
+);
+```
+
+### upload_history (Supabase PostgreSQL)
+```sql
+CREATE TABLE upload_history (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  user_id UUID NOT NULL REFERENCES auth.users(id),
+  bucket_id UUID REFERENCES bucket_configurations(id),
+  key TEXT NOT NULL,                     -- S3 object key
+  original_name TEXT NOT NULL,
+  size BIGINT NOT NULL,
+  original_size BIGINT,
+  mime_type VARCHAR(255),
+  short_url TEXT,
+  s3_bucket VARCHAR(255),
+  s3_region VARCHAR(50),
+  compressed BOOLEAN DEFAULT false,
+  created_at TIMESTAMPTZ DEFAULT now()
+);
+```
+
+### shortlinks (SQLite fallback or Supabase)
+```sql
+CREATE TABLE shortlinks (
+  code TEXT PRIMARY KEY,
+  url TEXT NOT NULL,
+  s3_bucket TEXT,
+  s3_key TEXT,
+  s3_region TEXT,
+  is_permanent INTEGER DEFAULT 0,
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+```
+
+================================================================================
+## API ENDPOINTS
+================================================================================
+
+### Health & General
+- GET /health - Server health check
+
+### Bucket Management (/api/buckets)
+- POST /api/buckets - Create bucket configuration
+- GET /api/buckets - List user's buckets
+- GET /api/buckets/count - Get bucket count
+- GET /api/buckets/default - Get default bucket with credentials
+- GET /api/buckets/:id - Get bucket metadata
+- GET /api/buckets/:id/credentials - Get decrypted credentials
+- PUT /api/buckets/:id - Update bucket
+- DELETE /api/buckets/:id - Delete bucket
+- POST /api/buckets/validate - Validate AWS credentials
+
+### File Operations (/api/files)
+- POST /api/files/upload - Upload file (multipart/form-data)
+- POST /api/files/delete - Delete files/folders
+- POST /api/files/rename - Rename file/folder
+- POST /api/files/create-folder - Create folder
+- POST /api/files/move - Move file to folder
+- GET /api/files/history - Get upload history
+- DELETE /api/files/history/:key - Remove from history
+
+### URL Shortener
+- POST /shorten - Create short URL
+- GET /s/:code - Redirect to original URL
+- GET /api/shortlinks/:code - Get shortlink metadata
+
+================================================================================
+## SECURITY FEATURES
+================================================================================
+
+1. **Credential Encryption**: AES-256-GCM with per-record IV
+2. **JWT Authentication**: Supabase JWT validated on every request
+3. **Rate Limiting**: 100 req/15min general, 30 req/15min for auth
+4. **CORS**: Whitelist-based origin validation
+5. **Helmet**: HTTP security headers
+6. **Input Validation**: Zod schemas on all endpoints
+7. **URL Validation**: SSRF protection on shortener
+8. **No Credential Logging**: All sensitive data redacted in logs
+
+================================================================================
+## ENVIRONMENT VARIABLES
+================================================================================
+
+### Frontend (.env.local)
+```
+VITE_API_URL=http://localhost:3000
+VITE_SUPABASE_URL=<supabase-url>
+VITE_SUPABASE_ANON_KEY=<supabase-anon-key>
+```
+
+### Backend (.env)
+```
+PORT=3000
+NODE_ENV=development
+BASE_URL=http://localhost:3000
+ALLOWED_ORIGINS=http://localhost:5173,http://localhost:3000
+
+# Supabase
+SUPABASE_URL=<supabase-url>
+SUPABASE_ANON_KEY=<supabase-anon-key>
+SUPABASE_SERVICE_ROLE_KEY=<service-role-key>
+
+# Encryption (generate with: openssl rand -hex 32)
+ENCRYPTION_KEY=<64-char-hex-key>
+
+# Rate Limiting (optional)
+RATE_LIMIT_WINDOW_MS=900000
+RATE_LIMIT_MAX=100
+```
+
+================================================================================
+## KEY FEATURES EXPLAINED
+================================================================================
+
+### Image Compression (Sharp)
+- Processes JPEG, PNG, WebP, AVIF, GIF
+- Max dimensions: 2048x2048
+- Quality: JPEG 75%, WebP 75%, AVIF 55%
+- PNG: Attempts WebP conversion, uses smaller result
+- Concurrency limited to prevent memory exhaustion
+- Files >50MB or <10KB skip processing
+
+### Cross-Device Sync
+- All uploads recorded in upload_history table
+- Dashboard polls /api/files/history on load
+- Local cache with 30-second TTL for performance
+- Files visible across all devices/sessions
+
+### URL Shortener
+- 6-character alphanumeric codes (a-z, A-Z, 0-9)
+- Collision-resistant with existence check
+- Stores S3 metadata for direct AWS URL generation
+- Falls back to SQLite if Supabase unavailable
+
+================================================================================
+## UI/UX DESIGN SYSTEM
+================================================================================
+
+### Design Language
+- Clean, minimal interface with dotted borders/separators
+- Grid-based layout with max-width 4xl (896px)
+- Diagonal separator SVG patterns
+- Brand color: Blue (#0062ff light, #3b82f6 dark)
+
+### Component Patterns
+- `.btn` - Button base with variants (primary, brand, secondary, outline, ghost)
+- `.card` - Card container with dotted border
+- `.input` - Form input with dotted border, solid on focus
+- `.badge` - Small status indicators
+- `.upload-zone` - Drag-and-drop file upload area
+- `.file-item` - List item for files with hover actions
+- `.screen-line-before/after` - Dotted horizontal separators
+
+### Typography
+- Font: "Saans" variable font (100-900 weights)
+- Monospace: JetBrains Mono for code/credentials
+- Weights used: 400 (regular), 500 (medium), 600 (semibold)
+
+================================================================================
+## DEVELOPMENT COMMANDS
+================================================================================
+
+### Frontend
+```bash
+npm run dev      # Start Vite dev server (port 5173)
+npm run build    # Build for production
+npm run lint     # ESLint check
+npm run preview  # Preview production build
+```
+
+### Backend
+```bash
+cd backend
+npm run dev      # Start with --watch (port 3000)
+npm start        # Production start
+npm test         # Run Vitest tests
+npm run generate:key  # Generate encryption key
+```
+
+================================================================================
+## COMMON PATTERNS
+================================================================================
+
+### API Request Pattern (Frontend)
+```javascript
+import { apiRequest } from './services/api/client';
+const result = await apiRequest('/api/endpoint', {
+  method: 'POST',
+  body: JSON.stringify(data)
+});
+```
+
+### Auth Guard Pattern (Backend)
+```javascript
+const { requireAuth } = require('./middleware/authMiddleware');
+router.post('/route', requireAuth({ requireEmailVerified: true }), handler);
+```
+
+### Error Response Pattern (Backend)
+```javascript
+res.status(400).json({
+  error: {
+    code: 'ERROR_CODE',
+    message: 'Human readable message',
+    status: 400
+  }
+});
+```
+
+================================================================================
+## KNOWN CONSIDERATIONS
+================================================================================
+
+1. **Mock Mode**: bucketManagerService.useMock enables offline development
+2. **SQLite Fallback**: URL shortener works without Supabase
+3. **Session Restore**: Auth state restored on page load via getSession()
+4. **Memory Management**: Sharp processing is concurrency-limited
+5. **Presigned URLs**: Expire in 1 hour, not permanent links
+
+================================================================================
+## FILE QUICK REFERENCE
+================================================================================
+
+| File | Purpose |
+|------|---------|
+| src/App.tsx | Main app routing/state orchestration |
+| src/hooks/useAuth.js | Supabase auth hook |
+| src/components/app/Dashboard.jsx | Main file management UI |
+| src/services/api/files.js | File operations API client |
+| backend/src/server.js | Express app entry |
+| backend/src/routes/files.js | File upload/delete/move routes |
+| backend/src/services/bucketService.js | Bucket CRUD + encryption |
+| backend/src/services/imageProcessor.js | Sharp compression |
+| backend/src/services/encryptionService.js | AES-256-GCM encryption |
+
+================================================================================
+## END OF DOCUMENT
+================================================================================

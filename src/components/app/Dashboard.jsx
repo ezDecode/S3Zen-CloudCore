@@ -173,7 +173,7 @@ export const Dashboard = ({ user, bucket, onLogout, onManageBucket }) => {
         syncHistory();
     }, []);
 
-    const uploadFile = async (file) => {
+    const uploadFile = useCallback(async (file) => {
         const uploadId = Date.now() + '-' + file.name;
         setUploads(prev => [...prev, { id: uploadId, name: file.name, progress: 0, status: 'uploading' }]);
 
@@ -211,13 +211,14 @@ export const Dashboard = ({ user, bucket, onLogout, onManageBucket }) => {
         } catch {
             setUploads(prev => prev.map(u => u.id === uploadId ? { ...u, status: 'error' } : u));
         }
-    };
+    }, [bucket]);
 
     const handleDrop = useCallback((e) => {
-        e.preventDefault(); setIsDragging(false);
+        e.preventDefault();
+        setIsDragging(false);
         const files = Array.from(e.dataTransfer?.files || []);
         files.forEach(file => uploadFile(file));
-    }, [bucket]);
+    }, [uploadFile]);
 
     const copyUrl = async (url, key) => {
         try {
@@ -364,6 +365,14 @@ export const Dashboard = ({ user, bucket, onLogout, onManageBucket }) => {
                             onDragOver={(e) => e.preventDefault()}
                             onDrop={handleDrop}
                             onClick={() => fileInputRef.current?.click()}
+                            role="button"
+                            tabIndex={0}
+                            onKeyDown={(e) => {
+                                if (e.key === 'Enter' || e.key === ' ') {
+                                    e.preventDefault();
+                                    fileInputRef.current?.click();
+                                }
+                            }}
                             className={`upload-zone ${isDragging ? 'dragging' : ''}`}
                         >
                             <input ref={fileInputRef} type="file" multiple onChange={(e) => {

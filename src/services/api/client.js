@@ -3,7 +3,7 @@
  * Base HTTP client with authentication handling
  */
 
-import { getAuthToken, refreshToken } from '../authTokenService';
+import { getAuthToken } from '../authTokenService';
 
 const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:3000';
 

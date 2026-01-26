@@ -126,7 +126,12 @@ export const AuthModal = ({ isOpen, onClose, onSendOTP, onVerifyOTP }) => {
 
     return (
         <div className="modal-overlay" onClick={(e) => e.target === e.currentTarget && onClose()}>
-            <div className="modal bg-card shadow-xl">
+            <div
+                className="modal bg-card shadow-xl"
+                role="dialog"
+                aria-modal="true"
+                aria-labelledby="auth-modal-title"
+            >
                 {/* Header */}
                 <div className="modal-header px-6 py-5 flex items-center justify-between bg-secondary/30">
                     <div className="flex items-center gap-3">
@@ -134,7 +139,7 @@ export const AuthModal = ({ isOpen, onClose, onSendOTP, onVerifyOTP }) => {
                             <Cloud className="w-4 h-4 text-brand" />
                         </div>
                         <div>
-                            <h2 className="font-semibold text-base text-foreground">
+                            <h2 id="auth-modal-title" className="font-semibold text-base text-foreground">
                                 {step === 'email' && 'Sign In'}
                                 {step === 'otp' && 'Verify Code'}
                                 {step === 'success' && 'Welcome Back'}
@@ -144,6 +149,7 @@ export const AuthModal = ({ isOpen, onClose, onSendOTP, onVerifyOTP }) => {
                     </div>
                     <button
                         onClick={onClose}
+                        aria-label="Close authentication dialog"
                         className="rounded-lg w-8 h-8 flex items-center justify-center text-muted-foreground hover:bg-secondary hover:text-foreground transition-colors"
                     >
                         <X className="w-4 h-4" />
@@ -178,7 +184,7 @@ export const AuthModal = ({ isOpen, onClose, onSendOTP, onVerifyOTP }) => {
                             </div>
 
                             {error && (
-                                <div className="p-3 rounded-lg bg-destructive/5 border border-destructive/20 text-destructive text-xs font-medium">
+                                <div className="p-3 rounded-lg bg-destructive/5 border border-destructive/20 text-destructive text-xs font-medium" role="alert" aria-live="polite">
                                     {error}
                                 </div>
                             )}
@@ -239,7 +245,7 @@ export const AuthModal = ({ isOpen, onClose, onSendOTP, onVerifyOTP }) => {
                             </div>
 
                             {error && (
-                                <div className="p-3 rounded-lg bg-destructive/5 border border-destructive/20 text-destructive text-xs font-medium text-center">
+                                <div className="p-3 rounded-lg bg-destructive/5 border border-destructive/20 text-destructive text-xs font-medium text-center" role="alert" aria-live="polite">
                                     {error}
                                 </div>
                             )}
