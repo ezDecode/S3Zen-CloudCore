@@ -1,38 +1,14 @@
 /**
- * bucket setup
+ * Bucket Setup
  * ncdai design system implementation
- * aws configuration with grid lines and screen-line separators
+ * AWS configuration with grid lines and screen-line separators
  */
 
 import { useState } from 'react';
 import bucketManagerService from '../../services/bucketManagerService';
 import { toast } from 'sonner';
 import { Shield, Database, ArrowRight, CheckCircle, Loader2 } from 'lucide-react';
-
-/**
- * Separator component - diagonal striped pattern
- * Matches ncdai design system exactly
- */
-function Separator({ className = '' }) {
-    return (
-        <div
-            className={`relative flex h-8 w-full border-x border-edge ${className}`}
-            style={{
-                backgroundImage: 'repeating-linear-gradient(315deg, var(--pattern-foreground) 0, var(--pattern-foreground) 1px, transparent 0, transparent 50%)',
-                backgroundSize: '10px 10px',
-            }}
-        >
-            <div
-                className="absolute -left-[100vw] top-0 w-[200vw] h-full -z-1"
-                style={{
-                    backgroundImage: 'repeating-linear-gradient(315deg, var(--pattern-foreground) 0, var(--pattern-foreground) 1px, transparent 0, transparent 50%)',
-                    backgroundSize: '10px 10px',
-                    opacity: 0.56,
-                }}
-            />
-        </div>
-    );
-}
+import { DiagonalSeparator as Separator } from '../ui/DiagonalSeparator';
 
 export const BucketSetup = ({ user, onComplete }) => {
     const [formData, setFormData] = useState({
@@ -48,27 +24,27 @@ export const BucketSetup = ({ user, onComplete }) => {
     const [error, setError] = useState(null);
 
     const regions = [
-        { value: 'us-east-1', label: 'us east (n. virginia)' },
-        { value: 'us-east-2', label: 'us east (ohio)' },
-        { value: 'us-west-1', label: 'us west (n. california)' },
-        { value: 'us-west-2', label: 'us west (oregon)' },
-        { value: 'af-south-1', label: 'africa (cape town)' },
-        { value: 'ap-east-1', label: 'asia pacific (hong kong)' },
-        { value: 'ap-south-1', label: 'asia pacific (mumbai)' },
-        { value: 'ap-northeast-3', label: 'asia pacific (osaka)' },
-        { value: 'ap-northeast-2', label: 'asia pacific (seoul)' },
-        { value: 'ap-southeast-1', label: 'asia pacific (singapore)' },
-        { value: 'ap-southeast-2', label: 'asia pacific (sydney)' },
-        { value: 'ap-northeast-1', label: 'asia pacific (tokyo)' },
-        { value: 'ca-central-1', label: 'canada (central)' },
-        { value: 'eu-central-1', label: 'europe (frankfurt)' },
-        { value: 'eu-west-1', label: 'europe (ireland)' },
-        { value: 'eu-west-2', label: 'europe (london)' },
-        { value: 'eu-south-1', label: 'europe (milan)' },
-        { value: 'eu-west-3', label: 'europe (paris)' },
-        { value: 'eu-north-1', label: 'europe (stockholm)' },
-        { value: 'me-south-1', label: 'middle east (bahrain)' },
-        { value: 'sa-east-1', label: 'south america (são paulo)' },
+        { value: 'us-east-1', label: 'US East (N. Virginia)' },
+        { value: 'us-east-2', label: 'US East (Ohio)' },
+        { value: 'us-west-1', label: 'US West (N. California)' },
+        { value: 'us-west-2', label: 'US West (Oregon)' },
+        { value: 'af-south-1', label: 'Africa (Cape Town)' },
+        { value: 'ap-east-1', label: 'Asia Pacific (Hong Kong)' },
+        { value: 'ap-south-1', label: 'Asia Pacific (Mumbai)' },
+        { value: 'ap-northeast-3', label: 'Asia Pacific (Osaka)' },
+        { value: 'ap-northeast-2', label: 'Asia Pacific (Seoul)' },
+        { value: 'ap-southeast-1', label: 'Asia Pacific (Singapore)' },
+        { value: 'ap-southeast-2', label: 'Asia Pacific (Sydney)' },
+        { value: 'ap-northeast-1', label: 'Asia Pacific (Tokyo)' },
+        { value: 'ca-central-1', label: 'Canada (Central)' },
+        { value: 'eu-central-1', label: 'Europe (Frankfurt)' },
+        { value: 'eu-west-1', label: 'Europe (Ireland)' },
+        { value: 'eu-west-2', label: 'Europe (London)' },
+        { value: 'eu-south-1', label: 'Europe (Milan)' },
+        { value: 'eu-west-3', label: 'Europe (Paris)' },
+        { value: 'eu-north-1', label: 'Europe (Stockholm)' },
+        { value: 'me-south-1', label: 'Middle East (Bahrain)' },
+        { value: 'sa-east-1', label: 'South America (São Paulo)' },
     ];
 
     const handleChange = (e) => {
@@ -78,9 +54,9 @@ export const BucketSetup = ({ user, onComplete }) => {
     };
 
     const validate = () => {
-        if (!formData.bucketName) return 'bucket name is required';
-        if (!formData.accessKeyId) return 'access key id is required';
-        if (!formData.secretAccessKey) return 'secret access key is required';
+        if (!formData.bucketName) return 'Bucket name is required';
+        if (!formData.accessKeyId) return 'Access Key ID is required';
+        if (!formData.secretAccessKey) return 'Secret Access Key is required';
         return null;
     };
 
@@ -94,37 +70,60 @@ export const BucketSetup = ({ user, onComplete }) => {
         setError(null);
 
         try {
+            // Step 1: Validate connection
             const verifyResult = await bucketManagerService.validateBucket(formData);
-            if (verifyResult.success) {
-                setConnectionStatus('success');
-                toast.success('connection verified');
-                const saveResult = await bucketManagerService.addBucket(formData);
-                if (saveResult.success || (saveResult && !saveResult.error)) {
-                    const bucket = saveResult.bucket || saveResult;
-                    setTimeout(() => onComplete(bucket), 1000);
-                } else { throw new Error(saveResult.error || 'failed to save'); }
-            } else { throw new Error(verifyResult.error || 'connection failed'); }
+            if (!verifyResult.success) {
+                throw new Error(verifyResult.error || 'Connection failed');
+            }
+
+            toast.success('Connection verified');
+
+            // Step 2: Save bucket configuration
+            const saveResult = await bucketManagerService.addBucket(formData);
+            if (!saveResult.success && saveResult.error) {
+                throw new Error(saveResult.error);
+            }
+
+            // Step 3: Success - now mark as complete and clear sensitive data
+            setConnectionStatus('success');
+            const bucket = saveResult.bucket || saveResult;
+
+            // Clear sensitive credentials from memory
+            setFormData(prev => ({
+                ...prev,
+                accessKeyId: '',
+                secretAccessKey: ''
+            }));
+
+            // Navigate after brief delay
+            setTimeout(() => onComplete(bucket), 1000);
+
         } catch (err) {
             if (bucketManagerService.useMock) {
                 setConnectionStatus('success');
-                onComplete({ ...formData, id: 'mock-' + Date.now() });
+                // Clear credentials even in mock mode
+                const bucketData = { bucketName: formData.bucketName, region: formData.region, id: 'mock-' + Date.now() };
+                setFormData(prev => ({ ...prev, accessKeyId: '', secretAccessKey: '' }));
+                onComplete(bucketData);
                 return;
             }
             setConnectionStatus('error');
-            setError(err.message || 'failed to connect to cluster');
-        } finally { setLoading(false); }
+            setError(err.message || 'Failed to connect to cluster');
+        } finally {
+            setLoading(false);
+        }
     };
 
     return (
         <div className="max-w-screen overflow-x-hidden px-2">
-            <div className="mx-auto border-x border-edge md:max-w-3xl min-h-screen flex flex-col">
+            <div className="mx-auto border-x border-edge md:max-w-4xl min-h-screen flex flex-col">
                 {/* top diagonal separator */}
                 <Separator />
 
                 {/* header */}
                 <header className="screen-line-after px-4 py-4 flex items-center gap-3 opacity-60">
                     <Database className="w-4 h-4 text-brand" />
-                    <span className="micro-label">infrastructure setup</span>
+                    <span className="text-xs tracking-widest uppercase font-medium text-muted-foreground">Infrastructure Setup</span>
                 </header>
 
                 {/* main content */}
@@ -132,14 +131,14 @@ export const BucketSetup = ({ user, onComplete }) => {
                     <div className="w-full max-w-md px-4 space-y-10">
                         {/* title section */}
                         <div className="space-y-4">
-                            <h1 className="screen-line-after text-3xl tracking-tight lowercase pb-4" style={{ fontWeight: 500 }}>
-                                cloud configuration
+                            <h1 className="screen-line-after text-3xl tracking-tight pb-4 font-medium">
+                                Cloud Configuration
                             </h1>
                         </div>
 
                         <div className="p-0">
-                            <p className="font-mono text-sm text-balance text-muted-foreground lowercase" style={{ fontWeight: 400, opacity: 0.7 }}>
-                                enter your aws deployment parameters to synchronize with your storage infrastructure. keys are never stored in plaintext and remain strictly in-memory during this session.
+                            <p className="font-mono text-sm text-balance text-muted-foreground" style={{ opacity: 0.7 }}>
+                                Enter your AWS deployment parameters to synchronize with your storage infrastructure. Keys are never stored in plaintext and remain strictly in-memory during this session.
                             </p>
                         </div>
 
@@ -149,13 +148,13 @@ export const BucketSetup = ({ user, onComplete }) => {
                         <form onSubmit={handleSubmit} className="space-y-8">
                             <div className="grid grid-cols-1 gap-8">
                                 <div className="space-y-2">
-                                    <label className="micro-label px-1">bucket name</label>
+                                    <label className="text-xs tracking-widest uppercase font-medium text-muted-foreground px-1">Bucket Name</label>
                                     <input
                                         type="text"
                                         name="bucketName"
                                         value={formData.bucketName}
                                         onChange={handleChange}
-                                        className="input lowercase"
+                                        className="input"
                                         placeholder="e.g. production-assets"
                                     />
                                 </div>
@@ -164,12 +163,12 @@ export const BucketSetup = ({ user, onComplete }) => {
                                 <div className="relative">
                                     <div className="grid grid-cols-2 gap-6">
                                         <div className="space-y-2 text-left">
-                                            <label className="micro-label px-1">data region</label>
+                                            <label className="text-xs tracking-widest uppercase font-medium text-muted-foreground px-1">Data Region</label>
                                             <select
                                                 name="region"
                                                 value={formData.region}
                                                 onChange={handleChange}
-                                                className="input appearance-none bg-background pr-10 lowercase"
+                                                className="input appearance-none bg-background pr-10"
                                             >
                                                 {regions.map(r => (
                                                     <option key={r.value} value={r.value}>{r.label}</option>
@@ -177,21 +176,21 @@ export const BucketSetup = ({ user, onComplete }) => {
                                             </select>
                                         </div>
                                         <div className="space-y-2">
-                                            <label className="micro-label px-1">access key id</label>
+                                            <label className="text-xs tracking-widest uppercase font-medium text-muted-foreground px-1">Access Key ID</label>
                                             <input
                                                 type="text"
                                                 name="accessKeyId"
                                                 value={formData.accessKeyId}
                                                 onChange={handleChange}
                                                 className="input font-mono"
-                                                placeholder="akia..."
+                                                placeholder="AKIA..."
                                             />
                                         </div>
                                     </div>
                                 </div>
 
                                 <div className="space-y-2">
-                                    <label className="micro-label px-1">secret access key</label>
+                                    <label className="text-xs tracking-widest uppercase font-medium text-muted-foreground px-1">Secret Access Key</label>
                                     <input
                                         type="password"
                                         name="secretAccessKey"
@@ -204,7 +203,7 @@ export const BucketSetup = ({ user, onComplete }) => {
                             </div>
 
                             {error && (
-                                <div className="screen-line-before screen-line-after p-4 rounded-md bg-red-500/5 text-red-500 text-[10px] tracking-[0.1em] lowercase" style={{ fontWeight: 400, border: '1px dotted rgba(239, 68, 68, 0.2)' }}>
+                                <div className="screen-line-before screen-line-after p-4 rounded-md bg-red-500/5 text-red-500 text-xs tracking-wide" style={{ border: '1px dotted rgba(239, 68, 68, 0.2)' }}>
                                     {error}
                                 </div>
                             )}
@@ -213,7 +212,7 @@ export const BucketSetup = ({ user, onComplete }) => {
                                 <button
                                     type="submit"
                                     disabled={loading || connectionStatus === 'success'}
-                                    className="btn btn-brand w-full h-11 rounded-md text-[11px] tracking-[0.15em] lowercase"
+                                    className="btn btn-brand w-full h-11 rounded-md text-sm tracking-wide"
                                 >
                                     {loading ? (
                                         <Loader2 className="w-4 h-4 animate-spin" />
@@ -221,7 +220,7 @@ export const BucketSetup = ({ user, onComplete }) => {
                                         <CheckCircle className="w-4 h-4" />
                                     ) : (
                                         <>
-                                            establish cluster
+                                            Establish Cluster
                                             <ArrowRight className="w-4 h-4 ml-2" />
                                         </>
                                     )}
@@ -239,9 +238,9 @@ export const BucketSetup = ({ user, onComplete }) => {
                     <div className="px-4 py-6 flex items-center justify-between text-muted-foreground opacity-40">
                         <div className="flex items-center gap-2">
                             <Shield className="w-3.5 h-3.5" />
-                            <span className="micro-label">encrypted handshake protocol</span>
+                            <span className="text-xs tracking-widest uppercase font-medium">Encrypted Handshake Protocol</span>
                         </div>
-                        <span className="text-[9px] tracking-[0.1em] lowercase" style={{ fontWeight: 400 }}>© {new Date().getFullYear()} cloudcore lab</span>
+                        <span className="text-xs font-medium">© {new Date().getFullYear()} CloudCore Lab</span>
                     </div>
                 </footer>
 

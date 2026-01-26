@@ -49,10 +49,10 @@ export const AuthModal = ({ isOpen, onClose, onSendOTP, onVerifyOTP }) => {
                 setStep('otp');
                 setTimeout(() => otpRefs.current[0]?.focus(), 100);
             } else {
-                setError(result?.error || 'failed to send code');
+                setError(result?.error || 'Failed to send code');
             }
         } catch (err) {
-            setError('failed to send code. please try again.');
+            setError('Failed to send code. Please try again.');
         } finally {
             setLoading(false);
         }
@@ -84,11 +84,15 @@ export const AuthModal = ({ isOpen, onClose, onSendOTP, onVerifyOTP }) => {
 
     const handleOtpPaste = (e) => {
         e.preventDefault();
-        const pasted = e.clipboardData.getData('text').replace(/\D/g, '').slice(0, 6);
-        if (pasted.length === 6) {
-            const newOtp = pasted.split('');
-            setOtp(newOtp);
-            handleVerifyOTP(pasted);
+        try {
+            const pasted = e.clipboardData.getData('text').replace(/\D/g, '').slice(0, 6);
+            if (pasted.length === 6) {
+                const newOtp = pasted.split('');
+                setOtp(newOtp);
+                handleVerifyOTP(pasted);
+            }
+        } catch {
+            // Ignore clipboard errors
         }
     };
 
@@ -104,12 +108,12 @@ export const AuthModal = ({ isOpen, onClose, onSendOTP, onVerifyOTP }) => {
                 setStep('success');
                 setTimeout(() => onClose(), 1500);
             } else {
-                setError(result?.error || 'invalid code');
+                setError(result?.error || 'Invalid code');
                 setOtp(['', '', '', '', '', '']);
                 otpRefs.current[0]?.focus();
             }
         } catch (err) {
-            const errorMessage = err?.message || err?.error || 'verification failed. please try again.';
+            const errorMessage = err?.message || err?.error || 'Verification failed. Please try again.';
             setError(errorMessage);
             setOtp(['', '', '', '', '', '']);
             otpRefs.current[0]?.focus();
@@ -130,12 +134,12 @@ export const AuthModal = ({ isOpen, onClose, onSendOTP, onVerifyOTP }) => {
                             <Cloud className="w-4 h-4 text-brand" />
                         </div>
                         <div>
-                            <h2 className="font-semibold text-base text-foreground lowercase">
-                                {step === 'email' && 'sign in'}
-                                {step === 'otp' && 'verify code'}
-                                {step === 'success' && 'welcome back'}
+                            <h2 className="font-semibold text-base text-foreground">
+                                {step === 'email' && 'Sign In'}
+                                {step === 'otp' && 'Verify Code'}
+                                {step === 'success' && 'Welcome Back'}
                             </h2>
-                            <p className="text-xs text-muted-foreground lowercase">cloudcore secure access</p>
+                            <p className="text-xs text-muted-foreground">CloudCore Secure Access</p>
                         </div>
                     </div>
                     <button
@@ -151,13 +155,13 @@ export const AuthModal = ({ isOpen, onClose, onSendOTP, onVerifyOTP }) => {
                     {/* Email Step */}
                     {step === 'email' && (
                         <form onSubmit={handleSendOTP} className="space-y-6">
-                            <p className="text-sm text-muted-foreground lowercase leading-relaxed">
-                                enter your email address and we'll send you a secure one-time code to access your account.
+                            <p className="text-sm text-muted-foreground leading-relaxed">
+                                Enter your email address and we'll send you a secure one-time code to access your account.
                             </p>
 
                             <div className="space-y-2">
-                                <label className="text-xs tracking-widest text-muted-foreground lowercase font-medium px-1">
-                                    email address
+                                <label className="text-xs tracking-widest text-muted-foreground uppercase font-medium px-1">
+                                    Email Address
                                 </label>
                                 <div className="relative">
                                     <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
@@ -167,14 +171,14 @@ export const AuthModal = ({ isOpen, onClose, onSendOTP, onVerifyOTP }) => {
                                         value={email}
                                         onChange={(e) => setEmail(e.target.value)}
                                         placeholder="you@company.com"
-                                        className="input pl-10 lowercase"
+                                        className="input pl-10"
                                         required
                                     />
                                 </div>
                             </div>
 
                             {error && (
-                                <div className="p-3 rounded-lg bg-destructive/5 border border-destructive/20 text-destructive text-xs lowercase font-medium">
+                                <div className="p-3 rounded-lg bg-destructive/5 border border-destructive/20 text-destructive text-xs font-medium">
                                     {error}
                                 </div>
                             )}
@@ -182,20 +186,20 @@ export const AuthModal = ({ isOpen, onClose, onSendOTP, onVerifyOTP }) => {
                             <button
                                 type="submit"
                                 disabled={loading || !email}
-                                className="btn btn-brand w-full h-11 rounded-lg text-sm lowercase font-medium"
+                                className="btn btn-brand w-full h-11 rounded-lg text-sm font-medium"
                             >
                                 {loading ? (
                                     <Loader2 className="w-4 h-4 animate-spin" />
                                 ) : (
                                     <>
-                                        send verification code
+                                        Send Verification Code
                                         <ArrowRight className="w-4 h-4" />
                                     </>
                                 )}
                             </button>
 
-                            <p className="text-[10px] text-muted-foreground/60 text-center lowercase">
-                                by continuing, you agree to our terms of service
+                            <p className="text-[10px] text-muted-foreground/60 text-center">
+                                By continuing, you agree to our Terms of Service
                             </p>
                         </form>
                     )}
@@ -204,17 +208,17 @@ export const AuthModal = ({ isOpen, onClose, onSendOTP, onVerifyOTP }) => {
                     {step === 'otp' && (
                         <div className="space-y-6">
                             <div>
-                                <p className="text-sm text-muted-foreground lowercase mb-1">
-                                    we sent a 6-digit code to
+                                <p className="text-sm text-muted-foreground mb-1">
+                                    We sent a 6-digit code to
                                 </p>
-                                <p className="font-semibold text-foreground text-base lowercase">
+                                <p className="font-semibold text-foreground text-base">
                                     {email}
                                 </p>
                             </div>
 
                             <div className="space-y-2">
-                                <label className="text-xs tracking-widest text-muted-foreground lowercase font-medium px-1">
-                                    verification code
+                                <label className="text-xs tracking-widest text-muted-foreground uppercase font-medium px-1">
+                                    Verification Code
                                 </label>
                                 <div className="flex gap-2 justify-center" onPaste={handleOtpPaste}>
                                     {otp.map((digit, index) => (
@@ -235,15 +239,15 @@ export const AuthModal = ({ isOpen, onClose, onSendOTP, onVerifyOTP }) => {
                             </div>
 
                             {error && (
-                                <div className="p-3 rounded-lg bg-destructive/5 border border-destructive/20 text-destructive text-xs lowercase font-medium text-center">
+                                <div className="p-3 rounded-lg bg-destructive/5 border border-destructive/20 text-destructive text-xs font-medium text-center">
                                     {error}
                                 </div>
                             )}
 
                             {loading && (
-                                <div className="flex items-center justify-center gap-2 text-muted-foreground text-sm lowercase">
+                                <div className="flex items-center justify-center gap-2 text-muted-foreground text-sm">
                                     <Loader2 className="w-4 h-4 animate-spin" />
-                                    <span>verifying...</span>
+                                    <span>Verifying...</span>
                                 </div>
                             )}
 
@@ -251,17 +255,17 @@ export const AuthModal = ({ isOpen, onClose, onSendOTP, onVerifyOTP }) => {
                                 <button
                                     type="button"
                                     onClick={() => setStep('email')}
-                                    className="btn btn-ghost w-full h-10 rounded-lg text-sm lowercase font-medium"
+                                    className="btn btn-ghost w-full h-10 rounded-lg text-sm font-medium"
                                 >
-                                    use different email
+                                    Use Different Email
                                 </button>
                                 <button
                                     type="button"
                                     onClick={() => handleSendOTP({ preventDefault: () => { } })}
                                     disabled={loading}
-                                    className="text-xs text-brand hover:text-brand/80 transition-colors lowercase font-medium"
+                                    className="text-xs text-brand hover:text-brand/80 transition-colors font-medium"
                                 >
-                                    resend code
+                                    Resend Code
                                 </button>
                             </div>
                         </div>
@@ -273,11 +277,11 @@ export const AuthModal = ({ isOpen, onClose, onSendOTP, onVerifyOTP }) => {
                             <div className="w-16 h-16 bg-brand/10 rounded-2xl flex items-center justify-center mx-auto mb-6">
                                 <CheckCircle className="w-8 h-8 text-brand" />
                             </div>
-                            <p className="text-xl font-semibold text-foreground lowercase mb-2">
-                                you're in!
+                            <p className="text-xl font-semibold text-foreground mb-2">
+                                You're In!
                             </p>
-                            <p className="text-sm text-muted-foreground lowercase">
-                                redirecting to your dashboard...
+                            <p className="text-sm text-muted-foreground">
+                                Redirecting to your dashboard...
                             </p>
                         </div>
                     )}

@@ -6,6 +6,7 @@
 
 import { useState, useEffect } from 'react';
 import { Cloud, ArrowRight, Shield, Zap, Lock, Upload, Link2, BarChart3 } from 'lucide-react';
+import { DiagonalSeparator as Separator } from '../ui/DiagonalSeparator';
 
 export const LandingPage = ({ onGetStarted }) => {
     const [scrolled, setScrolled] = useState(false);
@@ -18,7 +19,7 @@ export const LandingPage = ({ onGetStarted }) => {
 
     return (
         <div className="max-w-screen overflow-x-hidden px-2">
-            <div className="mx-auto border-x border-edge md:max-w-3xl">
+            <div className="mx-auto border-x border-edge md:max-w-4xl">
                 {/* top diagonal separator */}
                 <Separator />
 
@@ -27,7 +28,7 @@ export const LandingPage = ({ onGetStarted }) => {
                     <div className="screen-line-after px-4 py-4 flex items-center justify-between">
                         <div className="flex items-center gap-2.5 cursor-pointer">
                             <Cloud className="w-5 h-5 text-brand" />
-                            <span className="text-base tracking-tight lowercase font-medium">cloudcore</span>
+                            <span className="text-base tracking-tight font-medium">CloudCore</span>
                         </div>
 
                         <div className="flex items-center gap-8">
@@ -35,15 +36,15 @@ export const LandingPage = ({ onGetStarted }) => {
                                 href="https://github.com/ezDecode/S3Zen-CloudCore"
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="text-xs tracking-wide text-muted-foreground hover:text-foreground transition-colors hidden sm:block lowercase font-medium"
+                                className="text-xs tracking-wide text-muted-foreground hover:text-foreground transition-colors hidden sm:block font-medium"
                             >
-                                github
+                                GitHub
                             </a>
                             <button
                                 onClick={onGetStarted}
-                                className="btn btn-brand h-9 px-5 rounded-lg text-xs tracking-wide lowercase font-medium"
+                                className="btn btn-brand h-9 px-5 rounded-lg text-xs tracking-wide font-medium"
                             >
-                                get started
+                                Get Started
                             </button>
                         </div>
                     </div>
@@ -54,36 +55,36 @@ export const LandingPage = ({ onGetStarted }) => {
                     <div className="px-4 pt-20 pb-8 lg:pt-28">
                         <div className="inline-flex items-center gap-3 mb-6">
                             <div className="w-8 h-0.5 bg-brand/40 rounded-full" />
-                            <span className="text-xs tracking-widest text-muted-foreground lowercase font-medium">cloud infrastructure</span>
+                            <span className="text-xs tracking-widest text-muted-foreground uppercase font-medium">Cloud Infrastructure</span>
                         </div>
 
-                        <h1 className="screen-line-after text-4xl lg:text-5xl tracking-tight leading-[1.1] text-foreground lowercase pb-6 font-semibold">
-                            secure cloud storage<br />
-                            <span className="text-brand">made simple</span>
+                        <h1 className="screen-line-after text-4xl lg:text-5xl tracking-tight leading-[1.1] text-foreground pb-6 font-semibold">
+                            Secure Cloud Storage<br />
+                            <span className="text-brand">Made Simple</span>
                         </h1>
                     </div>
 
                     <div className="p-4 pb-8">
-                        <p className="text-base text-muted-foreground lowercase leading-relaxed max-w-lg">
-                            enterprise-grade s3 file management with client-side encryption, instant sharing, and real-time sync. built for teams who demand security without compromising on speed.
+                        <p className="text-base text-muted-foreground leading-relaxed max-w-lg">
+                            Enterprise-grade S3 file management with client-side encryption, instant sharing, and real-time sync. Built for teams who demand security without compromising on speed.
                         </p>
                     </div>
 
                     <div className="screen-line-before screen-line-after p-4 flex flex-wrap items-center gap-4">
                         <button
                             onClick={onGetStarted}
-                            className="btn btn-primary h-12 px-8 rounded-lg text-sm lowercase font-medium"
+                            className="btn btn-primary h-12 px-8 rounded-lg text-sm font-medium"
                         >
-                            start uploading
+                            Start Uploading
                             <ArrowRight className="w-4 h-4" />
                         </button>
                         <a
                             href="https://github.com/ezDecode/S3Zen-CloudCore"
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="btn btn-outline h-12 px-6 rounded-lg text-sm lowercase font-medium"
+                            className="btn btn-outline h-12 px-6 rounded-lg text-sm font-medium"
                         >
-                            view documentation
+                            View Documentation
                         </a>
                     </div>
 
@@ -97,157 +98,121 @@ export const LandingPage = ({ onGetStarted }) => {
 
                         <div className="grid grid-cols-1 sm:grid-cols-3">
                             {[
-                                { value: "256-bit", label: "aes encryption" },
-                                { value: "99.99%", label: "uptime sla" },
-                                { value: "<50ms", label: "global latency" }
+                                { value: '256-bit', label: 'AES Encryption', icon: Lock },
+                                { value: '99.99%', label: 'Uptime SLA', icon: Zap },
+                                { value: '<50ms', label: 'Global Latency', icon: BarChart3 },
                             ].map((stat, i) => (
-                                <div key={i} className="p-6 text-center screen-line-before screen-line-after">
-                                    <div className="text-2xl font-semibold text-brand lowercase mb-1">{stat.value}</div>
-                                    <div className="text-xs text-muted-foreground lowercase tracking-wide">{stat.label}</div>
+                                <div key={i} className="p-6 screen-line-after flex flex-col">
+                                    <stat.icon className="w-4 h-4 text-brand mb-3" />
+                                    <span className="text-2xl font-semibold tracking-tight">{stat.value}</span>
+                                    <span className="text-xs text-muted-foreground mt-1 font-medium">{stat.label}</span>
                                 </div>
                             ))}
                         </div>
+                    </div>
+
+                    {/* diagonal separator */}
+                    <Separator />
+
+                    {/* features section */}
+                    <div className="screen-line-after p-4 py-2">
+                        <span className="text-xs tracking-widest text-muted-foreground uppercase font-medium">Core Features</span>
+                    </div>
+
+                    <div className="relative">
+                        <div className="absolute inset-0 -z-1 grid grid-cols-2 max-sm:hidden">
+                            <div className="border-r border-edge"></div>
+                            <div></div>
+                        </div>
+
+                        <div className="grid grid-cols-1 sm:grid-cols-2">
+                            {[
+                                {
+                                    icon: Shield,
+                                    title: 'End-to-End Encryption',
+                                    description: 'Your files are encrypted before leaving your device. Zero-knowledge architecture means only you hold the keys.'
+                                },
+                                {
+                                    icon: Upload,
+                                    title: 'Smart Upload',
+                                    description: 'Drag, drop, done. Automatic image compression and optimization saves bandwidth without quality loss.'
+                                },
+                                {
+                                    icon: Link2,
+                                    title: 'Instant Sharing',
+                                    description: 'Generate secure, time-limited links in one click. Control access with password protection and expiry dates.'
+                                },
+                                {
+                                    icon: Zap,
+                                    title: 'Lightning Fast CDN',
+                                    description: 'Global edge network ensures your files load instantly anywhere in the world. 99.99% uptime guaranteed.'
+                                },
+                            ].map((feature, i) => (
+                                <div key={i} className="p-6 screen-line-after">
+                                    <feature.icon className="w-5 h-5 text-brand mb-4" />
+                                    <h3 className="text-base font-semibold mb-2">{feature.title}</h3>
+                                    <p className="text-sm text-muted-foreground leading-relaxed">{feature.description}</p>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+
+                    {/* diagonal separator */}
+                    <Separator />
+
+                    {/* why cloudcore section */}
+                    <div className="screen-line-after p-4 py-2">
+                        <span className="text-xs tracking-widest text-muted-foreground tracking-tighter font-medium">Why CloudCore</span>
+                    </div>
+
+                    <div className="p-6">
+                        <div className="grid grid-cols-2 sm:grid-cols-4 gap-6">
+                            {[
+                                { label: 'No Vendor Lock-in', desc: 'Your S3, your rules' },
+                                { label: 'Open Source', desc: 'Fully auditable code' },
+                                { label: 'Privacy First', desc: 'No tracking or analytics' },
+                                { label: 'Self-Hostable', desc: 'Run on your own infra' },
+                            ].map((item, i) => (
+                                <div key={i} className="text-center">
+                                    <h4 className="text-sm font-semibold mb-1">{item.label}</h4>
+                                    <p className="text-xs text-muted-foreground">{item.desc}</p>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+
+                    {/* diagonal separator */}
+                    <Separator />
+
+                    {/* CTA section */}
+                    <div className="p-8 text-center">
+                        <h2 className="text-2xl font-semibold mb-3">Ready to Get Started?</h2>
+                        <p className="text-sm text-muted-foreground mb-6 max-w-md mx-auto">
+                            Connect your S3 bucket and start uploading in under 2 minutes. No credit card required.
+                        </p>
+                        <button
+                            onClick={onGetStarted}
+                            className="btn btn-brand h-12 px-10 rounded-lg text-sm font-medium"
+                        >
+                            Launch Dashboard
+                            <ArrowRight className="w-4 h-4" />
+                        </button>
                     </div>
                 </main>
 
                 {/* diagonal separator */}
                 <Separator />
 
-                {/* features section */}
-                <section className="relative">
-                    {/* grid background lines */}
-                    <div className="absolute inset-0 -z-1 grid grid-cols-1 gap-4 max-sm:hidden sm:grid-cols-3">
-                        <div className="border-r border-edge"></div>
-                        <div className="border-r border-edge"></div>
-                        <div></div>
-                    </div>
-
-                    <div className="screen-line-after px-4 py-3">
-                        <span className="text-xs tracking-widest text-muted-foreground lowercase font-medium">core features</span>
-                    </div>
-
-                    <div className="grid grid-cols-1 sm:grid-cols-3">
-                        {[
-                            {
-                                icon: Lock,
-                                title: "end-to-end encryption",
-                                desc: "files are encrypted on your device before upload. only you hold the keys—zero-knowledge architecture.",
-                            },
-                            {
-                                icon: Zap,
-                                title: "edge-optimized cdn",
-                                desc: "lightning-fast delivery through aws cloudfront's global edge network with signed url security.",
-                            },
-                            {
-                                icon: Link2,
-                                title: "instant sharing",
-                                desc: "generate secure, expiring links in one click. control access with granular permissions.",
-                            }
-                        ].map((item, i) => {
-                            const Icon = item.icon;
-                            return (
-                                <div
-                                    key={i}
-                                    className="p-5 transition-colors ease-out hover:bg-accent2 screen-line-before screen-line-after group"
-                                >
-                                    <div className="w-10 h-10 rounded-lg bg-brand/10 flex items-center justify-center mb-4 group-hover:bg-brand/20 transition-colors">
-                                        <Icon className="w-5 h-5 text-brand" />
-                                    </div>
-                                    <h3 className="text-sm text-foreground lowercase mb-2 font-semibold">{item.title}</h3>
-                                    <p className="text-xs text-muted-foreground leading-relaxed lowercase">
-                                        {item.desc}
-                                    </p>
-                                </div>
-                            );
-                        })}
-                    </div>
-                </section>
-
-                {/* diagonal separator */}
-                <Separator />
-
-                {/* additional features */}
-                <section>
-                    <div className="screen-line-after px-4 py-3">
-                        <span className="text-xs tracking-widest text-muted-foreground lowercase font-medium">why cloudcore</span>
-                    </div>
-
-                    <div className="grid grid-cols-1 sm:grid-cols-2">
-                        {[
-                            {
-                                icon: Upload,
-                                title: "drag & drop uploads",
-                                desc: "intuitive file management with progress tracking and batch operations."
-                            },
-                            {
-                                icon: BarChart3,
-                                title: "usage analytics",
-                                desc: "monitor storage usage, bandwidth, and access patterns in real-time."
-                            },
-                            {
-                                icon: Shield,
-                                title: "compliance ready",
-                                desc: "gdpr, hipaa, and soc2 compliant infrastructure for enterprise needs."
-                            },
-                            {
-                                icon: Cloud,
-                                title: "multi-bucket support",
-                                desc: "manage multiple s3 buckets across regions from a single dashboard."
-                            }
-                        ].map((item, i) => {
-                            const Icon = item.icon;
-                            return (
-                                <div
-                                    key={i}
-                                    className="p-5 transition-colors ease-out hover:bg-accent2 screen-line-before screen-line-after flex gap-4"
-                                >
-                                    <div className="w-9 h-9 rounded-lg bg-secondary flex items-center justify-center shrink-0">
-                                        <Icon className="w-4 h-4 text-secondary-foreground" />
-                                    </div>
-                                    <div>
-                                        <h3 className="text-sm text-foreground lowercase mb-1 font-medium">{item.title}</h3>
-                                        <p className="text-xs text-muted-foreground leading-relaxed lowercase">
-                                            {item.desc}
-                                        </p>
-                                    </div>
-                                </div>
-                            );
-                        })}
-                    </div>
-                </section>
-
-                {/* CTA section */}
-                <Separator />
-
-                <section className="screen-line-before screen-line-after">
-                    <div className="px-4 py-12 text-center">
-                        <h2 className="text-2xl font-semibold text-foreground lowercase mb-3">ready to secure your files?</h2>
-                        <p className="text-sm text-muted-foreground lowercase mb-6 max-w-sm mx-auto">
-                            join thousands of developers using cloudcore for secure, fast cloud storage.
-                        </p>
-                        <button
-                            onClick={onGetStarted}
-                            className="btn btn-brand h-12 px-10 rounded-lg text-sm lowercase font-medium"
-                        >
-                            get started free
-                            <ArrowRight className="w-4 h-4" />
-                        </button>
-                    </div>
-                </section>
-
-                {/* diagonal separator */}
-                <Separator />
-
                 {/* footer */}
                 <footer className="screen-line-before">
-                    <div className="px-4 py-8 flex flex-col md:flex-row items-center justify-between gap-6">
+                    <div className="px-4 py-6 flex items-center justify-between">
                         <div className="flex items-center gap-2.5">
                             <Cloud className="w-4 h-4 text-brand" />
-                            <span className="text-sm lowercase font-medium">cloudcore</span>
+                            <span className="text-sm font-medium">CloudCore</span>
                         </div>
-                        <div className="flex items-center gap-8 text-xs text-muted-foreground lowercase font-medium">
-                            <a href="https://github.com/ezDecode" target="_blank" rel="noopener noreferrer" className="hover:text-foreground transition-colors">ezdecode lab</a>
-                            <a href="https://github.com/ezDecode/S3Zen-CloudCore" target="_blank" rel="noopener noreferrer" className="hover:text-foreground transition-colors">open source</a>
+                        <div className="flex items-center gap-8 text-xs text-muted-foreground font-medium">
+                            <a href="https://github.com/ezDecode" target="_blank" rel="noopener noreferrer" className="hover:text-foreground transition-colors">ezDecode Lab</a>
+                            <a href="https://github.com/ezDecode/S3Zen-CloudCore" target="_blank" rel="noopener noreferrer" className="hover:text-foreground transition-colors">Open Source</a>
                             <span className="select-none opacity-60">© {new Date().getFullYear()}</span>
                         </div>
                     </div>
@@ -259,30 +224,5 @@ export const LandingPage = ({ onGetStarted }) => {
         </div>
     );
 };
-
-/**
- * Separator component - diagonal striped pattern
- * Matches ncdai design system exactly
- */
-function Separator({ className = '' }) {
-    return (
-        <div
-            className={`relative flex h-10 w-full border-x border-edge ${className}`}
-            style={{
-                backgroundImage: 'repeating-linear-gradient(315deg, var(--pattern-foreground) 0, var(--pattern-foreground) 1px, transparent 0, transparent 50%)',
-                backgroundSize: '10px 10px',
-            }}
-        >
-            <div
-                className="absolute -left-[100vw] top-0 w-[200vw] h-full -z-1"
-                style={{
-                    backgroundImage: 'repeating-linear-gradient(315deg, var(--pattern-foreground) 0, var(--pattern-foreground) 1px, transparent 0, transparent 50%)',
-                    backgroundSize: '10px 10px',
-                    opacity: 0.56,
-                }}
-            />
-        </div>
-    );
-}
 
 export default LandingPage;

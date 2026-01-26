@@ -12,6 +12,7 @@ import { Dashboard } from './components/app/Dashboard';
 import { AuthModal } from './components/app/AuthModal';
 import { BucketSetup } from './components/app/BucketSetup';
 import { Toaster } from './components/app/Toaster';
+import { LoadingScreen } from './components/ui/LoadingScreen';
 import { useAuth } from './hooks/useAuth';
 import bucketManagerService from './services/bucketManagerService';
 
@@ -109,14 +110,7 @@ function AppContent() {
 
   // Loading state
   if (isLoading) {
-    return (
-      <div className="min-h-screen bg-background flex items-center justify-center relative overflow-hidden">
-        <div className="text-center z-10">
-          <div className="w-12 h-12 border-2 border-border border-t-primary rounded-full animate-spin mx-auto mb-4"></div>
-          <p className="text-muted-foreground text-sm font-medium animate-pulse">Loading...</p>
-        </div>
-      </div>
-    );
+    return <LoadingScreen message="Loading..." />;
   }
 
   // Not logged in - show landing page
@@ -137,14 +131,7 @@ function AppContent() {
 
   // Checking bucket status
   if (checkingBucket) {
-    return (
-      <div className="min-h-screen bg-background flex items-center justify-center relative overflow-hidden">
-        <div className="text-center z-10">
-          <div className="w-12 h-12 border-2 border-border border-t-primary rounded-full animate-spin mx-auto mb-4"></div>
-          <p className="text-muted-foreground text-sm font-medium animate-pulse">Setting things up...</p>
-        </div>
-      </div>
-    );
+    return <LoadingScreen message="Setting Things Up..." />;
   }
 
   // No bucket - show bucket setup

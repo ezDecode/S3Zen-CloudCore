@@ -302,18 +302,27 @@ async function deleteBucket(bucketId, userId) {
 
         let newDefault = null;
         if (wasDefault) {
-            const { data: buckets } = await adminClient
+            // Auto-promote the first remaining bucket to default
+            const { data: remainingBuckets } = await adminClient
                 .from(TABLE_NAME)
-                .select('id, display_name, is_default')
+                .select('id, display_name')
                 .eq('user_id', userId)
-                .eq('is_default', true)
+                .order('created_at', { ascending: false })
                 .limit(1);
 
-            if (buckets && buckets.length > 0) {
+            if (remainingBuckets && remainingBuckets.length > 0) {
+                // Promote this bucket to default
+                await adminClient
+                    .from(TABLE_NAME)
+                    .update({ is_default: true })
+                    .eq('id', remainingBuckets[0].id)
+                    .eq('user_id', userId);
+
                 newDefault = {
-                    id: buckets[0].id,
-                    displayName: buckets[0].display_name
+                    id: remainingBuckets[0].id,
+                    displayName: remainingBuckets[0].display_name
                 };
+                dbLogger.info('Auto-promoted new default bucket', { newDefaultId: newDefault.id });
             }
         }
 

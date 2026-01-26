@@ -3,64 +3,9 @@
  * Base HTTP client with authentication handling
  */
 
-import { supabase } from '../supabaseClient';
+import { getAuthToken, refreshToken } from '../authTokenService';
 
 const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:3000';
-
-// Token refresh buffer (refresh if < 5 minutes remaining)
-const TOKEN_REFRESH_BUFFER_SECONDS = 300;
-
-// Prevent concurrent refresh attempts
-let refreshPromise = null;
-
-/**
- * Refresh the auth token
- */
-const refreshToken = async () => {
-    if (refreshPromise) {
-        return refreshPromise;
-    }
-
-    refreshPromise = (async () => {
-        try {
-            const { data: { session: refreshed }, error } = await supabase.auth.refreshSession();
-            if (error || !refreshed?.access_token) {
-                console.error('[API] Token refresh failed:', error);
-                return null;
-            }
-            console.log('[API] Token refreshed successfully');
-            return refreshed.access_token;
-        } finally {
-            refreshPromise = null;
-        }
-    })();
-
-    return refreshPromise;
-};
-
-/**
- * Get auth token from Supabase session (with proactive refresh)
- */
-const getAuthToken = async (forceRefresh = false) => {
-    const { data: { session } } = await supabase.auth.getSession();
-
-    if (!session?.access_token) {
-        console.warn('[API] No access token');
-        return null;
-    }
-
-    const now = Date.now() / 1000;
-    const expiresAt = session.expires_at;
-    const timeRemaining = expiresAt - now;
-
-    // Proactively refresh if token is expired or near expiry
-    if (forceRefresh || timeRemaining < TOKEN_REFRESH_BUFFER_SECONDS) {
-        console.warn(`[API] Token ${timeRemaining < 0 ? 'expired' : 'expiring soon'}, refreshing...`);
-        return await refreshToken();
-    }
-
-    return session.access_token;
-};
 
 /**
  * Make authenticated API request (with 401 retry)
