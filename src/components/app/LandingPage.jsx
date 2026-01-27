@@ -28,7 +28,7 @@ export const LandingPage = ({ onGetStarted }) => {
                     <div className="screen-line-after px-4 py-4 flex items-center justify-between">
                         <div className="flex items-center gap-2.5 cursor-pointer">
                             <Cloud className="w-5 h-5 text-brand" />
-                            <span className="text-base tracking-tight font-medium">CloudCore</span>
+                            <span className="text-base tracking-tight font-medium font-mono">CloudCore</span>
                         </div>
 
                         <div className="flex items-center gap-8">
@@ -58,21 +58,21 @@ export const LandingPage = ({ onGetStarted }) => {
 
                 {/* hero section */}
                 <main className="min-h-[calc(100vh-200px)]">
-                    <div className="px-4 pt-20 pb-8 lg:pt-28">
+                    <div className="px-4 pt-16 pb-8 lg:pt-28">
                         <div className="inline-flex items-center gap-3 mb-6">
-                            <div className="w-8 h-0.5 bg-brand/40 rounded-full" />
-                            <span className="text-xs tracking-widest text-muted-foreground uppercase font-medium">Cloud Infrastructure</span>
+                            <div className="w-8 h-0.5 bg-brand/80 rounded-full" />
+                            <span className="text-xs tracking-widest text-muted-foreground uppercase font-medium">Sovereign S3</span>
                         </div>
 
-                        <h1 className="screen-line-after text-4xl lg:text-5xl tracking-tight leading-[1.1] text-foreground pb-6 font-semibold">
-                            Secure Cloud Storage<br />
-                            <span className="text-brand">Made Simple</span>
+                        <h1 className="screen-line-after text-3xl sm:text-4xl lg:text-5xl tracking-tighter leading-[1.1] text-foreground pb-6 font-semibold">
+                            Sovereign S3<br />
+                            <span className="text-brand">Precision Engineered</span>
                         </h1>
                     </div>
 
                     <div className="p-4 pb-8">
                         <p className="text-base text-muted-foreground leading-relaxed max-w-lg">
-                            Enterprise-grade S3 file management with client-side encryption, instant sharing, and real-time sync. Built for teams who demand security without compromising on speed.
+                            Your buckets. Your keys. Zero knowledge. The professional interface for your S3 assets.
                         </p>
                     </div>
 
@@ -94,28 +94,7 @@ export const LandingPage = ({ onGetStarted }) => {
                         </a>
                     </div>
 
-                    {/* stats section */}
-                    <div className="relative">
-                        <div className="absolute inset-0 -z-1 grid grid-cols-3 max-sm:hidden">
-                            <div className="border-r border-edge"></div>
-                            <div className="border-r border-edge"></div>
-                            <div></div>
-                        </div>
 
-                        <div className="grid grid-cols-1 sm:grid-cols-3">
-                            {[
-                                { value: '256-bit', label: 'AES Encryption', icon: Lock },
-                                { value: '99.99%', label: 'Uptime SLA', icon: Zap },
-                                { value: '<50ms', label: 'Global Latency', icon: BarChart3 },
-                            ].map((stat, i) => (
-                                <div key={i} className="p-6 screen-line-after flex flex-col">
-                                    <stat.icon className="w-4 h-4 text-brand mb-3" />
-                                    <span className="text-2xl font-semibold tracking-tight">{stat.value}</span>
-                                    <span className="text-xs text-muted-foreground mt-1 font-medium">{stat.label}</span>
-                                </div>
-                            ))}
-                        </div>
-                    </div>
 
                     {/* diagonal separator */}
                     <Separator />
@@ -135,23 +114,23 @@ export const LandingPage = ({ onGetStarted }) => {
                             {[
                                 {
                                     icon: Shield,
-                                    title: 'End-to-End Encryption',
-                                    description: 'Your files are encrypted before leaving your device. Zero-knowledge architecture means only you hold the keys.'
+                                    title: 'Local Encryption',
+                                    description: 'Keys stay in memory. Zero knowledge. Absolute privacy generated on-device.'
                                 },
                                 {
                                     icon: Upload,
-                                    title: 'Smart Upload',
-                                    description: 'Drag, drop, done. Automatic image compression and optimization saves bandwidth without quality loss.'
+                                    title: 'Smart Compress',
+                                    description: 'Auto-optimize assets on-the-fly. Save bandwidth without quality loss.'
                                 },
                                 {
                                     icon: Link2,
-                                    title: 'Instant Sharing',
-                                    description: 'Generate secure, time-limited links in one click. Control access with password protection and expiry dates.'
+                                    title: 'Instant Links',
+                                    description: 'Generate secure, expiring links in one click. Password protected access control.'
                                 },
                                 {
                                     icon: Zap,
-                                    title: 'Lightning Fast CDN',
-                                    description: 'Global edge network ensures your files load instantly anywhere in the world. 99.99% uptime guaranteed.'
+                                    title: 'Direct Access',
+                                    description: 'No bottlenecks. Raw speed. Direct-to-S3 architecture for maximum throughput.'
                                 },
                             ].map((feature, i) => (
                                 <div key={i} className="p-6 screen-line-after">

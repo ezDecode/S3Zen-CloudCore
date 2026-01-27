@@ -12,6 +12,15 @@
     font-family: "Geist", sans-serif;
     @apply bg-background text-foreground;
   }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    @apply font-mono tracking-tight;
+  }
 }
 
 @theme inline {
@@ -110,65 +119,71 @@
 
 :root {
   --radius: 0.5rem;
-  --background: #ffffff;
-  --foreground: #09090b;
 
-  --card: #ffffff;
-  --card-foreground: #09090b;
+  /* Strict Theme: Black Background, White Text */
+  --background: #000000;
+  --foreground: #ffffff;
 
-  --popover: #ffffff;
-  --popover-foreground: #09090b;
+  /* Card: Deepest Gray/Black */
+  --card: #09090b;
+  --card-foreground: #ffffff;
 
+  /* Popover: Black */
+  --popover: #000000;
+  --popover-foreground: #ffffff;
+
+  /* Primary: Orange */
   --primary: #f97316;
-  /* Orange-500 */
-  --primary-foreground: #fafafa;
+  --primary-foreground: #ffffff;
 
-  --secondary: #f4f4f5;
-  --secondary-foreground: #18181b;
+  /* Secondary: Zinc 900 */
+  --secondary: #18181b;
+  --secondary-foreground: #ffffff;
 
-  --muted: #f4f4f5;
-  --muted-foreground: #71717a;
+  /* Muted: Zinc 900 */
+  --muted: #18181b;
+  --muted-foreground: #a1a1aa;
 
-  --accent: #f4f4f5;
-  --accent-foreground: #18181b;
+  /* Accent: Zinc 800 */
+  --accent: #27272a;
+  --accent-foreground: #ffffff;
 
   /* New accent color for subtle hovers */
-  --accent2: rgba(0, 0, 0, 0.02);
+  --accent2: rgba(255, 255, 255, 0.03);
 
-  --destructive: #ef4444;
-  --destructive-foreground: #fafafa;
+  --destructive: #7f1d1d;
+  --destructive-foreground: #ffffff;
 
-  --border: #e4e4e7;
-  --input: #e4e4e7;
+  /* Borders: Zinc 800 */
+  --border: #27272a;
+  --input: #27272a;
   --ring: #f97316;
-  /* Orange Ring */
 
-  /* Edge and pattern colors matching ncdai */
-  --color-edge: rgba(0, 0, 0, 0.08);
+  /* Edge and pattern colors - Visible on Black */
+  --color-edge: rgba(255, 255, 255, 0.12);
   --edge: var(--color-edge);
-  --grid-dot: rgba(0, 0, 0, 0.06);
-  --diagonal-line: rgba(0, 0, 0, 0.03);
+  --grid-dot: rgba(255, 255, 255, 0.08);
+  --diagonal-line: rgba(255, 255, 255, 0.04);
   --pattern-foreground: var(--color-edge);
 
-  /* Info accent for badges/indicators */
+  /* Info accent */
   --info: #3b82f6;
 
-  /* Popover specific styling */
-  --popover-border: rgba(0, 0, 0, 0.08);
+  /* Popover border */
+  --popover-border: rgba(255, 255, 255, 0.12);
 
-  /* Custom Mainline Accents */
+  /* Brand: Orange */
   --brand: #f97316;
-  /* Orange Brand */
   --brand-foreground: #ffffff;
 
-  /* Code block styling */
-  --code: #fafafa;
-  --code-foreground: #18181b;
+  /* Code block */
+  --code: #121212;
+  --code-foreground: #ffffff;
 
   /* Shadow tokens */
-  --shadow-xs: 0 1px 2px 0 rgb(0 0 0 / 0.05);
-  --shadow-sm: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
-  --shadow-popover: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+  --shadow-xs: 0 1px 2px 0 rgb(0 0 0 / 0.5);
+  --shadow-sm: 0 1px 3px 0 rgb(0 0 0 / 0.5), 0 1px 2px -1px rgb(0 0 0 / 0.5);
+  --shadow-popover: 0 10px 15px -3px rgb(0 0 0 / 0.5), 0 4px 6px -4px rgb(0 0 0 / 0.5);
 }
 
 .dark {
@@ -479,7 +494,7 @@
 }
 
 .btn-ghost {
-  @apply text-foreground hover:bg-accent hover:text-accent-foreground opacity-80 hover:opacity-100;
+  @apply text-foreground hover:bg-accent hover:text-accent-foreground opacity-90 hover:opacity-100;
 }
 
 /* Card */
@@ -520,14 +535,14 @@
 
 /* Typography - Medium & Regular weights only */
 .heading-mainline {
-  @apply text-foreground tracking-tight lowercase;
+  @apply text-foreground tracking-tight lowercase font-mono;
   font-weight: 500;
 }
 
 .text-muted-mainline {
   @apply text-muted-foreground leading-relaxed lowercase;
   font-weight: 400;
-  opacity: 0.7;
+  opacity: 1;
 }
 
 /* Progress */
@@ -555,7 +570,7 @@
 .micro-label {
   @apply text-[10px] tracking-[0.15em] text-muted-foreground lowercase;
   font-weight: 400;
-  opacity: 0.6;
+  opacity: 0.9;
 }
 
 /* Infrastructure Status Indicator */

@@ -132,13 +132,13 @@ export const BucketSetup = ({ user, onComplete }) => {
                         {/* title section */}
                         <div className="space-y-4">
                             <h1 className="screen-line-after text-3xl tracking-tight pb-4 font-medium">
-                                Cloud Configuration
+                                Connect Storage
                             </h1>
                         </div>
 
                         <div className="p-0">
                             <p className="font-mono text-sm text-balance text-muted-foreground" style={{ opacity: 0.7 }}>
-                                Enter your AWS deployment parameters to synchronize with your storage infrastructure. Keys are never stored in plaintext and remain strictly in-memory during this session.
+                                Link AWS S3. Keys processed in-memory. Zero logging.
                             </p>
                         </div>
 
@@ -161,7 +161,7 @@ export const BucketSetup = ({ user, onComplete }) => {
 
                                 {/* 2 column grid with background lines */}
                                 <div className="relative">
-                                    <div className="grid grid-cols-2 gap-6">
+                                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                                         <div className="space-y-2 text-left">
                                             <label className="text-xs tracking-widest uppercase font-medium text-muted-foreground px-1">Data Region</label>
                                             <select
@@ -220,7 +220,7 @@ export const BucketSetup = ({ user, onComplete }) => {
                                         <CheckCircle className="w-4 h-4" />
                                     ) : (
                                         <>
-                                            Establish Cluster
+                                            Connect
                                             <ArrowRight className="w-4 h-4 ml-2" />
                                         </>
                                     )}

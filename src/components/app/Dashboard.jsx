@@ -79,7 +79,7 @@ const FileItem = memo(({ file, copiedUrl, deleting, onCopy, onDelete }) => {
 
             <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-3">
-                    <span className="text-sm truncate font-medium">{file.name}</span>
+                    <span className="text-sm truncate font-medium max-w-[150px] sm:max-w-none">{file.name}</span>
                     {file.compressed && (
                         <span className="badge badge-brand">Compressed</span>
                     )}
@@ -89,7 +89,7 @@ const FileItem = memo(({ file, copiedUrl, deleting, onCopy, onDelete }) => {
                         <HardDrive className="w-3 h-3" />
                         {formatSize(file.size)}
                     </span>
-                    <span className="w-1 h-1 rounded-full bg-muted-foreground/30" />
+                    <span className="w-1 h-1 rounded-full bg-muted-foreground/50" />
                     <span className="flex items-center gap-1">
                         <Clock className="w-3 h-3" />
                         {formatDate(file.uploadedAt)}
@@ -97,7 +97,7 @@ const FileItem = memo(({ file, copiedUrl, deleting, onCopy, onDelete }) => {
                 </div>
             </div>
 
-            <div className="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+            <div className="flex items-center gap-2 opacity-100 md:opacity-0 group-hover:opacity-100 transition-opacity">
                 <button
                     onClick={() => onCopy(file.url, file.key)}
                     className={`btn h-8 px-4 text-xs rounded-lg font-medium ${copiedUrl === file.key ? 'btn-brand' : 'btn-secondary'}`}
@@ -261,7 +261,7 @@ export const Dashboard = ({ user, bucket, onLogout, onManageBucket }) => {
                                 <Cloud className="w-5 h-5 text-brand" />
                             </div>
                             <div className="flex flex-col">
-                                <span className="text-base leading-none font-semibold">CloudCore</span>
+                                <span className="text-base leading-none font-semibold font-mono">CloudCore</span>
                                 <span className="text-[11px] text-muted-foreground mt-1 font-medium">
                                     {bucket?.bucket_name || bucket?.bucketName || 'No Bucket Connected'}
                                 </span>
@@ -296,13 +296,13 @@ export const Dashboard = ({ user, bucket, onLogout, onManageBucket }) => {
 
                 {/* stats bar */}
                 <div className="relative">
-                    <div className="absolute inset-0 -z-1 grid grid-cols-3 max-sm:hidden">
-                        <div className="border-r border-edge"></div>
-                        <div className="border-r border-edge"></div>
+                    <div className="absolute inset-0 -z-1 grid grid-cols-1 md:grid-cols-3 max-sm:hidden">
+                        <div className="border-r border-edge hidden md:block"></div>
+                        <div className="border-r border-edge hidden md:block"></div>
                         <div></div>
                     </div>
 
-                    <div className="grid grid-cols-3 screen-line-after">
+                    <div className="grid grid-cols-1 md:grid-cols-3 screen-line-after divide-y divide-dotted divide-edge md:divide-y-0">
                         <div className="p-4 flex items-center gap-3">
                             <HardDrive className="w-4 h-4 text-brand" />
                             <div>
@@ -358,7 +358,7 @@ export const Dashboard = ({ user, bucket, onLogout, onManageBucket }) => {
 
                     {/* upload zone section */}
                     <div className="screen-line-after px-4 py-2">
-                        <span className="text-xs tracking-widest text-muted-foreground uppercase font-medium">Upload Files</span>
+                        <span className="text-xs tracking-widest text-muted-foreground uppercase font-medium">Secure Upload</span>
                     </div>
 
                     <div className="p-4">
@@ -396,10 +396,10 @@ export const Dashboard = ({ user, bucket, onLogout, onManageBucket }) => {
                             </div>
                             <div className="text-center">
                                 <h3 className="text-base font-semibold mb-1">
-                                    {isDragging ? 'Drop Files Here' : 'Drag Files to Upload'}
+                                    {isDragging ? 'Add Files' : 'Secure Upload'}
                                 </h3>
                                 <p className="text-xs text-muted-foreground">
-                                    Or click to browse • Images auto-compressed
+                                    Drag & drop or click to browse • Auto-compression active
                                 </p>
                             </div>
                         </div>
@@ -426,9 +426,9 @@ export const Dashboard = ({ user, bucket, onLogout, onManageBucket }) => {
                             <div className="w-16 h-16 rounded-2xl bg-secondary flex items-center justify-center mx-auto mb-4">
                                 <Cloud className="w-8 h-8 text-muted-foreground" />
                             </div>
-                            <h3 className="text-base font-semibold mb-2">No Files Yet</h3>
+                            <h3 className="text-base font-semibold mb-2 tracking-tight">No Assets</h3>
                             <p className="text-sm text-muted-foreground max-w-xs mx-auto">
-                                Upload your first file to get started. All files are securely stored in your connected S3 bucket.
+                                Initialize upload. Assets stored securely in S3.
                             </p>
                         </div>
                     ) : (
@@ -454,7 +454,7 @@ export const Dashboard = ({ user, bucket, onLogout, onManageBucket }) => {
                 <footer className="screen-line-before">
                     <div className="px-4 py-6 flex items-center justify-between">
                         <div className="status-indicator">
-                            <span className="text-xs font-medium">System Operational</span>
+                            <span className="text-xs font-medium tracking-tight">Channel Secure</span>
                         </div>
                         <div className="text-xs text-muted-foreground font-medium">
                             © {new Date().getFullYear()} CloudCore Lab

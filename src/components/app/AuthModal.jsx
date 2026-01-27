@@ -140,11 +140,11 @@ export const AuthModal = ({ isOpen, onClose, onSendOTP, onVerifyOTP }) => {
                         </div>
                         <div>
                             <h2 id="auth-modal-title" className="font-semibold text-base text-foreground">
-                                {step === 'email' && 'Sign In'}
+                                {step === 'email' && 'Authenticate'}
                                 {step === 'otp' && 'Verify Code'}
                                 {step === 'success' && 'Welcome Back'}
                             </h2>
-                            <p className="text-xs text-muted-foreground">CloudCore Secure Access</p>
+                            <p className="text-xs text-muted-foreground tracking-tight">Secure Login</p>
                         </div>
                     </div>
                     <button
@@ -198,13 +198,13 @@ export const AuthModal = ({ isOpen, onClose, onSendOTP, onVerifyOTP }) => {
                                     <Loader2 className="w-4 h-4 animate-spin" />
                                 ) : (
                                     <>
-                                        Send Verification Code
+                                        Send Code
                                         <ArrowRight className="w-4 h-4" />
                                     </>
                                 )}
                             </button>
 
-                            <p className="text-[10px] text-muted-foreground/60 text-center">
+                            <p className="text-[10px] text-muted-foreground text-center">
                                 By continuing, you agree to our Terms of Service
                             </p>
                         </form>
@@ -237,7 +237,7 @@ export const AuthModal = ({ isOpen, onClose, onSendOTP, onVerifyOTP }) => {
                                             value={digit}
                                             onChange={(e) => handleOtpChange(index, e.target.value)}
                                             onKeyDown={(e) => handleOtpKeyDown(index, e)}
-                                            className="w-11 h-13 text-center text-xl font-bold rounded-lg border-2 border-edge bg-input/50 focus:border-brand focus:ring-2 focus:ring-brand/20 outline-none transition-all placeholder:text-muted-foreground/20"
+                                            className="w-11 h-13 text-center text-xl font-bold rounded-lg border-2 border-edge bg-input/50 focus:border-brand focus:ring-2 focus:ring-brand/20 outline-none transition-all placeholder:text-muted-foreground/50"
                                             style={{ borderStyle: digit ? 'solid' : 'dotted' }}
                                             aria-label={`Digit ${index + 1}`}
                                         />
