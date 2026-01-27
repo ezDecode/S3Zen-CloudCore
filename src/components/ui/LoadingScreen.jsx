@@ -1,39 +1,53 @@
 /**
  * LoadingScreen Component
- * Unified loading state display for consistent UX
+ * Premium loading state with smooth animations
  */
 
-import { Icon } from '@iconify/react';
+import { motion } from 'motion/react';
+import { FlickeringGrid } from './flickering-grid';
+import { AnimatedLogo } from './AnimatedLogo';
 
-export const LoadingScreen = ({ message = 'loading...' }) => {
+export const LoadingScreen = ({ message = 'Initializing...' }) => {
     return (
-        <div className="min-h-screen w-full bg-background flex items-center justify-center relative overflow-hidden">
-            {/* Subtle background pattern */}
-            <div
-                className="absolute inset-0 opacity-30"
-                style={{
-                    backgroundImage: 'none',
-                    backgroundSize: '24px 24px',
-                }}
-            />
+        <div className="fixed inset-0 min-h-screen w-full bg-background flex items-center justify-center overflow-hidden z-[9999]">
+            {/* Background Grid */}
+            <div className="absolute inset-0 z-0">
+                <FlickeringGrid
+                    squareSize={4}
+                    gridGap={6}
+                    color="#f97316" // Brand Orange
+                    maxOpacity={0.15}
+                    flickerChance={0.1}
+                    className="w-full h-full"
+                />
+            </div>
 
-            <div className="text-center z-10">
-                {/* Animated logo */}
-                <div className="relative mx-auto mb-6 w-16 h-16">
-                    <div className="absolute inset-0 rounded-2xl bg-brand/10 animate-pulse" />
-                    <div className="absolute inset-0 flex items-center justify-center">
-                        <Icon icon="solar:cloud-linear" className="w-8 h-8 text-brand animate-float-subtle" />
-                    </div>
+            <motion.div
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.95 }}
+                transition={{ duration: 0.5, ease: "easeOut" }}
+                className="relative z-10 flex flex-col items-center justify-center"
+            >
+                {/* Logo Container */}
+                {/* Logo Container */}
+                <div className="relative mb-8 w-48 h-auto">
+                    <AnimatedLogo className="w-full h-full text-foreground" />
                 </div>
 
-                {/* Spinner */}
-                <div className="w-8 h-8 border-2 border-edge border-t-brand rounded-full animate-spin mx-auto mb-4" />
-
                 {/* Message */}
-                <p className="text-muted-foreground text-sm font-medium animate-pulse">
-                    {message}
-                </p>
-            </div>
+                <motion.div
+                    key={message}
+                    initial={{ opacity: 0, y: 5 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.3 }}
+                    className="flex flex-col items-center gap-2"
+                >
+                    <p className="text-foreground text-sm font-medium tracking-widest uppercase opacity-90">
+                        {message}
+                    </p>
+                </motion.div>
+            </motion.div>
         </div>
     );
 };

@@ -5,17 +5,19 @@
  * Flow: Login → Connect Bucket → Upload → Get Links
  */
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, lazy, Suspense } from 'react';
 import ErrorBoundary from './components/ErrorBoundary';
-import { LandingPage } from './components/app/LandingPage';
-import Dashboard from './components/app/Dashboard';
-import { AuthModal } from './components/app/AuthModal';
-import { BucketSetup } from './components/app/BucketSetup';
-import { DisconnectModal } from './components/app/DisconnectModal';
 import { LoadingScreen } from './components/ui/LoadingScreen';
 import { useAuth } from './hooks/useAuth';
 import bucketManagerService from './services/bucketManagerService';
 import { toast } from 'sonner';
+
+// Lazy load heavy components
+const LandingPage = lazy(() => import('./components/app/LandingPage').then(module => ({ default: module.LandingPage })));
+const Dashboard = lazy(() => import('./components/app/Dashboard'));
+const AuthModal = lazy(() => import('./components/app/AuthModal').then(module => ({ default: module.AuthModal })));
+const BucketSetup = lazy(() => import('./components/app/BucketSetup').then(module => ({ default: module.BucketSetup })));
+const DisconnectModal = lazy(() => import('./components/app/DisconnectModal').then(module => ({ default: module.DisconnectModal })));
 
 interface Bucket {
   id?: string;
@@ -192,9 +194,10 @@ function AppContent() {
   }
 
   // Not logged in - show landing page
+  // Not logged in - show landing page
   if (!isLoggedIn) {
     return (
-      <>
+      <Suspense fallback={<LoadingScreen message="Loading..." />}>
         <LandingPage onGetStarted={handleGetStarted} />
         <AuthModal
           isOpen={showAuthModal}
@@ -202,7 +205,7 @@ function AppContent() {
           onSendOTP={handleSendOTP}
           onVerifyOTP={handleVerifyOTP}
         />
-      </>
+      </Suspense>
     );
   }
 
@@ -213,7 +216,8 @@ function AppContent() {
 
   // Has bucket or is setting up - show dashboard as base
   return (
-    <>
+    <Suspense fallback={<LoadingScreen message="Loading..." />}>
+      {/* Dashboard */}
       <Dashboard
         user={user}
         bucket={currentBucket}
@@ -240,7 +244,7 @@ function AppContent() {
         />
       )}
 
-
+      {/* Disconnect Modal */}
       <DisconnectModal
         isOpen={showDisconnectModal}
         onClose={() => setShowDisconnectModal(false)}
@@ -249,7 +253,7 @@ function AppContent() {
         bucketName={currentBucket?.display_name || currentBucket?.bucket_name || currentBucket?.bucketName || 'this bucket'}
         hasActiveUploads={activeUploads > 0}
       />
-    </>
+    </Suspense>
   );
 }
 

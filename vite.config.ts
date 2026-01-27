@@ -14,4 +14,16 @@ export default defineConfig({
       "@": path.resolve(__dirname, "./src"),
     },
   },
+  build: {
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          'vendor-aws': ['@aws-sdk/client-s3', '@aws-sdk/lib-storage', '@aws-sdk/client-sts', '@aws-sdk/s3-request-presigner'],
+          'vendor-motion': ['motion'],
+          'vendor-ui': ['@base-ui/react', '@radix-ui/react-dialog', '@radix-ui/react-slot', '@radix-ui/react-toast', 'vaul', 'sonner'],
+          'vendor-react': ['react', 'react-dom'],
+        },
+      },
+    },
+  },
 })
