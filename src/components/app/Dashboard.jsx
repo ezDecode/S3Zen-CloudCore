@@ -284,8 +284,8 @@ const Dashboard = ({ user, bucket, onLogout, onAddBucket, onRemoveBucket }) => {
     };
 
     return (
-        <div className="flex min-h-screen items-center justify-center bg-muted/50 w-full">
-            <main className="flex min-h-screen flex-col bg-background border-x max-w-[70rem] w-full">
+        <div className="flex min-h-screen items-center justify-center bg-background w-full">
+            <main className="flex min-h-screen flex-col w-full">
                 <div className="flex-1 w-full flex flex-col">
                     {/* Header */}
                     <Header
@@ -303,22 +303,22 @@ const Dashboard = ({ user, bucket, onLogout, onAddBucket, onRemoveBucket }) => {
                             <Card className="p-6 flex flex-row items-center gap-4 bg-secondary/20">
                                 <Icon icon="solar:ssd-linear" className="w-6 h-6 text-brand" />
                                 <div>
-                                    <div className="text-lg font-display font-bold">{totalFiles}</div>
-                                    <div className="text-xs text-muted-foreground uppercase tracking-wider">Files Stored</div>
+                                    <div className="text-2xl font-display font-bold">{totalFiles}</div>
+                                    <div className="text-label">Files Stored</div>
                                 </div>
                             </Card>
                             <Card className="p-6 flex flex-row items-center gap-4 bg-secondary/20">
                                 <Icon icon="solar:graph-new-up-linear" className="w-6 h-6 text-brand" />
                                 <div>
-                                    <div className="text-lg font-display font-bold">{formatSize(totalSize)}</div>
-                                    <div className="text-xs text-muted-foreground uppercase tracking-wider">Total Storage</div>
+                                    <div className="text-2xl font-display font-bold">{formatSize(totalSize)}</div>
+                                    <div className="text-label">Total Storage</div>
                                 </div>
                             </Card>
                             <Card className="p-6 flex flex-row items-center gap-4 bg-secondary/20">
                                 <Icon icon="solar:shield-linear" className="w-6 h-6 text-brand" />
                                 <div>
-                                    <div className="text-lg font-display font-bold">{formatSize(totalSaved)}</div>
-                                    <div className="text-xs text-muted-foreground uppercase tracking-wider">Space Saved</div>
+                                    <div className="text-2xl font-display font-bold">{formatSize(totalSaved)}</div>
+                                    <div className="text-label">Space Saved</div>
                                 </div>
                             </Card>
                         </div>
@@ -346,7 +346,7 @@ const Dashboard = ({ user, bucket, onLogout, onAddBucket, onRemoveBucket }) => {
                         {/* Active Uploads */}
                         {uploads.length > 0 && (
                             <div className="flex flex-col gap-4">
-                                <h2 className="text-sm font-display font-bold uppercase tracking-widest text-muted-foreground">Uploading</h2>
+                                <h2 className="text-label">Uploading</h2>
                                 <div className="divide-y divide-dotted divide-border/50">
                                     {uploads.map(upload => (
                                         <UploadItem key={upload.id} upload={upload} />
@@ -358,7 +358,7 @@ const Dashboard = ({ user, bucket, onLogout, onAddBucket, onRemoveBucket }) => {
                         {/* File Inventory */}
                         <div className="flex flex-col gap-4">
                             <div className="flex items-center justify-between border-b border-dotted border-border/50 pb-2">
-                                <h2 className="text-sm font-display font-bold uppercase tracking-widest text-muted-foreground">Recent Assets</h2>
+                                <h2 className="text-label">Recent Assets</h2>
                                 <Button
                                     onClick={() => syncHistory(true)}
                                     variant={isSyncing ? "secondary" : "ghost"}
@@ -384,8 +384,8 @@ const Dashboard = ({ user, bucket, onLogout, onAddBucket, onRemoveBucket }) => {
                                 <div className="py-20 text-center flex flex-col items-center justify-center">
                                     <img src="/logos/orbit-black.svg" alt="Empty" className="w-24 h-24 object-contain opacity-50 block dark:hidden" />
                                     <img src="/logos/orbit-white.svg" alt="Empty" className="w-24 h-24 object-contain opacity-50 hidden dark:block" />
-                                    <h3 className="font-medium">No assets found</h3>
-                                    <p className="text-sm text-muted-foreground">Upload your first file to see it here</p>
+                                    <h3 className="font-semibold text-lg">No assets found</h3>
+                                    <p className="text-muted-foreground">Upload your first file to see it here</p>
                                 </div>
                             ) : (
                                 <div className="divide-y divide-dotted divide-border/50">

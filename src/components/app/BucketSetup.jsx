@@ -119,7 +119,7 @@ export const BucketSetup = ({ user, onComplete, onBack }) => {
                         <img src="/logos/logo-white.svg" alt="Orbit" className="h-8 hidden dark:block" />
                         <div className="h-6 w-px bg-border/50" />
                         <div>
-                            <h2 className="font-display font-medium text-lg tracking-tight">
+                            <h2 className="font-display font-bold text-xl tracking-tight">
                                 Storage Setup
                             </h2>
                         </div>
@@ -143,7 +143,7 @@ export const BucketSetup = ({ user, onComplete, onBack }) => {
                         <div className="space-y-4">
                             <div className="grid grid-cols-1 gap-4">
                                 <div className="space-y-1.5">
-                                    <label className="text-[10px] tracking-widest uppercase font-semibold text-muted-foreground px-1">Bucket Name</label>
+                                    <label className="text-label px-1">Bucket Name</label>
                                     <Input
                                         type="text"
                                         name="bucketName"
@@ -155,7 +155,7 @@ export const BucketSetup = ({ user, onComplete, onBack }) => {
                                 </div>
 
                                 <div className="space-y-1.5">
-                                    <label className="text-[10px] tracking-widest uppercase font-semibold text-muted-foreground px-1">Region</label>
+                                    <label className="text-label px-1">Region</label>
                                     <Select
                                         name="region"
                                         value={formData.region}
@@ -174,7 +174,7 @@ export const BucketSetup = ({ user, onComplete, onBack }) => {
                             </div>
 
                             <div className="space-y-1.5">
-                                <label className="text-[10px] tracking-widest uppercase font-semibold text-muted-foreground px-1">Access Key ID</label>
+                                <label className="text-label px-1">Access Key ID</label>
                                 <Input
                                     type="text"
                                     name="accessKeyId"
@@ -186,7 +186,7 @@ export const BucketSetup = ({ user, onComplete, onBack }) => {
                             </div>
 
                             <div className="space-y-1.5">
-                                <label className="text-[10px] tracking-widest uppercase font-semibold text-muted-foreground px-1">Secret Access Key</label>
+                                <label className="text-label px-1">Secret Access Key</label>
                                 <Input
                                     type="password"
                                     name="secretAccessKey"

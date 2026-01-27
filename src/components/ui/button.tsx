@@ -22,6 +22,7 @@ const buttonVariants = cva(
         sm: "h-8 px-3 text-xs gap-1",
         lg: "h-12 px-8 text-base gap-1.5",
         xl: "h-14 px-10 text-lg gap-2",
+        launch: "h-10 px-4 text-sm font-semibold tracking-tight gap-2",
         icon: "h-10 w-10",
         "icon-sm": "h-8 w-8",
       },

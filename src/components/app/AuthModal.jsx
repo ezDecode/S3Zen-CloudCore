@@ -119,26 +119,24 @@ export const AuthModal = ({ isOpen, onClose, onSendOTP, onVerifyOTP }) => {
 
     return (
         <div className="fixed inset-0 z-[100] flex items-center justify-center bg-background/80 backdrop-blur-md" onClick={(e) => e.target === e.currentTarget && onClose()}>
-            <div className="w-full max-w-md bg-card shadow-2xl border border-border/50 rounded-3xl overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+            <div className="w-full max-w-md bg-card shadow-2xl border border-border/50 rounded-xl overflow-hidden animate-in fade-in zoom-in-95 duration-200">
                 {/* Header */}
-                <div className="px-6 py-4 flex items-center justify-between border-b border-dotted border-border/50">
-                    <div className="flex items-center gap-4">
-                        <img src="/logos/logo-black.svg" alt="Orbit" className="h-8 block dark:hidden" />
-                        <img src="/logos/logo-white.svg" alt="Orbit" className="h-8 hidden dark:block" />
-                        <div className="h-6 w-px bg-border/50" />
-                        <div>
-                            <h2 className="font-display font-medium text-lg tracking-tight">
-                                {step === 'email' && 'Authenticate'}
-                                {step === 'otp' && 'Verify Session'}
-                                {step === 'success' && 'Authenticated'}
-                            </h2>
-                        </div>
+                <div className="px-6 py-5 flex items-center justify-between border-b border-border/50">
+                    <div className="flex items-center gap-3">
+                        <img src="/logos/logo-black.svg" alt="Orbit" className="h-7 block dark:hidden" />
+                        <img src="/logos/logo-white.svg" alt="Orbit" className="h-7 hidden dark:block" />
+                        <div className="h-5 w-px bg-border/50" />
+                        <h2 className="font-display font-medium text-lg tracking-tight">
+                            {step === 'email' && 'Authenticate'}
+                            {step === 'otp' && 'Verify Session'}
+                            {step === 'success' && 'Authenticated'}
+                        </h2>
                     </div>
                     <Button
                         onClick={onClose}
                         variant="ghost"
                         size="icon-sm"
-                        className="text-muted-foreground hover:text-foreground"
+                        className="text-muted-foreground/50 hover:text-foreground transition-colors"
                     >
                         <Icon icon="solar:close-circle-linear" className="w-5 h-5" />
                     </Button>
@@ -148,23 +146,25 @@ export const AuthModal = ({ isOpen, onClose, onSendOTP, onVerifyOTP }) => {
                 <div className="p-6">
                     {step === 'email' && (
                         <form onSubmit={handleSendOTP} className="space-y-6">
-                            <p className="text-sm text-muted-foreground leading-relaxed">
+                            <p className="text-description">
                                 Enter your email for a zero-knowledge handshake. We'll send a one-time secure code.
                             </p>
 
-                            <div className="space-y-2">
-                                <label className="text-[10px] tracking-widest text-muted-foreground uppercase font-semibold px-1">Email Address</label>
-                                <div className="relative">
-                                    <Icon icon="solar:letter-linear" className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-                                    <Input
-                                        ref={emailInputRef}
-                                        type="email"
-                                        value={email}
-                                        onChange={(e) => setEmail(e.target.value)}
-                                        placeholder="user@orbit.xyz"
-                                        className="h-10 pl-10 rounded-xl text-sm"
-                                        required
-                                    />
+                            <div className="space-y-4">
+                                <div className="space-y-2">
+                                    <label className="text-label px-1">Email Address</label>
+                                    <div className="relative">
+                                        <Icon icon="solar:letter-linear" className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground/60" />
+                                        <Input
+                                            ref={emailInputRef}
+                                            type="email"
+                                            value={email}
+                                            onChange={(e) => setEmail(e.target.value)}
+                                            placeholder="user@orbit.xyz"
+                                            className="h-11 pl-10 rounded-md text-sm bg-secondary/20 border-transparent focus:bg-background transition-all"
+                                            required
+                                        />
+                                    </div>
                                 </div>
                             </div>
 
@@ -184,12 +184,12 @@ export const AuthModal = ({ isOpen, onClose, onSendOTP, onVerifyOTP }) => {
                     {step === 'otp' && (
                         <div className="space-y-6 text-center">
                             <div>
-                                <p className="text-sm text-muted-foreground mb-1">Code sent to</p>
+                                <p className="text-label mb-1">Code sent to</p>
                                 <p className="font-medium text-base text-foreground">{email}</p>
                             </div>
 
                             <div className="space-y-4">
-                                <div className="flex gap-2 justify-center" onPaste={handleOtpPaste}>
+                                <div className="flex gap-2.5 justify-center" onPaste={handleOtpPaste}>
                                     {otp.map((digit, index) => (
                                         <input
                                             key={index}
@@ -200,8 +200,12 @@ export const AuthModal = ({ isOpen, onClose, onSendOTP, onVerifyOTP }) => {
                                             value={digit}
                                             onChange={(e) => handleOtpChange(index, e.target.value)}
                                             onKeyDown={(e) => handleOtpKeyDown(index, e)}
-                                            className="w-10 h-14 text-center text-xl font-mono font-medium rounded-xl border-2 border-dotted border-border focus:border-brand focus:border-solid focus:ring-4 focus:ring-brand/10 outline-none transition-all"
-                                            style={{ borderColor: digit ? 'var(--brand)' : '', borderStyle: digit ? 'solid' : 'dotted' }}
+                                            className="w-12 h-12 text-center text-lg font-mono font-medium rounded-md border-dashed border border-border bg-secondary/10 focus:border-brand focus:border-solid focus:ring-4 focus:ring-brand/5 outline-none transition-all"
+                                            style={{
+                                                borderColor: digit ? 'var(--brand)' : '',
+                                                borderStyle: digit ? 'solid' : 'dashed',
+                                                background: digit ? 'transparent' : ''
+                                            }}
                                         />
                                     ))}
                                 </div>
@@ -211,18 +215,26 @@ export const AuthModal = ({ isOpen, onClose, onSendOTP, onVerifyOTP }) => {
 
                             <div className="flex flex-col gap-2">
                                 <Button variant="link" size="sm" className="h-auto p-0" onClick={() => setStep('email')}>Use different email</Button>
-                                <Button variant="ghost" size="sm" className="h-auto p-0 text-brand hover:text-brand/80" onClick={() => handleSendOTP({ preventDefault: () => { } })} disabled={loading}>Resend code</Button>
+                                <Button
+                                    variant="ghost"
+                                    size="sm"
+                                    className="h-9 px-4 text-brand hover:text-brand hover:bg-brand/5 cursor-pointer transition-all"
+                                    onClick={() => handleSendOTP({ preventDefault: () => { } })}
+                                    disabled={loading}
+                                >
+                                    Resend code
+                                </Button>
                             </div>
                         </div>
                     )}
 
                     {step === 'success' && (
-                        <div className="text-center py-6">
-                            <div className="w-16 h-16 bg-brand/10 rounded-2xl flex items-center justify-center mx-auto mb-4">
-                                <Icon icon="solar:check-circle-linear" className="w-8 h-8 text-brand" />
+                        <div className="text-center py-8">
+                            <div className="w-14 h-14 bg-brand/10 rounded-lg flex items-center justify-center mx-auto mb-5">
+                                <Icon icon="solar:check-circle-linear" className="w-7 h-7 text-brand" />
                             </div>
-                            <h3 className="text-xl font-display font-bold mb-1 uppercase tracking-tight">Access Granted</h3>
-                            <p className="text-sm text-muted-foreground">Synchronizing your environment...</p>
+                            <h3 className="font-display font-bold text-xl mb-1.5 tracking-tight">Access Granted</h3>
+                            <p className="text-description px-8">Your environment is synchronized and ready for use.</p>
                         </div>
                     )}
                 </div>

@@ -12,7 +12,6 @@ import Dashboard from './components/app/Dashboard';
 import { AuthModal } from './components/app/AuthModal';
 import { BucketSetup } from './components/app/BucketSetup';
 import { DisconnectModal } from './components/app/DisconnectModal';
-import { Toaster } from './components/app/Toaster';
 import { LoadingScreen } from './components/ui/LoadingScreen';
 import { useAuth } from './hooks/useAuth';
 import bucketManagerService from './services/bucketManagerService';
@@ -135,7 +134,6 @@ function AppContent() {
           onSendOTP={handleSendOTP}
           onVerifyOTP={handleVerifyOTP}
         />
-        <Toaster />
       </>
     );
   }
@@ -165,7 +163,6 @@ function AppContent() {
         />
       )}
 
-      <Toaster />
 
       <DisconnectModal
         isOpen={showDisconnectModal}
@@ -182,7 +179,7 @@ function AppContent() {
  */
 function App() {
   return (
-    <div className="min-h-screen bg-black flex justify-center selection:bg-brand/20 selection:text-brand">
+    <div className="min-h-screen bg-background flex justify-center selection:bg-brand/20 selection:text-brand">
       <ErrorBoundary>
         <AppContent />
       </ErrorBoundary>
