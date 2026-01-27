@@ -5,6 +5,7 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { X, Mail, ArrowRight, Loader2, CheckCircle, Cloud } from 'lucide-react';
+import { Button } from '../ui/button';
 
 export const AuthModal = ({ isOpen, onClose, onSendOTP, onVerifyOTP }) => {
     const [step, setStep] = useState('email'); // 'email' | 'otp' | 'success'
@@ -39,10 +40,8 @@ export const AuthModal = ({ isOpen, onClose, onSendOTP, onVerifyOTP }) => {
     const handleSendOTP = async (e) => {
         e.preventDefault();
         if (!email || loading) return;
-
         setError('');
         setLoading(true);
-
         try {
             const result = await onSendOTP(email);
             if (result?.success !== false) {
@@ -60,26 +59,15 @@ export const AuthModal = ({ isOpen, onClose, onSendOTP, onVerifyOTP }) => {
 
     const handleOtpChange = (index, value) => {
         if (!/^\d*$/.test(value)) return;
-
         const newOtp = [...otp];
         newOtp[index] = value.slice(-1);
         setOtp(newOtp);
-
-        // Auto-focus next input
-        if (value && index < 5) {
-            otpRefs.current[index + 1]?.focus();
-        }
-
-        // Auto-submit when complete
-        if (index === 5 && value && newOtp.every(d => d)) {
-            handleVerifyOTP(newOtp.join(''));
-        }
+        if (value && index < 5) otpRefs.current[index + 1]?.focus();
+        if (index === 5 && value && newOtp.every(d => d)) handleVerifyOTP(newOtp.join(''));
     };
 
     const handleOtpKeyDown = (index, e) => {
-        if (e.key === 'Backspace' && !otp[index] && index > 0) {
-            otpRefs.current[index - 1]?.focus();
-        }
+        if (e.key === 'Backspace' && !otp[index] && index > 0) otpRefs.current[index - 1]?.focus();
     };
 
     const handleOtpPaste = (e) => {
@@ -91,17 +79,13 @@ export const AuthModal = ({ isOpen, onClose, onSendOTP, onVerifyOTP }) => {
                 setOtp(newOtp);
                 handleVerifyOTP(pasted);
             }
-        } catch {
-            // Ignore clipboard errors
-        }
+        } catch { }
     };
 
     const handleVerifyOTP = async (code) => {
         if (loading) return;
-
         setError('');
         setLoading(true);
-
         try {
             const result = await onVerifyOTP(email, code);
             if (result?.success !== false) {
@@ -113,8 +97,7 @@ export const AuthModal = ({ isOpen, onClose, onSendOTP, onVerifyOTP }) => {
                 otpRefs.current[0]?.focus();
             }
         } catch (err) {
-            const errorMessage = err?.message || err?.error || 'Verification failed. Please try again.';
-            setError(errorMessage);
+            setError(err?.message || 'Verification failed');
             setOtp(['', '', '', '', '', '']);
             otpRefs.current[0]?.focus();
         } finally {
@@ -125,108 +108,78 @@ export const AuthModal = ({ isOpen, onClose, onSendOTP, onVerifyOTP }) => {
     if (!isOpen) return null;
 
     return (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-background/80 backdrop-blur-sm" onClick={(e) => e.target === e.currentTarget && onClose()}>
-            <div
-                className="w-full max-w-md bg-card shadow-2xl border border-edge/50 rounded-xl overflow-hidden animate-in fade-in zoom-in-95 duration-200"
-                role="dialog"
-                aria-modal="true"
-                aria-labelledby="auth-modal-title"
-            >
+        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-background/80 backdrop-blur-md" onClick={(e) => e.target === e.currentTarget && onClose()}>
+            <div className="w-full max-w-lg bg-card shadow-2xl border border-border/50 rounded-3xl overflow-hidden animate-in fade-in zoom-in-95 duration-200">
                 {/* Header */}
-                <div className="modal-header px-6 py-5 flex items-center justify-between bg-secondary/30">
-                    <div className="flex items-center gap-3">
-                        <div className="w-8 h-8 rounded-lg bg-brand/10 flex items-center justify-center">
-                            <Cloud className="w-4 h-4 text-brand" />
-                        </div>
+                <div className="px-8 py-6 flex items-center justify-between border-b border-dotted border-border/50">
+                    <div className="flex items-center gap-4">
+                        <img src="/logos/logo-black.svg" alt="Orbit" className="h-10 block dark:hidden" />
+                        <img src="/logos/logo-white.svg" alt="Orbit" className="h-10 hidden dark:block" />
+                        <div className="h-8 w-px bg-border/50" />
                         <div>
-                            <h2 id="auth-modal-title" className="font-semibold text-base text-foreground">
+                            <h2 className="font-sans font-medium text-lg">
                                 {step === 'email' && 'Authenticate'}
-                                {step === 'otp' && 'Verify Code'}
-                                {step === 'success' && 'Welcome Back'}
+                                {step === 'otp' && 'Verify Session'}
+                                {step === 'success' && 'Authenticated'}
                             </h2>
-                            <p className="text-xs text-muted-foreground tracking-tight">Secure Login</p>
+                            <p className="text-xs text-muted-foreground uppercase tracking-widest font-medium">Secure Access</p>
                         </div>
                     </div>
-                    <button
+                    <Button
                         onClick={onClose}
-                        aria-label="Close authentication dialog"
-                        className="rounded-lg w-8 h-8 flex items-center justify-center text-muted-foreground hover:bg-secondary hover:text-foreground transition-colors"
+                        variant="ghost"
+                        size="icon"
                     >
-                        <X className="w-4 h-4" />
-                    </button>
+                        <X className="w-5 h-5" />
+                    </Button>
                 </div>
 
                 {/* Body */}
-                <div className="modal-body p-6">
-                    {/* Email Step */}
+                <div className="p-8">
                     {step === 'email' && (
-                        <form onSubmit={handleSendOTP} className="space-y-6">
-                            <p className="text-sm text-muted-foreground leading-relaxed">
-                                Enter your email address and we'll send you a secure one-time code to access your account.
+                        <form onSubmit={handleSendOTP} className="space-y-8">
+                            <p className="text-base text-muted-foreground leading-relaxed">
+                                Enter your email for a zero-knowledge handshake. We'll send a one-time secure code.
                             </p>
 
-                            <div className="space-y-2">
-                                <label className="text-xs tracking-widest text-muted-foreground uppercase font-medium px-1">
-                                    Email Address
-                                </label>
+                            <div className="space-y-3">
+                                <label className="text-xs tracking-widest text-muted-foreground uppercase font-medium px-1">Email Address</label>
                                 <div className="relative">
-                                    <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                                    <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
                                     <input
                                         ref={emailInputRef}
                                         type="email"
                                         value={email}
                                         onChange={(e) => setEmail(e.target.value)}
-                                        placeholder="you@company.com"
-                                        className="input pl-10"
+                                        placeholder="user@orbit.xyz"
+                                        className="input h-14 pl-12 rounded-xl text-base"
                                         required
                                     />
                                 </div>
                             </div>
 
-                            {error && (
-                                <div className="p-3 rounded-lg bg-destructive/5 border border-destructive/20 text-destructive text-xs font-medium" role="alert" aria-live="polite">
-                                    {error}
-                                </div>
-                            )}
+                            {error && <div className="p-4 rounded-xl bg-destructive/5 border border-destructive/20 text-destructive text-sm">{error}</div>}
 
-                            <button
+                            <Button
                                 type="submit"
                                 disabled={loading || !email}
-                                className="btn btn-brand w-full h-11 rounded-lg text-sm font-medium"
+                                size="lg"
+                                className="w-full"
                             >
-                                {loading ? (
-                                    <Loader2 className="w-4 h-4 animate-spin" />
-                                ) : (
-                                    <>
-                                        Send Code
-                                        <ArrowRight className="w-4 h-4" />
-                                    </>
-                                )}
-                            </button>
-
-                            <p className="text-[10px] text-muted-foreground text-center">
-                                By continuing, you agree to our Terms of Service
-                            </p>
+                                {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : <>Generate Code <ArrowRight className="w-5 h-5 ml-2" /></>}
+                            </Button>
                         </form>
                     )}
 
-                    {/* OTP Step */}
                     {step === 'otp' && (
-                        <div className="space-y-6">
+                        <div className="space-y-8 text-center">
                             <div>
-                                <p className="text-sm text-muted-foreground mb-1">
-                                    We sent a 6-digit code to
-                                </p>
-                                <p className="font-semibold text-foreground text-base">
-                                    {email}
-                                </p>
+                                <p className="text-muted-foreground mb-1">Code sent to</p>
+                                <p className="font-sans font-medium text-lg text-foreground">{email}</p>
                             </div>
 
-                            <div className="space-y-2">
-                                <label className="text-xs tracking-widest text-muted-foreground uppercase font-medium px-1">
-                                    Verification Code
-                                </label>
-                                <div className="flex gap-2 justify-center" onPaste={handleOtpPaste}>
+                            <div className="space-y-4">
+                                <div className="flex gap-3 justify-center" onPaste={handleOtpPaste}>
                                     {otp.map((digit, index) => (
                                         <input
                                             key={index}
@@ -237,59 +190,29 @@ export const AuthModal = ({ isOpen, onClose, onSendOTP, onVerifyOTP }) => {
                                             value={digit}
                                             onChange={(e) => handleOtpChange(index, e.target.value)}
                                             onKeyDown={(e) => handleOtpKeyDown(index, e)}
-                                            className="w-11 h-13 text-center text-xl font-bold rounded-lg border-2 border-edge bg-input/50 focus:border-brand focus:ring-2 focus:ring-brand/20 outline-none transition-all placeholder:text-muted-foreground/50"
-                                            style={{ borderStyle: digit ? 'solid' : 'dotted' }}
-                                            aria-label={`Digit ${index + 1}`}
+                                            className="w-12 h-16 text-center text-2xl font-mono font-medium rounded-xl border-2 border-dotted border-border focus:border-brand focus:border-solid focus:ring-4 focus:ring-brand/10 outline-none transition-all"
+                                            style={{ borderColor: digit ? 'var(--brand)' : '', borderStyle: digit ? 'solid' : 'dotted' }}
                                         />
                                     ))}
                                 </div>
                             </div>
 
-                            {error && (
-                                <div className="p-3 rounded-lg bg-destructive/5 border border-destructive/20 text-destructive text-xs font-medium text-center" role="alert" aria-live="polite">
-                                    {error}
-                                </div>
-                            )}
+                            {error && <div className="p-4 rounded-xl bg-destructive/5 border border-destructive/20 text-destructive text-sm">{error}</div>}
 
-                            {loading && (
-                                <div className="flex items-center justify-center gap-2 text-muted-foreground text-sm">
-                                    <Loader2 className="w-4 h-4 animate-spin" />
-                                    <span>Verifying...</span>
-                                </div>
-                            )}
-
-                            <div className="flex flex-col gap-2">
-                                <button
-                                    type="button"
-                                    onClick={() => setStep('email')}
-                                    className="btn btn-ghost w-full h-10 rounded-lg text-sm font-medium"
-                                >
-                                    Use Different Email
-                                </button>
-                                <button
-                                    type="button"
-                                    onClick={() => handleSendOTP({ preventDefault: () => { } })}
-                                    disabled={loading}
-                                    className="text-xs text-brand hover:text-brand/80 transition-colors font-medium"
-                                >
-                                    Resend Code
-                                </button>
+                            <div className="flex flex-col gap-4">
+                                <Button variant="link" size="sm" onClick={() => setStep('email')}>Use different email</Button>
+                                <Button variant="ghost" size="sm" className="text-brand hover:text-brand/80" onClick={() => handleSendOTP({ preventDefault: () => { } })} disabled={loading}>Resend code</Button>
                             </div>
                         </div>
                     )}
 
-                    {/* Success Step */}
                     {step === 'success' && (
-                        <div className="text-center py-8">
-                            <div className="w-16 h-16 bg-brand/10 rounded-2xl flex items-center justify-center mx-auto mb-6">
-                                <CheckCircle className="w-8 h-8 text-brand" />
+                        <div className="text-center py-10">
+                            <div className="w-20 h-20 bg-brand/10 rounded-3xl flex items-center justify-center mx-auto mb-6">
+                                <CheckCircle className="w-10 h-10 text-brand" />
                             </div>
-                            <p className="text-xl font-semibold text-foreground mb-2">
-                                You're In!
-                            </p>
-                            <p className="text-sm text-muted-foreground">
-                                Redirecting to your dashboard...
-                            </p>
+                            <h3 className="text-2xl font-sans font-medium mb-2">Access Granted</h3>
+                            <p className="text-muted-foreground">Synchronizing your S3 environment...</p>
                         </div>
                     )}
                 </div>

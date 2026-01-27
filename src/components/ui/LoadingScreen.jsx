@@ -12,7 +12,7 @@ export const LoadingScreen = ({ message = 'loading...' }) => {
             <div
                 className="absolute inset-0 opacity-30"
                 style={{
-                    backgroundImage: 'radial-gradient(var(--grid-dot) 1px, transparent 1px)',
+                    backgroundImage: 'none',
                     backgroundSize: '24px 24px',
                 }}
             />

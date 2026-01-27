@@ -1,32 +1,29 @@
 import * as React from "react"
 import { cva, type VariantProps } from "class-variance-authority"
-import { Slot } from "radix-ui"
+import { Slot } from "@radix-ui/react-slot"
 
 import { cn } from "@/lib/utils"
 
 const buttonVariants = cva(
-  "inline-flex items-center justify-center gap-2 rounded-lg text-sm font-medium whitespace-nowrap transition-[background-color,scale] ease-out outline-none select-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 active:scale-[0.98] disabled:pointer-events-none disabled:opacity-50 aria-invalid:border-destructive aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
+  "group relative isolate inline-flex items-center justify-center overflow-hidden text-left font-medium transition duration-300 ease-[cubic-bezier(0.4,0.36,0,1)] before:duration-300 before:ease-[cubic-bezier(0.4,0.36,0,1)] before:transition-opacity rounded-md shadow-[0_1px_theme(colors.white/0.07)_inset,0_1px_3px_theme(colors.gray.900/0.2)] before:pointer-events-none before:absolute before:inset-0 before:-z-10 before:rounded-md before:bg-gradient-to-b before:from-white/20 before:opacity-50 hover:before:opacity-100 after:pointer-events-none after:absolute after:inset-0 after:-z-10 after:rounded-md after:bg-gradient-to-b after:from-white/10 after:from-[46%] after:to-[54%] after:mix-blend-overlay ring-1 focus-visible:ring-brand/50 active:scale-[0.98] disabled:opacity-50 disabled:pointer-events-none whitespace-nowrap select-none",
   {
     variants: {
       variant: {
-        default: "bg-primary text-primary-foreground hover:bg-primary/90",
-        secondary:
-          "bg-secondary text-secondary-foreground hover:bg-secondary/80",
-        destructive:
-          "bg-destructive text-destructive-foreground hover:bg-destructive/90 focus-visible:ring-destructive/20 dark:focus-visible:ring-destructive/40 shadow-sm",
-        outline:
-          "border border-input bg-background hover:bg-accent hover:text-accent-foreground",
-        ghost: "hover:bg-accent hover:text-accent-foreground",
-        link: "text-foreground underline-offset-4 hover:underline active:scale-none",
+        default: "bg-brand text-white ring-brand",
+        brand: "bg-brand text-white ring-brand",
+        secondary: "bg-secondary text-secondary-foreground ring-secondary",
+        destructive: "bg-destructive text-destructive-foreground ring-destructive",
+        outline: "border border-input bg-background hover:bg-accent hover:text-accent-foreground ring-input/50 shadow-none",
+        ghost: "hover:bg-accent hover:text-accent-foreground ring-transparent shadow-none before:opacity-0 after:opacity-0",
+        link: "text-brand underline-offset-4 hover:underline active:scale-100 ring-transparent shadow-none before:opacity-0 after:opacity-0",
+        purple: "bg-purple-500 text-white ring-purple-500",
       },
       size: {
-        default: "h-8 px-4",
-        sm: "h-7 gap-1.5 px-3 [&_svg:not([class*='size-'])]:size-3.5",
-        lg: "h-10 px-6",
-        icon: "size-8",
-        "icon-sm": "size-7",
-        "icon-xs": "size-5",
-        "icon-lg": "size-10",
+        default: "h-7.5 px-1 text-sm gap-2",
+        sm: "h-6.5 px-1 text-[11px] gap-1.5",
+        lg: "h-10 px-2 text-base gap-2.5",
+        icon: "size-7.5",
+        "icon-xs": "size-6",
       },
     },
     defaultVariants: {
@@ -36,25 +33,24 @@ const buttonVariants = cva(
   }
 )
 
-function Button({
-  className,
-  variant,
-  size,
-  asChild = false,
-  ...props
-}: React.ComponentProps<"button"> &
-  VariantProps<typeof buttonVariants> & {
-    asChild?: boolean
-  }) {
-  const Comp = asChild ? Slot.Root : "button"
-
-  return (
-    <Comp
-      data-slot="button"
-      className={cn(buttonVariants({ variant, size, className }))}
-      {...props}
-    />
-  )
+export interface ButtonProps
+  extends React.ButtonHTMLAttributes<HTMLButtonElement>,
+  VariantProps<typeof buttonVariants> {
+  asChild?: boolean
 }
+
+const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
+  ({ className, variant, size, asChild = false, ...props }, ref) => {
+    const Comp = asChild ? Slot : "button"
+    return (
+      <Comp
+        className={cn(buttonVariants({ variant, size, className }))}
+        ref={ref}
+        {...props}
+      />
+    )
+  }
+)
+Button.displayName = "Button"
 
 export { Button, buttonVariants }

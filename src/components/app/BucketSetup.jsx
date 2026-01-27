@@ -7,10 +7,12 @@
 import { useState } from 'react';
 import bucketManagerService from '../../services/bucketManagerService';
 import { toast } from 'sonner';
-import { Shield, Database, ArrowRight, CheckCircle, Loader2 } from 'lucide-react';
+import { Shield, Database, ArrowRight, CheckCircle, Loader2, Sun, Moon, Twitter, Github, Linkedin, Cloud } from 'lucide-react';
 import { DiagonalSeparator as Separator } from '../ui/DiagonalSeparator';
+import { Button } from '../ui/button';
 
 export const BucketSetup = ({ user, onComplete }) => {
+    // ... state and handlers remain the same ...
     const [formData, setFormData] = useState({
         bucketName: '',
         region: 'eu-north-1',
@@ -70,183 +72,160 @@ export const BucketSetup = ({ user, onComplete }) => {
         setError(null);
 
         try {
-            // Step 1: Validate connection
             const verifyResult = await bucketManagerService.validateBucket(formData);
-            if (!verifyResult.success) {
-                throw new Error(verifyResult.error || 'Connection failed');
-            }
-
+            if (!verifyResult.success) throw new Error(verifyResult.error || 'Connection failed');
             toast.success('Connection verified');
-
-            // Step 2: Save bucket configuration
             const saveResult = await bucketManagerService.addBucket(formData);
-            if (!saveResult.success && saveResult.error) {
-                throw new Error(saveResult.error);
-            }
-
-            // Step 3: Success - now mark as complete and clear sensitive data
+            if (!saveResult.success && saveResult.error) throw new Error(saveResult.error);
             setConnectionStatus('success');
             const bucket = saveResult.bucket || saveResult;
-
-            // Clear sensitive credentials from memory
-            setFormData(prev => ({
-                ...prev,
-                accessKeyId: '',
-                secretAccessKey: ''
-            }));
-
-            // Navigate after brief delay
+            setFormData(prev => ({ ...prev, accessKeyId: '', secretAccessKey: '' }));
             setTimeout(() => onComplete(bucket), 1000);
-
         } catch (err) {
             if (bucketManagerService.useMock) {
                 setConnectionStatus('success');
-                // Clear credentials even in mock mode
                 const bucketData = { bucketName: formData.bucketName, region: formData.region, id: 'mock-' + Date.now() };
-                setFormData(prev => ({ ...prev, accessKeyId: '', secretAccessKey: '' }));
                 onComplete(bucketData);
                 return;
             }
             setConnectionStatus('error');
             setError(err.message || 'Failed to connect to cluster');
-        } finally {
-            setLoading(false);
-        }
+        } finally { setLoading(false); }
     };
 
     return (
-        <div className="max-w-screen overflow-x-hidden px-2">
-            <div className="mx-auto border-x border-edge md:max-w-4xl min-h-screen flex flex-col">
-                {/* top diagonal separator */}
-                <Separator />
-
-                {/* header */}
-                <header className="screen-line-after px-4 py-4 flex items-center gap-3 opacity-60">
-                    <Database className="w-4 h-4 text-brand" />
-                    <span className="text-xs tracking-widest uppercase font-medium text-muted-foreground">Infrastructure Setup</span>
-                </header>
-
-                {/* main content */}
-                <main className="flex-1 flex flex-col items-center justify-center py-12">
-                    <div className="w-full max-w-md px-4 space-y-10">
-                        {/* title section */}
-                        <div className="space-y-4">
-                            <h1 className="screen-line-after text-3xl tracking-tight pb-4 font-medium">
-                                Connect Storage
-                            </h1>
+        <div className="flex min-h-screen items-center justify-center bg-muted/50 font-sans w-full">
+            <main className="flex min-h-screen flex-col bg-background border-x max-w-[70rem] w-full">
+                <div className="flex-1 w-full flex flex-col">
+                    {/* Header */}
+                    <header className="flex items-center justify-between w-full md:p-16 p-8 pb-4 md:pb-8">
+                        <div className="flex items-center gap-4">
+                            <img src="/logos/logo-black.svg" alt="Orbit" className="h-10 block dark:hidden" />
+                            <img src="/logos/logo-white.svg" alt="Orbit" className="h-10 hidden dark:block" />
+                            <div className="h-8 w-px bg-border/50" />
+                            <div className="flex flex-col">
+                                <span className="text-xs text-muted-foreground font-medium uppercase tracking-widest">Setup Phase</span>
+                            </div>
                         </div>
 
-                        <div className="p-0">
-                            <p className="font-mono text-sm text-balance text-muted-foreground" style={{ opacity: 0.7 }}>
-                                Link AWS S3. Keys processed in-memory. Zero logging.
-                            </p>
+                        <div className="flex items-center gap-4">
+                            <Button
+                                variant="ghost"
+                                size="icon"
+                                onClick={() => document.documentElement.classList.toggle('dark')}
+                            >
+                                <Sun className="h-[1.2rem] w-[1.2rem] scale-100 rotate-0 transition-all dark:scale-0 dark:-rotate-90" />
+                                <Moon className="absolute h-[1.2rem] w-[1.2rem] scale-0 rotate-90 transition-all dark:scale-100 dark:rotate-0" />
+                            </Button>
                         </div>
+                    </header>
 
-                        <Separator />
+                    <div className="md:px-16 px-8 flex-1 flex flex-col items-center justify-center py-10">
+                        <div className="w-full max-w-2xl space-y-12">
+                            <div className="space-y-6">
+                                <h1 className="text-4xl font-sans font-medium tracking-tight text-foreground">
+                                    Connect Storage <span className="text-brand">Cluster.</span>
+                                </h1>
+                                <p className="text-lg text-muted-foreground leading-relaxed">
+                                    Link your AWS S3 bucket. Credentials are processed in-memory and never stored on our servers. Zero logging, full transparency.
+                                </p>
+                            </div>
 
-                        {/* form */}
-                        <form onSubmit={handleSubmit} className="space-y-8">
-                            <div className="grid grid-cols-1 gap-8">
-                                <div className="space-y-2">
-                                    <label className="text-xs tracking-widest uppercase font-medium text-muted-foreground px-1">Bucket Name</label>
-                                    <input
-                                        type="text"
-                                        name="bucketName"
-                                        value={formData.bucketName}
-                                        onChange={handleChange}
-                                        className="input"
-                                        placeholder="e.g. production-assets"
-                                    />
-                                </div>
+                            <form onSubmit={handleSubmit} className="space-y-8 bg-secondary/5 p-8 rounded-3xl border border-border/50">
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                                    <div className="space-y-3 md:col-span-2">
+                                        <label className="text-xs tracking-widest uppercase font-medium text-muted-foreground px-1">Bucket Name</label>
+                                        <input
+                                            type="text"
+                                            name="bucketName"
+                                            value={formData.bucketName}
+                                            onChange={handleChange}
+                                            className="input h-14 text-base rounded-xl"
+                                            placeholder="production-assets-s3"
+                                        />
+                                    </div>
 
-                                {/* 2 column grid with background lines */}
-                                <div className="relative">
-                                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                                        <div className="space-y-2 text-left">
-                                            <label className="text-xs tracking-widest uppercase font-medium text-muted-foreground px-1">Data Region</label>
-                                            <select
-                                                name="region"
-                                                value={formData.region}
-                                                onChange={handleChange}
-                                                className="input appearance-none bg-background pr-10 border-input/50 focus:border-brand"
-                                            >
-                                                {regions.map(r => (
-                                                    <option key={r.value} value={r.value}>{r.label}</option>
-                                                ))}
-                                            </select>
-                                        </div>
-                                        <div className="space-y-2">
-                                            <label className="text-xs tracking-widest uppercase font-medium text-muted-foreground px-1">Access Key ID</label>
-                                            <input
-                                                type="text"
-                                                name="accessKeyId"
-                                                value={formData.accessKeyId}
-                                                onChange={handleChange}
-                                                className="input font-mono bg-input/10 border-input/50 focus:border-brand placeholder:text-muted-foreground/30"
-                                                placeholder="AKIA..."
-                                            />
-                                        </div>
+                                    <div className="space-y-3">
+                                        <label className="text-xs tracking-widest uppercase font-medium text-muted-foreground px-1">Data Region</label>
+                                        <select
+                                            name="region"
+                                            value={formData.region}
+                                            onChange={handleChange}
+                                            className="input h-14 text-base rounded-xl appearance-none bg-background pr-10"
+                                        >
+                                            {regions.map(r => (
+                                                <option key={r.value} value={r.value}>{r.label}</option>
+                                            ))}
+                                        </select>
+                                    </div>
+
+                                    <div className="space-y-3">
+                                        <label className="text-xs tracking-widest uppercase font-medium text-muted-foreground px-1">Access Key ID</label>
+                                        <input
+                                            type="text"
+                                            name="accessKeyId"
+                                            value={formData.accessKeyId}
+                                            onChange={handleChange}
+                                            className="input h-14 text-base rounded-xl font-mono"
+                                            placeholder="AKIA..."
+                                        />
+                                    </div>
+
+                                    <div className="space-y-3 md:col-span-2">
+                                        <label className="text-xs tracking-widest uppercase font-medium text-muted-foreground px-1">Secret Access Key</label>
+                                        <input
+                                            type="password"
+                                            name="secretAccessKey"
+                                            value={formData.secretAccessKey}
+                                            onChange={handleChange}
+                                            className="input h-14 text-base rounded-xl font-mono"
+                                            placeholder="••••••••••••••••••••••••••••"
+                                        />
                                     </div>
                                 </div>
 
-                                <div className="space-y-2">
-                                    <label className="text-xs tracking-widest uppercase font-medium text-muted-foreground px-1">Secret Access Key</label>
-                                    <input
-                                        type="password"
-                                        name="secretAccessKey"
-                                        value={formData.secretAccessKey}
-                                        onChange={handleChange}
-                                        className="input font-mono bg-input/10 border-input/50 focus:border-brand placeholder:text-muted-foreground/30"
-                                        placeholder="••••••••••••••••"
-                                    />
-                                </div>
-                            </div>
+                                {error && (
+                                    <div className="p-4 rounded-xl bg-destructive/5 border border-destructive/20 text-destructive text-sm">
+                                        {error}
+                                    </div>
+                                )}
 
-                            {error && (
-                                <div className="screen-line-before screen-line-after p-4 rounded-md bg-red-500/5 text-red-500 text-xs tracking-wide" style={{ border: '1px dotted rgba(239, 68, 68, 0.2)' }}>
-                                    {error}
-                                </div>
-                            )}
-
-                            <div className="screen-line-before pt-6">
-                                <button
+                                <Button
                                     type="submit"
                                     disabled={loading || connectionStatus === 'success'}
-                                    className="btn btn-brand w-full h-11 rounded-md text-sm tracking-wide"
+                                    size="lg"
+                                    className="w-full"
                                 >
                                     {loading ? (
-                                        <Loader2 className="w-4 h-4 animate-spin" />
+                                        <Loader2 className="w-5 h-5 animate-spin" />
                                     ) : connectionStatus === 'success' ? (
-                                        <CheckCircle className="w-4 h-4" />
+                                        <CheckCircle className="w-5 h-5" />
                                     ) : (
                                         <>
-                                            Connect
-                                            <ArrowRight className="w-4 h-4 ml-2" />
+                                            Establish Connection
+                                            <ArrowRight className="w-5 h-5 ml-2" />
                                         </>
                                     )}
-                                </button>
-                            </div>
-                        </form>
-                    </div>
-                </main>
-
-                {/* diagonal separator */}
-                <Separator />
-
-                {/* footer */}
-                <footer className="screen-line-before mt-auto">
-                    <div className="px-4 py-6 flex items-center justify-between text-muted-foreground opacity-40">
-                        <div className="flex items-center gap-2">
-                            <Shield className="w-3.5 h-3.5" />
-                            <span className="text-xs tracking-widest uppercase font-medium">Encrypted Handshake Protocol</span>
+                                </Button>
+                            </form>
                         </div>
-                        <span className="text-xs font-medium">© {new Date().getFullYear()} Orbit Lab</span>
                     </div>
-                </footer>
 
-                {/* bottom spacing */}
-                <div className="h-4" />
-            </div>
+                    {/* Footer */}
+                    <footer className="w-full flex items-center justify-between md:p-16 p-8 pt-8 border-t border-dotted border-border/50 mt-auto">
+                        <div className="flex items-center gap-3">
+                            <Shield className="w-4 h-4 text-brand" />
+                            <span className="text-xs tracking-widest uppercase font-medium opacity-60">Encrypted Handshake Protocol</span>
+                        </div>
+                        <div className="flex items-center gap-6">
+                            <ul className="flex items-center gap-6">
+                                <li><a href="https://twitter.com/skaleway" className="text-muted-foreground hover:text-brand transition-all block"><Twitter className="size-5" /></a></li>
+                                <li><a href="https://github.com/skaleway" className="text-muted-foreground hover:text-brand transition-all block"><Github className="size-5" /></a></li>
+                            </ul>
+                        </div>
+                    </footer>
+                </div>
+            </main>
         </div>
     );
 };

@@ -19,7 +19,7 @@
   h4,
   h5,
   h6 {
-    @apply font-mono tracking-tight;
+    @apply font-sans tracking-tight font-medium;
   }
 }
 
@@ -120,138 +120,130 @@
 :root {
   --radius: 0.5rem;
 
-  /* Strict Theme: Black Background, White Text */
-  --background: #000000;
-  --foreground: #ffffff;
+  /* Deep Slate Theme - Orbit Aesthetic */
+  --background: #020617;
+  /* Slate 950 */
+  --foreground: #f8fafc;
+  /* Slate 50 */
 
-  /* Card: Deepest Gray/Black */
-  --card: #09090b;
-  --card-foreground: #ffffff;
+  /* Card: Slate 900 - Rich dark blue/gray */
+  --card: #0f172a;
+  --card-foreground: #f8fafc;
 
-  /* Popover: Black */
-  --popover: #000000;
-  --popover-foreground: #ffffff;
+  /* Popover: Matches Background */
+  --popover: #020617;
+  --popover-foreground: #f8fafc;
 
-  /* Primary: Orange */
+  /* Primary: Vibrant Orange */
   --primary: #f97316;
   --primary-foreground: #ffffff;
 
-  /* Secondary: Zinc 900 */
-  --secondary: #18181b;
-  --secondary-foreground: #ffffff;
+  /* Secondary: Slate 800 */
+  --secondary: #1e293b;
+  --secondary-foreground: #f8fafc;
 
-  /* Muted: Zinc 900 */
-  --muted: #18181b;
-  --muted-foreground: #a1a1aa;
+  /* Muted: Slate 900/800 mix */
+  --muted: #0f172a;
+  --muted-foreground: #94a3b8;
+  /* Slate 400 */
 
-  /* Accent: Zinc 800 */
-  --accent: #27272a;
-  --accent-foreground: #ffffff;
+  /* Accent: Slate 800 */
+  --accent: #1e293b;
+  --accent-foreground: #f8fafc;
 
   /* New accent color for subtle hovers */
-  --accent2: rgba(255, 255, 255, 0.03);
+  --accent2: rgba(248, 250, 252, 0.05);
 
   --destructive: #7f1d1d;
-  --destructive-foreground: #ffffff;
+  --destructive-foreground: #f8fafc;
 
-  /* Borders: Zinc 800 */
-  --border: #27272a;
-  --input: #27272a;
+  /* Borders: Slate 800 */
+  --border: #1e293b;
+  --input: #1e293b;
   --ring: #f97316;
 
-  /* Edge and pattern colors - Visible on Black */
-  --color-edge: rgba(255, 255, 255, 0.12);
+  /* Edge and pattern colors - Adjusted for Slate */
+  --color-edge: rgba(148, 163, 184, 0.1);
+  /* Slate 400 at 10% */
   --edge: var(--color-edge);
-  --grid-dot: rgba(255, 255, 255, 0.08);
-  --diagonal-line: rgba(255, 255, 255, 0.04);
+  --grid-dot: rgba(148, 163, 184, 0.08);
+  --diagonal-line: rgba(148, 163, 184, 0.04);
   --pattern-foreground: var(--color-edge);
 
   /* Info accent */
   --info: #3b82f6;
 
   /* Popover border */
-  --popover-border: rgba(255, 255, 255, 0.12);
+  --popover-border: rgba(148, 163, 184, 0.1);
 
   /* Brand: Orange */
   --brand: #f97316;
   --brand-foreground: #ffffff;
 
   /* Code block */
-  --code: #121212;
-  --code-foreground: #ffffff;
+  --code: #0f172a;
+  /* Slate 900 */
+  --code-foreground: #f8fafc;
 
-  /* Shadow tokens */
-  --shadow-xs: 0 1px 2px 0 rgb(0 0 0 / 0.5);
-  --shadow-sm: 0 1px 3px 0 rgb(0 0 0 / 0.5), 0 1px 2px -1px rgb(0 0 0 / 0.5);
-  --shadow-popover: 0 10px 15px -3px rgb(0 0 0 / 0.5), 0 4px 6px -4px rgb(0 0 0 / 0.5);
+  /* Shadow tokens - Colored shadows for depth */
+  --shadow-xs: 0 1px 2px 0 rgb(2 6 23 / 0.5);
+  --shadow-sm: 0 1px 3px 0 rgb(2 6 23 / 0.5), 0 1px 2px -1px rgb(2 6 23 / 0.5);
+  --shadow-popover: 0 10px 15px -3px rgb(2 6 23 / 0.5), 0 4px 6px -4px rgb(2 6 23 / 0.5);
 }
 
 .dark {
   color-scheme: dark;
-  --background: #000000;
-  /* True Black/Void */
-  --foreground: #fafafa;
-  /* Crisp White */
+  --background: #020617;
+  /* Slate 950 */
+  --foreground: #f8fafc;
+  /* Slate 50 */
 
-  --card: #09090b;
-  /* Zinc 950 - Extremely deep gray, barely distinguishable from black */
-  --card-foreground: #fafafa;
+  --card: #0f172a;
+  /* Slate 900 */
+  --card-foreground: #f8fafc;
 
-  --popover: #000000;
-  --popover-foreground: #fafafa;
+  --popover: #020617;
+  --popover-foreground: #f8fafc;
 
   --primary: #f97316;
-  /* Maintains the Vibrant Orange */
   --primary-foreground: #ffffff;
 
-  --secondary: #18181b;
-  /* Zinc 900 */
-  --secondary-foreground: #fafafa;
+  --secondary: #1e293b;
+  /* Slate 800 */
+  --secondary-foreground: #f8fafc;
 
-  --muted: #18181b;
-  --muted-foreground: #a1a1aa;
-  /* Zinc 400 */
+  --muted: #0f172a;
+  --muted-foreground: #94a3b8;
 
-  --accent: #27272a;
-  /* Zinc 800 */
-  --accent-foreground: #fafafa;
+  --accent: #1e293b;
+  --accent-foreground: #f8fafc;
 
-  /* New accent color for subtle hovers in dark mode */
-  --accent2: rgba(255, 255, 255, 0.03);
+  --accent2: rgba(248, 250, 252, 0.05);
 
   --destructive: #7f1d1d;
-  --destructive-foreground: #fafafa;
+  --destructive-foreground: #f8fafc;
 
-  --border: #27272a;
-  /* Zinc 800 - Subtle but visible borders */
-  --input: #27272a;
+  --border: #1e293b;
+  /* Slate 800 */
+  --input: #1e293b;
   --ring: #f97316;
 
-  /* Edge and pattern colors for dark mode - Refined for Obsidian */
-  --color-edge: rgba(255, 255, 255, 0.12);
-  /* Slightly higher opacity for contrast against black */
+  --color-edge: rgba(148, 163, 184, 0.1);
   --edge: var(--color-edge);
-  --grid-dot: rgba(255, 255, 255, 0.08);
-  /* More visible dots */
-  --diagonal-line: rgba(255, 255, 255, 0.04);
+  --grid-dot: rgba(148, 163, 184, 0.08);
+  --diagonal-line: rgba(148, 163, 184, 0.04);
   --pattern-foreground: var(--color-edge);
 
-  /* Info accent for dark mode */
   --info: #3b82f6;
-
-  /* Popover specific styling for dark mode */
-  --popover-border: rgba(255, 255, 255, 0.12);
-
+  --popover-border: rgba(148, 163, 184, 0.1);
   --brand: #f97316;
 
-  /* Code block styling for dark mode */
-  --code: #121212;
-  --code-foreground: #fafafa;
+  --code: #0f172a;
+  --code-foreground: #f8fafc;
 
-  /* Shadow tokens for dark mode - Deeper shadows */
-  --shadow-xs: 0 1px 2px 0 rgb(0 0 0 / 0.5);
-  --shadow-sm: 0 1px 3px 0 rgb(0 0 0 / 0.5), 0 1px 2px -1px rgb(0 0 0 / 0.5);
-  --shadow-popover: 0 10px 15px -3px rgb(0 0 0 / 0.5), 0 4px 6px -4px rgb(0 0 0 / 0.5);
+  --shadow-xs: 0 1px 2px 0 rgb(2 6 23 / 0.5);
+  --shadow-sm: 0 1px 3px 0 rgb(2 6 23 / 0.5), 0 1px 2px -1px rgb(2 6 23 / 0.5);
+  --shadow-popover: 0 10px 15px -3px rgb(2 6 23 / 0.5), 0 4px 6px -4px rgb(2 6 23 / 0.5);
 }
 
 @layer base {
@@ -260,7 +252,7 @@
   }
 
   body {
-    @apply bg-background text-foreground antialiased selection:bg-brand/20 selection:text-brand;
+    @apply bg-black text-foreground antialiased selection:bg-brand/20 selection:text-brand tracking-tight;
     font-feature-settings: "rlig" 1, "calt" 1;
   }
 
@@ -294,7 +286,7 @@
   left: 0;
   right: 0;
   height: 0;
-  border-top: 1px dotted var(--edge);
+  border-top: none;
 }
 
 /* Dotted Screen Lines - After */
@@ -309,7 +301,7 @@
   left: 0;
   right: 0;
   height: 0;
-  border-bottom: 1px dotted var(--edge);
+  border-bottom: none;
 }
 
 /* Border edge utility */
@@ -324,17 +316,13 @@
 
 /* Subtle Pattern Background */
 .pattern-dots {
-  background-image: radial-gradient(var(--grid-dot) 1px, transparent 1px);
+  background-image: none;
   background-size: 20px 20px;
 }
 
 /* Diagonal Pattern */
 .pattern-diagonal {
-  background-image: repeating-linear-gradient(-45deg,
-      var(--diagonal-line) 0,
-      var(--diagonal-line) 1px,
-      transparent 1px,
-      transparent 16px);
+  background-image: none;
 }
 
 /* Subtle hover states */
@@ -390,9 +378,14 @@
 /* Main Canvas - 60vw centered with dotted grid lines */
 .main-canvas {
   @apply mx-auto w-full relative min-h-screen bg-background;
-  max-width: 60vw;
-  border-left: 1px dotted var(--edge);
-  border-right: 1px dotted var(--edge);
+  max-width: 100%;
+
+  /* Diagonal hashed vertical lines replacing standard borders */
+  /* Diagonal hashed vertical lines replacing standard borders */
+  background-image: none;
+  background-position: left top, right top;
+  background-repeat: repeat-y;
+  background-size: 1px 10px;
 }
 
 /* Dotted Screen Lines */
@@ -407,7 +400,7 @@
   left: 0;
   right: 0;
   height: 0;
-  border-top: 1px dotted var(--edge);
+  border-top: none;
 }
 
 .screen-line-after {
@@ -421,12 +414,12 @@
   left: 0;
   right: 0;
   height: 0;
-  border-bottom: 1px dotted var(--edge);
+  border-bottom: none;
 }
 
 /* Subtle Dot Pattern Background */
 .pattern-dots {
-  background-image: radial-gradient(var(--grid-dot) 1px, transparent 1px);
+  background-image: none;
   background-size: 20px 20px;
 }
 
@@ -440,32 +433,18 @@
   position: absolute;
   inset: 0;
   pointer-events: none;
-  background-image: repeating-linear-gradient(-45deg,
-      var(--diagonal-line) 0,
-      var(--diagonal-line) 1px,
-      transparent 1px,
-      transparent 12px);
+  background-image: none;
   z-index: 0;
 }
 
 /* Diagonal Pattern For Sections */
 .pattern-diagonal {
-  background-image: repeating-linear-gradient(-45deg,
-      var(--diagonal-line) 0,
-      var(--diagonal-line) 1px,
-      transparent 1px,
-      transparent 16px);
+  background-image: none;
 }
 
 /* Combined Pattern - Dots + Diagonal */
 .pattern-tech {
-  background-image:
-    radial-gradient(var(--grid-dot) 1px, transparent 1px),
-    repeating-linear-gradient(-45deg,
-      var(--diagonal-line) 0,
-      var(--diagonal-line) 1px,
-      transparent 1px,
-      transparent 20px);
+  background-image: none;
   background-size: 20px 20px, auto;
 }
 

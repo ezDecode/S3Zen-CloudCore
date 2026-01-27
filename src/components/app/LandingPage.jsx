@@ -1,213 +1,84 @@
-/**
- * cloudcore landing page
- * ncdai design system implementation with terracotta palette
- * centered layout with border-edge gridlines and screen-line separators
- */
-
-import { useState, useEffect } from 'react';
-import { Cloud, ArrowRight, Shield, Zap, Lock, Upload, Link2, BarChart3 } from 'lucide-react';
-import { DiagonalSeparator as Separator } from '../ui/DiagonalSeparator';
+import React from 'react';
+import { Sun, Moon, Twitter, Github, Linkedin } from 'lucide-react';
+import { Button } from '../ui/button';
 
 export const LandingPage = ({ onGetStarted }) => {
-    const [scrolled, setScrolled] = useState(false);
-
-    useEffect(() => {
-        const handleScroll = () => setScrolled(window.scrollY > 20);
-        window.addEventListener('scroll', handleScroll);
-        return () => window.removeEventListener('scroll', handleScroll);
-    }, []);
-
     return (
-        <div className="max-w-screen overflow-x-hidden px-2">
-            <div className="mx-auto border-x border-edge md:max-w-4xl">
-                {/* top diagonal separator */}
-                <Separator />
-
-                {/* navigation */}
-                <header className={`sticky top-0 z-50 transition-all duration-300 ${scrolled ? 'bg-background/80 backdrop-blur-xl supports-[backdrop-filter]:bg-background/60 shadow-sm' : ''}`}>
-                    <div className="screen-line-after px-4 py-4 flex items-center justify-between">
-                        <div className="flex items-center gap-2.5 cursor-pointer">
-                            <Cloud className="w-5 h-5 text-brand" />
-                            <span className="text-base tracking-tight font-medium font-mono">Orbit</span>
+        <div className="flex min-h-screen items-center justify-center bg-muted/50 font-sans w-full">
+            <main className="flex min-h-screen flex-col justify-between md:p-16 p-8 bg-background border-x gap-8 max-w-[70rem] w-full">
+                <div className="justify-between flex-1 w-full gap-20 flex flex-col">
+                    {/* Header */}
+                    <header className="flex items-center justify-between w-full">
+                        <div className="flex items-center">
+                            <img src="/logos/logo-black.svg" alt="Orbit Logo" className="h-14 block dark:hidden" />
+                            <img src="/logos/logo-white.svg" alt="Orbit Logo" className="h-14 hidden dark:block" />
                         </div>
-
-                        <div className="flex items-center gap-8">
-                            <a
-                                href="https://github.com/ezDecode/S3Zen-CloudCore"
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="text-xs tracking-wide text-muted-foreground hover:text-foreground transition-colors hidden sm:block font-medium"
-                            >
-                                GitHub
-                            </a>
+                        <div className="flex items-center gap-4 text-sm font-medium">
+                            <a href="/docs" className="hover:text-brand transition-colors">Docs</a>
                             <button
-                                onClick={onGetStarted}
-                                className="btn btn-brand h-9 px-5 rounded-lg text-xs tracking-wide font-medium"
+                                className="inline-flex items-center justify-center rounded-md border bg-background shadow-xs hover:bg-accent size-9 transition-all active:scale-95 cursor-pointer"
+                                onClick={() => document.documentElement.classList.toggle('dark')}
                             >
-                                Get Started
-                            </button>
-                            <button
-                                onClick={onGetStarted}
-                                className="sm:hidden text-brand font-medium text-xs"
-                            >
-                                Login
+                                <Sun className="h-[1.2rem] w-[1.2rem] scale-100 rotate-0 transition-all dark:scale-0 dark:-rotate-90" />
+                                <Moon className="absolute h-[1.2rem] w-[1.2rem] scale-0 rotate-90 transition-all dark:scale-100 dark:rotate-0" />
+                                <span className="sr-only">Toggle theme</span>
                             </button>
                         </div>
-                    </div>
-                </header>
+                    </header>
 
-                {/* hero section */}
-                <main className="min-h-[calc(100vh-200px)]">
-                    <div className="px-4 pt-16 pb-8 lg:pt-28">
-                        <div className="inline-flex items-center gap-3 mb-6">
-                            <div className="w-8 h-0.5 bg-brand/80 rounded-full" />
-                            <span className="text-xs tracking-widest text-muted-foreground uppercase font-medium">Sovereign S3</span>
+                    {/* Main Content - Vertically centered and left aligned */}
+                    <div className="flex flex-col gap-10 my-auto max-w-4xl">
+                        <div className="flex flex-col gap-6">
+                            <h1 className="md:text-5xl text-4xl font-sans font-medium leading-tight tracking-tight text-foreground">
+                                Orbit — Sovereign S3<span className="text-brand">.</span>
+                            </h1>
+                            <p className="md:text-xl text-lg leading-relaxed text-muted-foreground max-w-full">
+                                A zero-knowledge interface for your own S3. Encrypt locally, upload directly, auto-compress assets, and share with secure links — no vendor lock-in, no tracking, fully open-source.
+                            </p>
                         </div>
 
-                        <h1 className="screen-line-after text-3xl sm:text-4xl lg:text-5xl tracking-tighter leading-[1.1] text-foreground pb-6 font-semibold">
-                            Sovereign S3<br />
-                            <span className="text-brand">Precision Engineered</span>
-                        </h1>
-                    </div>
-
-                    <div className="p-4 pb-8">
-                        <p className="text-base text-muted-foreground leading-relaxed max-w-lg">
-                            Your buckets. Your keys. Zero knowledge. The professional interface for your S3 assets.
-                        </p>
-                    </div>
-
-                    <div className="screen-line-before screen-line-after p-4 flex flex-wrap items-center gap-4">
-                        <button
-                            onClick={onGetStarted}
-                            className="btn btn-primary h-12 px-8 rounded-lg text-sm font-medium"
-                        >
-                            Start Uploading
-                            <ArrowRight className="w-4 h-4" />
-                        </button>
-                        <a
-                            href="https://github.com/ezDecode/S3Zen-CloudCore"
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="btn btn-outline h-12 px-6 rounded-lg text-sm font-medium"
-                        >
-                            View Documentation
-                        </a>
-                    </div>
-
-
-
-                    {/* diagonal separator */}
-                    <Separator />
-
-                    {/* features section */}
-                    <div className="screen-line-after p-4 py-2">
-                        <span className="text-xs tracking-widest text-muted-foreground uppercase font-medium">Core Features</span>
-                    </div>
-
-                    <div className="relative">
-                        <div className="absolute inset-0 -z-1 grid grid-cols-2 max-sm:hidden">
-                            <div className="border-r border-edge"></div>
-                            <div></div>
-                        </div>
-
-                        <div className="grid grid-cols-1 sm:grid-cols-2">
-                            {[
-                                {
-                                    icon: Shield,
-                                    title: 'Local Encryption',
-                                    description: 'Keys stay in memory. Zero knowledge. Absolute privacy generated on-device.'
-                                },
-                                {
-                                    icon: Upload,
-                                    title: 'Smart Compress',
-                                    description: 'Auto-optimize assets on-the-fly. Save bandwidth without quality loss.'
-                                },
-                                {
-                                    icon: Link2,
-                                    title: 'Instant Links',
-                                    description: 'Generate secure, expiring links in one click. Password protected access control.'
-                                },
-                                {
-                                    icon: Zap,
-                                    title: 'Direct Access',
-                                    description: 'No bottlenecks. Raw speed. Direct-to-S3 architecture for maximum throughput.'
-                                },
-                            ].map((feature, i) => (
-                                <div key={i} className="p-6 screen-line-after">
-                                    <feature.icon className="w-5 h-5 text-brand mb-4" />
-                                    <h3 className="text-base font-semibold mb-2">{feature.title}</h3>
-                                    <p className="text-sm text-muted-foreground leading-relaxed">{feature.description}</p>
-                                </div>
-                            ))}
+                        <div className="flex items-center gap-5">
+                            <Button
+                                onClick={onGetStarted}
+                                size="lg"
+                            >
+                                Launch Interface
+                            </Button>
+                            <Button
+                                variant="outline"
+                                size="lg"
+                                asChild
+                            >
+                                <a
+                                    href="https://github.com/skaleway/orbit"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                >
+                                    Star on GitHub
+                                </a>
+                            </Button>
                         </div>
                     </div>
 
-                    {/* diagonal separator */}
-                    <Separator />
-
-                    {/* why cloudcore section */}
-                    <div className="screen-line-after p-4 py-2">
-                        <span className="text-xs tracking-widest text-muted-foreground tracking-tighter font-medium">Why Orbit</span>
-                    </div>
-
-                    <div className="p-6">
-                        <div className="grid grid-cols-2 sm:grid-cols-4 gap-6">
-                            {[
-                                { label: 'No Vendor Lock-in', desc: 'Your S3, your rules' },
-                                { label: 'Open Source', desc: 'Fully auditable code' },
-                                { label: 'Privacy First', desc: 'No tracking or analytics' },
-                                { label: 'Self-Hostable', desc: 'Run on your own infra' },
-                            ].map((item, i) => (
-                                <div key={i} className="text-center">
-                                    <h4 className="text-sm font-semibold mb-1">{item.label}</h4>
-                                    <p className="text-xs text-muted-foreground">{item.desc}</p>
-                                </div>
-                            ))}
+                    {/* Footer */}
+                    <footer className="w-full flex items-center justify-between pt-8 border-t border-dotted border-border/50">
+                        <div className="flex items-center gap-3">
+                            <img src="/icon-512.svg" alt="Orbit Icon" className="h-6 w-6" />
+                            <p className="text-sm text-muted-foreground">
+                                Built with ❤️ by Orbit Team
+                            </p>
                         </div>
-                    </div>
-
-                    {/* diagonal separator */}
-                    <Separator />
-
-                    {/* CTA section */}
-                    <div className="p-8 text-center">
-                        <h2 className="text-2xl font-semibold mb-3">Ready to Get Started?</h2>
-                        <p className="text-sm text-muted-foreground mb-6 max-w-md mx-auto">
-                            Connect your S3 bucket and start uploading in under 2 minutes. No credit card required.
-                        </p>
-                        <button
-                            onClick={onGetStarted}
-                            className="btn btn-brand h-12 px-10 rounded-lg text-sm font-medium"
-                        >
-                            Launch Dashboard
-                            <ArrowRight className="w-4 h-4" />
-                        </button>
-                    </div>
-                </main>
-
-                {/* diagonal separator */}
-                <Separator />
-
-                {/* footer */}
-                <footer className="screen-line-before">
-                    <div className="px-4 py-6 flex items-center justify-between">
-                        <div className="flex items-center gap-2.5">
-                            <Cloud className="w-4 h-4 text-brand" />
-                            <span className="text-sm font-medium">Orbit</span>
-                        </div>
-                        <div className="flex items-center gap-8 text-xs text-muted-foreground font-medium">
-                            <a href="https://github.com/ezDecode" target="_blank" rel="noopener noreferrer" className="hover:text-foreground transition-colors">ezDecode Lab</a>
-                            <a href="https://github.com/ezDecode/S3Zen-CloudCore" target="_blank" rel="noopener noreferrer" className="hover:text-foreground transition-colors">Open Source</a>
-                            <span className="select-none opacity-60">© {new Date().getFullYear()}</span>
-                        </div>
-                    </div>
-                </footer>
-
-                {/* bottom spacing */}
-                <div className="h-4" />
-            </div>
+                        <ul className="flex items-center gap-6">
+                            <li><a href="https://twitter.com/skaleway" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-brand transition-all block"><Twitter className="size-5" /></a></li>
+                            <li><a href="https://github.com/skaleway" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-brand transition-all block"><Github className="size-5" /></a></li>
+                            <li><a href="https://linkedin.com/company/skaleway" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-brand transition-all block"><Linkedin className="size-5" /></a></li>
+                        </ul>
+                    </footer>
+                </div>
+            </main>
         </div>
     );
 };
 
 export default LandingPage;
+

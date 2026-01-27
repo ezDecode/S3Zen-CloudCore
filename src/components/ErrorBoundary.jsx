@@ -35,19 +35,19 @@ class ErrorBoundary extends Component {
                     <div className="bg-white/10 backdrop-blur-xl rounded-2xl p-8 max-w-2xl w-full border border-white/20">
                         <div className="text-center">
                             <div className="text-6xl mb-4">⚠️</div>
-                            <h1 className="text-3xl font-bold text-white mb-4">
+                            <h1 className="text-3xl font-medium text-white mb-4">
                                 Oops! Something went wrong
                             </h1>
                             <p className="text-gray-300 mb-6">
                                 The application encountered an unexpected error. Don't worry, your data is safe.
                             </p>
-                            
+
                             {this.state.error && (
                                 <details className="mb-6 text-left">
                                     <summary className="cursor-pointer text-purple-300 hover:text-purple-200 mb-2">
                                         Technical Details
                                     </summary>
-                                    <div className="bg-black/30 rounded-lg p-4 text-sm text-gray-300 font-mono overflow-auto max-h-64">
+                                    <div className="bg-slate-950/50 rounded-lg p-4 text-sm text-gray-300 font-mono overflow-auto max-h-64">
                                         <div className="mb-2 text-red-400">{this.state.error.toString()}</div>
                                         {this.state.errorInfo && (
                                             <pre className="text-xs">{this.state.errorInfo.componentStack}</pre>

@@ -166,9 +166,11 @@ function AppContent() {
  */
 function App() {
   return (
-    <ErrorBoundary>
-      <AppContent />
-    </ErrorBoundary>
+    <div className="min-h-screen bg-black flex justify-center selection:bg-brand/20 selection:text-brand">
+      <ErrorBoundary>
+        <AppContent />
+      </ErrorBoundary>
+    </div>
   );
 }
 
