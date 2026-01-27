@@ -1,6 +1,6 @@
 /**
  * Auth Modal
- * Terracotta-themed OTP authentication with ncdai design system
+ * Black/White/Orange themed OTP authentication with ncdai design system
  */
 
 import { useState, useEffect, useRef } from 'react';
@@ -117,12 +117,12 @@ export const AuthModal = ({ isOpen, onClose, onSendOTP, onVerifyOTP }) => {
                         <img src="/logos/logo-white.svg" alt="Orbit" className="h-10 hidden dark:block" />
                         <div className="h-8 w-px bg-border/50" />
                         <div>
-                            <h2 className="font-sans font-medium text-lg">
+                            <h2 className="font-display font-bold text-lg uppercase tracking-tight">
                                 {step === 'email' && 'Authenticate'}
                                 {step === 'otp' && 'Verify Session'}
                                 {step === 'success' && 'Authenticated'}
                             </h2>
-                            <p className="text-xs text-muted-foreground uppercase tracking-widest font-medium">Secure Access</p>
+                            {/* <p className="text-xs text-muted-foreground uppercase tracking-widest font-medium">Secure Access</p> */}
                         </div>
                     </div>
                     <Button
@@ -175,7 +175,7 @@ export const AuthModal = ({ isOpen, onClose, onSendOTP, onVerifyOTP }) => {
                         <div className="space-y-8 text-center">
                             <div>
                                 <p className="text-muted-foreground mb-1">Code sent to</p>
-                                <p className="font-sans font-medium text-lg text-foreground">{email}</p>
+                                <p className="font-medium text-lg text-foreground">{email}</p>
                             </div>
 
                             <div className="space-y-4">
@@ -211,7 +211,7 @@ export const AuthModal = ({ isOpen, onClose, onSendOTP, onVerifyOTP }) => {
                             <div className="w-20 h-20 bg-brand/10 rounded-3xl flex items-center justify-center mx-auto mb-6">
                                 <CheckCircle className="w-10 h-10 text-brand" />
                             </div>
-                            <h3 className="text-2xl font-sans font-medium mb-2">Access Granted</h3>
+                            <h3 className="text-2xl font-display font-bold mb-2 uppercase tracking-tight">Access Granted</h3>
                             <p className="text-muted-foreground">Synchronizing your S3 environment...</p>
                         </div>
                     )}

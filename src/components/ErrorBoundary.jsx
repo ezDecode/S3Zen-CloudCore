@@ -31,26 +31,26 @@ class ErrorBoundary extends Component {
     render() {
         if (this.state.hasError) {
             return (
-                <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 flex items-center justify-center p-4">
-                    <div className="bg-white/10 backdrop-blur-xl rounded-2xl p-8 max-w-2xl w-full border border-white/20">
+                <div className="min-h-screen bg-background flex items-center justify-center p-4">
+                    <div className="bg-card rounded-2xl p-8 max-w-2xl w-full border border-border">
                         <div className="text-center">
                             <div className="text-6xl mb-4">⚠️</div>
-                            <h1 className="text-3xl font-medium text-white mb-4">
+                            <h1 className="text-3xl font-display font-medium text-foreground mb-4">
                                 Oops! Something went wrong
                             </h1>
-                            <p className="text-gray-300 mb-6">
+                            <p className="text-muted-foreground mb-6">
                                 The application encountered an unexpected error. Don't worry, your data is safe.
                             </p>
 
                             {this.state.error && (
                                 <details className="mb-6 text-left">
-                                    <summary className="cursor-pointer text-purple-300 hover:text-purple-200 mb-2">
+                                    <summary className="cursor-pointer text-brand hover:text-brand/80 mb-2 font-medium">
                                         Technical Details
                                     </summary>
-                                    <div className="bg-slate-950/50 rounded-lg p-4 text-sm text-gray-300 font-mono overflow-auto max-h-64">
-                                        <div className="mb-2 text-red-400">{this.state.error.toString()}</div>
+                                    <div className="bg-secondary/50 rounded-lg p-4 text-sm text-foreground font-mono overflow-auto max-h-64 border border-border/50">
+                                        <div className="mb-2 text-destructive">{this.state.error.toString()}</div>
                                         {this.state.errorInfo && (
-                                            <pre className="text-xs">{this.state.errorInfo.componentStack}</pre>
+                                            <pre className="text-xs text-muted-foreground">{this.state.errorInfo.componentStack}</pre>
                                         )}
                                     </div>
                                 </details>
@@ -58,7 +58,7 @@ class ErrorBoundary extends Component {
 
                             <button
                                 onClick={this.handleReset}
-                                className="px-6 py-3 bg-purple-600 hover:bg-purple-700 text-white rounded-lg font-medium transition-colors"
+                                className="px-6 py-3 bg-brand hover:bg-brand/90 text-white rounded-lg font-medium transition-colors"
                             >
                                 Return to Home
                             </button>

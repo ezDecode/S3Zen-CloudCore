@@ -94,7 +94,7 @@ export const BucketSetup = ({ user, onComplete }) => {
     };
 
     return (
-        <div className="flex min-h-screen items-center justify-center bg-muted/50 font-sans w-full">
+        <div className="flex min-h-screen items-center justify-center bg-muted/50 w-full">
             <main className="flex min-h-screen flex-col bg-background border-x max-w-[70rem] w-full">
                 <div className="flex-1 w-full flex flex-col">
                     {/* Header */}
@@ -123,7 +123,7 @@ export const BucketSetup = ({ user, onComplete }) => {
                     <div className="md:px-16 px-8 flex-1 flex flex-col items-center justify-center py-10">
                         <div className="w-full max-w-2xl space-y-12">
                             <div className="space-y-6">
-                                <h1 className="text-4xl font-sans font-medium tracking-tight text-foreground">
+                                <h1 className="text-4xl font-display font-bold tracking-tight text-foreground uppercase">
                                     Connect Storage <span className="text-brand">Cluster.</span>
                                 </h1>
                                 <p className="text-lg text-muted-foreground leading-relaxed">
@@ -219,8 +219,8 @@ export const BucketSetup = ({ user, onComplete }) => {
                         </div>
                         <div className="flex items-center gap-6">
                             <ul className="flex items-center gap-6">
-                                <li><a href="https://twitter.com/skaleway" className="text-muted-foreground hover:text-brand transition-all block"><Twitter className="size-5" /></a></li>
-                                <li><a href="https://github.com/skaleway" className="text-muted-foreground hover:text-brand transition-all block"><Github className="size-5" /></a></li>
+                                <li><a href="https://twitter.com/ezdecode" className="text-muted-foreground hover:text-brand transition-all block"><Twitter className="size-5" /></a></li>
+                                <li><a href="https://github.com/ezDecode" className="text-muted-foreground hover:text-brand transition-all block"><Github className="size-5" /></a></li>
                             </ul>
                         </div>
                     </footer>

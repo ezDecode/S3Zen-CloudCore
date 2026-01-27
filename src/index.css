@@ -9,7 +9,7 @@
 
 @layer base {
   body {
-    font-family: "Geist", sans-serif;
+    font-family: var(--font-sans);
     @apply bg-background text-foreground;
   }
 
@@ -19,7 +19,7 @@
   h4,
   h5,
   h6 {
-    @apply font-sans tracking-tight font-medium;
+    @apply font-display tracking-tight font-bold;
   }
 }
 
@@ -29,34 +29,6 @@
   --radius-lg: 1rem;
   --radius-xl: 1.5rem;
   --radius-2xl: 2rem;
-
-  --color-rich-cerulean-800: #113c55;
-  --color-rich-cerulean-900: #091e2a;
-  --color-rich-cerulean-950: #06151e;
-
-  --color-sand-dune-50: #f7f5ed;
-  --color-sand-dune-100: #f0ebdb;
-  --color-sand-dune-200: #e1d6b7;
-  --color-sand-dune-300: #d2c293;
-  --color-sand-dune-400: #c3ae6f;
-  --color-sand-dune-500: #b49a4b;
-  --color-sand-dune-600: #907b3c;
-  --color-sand-dune-700: #6c5c2d;
-  --color-sand-dune-800: #483d1e;
-  --color-sand-dune-900: #241f0f;
-  --color-sand-dune-950: #19160b;
-
-  --color-alice-blue-50: #ecf3f8;
-  --color-alice-blue-100: #dae7f1;
-  --color-alice-blue-200: #b4cfe4;
-  --color-alice-blue-300: #8fb7d6;
-  --color-alice-blue-400: #699fc9;
-  --color-alice-blue-500: #4487bb;
-  --color-alice-blue-600: #366c96;
-  --color-alice-blue-700: #295170;
-  --color-alice-blue-800: #1b364b;
-  --color-alice-blue-900: #0e1b25;
-  --color-alice-blue-950: #09131a;
 
   --color-background: var(--background);
   --color-foreground: var(--foreground);
@@ -84,9 +56,9 @@
   --font-display: "Geist", system-ui, sans-serif;
   --font-mono: "Geist Mono", monospace;
 
-  /* Shadows - Sophisticated & Layered */
-  --shadow-premium: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 10px 15px -3px rgba(9, 30, 42, 0.1);
-  --shadow-glow: 0 0 20px -5px var(--color-rich-cerulean-400);
+  /* Shadows - Minimalist & Deep */
+  --shadow-premium: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+  --shadow-glow: 0 0 20px -5px var(--color-brand);
 
   /* Animations */
   --animate-float: float 6s ease-in-out infinite;
@@ -120,130 +92,109 @@
 :root {
   --radius: 0.5rem;
 
-  /* Deep Slate Theme - Orbit Aesthetic */
-  --background: #020617;
-  /* Slate 950 */
-  --foreground: #f8fafc;
-  /* Slate 50 */
+  /* Light Theme - Stark White/Black/Orange */
+  --background: #ffffff;
+  --foreground: #000000;
 
-  /* Card: Slate 900 - Rich dark blue/gray */
-  --card: #0f172a;
-  --card-foreground: #f8fafc;
+  --card: #ffffff;
+  --card-foreground: #000000;
 
-  /* Popover: Matches Background */
-  --popover: #020617;
-  --popover-foreground: #f8fafc;
+  --popover: #ffffff;
+  --popover-foreground: #000000;
 
-  /* Primary: Vibrant Orange */
   --primary: #f97316;
   --primary-foreground: #ffffff;
 
-  /* Secondary: Slate 800 */
-  --secondary: #1e293b;
-  --secondary-foreground: #f8fafc;
+  --secondary: #f4f4f5;
+  --secondary-foreground: #000000;
 
-  /* Muted: Slate 900/800 mix */
-  --muted: #0f172a;
-  --muted-foreground: #94a3b8;
-  /* Slate 400 */
+  --muted: #f4f4f5;
+  --muted-foreground: #71717a;
 
-  /* Accent: Slate 800 */
-  --accent: #1e293b;
-  --accent-foreground: #f8fafc;
+  --accent: #f4f4f5;
+  --accent-foreground: #000000;
 
-  /* New accent color for subtle hovers */
-  --accent2: rgba(248, 250, 252, 0.05);
+  --accent2: rgba(0, 0, 0, 0.05);
 
-  --destructive: #7f1d1d;
-  --destructive-foreground: #f8fafc;
+  --destructive: #ef4444;
+  --destructive-foreground: #ffffff;
 
-  /* Borders: Slate 800 */
-  --border: #1e293b;
-  --input: #1e293b;
+  --border: #e4e4e7;
+  --input: #e4e4e7;
   --ring: #f97316;
 
-  /* Edge and pattern colors - Adjusted for Slate */
-  --color-edge: rgba(148, 163, 184, 0.1);
-  /* Slate 400 at 10% */
+  --color-edge: rgba(0, 0, 0, 0.1);
   --edge: var(--color-edge);
-  --grid-dot: rgba(148, 163, 184, 0.08);
-  --diagonal-line: rgba(148, 163, 184, 0.04);
+  --grid-dot: rgba(0, 0, 0, 0.05);
+  --diagonal-line: rgba(0, 0, 0, 0.03);
   --pattern-foreground: var(--color-edge);
 
-  /* Info accent */
-  --info: #3b82f6;
+  --info: #000000;
+  --popover-border: rgba(0, 0, 0, 0.1);
 
-  /* Popover border */
-  --popover-border: rgba(148, 163, 184, 0.1);
-
-  /* Brand: Orange */
   --brand: #f97316;
   --brand-foreground: #ffffff;
 
-  /* Code block */
-  --code: #0f172a;
-  /* Slate 900 */
-  --code-foreground: #f8fafc;
+  --code: #f4f4f5;
+  --code-foreground: #000000;
 
-  /* Shadow tokens - Colored shadows for depth */
-  --shadow-xs: 0 1px 2px 0 rgb(2 6 23 / 0.5);
-  --shadow-sm: 0 1px 3px 0 rgb(2 6 23 / 0.5), 0 1px 2px -1px rgb(2 6 23 / 0.5);
-  --shadow-popover: 0 10px 15px -3px rgb(2 6 23 / 0.5), 0 4px 6px -4px rgb(2 6 23 / 0.5);
+  --shadow-xs: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  --shadow-sm: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+  --shadow-popover: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
 }
 
 .dark {
   color-scheme: dark;
-  --background: #020617;
-  /* Slate 950 */
-  --foreground: #f8fafc;
-  /* Slate 50 */
 
-  --card: #0f172a;
-  /* Slate 900 */
-  --card-foreground: #f8fafc;
+  /* Dark Theme - Pure Black/White/Orange */
+  --background: #000000;
+  --foreground: #ffffff;
 
-  --popover: #020617;
-  --popover-foreground: #f8fafc;
+  --card: #09090b;
+  --card-foreground: #ffffff;
+
+  --popover: #000000;
+  --popover-foreground: #ffffff;
 
   --primary: #f97316;
   --primary-foreground: #ffffff;
 
-  --secondary: #1e293b;
-  /* Slate 800 */
-  --secondary-foreground: #f8fafc;
+  --secondary: #18181b;
+  --secondary-foreground: #ffffff;
 
-  --muted: #0f172a;
-  --muted-foreground: #94a3b8;
+  --muted: #18181b;
+  --muted-foreground: #a1a1aa;
 
-  --accent: #1e293b;
-  --accent-foreground: #f8fafc;
+  --accent: #27272a;
+  --accent-foreground: #ffffff;
 
-  --accent2: rgba(248, 250, 252, 0.05);
+  --accent2: rgba(255, 255, 255, 0.05);
 
   --destructive: #7f1d1d;
-  --destructive-foreground: #f8fafc;
+  --destructive-foreground: #ffffff;
 
-  --border: #1e293b;
-  /* Slate 800 */
-  --input: #1e293b;
+  --border: #27272a;
+  --input: #27272a;
   --ring: #f97316;
 
-  --color-edge: rgba(148, 163, 184, 0.1);
+  --color-edge: rgba(255, 255, 255, 0.1);
   --edge: var(--color-edge);
-  --grid-dot: rgba(148, 163, 184, 0.08);
-  --diagonal-line: rgba(148, 163, 184, 0.04);
+  --grid-dot: rgba(255, 255, 255, 0.05);
+  --diagonal-line: rgba(255, 255, 255, 0.03);
   --pattern-foreground: var(--color-edge);
 
-  --info: #3b82f6;
-  --popover-border: rgba(148, 163, 184, 0.1);
+  --info: #ffffff;
+  --popover-border: rgba(255, 255, 255, 0.1);
+
   --brand: #f97316;
+  --brand-foreground: #ffffff;
 
-  --code: #0f172a;
-  --code-foreground: #f8fafc;
+  --code: #18181b;
+  --code-foreground: #ffffff;
 
-  --shadow-xs: 0 1px 2px 0 rgb(2 6 23 / 0.5);
-  --shadow-sm: 0 1px 3px 0 rgb(2 6 23 / 0.5), 0 1px 2px -1px rgb(2 6 23 / 0.5);
-  --shadow-popover: 0 10px 15px -3px rgb(2 6 23 / 0.5), 0 4px 6px -4px rgb(2 6 23 / 0.5);
+  --shadow-xs: 0 1px 2px 0 rgb(0 0 0 / 0.5);
+  --shadow-sm: 0 1px 3px 0 rgb(0 0 0 / 0.5), 0 1px 2px -1px rgb(0 0 0 / 0.5);
+  --shadow-popover: 0 10px 15px -3px rgb(0 0 0 / 0.5), 0 4px 6px -4px rgb(0 0 0 / 0.5);
 }
 
 @layer base {

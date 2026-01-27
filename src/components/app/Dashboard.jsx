@@ -1,6 +1,6 @@
 /**
  * Dashboard
- * ncdai design system with terracotta palette
+ * ncdai design system with Black/White/Orange palette
  * main upload and file management interface with grid lines
  */
 
@@ -187,7 +187,7 @@ export const Dashboard = ({ user, bucket, onLogout, onManageBucket }) => {
     };
 
     return (
-        <div className="flex min-h-screen items-center justify-center bg-muted/50 font-sans w-full">
+        <div className="flex min-h-screen items-center justify-center bg-muted/50 w-full">
             <main className="flex min-h-screen flex-col bg-background border-x max-w-[70rem] w-full">
                 <div className="flex-1 w-full flex flex-col">
                     {/* Header */}
@@ -236,21 +236,21 @@ export const Dashboard = ({ user, bucket, onLogout, onManageBucket }) => {
                             <div className="card p-6 flex items-center gap-4 bg-secondary/20">
                                 <HardDrive className="w-6 h-6 text-brand" />
                                 <div>
-                                    <div className="text-lg font-sans font-medium">{totalFiles}</div>
+                                    <div className="text-lg font-display font-bold">{totalFiles}</div>
                                     <div className="text-xs text-muted-foreground uppercase tracking-wider">Files Stored</div>
                                 </div>
                             </div>
                             <div className="card p-6 flex items-center gap-4 bg-secondary/20">
                                 <TrendingUp className="w-6 h-6 text-brand" />
                                 <div>
-                                    <div className="text-lg font-sans font-medium">{formatSize(totalSize)}</div>
+                                    <div className="text-lg font-display font-bold">{formatSize(totalSize)}</div>
                                     <div className="text-xs text-muted-foreground uppercase tracking-wider">Total Storage</div>
                                 </div>
                             </div>
                             <div className="card p-6 flex items-center gap-4 bg-secondary/20">
                                 <Shield className="w-6 h-6 text-brand" />
                                 <div>
-                                    <div className="text-lg font-sans font-medium">{formatSize(totalSaved)}</div>
+                                    <div className="text-lg font-display font-bold">{formatSize(totalSaved)}</div>
                                     <div className="text-xs text-muted-foreground uppercase tracking-wider">Space Saved</div>
                                 </div>
                             </div>
@@ -279,7 +279,7 @@ export const Dashboard = ({ user, bucket, onLogout, onManageBucket }) => {
                         {/* File Inventory */}
                         <div className="flex flex-col gap-4">
                             <div className="flex items-center justify-between border-b border-dotted border-border/50 pb-2">
-                                <h2 className="text-sm font-sans font-medium uppercase tracking-widest text-muted-foreground">Recent Assets</h2>
+                                <h2 className="text-sm font-display font-bold uppercase tracking-widest text-muted-foreground">Recent Assets</h2>
                                 <Button
                                     onClick={() => syncHistory(true)}
                                     variant="ghost"
@@ -316,9 +316,8 @@ export const Dashboard = ({ user, bucket, onLogout, onManageBucket }) => {
                             </p>
                         </div>
                         <ul className="flex items-center gap-6">
-                            <li><a href="https://twitter.com/skaleway" className="text-muted-foreground hover:text-brand transition-all block"><Twitter className="size-5" /></a></li>
-                            <li><a href="https://github.com/skaleway" className="text-muted-foreground hover:text-brand transition-all block"><Github className="size-5" /></a></li>
-                            <li><a href="https://linkedin.com/company/skaleway" className="text-muted-foreground hover:text-brand transition-all block"><Linkedin className="size-5" /></a></li>
+                            <li><a href="https://twitter.com/ezdecode" className="text-muted-foreground hover:text-brand transition-all block"><Twitter className="size-5" /></a></li>
+                            <li><a href="https://github.com/ezDecode" className="text-muted-foreground hover:text-brand transition-all block"><Github className="size-5" /></a></li>
                         </ul>
                     </footer>
                 </div>
