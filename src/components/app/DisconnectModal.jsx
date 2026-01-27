@@ -2,7 +2,7 @@ import React from 'react';
 import { Icon } from '@iconify/react';
 import { Button } from '../ui/button';
 
-export const DisconnectModal = ({ isOpen, onClose, onConfirm, bucketName }) => {
+export const DisconnectModal = ({ isOpen, onClose, onConfirm, bucketName, isLoading, hasActiveUploads }) => {
     if (!isOpen) return null;
 
     return (
@@ -26,11 +26,23 @@ export const DisconnectModal = ({ isOpen, onClose, onConfirm, bucketName }) => {
 
                 {/* Body */}
                 <div className="p-6 space-y-4">
+                    {hasActiveUploads && (
+                        <div className="p-3 bg-destructive/10 border border-destructive/20 rounded-2xl flex items-start gap-3 animate-in slide-in-from-top-2">
+                            <Icon icon="solar:shield-warning-linear" className="w-5 h-5 text-destructive shrink-0 mt-0.5" />
+                            <div className="space-y-1">
+                                <p className="text-sm font-semibold text-destructive">Active Uploads in Progress</p>
+                                <p className="text-xs text-destructive/80 leading-relaxed">
+                                    You have ongoing uploads. Disconnecting now will cancel these operations.
+                                </p>
+                            </div>
+                        </div>
+                    )}
+
                     <div className="space-y-2">
                         <p className="text-base font-medium">Are you sure you want to disconnect <span className="text-brand">{bucketName}</span>?</p>
                         <p className="text-sm text-muted-foreground leading-relaxed">
-                            This action will only remove the bucket credentials from this application session.
-                            <span className="block mt-1 font-medium text-foreground/80">Your actual data and files in S3 will not be deleted or modified.</span>
+                            This will remove the bucket configuration from your account.
+                            <span className="block mt-1 font-medium text-foreground/80">Your files in S3 will remain safe and will not be deleted.</span>
                         </p>
                     </div>
 
@@ -39,6 +51,7 @@ export const DisconnectModal = ({ isOpen, onClose, onConfirm, bucketName }) => {
                             variant="outline"
                             onClick={onClose}
                             className="flex-1 rounded-xl h-11"
+                            disabled={isLoading}
                         >
                             Keep Connected
                         </Button>
@@ -46,8 +59,16 @@ export const DisconnectModal = ({ isOpen, onClose, onConfirm, bucketName }) => {
                             variant="destructive"
                             onClick={onConfirm}
                             className="flex-1 rounded-xl h-11 bg-destructive hover:bg-destructive/90"
+                            disabled={isLoading}
                         >
-                            Confirm Disconnect
+                            {isLoading ? (
+                                <>
+                                    <Icon icon="solar:refresh-circle-linear" className="w-4 h-4 mr-2 animate-spin" />
+                                    Disconnecting...
+                                </>
+                            ) : (
+                                'Confirm Disconnect'
+                            )}
                         </Button>
                     </div>
                 </div>

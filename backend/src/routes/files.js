@@ -332,8 +332,9 @@ router.get('/history', requireAuth(), async (req, res) => {
         const { id: userId } = req.user;
         const limit = Math.min(parseInt(req.query.limit) || 50, 100);
         const offset = parseInt(req.query.offset) || 0;
+        const bucketId = req.query.bucketId;
 
-        const result = await uploadHistoryService.getHistory(userId, limit, offset);
+        const result = await uploadHistoryService.getHistory(userId, limit, offset, bucketId);
 
         // Always return success with files array (graceful degradation)
         res.json({

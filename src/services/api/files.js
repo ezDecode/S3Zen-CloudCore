@@ -102,8 +102,12 @@ export const files = {
             return { success: true, files: [], total: 0 };
         }
         try {
-            const { limit = 50, offset = 0 } = options;
-            const result = await apiRequest(`/api/files/history?limit=${limit}&offset=${offset}`);
+            const { limit = 50, offset = 0, bucketId = null } = options;
+            let url = `/api/files/history?limit=${limit}&offset=${offset}`;
+            if (bucketId) {
+                url += `&bucketId=${encodeURIComponent(bucketId)}`;
+            }
+            const result = await apiRequest(url);
             return {
                 success: true,
                 files: result.files,

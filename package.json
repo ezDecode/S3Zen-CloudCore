@@ -19,7 +19,7 @@
     "@aws-sdk/s3-request-presigner": "^3.971.0",
     "@base-ui/react": "^1.1.0",
     "@fontsource-variable/jetbrains-mono": "^5.2.8",
-    "@iconify-json/solar": "^1.2.5",
+    "@iconify-json/codicon": "^1.2.41",
     "@iconify/react": "^6.0.2",
     "@supabase/supabase-js": "^2.91.0",
     "@tailwindcss/vite": "^4.1.18",

@@ -99,15 +99,21 @@ async function recordUpload(userId, data) {
 /**
  * Get user's upload history
  */
-async function getHistory(userId, limit = 50, offset = 0) {
+async function getHistory(userId, limit = 50, offset = 0, bucketId = null) {
     try {
         const supabase = getClient();
         if (!supabase) return { success: false, error: 'Database not available', files: [] };
 
-        const { data: uploads, error, count } = await supabase
+        let query = supabase
             .from(TABLE_NAME)
             .select('*', { count: 'exact' })
-            .eq('user_id', userId)
+            .eq('user_id', userId);
+
+        if (bucketId) {
+            query = query.eq('bucket_id', bucketId);
+        }
+
+        const { data: uploads, error, count } = await query
             .order('created_at', { ascending: false })
             .range(offset, offset + limit - 1);
 

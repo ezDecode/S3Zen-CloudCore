@@ -166,13 +166,50 @@ const UploadItem = memo(({ upload }) => {
     );
 });
 
-const Dashboard = ({ user, bucket, onLogout, onAddBucket, onRemoveBucket }) => {
+/**
+ * @param {Object} props
+ * @param {any} props.user
+ * @param {any} props.bucket
+ * @param {Function} props.onLogout
+ * @param {Function} props.onAddBucket
+ * @param {Function} props.onRemoveBucket
+ * @param {Function} [props.onUploadsChange]
+ * @param {File[]} [props.pendingFiles]
+ * @param {Function} [props.onPendingUpload]
+ * @param {Function} [props.onUploadComplete]
+ */
+const Dashboard = ({ user, bucket, onLogout, onAddBucket, onRemoveBucket, onUploadsChange, pendingFiles = [], onPendingUpload, onUploadComplete }) => {
     const [isDragging, setIsDragging] = useState(false);
     const [uploads, setUploads] = useState([]);
     const [recentFiles, setRecentFiles] = useState(getLocalCache());
     const [copiedUrl, setCopiedUrl] = useState(null);
     const [deleting, setDeleting] = useState(null);
     const [isSyncing, setIsSyncing] = useState(false);
+
+    // Initial sync and cleanup on bucket change
+    useEffect(() => {
+        // Clear recent files and active uploads when bucket changes 
+        // to avoid showing stale data or keeping orphaned upload UI from previous bucket
+        setRecentFiles([]);
+        setUploads([]);
+        syncHistory(true);
+    }, [bucket?.id]);
+
+    // Handle pending files from App.tsx (after bucket setup)
+    useEffect(() => {
+        if (bucket?.id && pendingFiles.length > 0) {
+            console.log(`[Dashboard] Processing ${pendingFiles.length} pending files...`);
+            pendingFiles.forEach(file => uploadFile(file));
+            if (onUploadComplete) onUploadComplete();
+        }
+    }, [bucket?.id, pendingFiles, onUploadComplete]);
+
+    // Notify parent of active uploads count
+    useEffect(() => {
+        if (onUploadsChange) {
+            onUploadsChange(uploads.length);
+        }
+    }, [uploads.length, onUploadsChange]);
 
     const fileInputRef = useRef(null);
     const dropZoneRef = useRef(null);
@@ -185,7 +222,10 @@ const Dashboard = ({ user, bucket, onLogout, onAddBucket, onRemoveBucket }) => {
         if (!forceRefresh && isCacheFresh() && recentFiles.length > 0) return;
         setIsSyncing(true);
         try {
-            const result = await filesApi.getHistory({ limit: 50 });
+            const result = await filesApi.getHistory({
+                limit: 50,
+                bucketId: bucket?.id
+            });
             if (result.success && result.files) {
                 setRecentFiles(result.files);
                 setLocalCache(result.files);
@@ -197,11 +237,17 @@ const Dashboard = ({ user, bucket, onLogout, onAddBucket, onRemoveBucket }) => {
         }
     };
 
-    useEffect(() => {
-        syncHistory();
-    }, []);
-
     const uploadFile = useCallback(async (file, options = {}) => {
+        if (!bucket?.id) {
+            console.log(`[Dashboard] No bucket connected, storing ${file.name} as pending`);
+            if (onPendingUpload) {
+                onPendingUpload([file]);
+            } else {
+                toast.error('Connect a bucket to upload files');
+            }
+            return;
+        }
+
         const uploadId = Date.now() + '-' + file.name;
         setUploads(prev => [...prev, { id: uploadId, name: file.name, progress: 0, status: 'uploading' }]);
 
