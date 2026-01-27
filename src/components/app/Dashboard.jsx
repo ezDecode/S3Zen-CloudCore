@@ -56,77 +56,81 @@ const FileItem = memo(({ file, copiedUrl, deleting, onCopy, onDelete }) => {
     const isCopied = copiedUrl === file.key;
 
     return (
-        <div className="py-5 flex items-center gap-5 transition-colors border-b border-dotted border-border/50 last:border-0 group">
-            <div className="w-11 h-11 bg-secondary rounded-lg flex items-center justify-center transition-colors group-hover:bg-brand/10">
-                <Icon icon={iconString} className="w-5 h-5 text-muted-foreground group-hover:text-brand transition-colors" />
-            </div>
-
-            <div className="flex-1 min-w-0">
-                <div className="flex items-center gap-3">
-                    <span className="text-sm truncate font-medium max-w-[150px] sm:max-w-none">{file.name}</span>
-                    {file.compressed && (
-                        <Badge variant="brand">Compressed</Badge>
-                    )}
+        <div className="py-5 flex flex-col sm:flex-row sm:items-center gap-4 sm:gap-5 transition-colors border-b border-dotted border-border/50 last:border-0 group">
+            <div className="flex items-center gap-4 sm:gap-5 flex-1 min-w-0">
+                <div className="w-11 h-11 bg-secondary rounded-lg flex items-center justify-center shrink-0 transition-colors group-hover:bg-brand/10">
+                    <Icon icon={iconString} className="w-5 h-5 text-muted-foreground group-hover:text-brand transition-colors" />
                 </div>
-                <div className="flex items-center gap-3 text-[11px] text-muted-foreground mt-1">
-                    <span className="flex items-center gap-1">
-                        <Icon icon="solar:ssd-linear" className="w-3 h-3" />
-                        {formatSize(file.size)}
-                    </span>
-                    <span className="w-1 h-1 rounded-full bg-muted-foreground/50" />
-                    <span className="flex items-center gap-1">
-                        <Icon icon="solar:clock-circle-linear" className="w-3 h-3" />
-                        {formatDate(file.uploadedAt)}
-                    </span>
-                </div>
-            </div>
 
-            <div className="flex items-center gap-2">
-                <Button
-                    onClick={() => onCopy(file.url, file.key)}
-                    variant={isCopied ? "default" : "secondary"}
-                    size="sm"
-                    className="min-w-[100px] transition-all duration-300"
-                >
-                    {isCopied ? (
-                        <>
-                            <Icon icon="solar:check-circle-linear" className="w-4 h-4" />
-                            Copied
-                        </>
-                    ) : (
-                        'Copy Link'
-                    )}
-                </Button>
-                <Button
-                    variant="ghost"
-                    size="icon"
-                    asChild
-                >
-                    <a
-                        href={file.url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        title="Open File"
-                        aria-label={`Open ${file.name}`}
+                <div className="flex-1 min-w-0">
+                    <div className="flex items-center flex-wrap gap-2 sm:gap-3">
+                        <span className="text-sm truncate font-medium max-w-[150px] sm:max-w-none">{file.name}</span>
+                        {file.compressed && (
+                            <Badge variant="brand">Compressed</Badge>
+                        )}
+                    </div>
+                    <div className="flex items-center gap-3 text-[11px] text-muted-foreground mt-1">
+                        <span className="flex items-center gap-1">
+                            <Icon icon="solar:ssd-linear" className="w-3 h-3" />
+                            {formatSize(file.size)}
+                        </span>
+                        <span className="w-1 h-1 rounded-full bg-muted-foreground/50" />
+                        <span className="flex items-center gap-1">
+                            <Icon icon="solar:clock-circle-linear" className="w-3 h-3" />
+                            {formatDate(file.uploadedAt)}
+                        </span>
+                    </div>
+                </div>
+
+                <div className="flex items-center gap-2 sm:ml-auto">
+                    <Button
+                        onClick={() => onCopy(file.url, file.key)}
+                        variant={isCopied ? "default" : "secondary"}
+                        size="sm"
+                        className="flex-1 sm:min-w-[100px] transition-all duration-300"
                     >
-                        <Icon icon="solar:link-circle-linear" className="w-4 h-4" />
-                    </a>
-                </Button>
-                <Button
-                    onClick={() => onDelete(file)}
-                    disabled={deleting === file.key}
-                    variant="ghost"
-                    size="icon"
-                    className="hover:text-destructive hover:bg-destructive/10"
-                    title="Delete File"
-                    aria-label={`Delete ${file.name}`}
-                >
-                    {deleting === file.key ? (
-                        <Icon icon="solar:refresh-circle-linear" className="w-4 h-4 animate-spin" />
-                    ) : (
-                        <Icon icon="solar:trash-bin-trash-linear" className="w-4 h-4" />
-                    )}
-                </Button>
+                        {isCopied ? (
+                            <>
+                                <Icon icon="solar:check-circle-linear" className="w-4 h-4" />
+                                Copied
+                            </>
+                        ) : (
+                            'Copy Link'
+                        )}
+                    </Button>
+                    <div className="flex items-center gap-2">
+                        <Button
+                            variant="ghost"
+                            size="icon"
+                            asChild
+                        >
+                            <a
+                                href={file.url}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                title="Open File"
+                                aria-label={`Open ${file.name}`}
+                            >
+                                <Icon icon="solar:link-circle-linear" className="w-4 h-4" />
+                            </a>
+                        </Button>
+                        <Button
+                            onClick={() => onDelete(file)}
+                            disabled={deleting === file.key}
+                            variant="ghost"
+                            size="icon"
+                            className="hover:text-destructive hover:bg-destructive/10"
+                            title="Delete File"
+                            aria-label={`Delete ${file.name}`}
+                        >
+                            {deleting === file.key ? (
+                                <Icon icon="solar:refresh-circle-linear" className="w-4 h-4 animate-spin" />
+                            ) : (
+                                <Icon icon="solar:trash-bin-trash-linear" className="w-4 h-4" />
+                            )}
+                        </Button>
+                    </div>
+                </div>
             </div>
         </div>
     );
@@ -168,16 +172,16 @@ const UploadItem = memo(({ upload }) => {
 
 /**
  * @param {Object} props
- * @param {any} props.user
- * @param {any} props.bucket
- * @param {Function} props.onLogout
- * @param {Function} props.onAddBucket
- * @param {Function} props.onRemoveBucket
- * @param {Function} [props.onUploadsChange]
- * @param {File[]} [props.pendingFiles]
- * @param {Function} [props.onPendingUpload]
- * @param {Function} [props.onUploadComplete]
- */
+            * @param {any} props.user
+            * @param {any} props.bucket
+            * @param {Function} props.onLogout
+            * @param {Function} props.onAddBucket
+            * @param {Function} props.onRemoveBucket
+            * @param {Function} [props.onUploadsChange]
+            * @param {File[]} [props.pendingFiles]
+            * @param {Function} [props.onPendingUpload]
+            * @param {Function} [props.onUploadComplete]
+            */
 const Dashboard = ({ user, bucket, onLogout, onAddBucket, onRemoveBucket, onUploadsChange, pendingFiles = [], onPendingUpload, onUploadComplete }) => {
     const [isDragging, setIsDragging] = useState(false);
     const [uploads, setUploads] = useState([]);
@@ -334,16 +338,18 @@ const Dashboard = ({ user, bucket, onLogout, onAddBucket, onRemoveBucket, onUplo
             <main className="flex min-h-screen flex-col w-full max-w-[1400px] 2xl:max-w-[60vw] mx-auto">
                 <div className="flex-1 w-full flex flex-col">
                     {/* Header */}
-                    <Header
-                        variant="dashboard"
-                        bucketName={bucket?.bucket_name || bucket?.bucketName}
-                        onLogout={onLogout}
-                        onAddBucket={onAddBucket}
-                        onRemoveBucket={onRemoveBucket}
-                        className="md:p-16 p-8 pb-4 md:pb-8"
-                    />
+                    <div className="sticky top-0 z-50 bg-background/95 backdrop-blur-sm border-b border-transparent transition-all duration-200">
+                        <Header
+                            variant="dashboard"
+                            bucketName={bucket?.bucket_name || bucket?.bucketName}
+                            onLogout={onLogout}
+                            onAddBucket={onAddBucket}
+                            onRemoveBucket={onRemoveBucket}
+                            className="md:px-16 px-6 py-6 md:py-8"
+                        />
+                    </div>
 
-                    <div className="md:px-16 px-8 flex-1 flex flex-col gap-8 pb-16">
+                    <div className="md:px-16 px-6 flex-1 flex flex-col gap-8 pb-16">
                         {/* Stats Section */}
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                             <Card className="p-6 flex flex-row items-center gap-4 bg-secondary/20">
@@ -446,7 +452,7 @@ const Dashboard = ({ user, bucket, onLogout, onAddBucket, onRemoveBucket, onUplo
                     </div>
 
                     {/* Footer */}
-                    <Footer className="md:p-16 p-8 pt-8 mt-auto" />
+                    <Footer className="md:p-16 p-6 pt-8 mt-auto" />
                 </div>
             </main>
         </div>

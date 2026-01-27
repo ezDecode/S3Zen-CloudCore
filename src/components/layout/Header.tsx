@@ -26,8 +26,13 @@ export const Header: React.FC<HeaderProps> = ({
     return (
         <header className={`flex items-center justify-between w-full ${className}`}>
             <div className="flex items-center gap-4">
-                <img src="/logos/orbit-black.svg" alt="Orbit" className="h-8 block dark:hidden" />
-                <img src="/logos/orbit-white.svg" alt="Orbit" className="h-8 hidden dark:block" />
+                {/* Desktop Logos */}
+                <img src="/logos/orbit-black.svg" alt="Orbit" className="h-8 hidden sm:block dark:hidden" />
+                <img src="/logos/orbit-white.svg" alt="Orbit" className="h-8 hidden sm:dark:block" />
+
+                {/* Mobile Logos (icon only) */}
+                <img src="/logos/logo-black.svg" alt="Orbit" className="h-8 block sm:hidden dark:hidden" />
+                <img src="/logos/logo-white.svg" alt="Orbit" className="h-8 hidden dark:block sm:hidden" />
 
                 {variant === 'dashboard' && (
                     <>
