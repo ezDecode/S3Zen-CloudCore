@@ -117,7 +117,7 @@ export const AuthModal = ({ isOpen, onClose, onSendOTP, onVerifyOTP }) => {
                         <img src="/logos/logo-white.svg" alt="Orbit" className="h-10 hidden dark:block" />
                         <div className="h-8 w-px bg-border/50" />
                         <div>
-                            <h2 className="font-display font-bold text-lg uppercase tracking-tight">
+                            <h2 className="font-display font-medium text-xl tracking-tight">
                                 {step === 'email' && 'Authenticate'}
                                 {step === 'otp' && 'Verify Session'}
                                 {step === 'success' && 'Authenticated'}

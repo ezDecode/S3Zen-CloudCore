@@ -15,7 +15,40 @@ import { toast } from 'sonner';
 import { DiagonalSeparator as Separator } from '../ui/DiagonalSeparator';
 import { Button } from '../ui/button';
 
-// ... (getFileIcon, formatSize, formatDate, constants, getLocalCache, setLocalCache, isCacheFresh stay the same) ...
+import { formatBytes as formatSize, formatDate } from '../../lib/utils';
+
+// Constants
+const CACHE_KEY = 'orbit_files_cache';
+const CACHE_TIME_KEY = 'orbit_cache_time';
+const CACHE_DURATION = 5 * 60 * 1000; // 5 minutes
+
+// Helpers
+const getLocalCache = () => {
+    try {
+        const cached = localStorage.getItem(CACHE_KEY);
+        return cached ? JSON.parse(cached) : [];
+    } catch { return []; }
+};
+
+const setLocalCache = (files) => {
+    try {
+        localStorage.setItem(CACHE_KEY, JSON.stringify(files));
+        localStorage.setItem(CACHE_TIME_KEY, Date.now().toString());
+    } catch { }
+};
+
+const isCacheFresh = () => {
+    const last = localStorage.getItem(CACHE_TIME_KEY);
+    return last && (Date.now() - parseInt(last) < CACHE_DURATION);
+};
+
+const getFileIcon = (type, name) => {
+    if (!type) return FileIcon;
+    if (type.startsWith('image/')) return Image;
+    if (type.includes('json') || type.includes('javascript') || type.includes('html') || type.includes('css')) return FileCode;
+    if (type.startsWith('text/')) return FileText;
+    return FileIcon;
+};
 
 const FileItem = memo(({ file, copiedUrl, deleting, onCopy, onDelete }) => {
     const Icon = getFileIcon(file.type, file.name);

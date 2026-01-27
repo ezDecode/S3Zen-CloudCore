@@ -221,6 +221,7 @@
   }
 }
 
+@layer components {
 /* ============================================
    ncdai Design System - Screen Lines & Separators
    ============================================ */
@@ -579,4 +580,5 @@
   .main-canvas {
     max-width: 95vw;
   }
+}
 }
