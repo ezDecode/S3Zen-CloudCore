@@ -24,7 +24,7 @@ export const LandingPage = ({ onGetStarted }) => {
                 <Separator />
 
                 {/* navigation */}
-                <header className={`sticky top-0 z-50 transition-all duration-300 ${scrolled ? 'bg-background/80 backdrop-blur-md' : ''}`}>
+                <header className={`sticky top-0 z-50 transition-all duration-300 ${scrolled ? 'bg-background/80 backdrop-blur-xl supports-[backdrop-filter]:bg-background/60 shadow-sm' : ''}`}>
                     <div className="screen-line-after px-4 py-4 flex items-center justify-between">
                         <div className="flex items-center gap-2.5 cursor-pointer">
                             <Cloud className="w-5 h-5 text-brand" />
@@ -45,6 +45,12 @@ export const LandingPage = ({ onGetStarted }) => {
                                 className="btn btn-brand h-9 px-5 rounded-lg text-xs tracking-wide font-medium"
                             >
                                 Get Started
+                            </button>
+                            <button
+                                onClick={onGetStarted}
+                                className="sm:hidden text-brand font-medium text-xs"
+                            >
+                                Login
                             </button>
                         </div>
                     </div>

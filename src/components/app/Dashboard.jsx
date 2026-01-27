@@ -110,6 +110,7 @@ const FileItem = memo(({ file, copiedUrl, deleting, onCopy, onDelete }) => {
                     rel="noopener noreferrer"
                     className="w-8 h-8 flex items-center justify-center text-muted-foreground hover:text-foreground hover:bg-secondary transition-colors rounded-lg"
                     title="Open File"
+                    aria-label={`Open ${file.name}`}
                 >
                     <ExternalLink className="w-4 h-4" />
                 </a>
@@ -118,6 +119,7 @@ const FileItem = memo(({ file, copiedUrl, deleting, onCopy, onDelete }) => {
                     disabled={deleting === file.key}
                     className="w-8 h-8 flex items-center justify-center text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors rounded-lg"
                     title="Delete File"
+                    aria-label={`Delete ${file.name}`}
                 >
                     {deleting === file.key ? (
                         <Loader2 className="w-4 h-4 animate-spin" />
@@ -247,12 +249,12 @@ export const Dashboard = ({ user, bucket, onLogout, onManageBucket }) => {
 
     return (
         <div className="max-w-screen overflow-x-hidden px-2">
-            <div className="mx-auto border-x border-edge md:max-w-4xl">
+            <div className="mx-auto border-x border-edge md:max-w-5xl">
                 {/* top diagonal separator */}
                 <Separator />
 
                 {/* header */}
-                <header className="sticky top-0 z-50 bg-background/80 backdrop-blur-md">
+                <header className="sticky top-0 z-50 bg-background/80 backdrop-blur-xl supports-[backdrop-filter]:bg-background/60">
                     <div className="screen-line-after px-4 py-4 flex items-center justify-between">
                         <div className="flex items-center gap-3">
                             <div className="w-9 h-9 rounded-lg bg-brand/10 flex items-center justify-center">
@@ -275,6 +277,7 @@ export const Dashboard = ({ user, bucket, onLogout, onManageBucket }) => {
                                     onClick={onManageBucket}
                                     className="w-9 h-9 flex items-center justify-center text-muted-foreground hover:text-foreground hover:bg-secondary transition-colors rounded-lg"
                                     title="Bucket Settings"
+                                    aria-label="Bucket Settings"
                                 >
                                     <Settings className="w-4 h-4" />
                                 </button>
@@ -282,6 +285,7 @@ export const Dashboard = ({ user, bucket, onLogout, onManageBucket }) => {
                                     onClick={onLogout}
                                     className="w-9 h-9 flex items-center justify-center text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors rounded-lg"
                                     title="Sign Out"
+                                    aria-label="Sign Out"
                                 >
                                     <LogOut className="w-4 h-4" />
                                 </button>
@@ -375,10 +379,18 @@ export const Dashboard = ({ user, bucket, onLogout, onManageBucket }) => {
                             }}
                             className={`upload-zone ${isDragging ? 'dragging' : ''}`}
                         >
-                            <input ref={fileInputRef} type="file" multiple onChange={(e) => {
-                                Array.from(e.target.files).forEach(f => uploadFile(f));
-                                e.target.value = '';
-                            }} className="hidden" />
+                            <input
+                                ref={fileInputRef}
+                                type="file"
+                                multiple
+                                onChange={(e) => {
+                                    Array.from(e.target.files).forEach(f => uploadFile(f));
+                                    e.target.value = '';
+                                }}
+                                className="hidden"
+                                title="Upload files"
+                                aria-label="Upload files"
+                            />
                             <div className={`w-14 h-14 rounded-2xl flex items-center justify-center transition-colors ${isDragging ? 'bg-brand/20' : 'bg-secondary'}`}>
                                 <Upload className={`w-7 h-7 transition-colors ${isDragging ? 'text-brand' : 'text-muted-foreground'}`} />
                             </div>

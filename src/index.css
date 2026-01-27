@@ -1,16 +1,17 @@
+@import url('https://fonts.googleapis.com/css2?family=Geist:wght@100..900&family=Geist+Mono:wght@100..900&display=swap');
+
 @import "tailwindcss";
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
-@import "@fontsource-variable/jetbrains-mono";
+
 
 @custom-variant dark (&:is(.dark *));
 
-@font-face {
-  font-family: 'Saans';
-  src: url('/fonts/SaansCollectionVF.ttf') format('truetype');
-  font-weight: 100 900;
-  font-style: normal;
-  font-display: swap;
+@layer base {
+  body {
+    font-family: "Geist", sans-serif;
+    @apply bg-background text-foreground;
+  }
 }
 
 @theme inline {
@@ -20,14 +21,6 @@
   --radius-xl: 1.5rem;
   --radius-2xl: 2rem;
 
-  --color-rich-cerulean-50: #eaf4fb;
-  --color-rich-cerulean-100: #d5eaf6;
-  --color-rich-cerulean-200: #aad5ee;
-  --color-rich-cerulean-300: #80c0e5;
-  --color-rich-cerulean-400: #56abdc;
-  --color-rich-cerulean-500: #2b96d4;
-  --color-rich-cerulean-600: #2378a9;
-  --color-rich-cerulean-700: #1a5a7f;
   --color-rich-cerulean-800: #113c55;
   --color-rich-cerulean-900: #091e2a;
   --color-rich-cerulean-950: #06151e;
@@ -69,9 +62,18 @@
   --color-accent-foreground: var(--accent-foreground);
   --color-brand: var(--brand);
   --color-brand-foreground: var(--brand-foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-ring: var(--ring);
+  --color-input: var(--input);
 
-  --font-sans: "Saans", system-ui, sans-serif;
-  --font-display: "Saans", system-ui, sans-serif;
+  --font-sans: "Geist", system-ui, sans-serif;
+  --font-display: "Geist", system-ui, sans-serif;
+  --font-mono: "Geist Mono", monospace;
 
   /* Shadows - Sophisticated & Layered */
   --shadow-premium: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 10px 15px -3px rgba(9, 30, 42, 0.1);
@@ -117,7 +119,8 @@
   --popover: #ffffff;
   --popover-foreground: #09090b;
 
-  --primary: #18181b;
+  --primary: #f97316;
+  /* Orange-500 */
   --primary-foreground: #fafafa;
 
   --secondary: #f4f4f5;
@@ -137,7 +140,8 @@
 
   --border: #e4e4e7;
   --input: #e4e4e7;
-  --ring: #18181b;
+  --ring: #f97316;
+  /* Orange Ring */
 
   /* Edge and pattern colors matching ncdai */
   --color-edge: rgba(0, 0, 0, 0.08);
@@ -153,7 +157,8 @@
   --popover-border: rgba(0, 0, 0, 0.08);
 
   /* Custom Mainline Accents */
-  --brand: #0062ff;
+  --brand: #f97316;
+  /* Orange Brand */
   --brand-foreground: #ffffff;
 
   /* Code block styling */
@@ -167,60 +172,71 @@
 }
 
 .dark {
-  --background: #09090b;
+  color-scheme: dark;
+  --background: #000000;
+  /* True Black/Void */
   --foreground: #fafafa;
+  /* Crisp White */
 
   --card: #09090b;
+  /* Zinc 950 - Extremely deep gray, barely distinguishable from black */
   --card-foreground: #fafafa;
 
-  --popover: #09090b;
+  --popover: #000000;
   --popover-foreground: #fafafa;
 
-  --primary: #fafafa;
-  --primary-foreground: #18181b;
+  --primary: #f97316;
+  /* Maintains the Vibrant Orange */
+  --primary-foreground: #ffffff;
 
-  --secondary: #27272a;
+  --secondary: #18181b;
+  /* Zinc 900 */
   --secondary-foreground: #fafafa;
 
-  --muted: #27272a;
+  --muted: #18181b;
   --muted-foreground: #a1a1aa;
+  /* Zinc 400 */
 
   --accent: #27272a;
+  /* Zinc 800 */
   --accent-foreground: #fafafa;
 
   /* New accent color for subtle hovers in dark mode */
-  --accent2: rgba(255, 255, 255, 0.02);
+  --accent2: rgba(255, 255, 255, 0.03);
 
   --destructive: #7f1d1d;
   --destructive-foreground: #fafafa;
 
   --border: #27272a;
+  /* Zinc 800 - Subtle but visible borders */
   --input: #27272a;
-  --ring: #d4d4d8;
+  --ring: #f97316;
 
-  /* Edge and pattern colors for dark mode */
-  --color-edge: rgba(255, 255, 255, 0.08);
+  /* Edge and pattern colors for dark mode - Refined for Obsidian */
+  --color-edge: rgba(255, 255, 255, 0.12);
+  /* Slightly higher opacity for contrast against black */
   --edge: var(--color-edge);
-  --grid-dot: rgba(255, 255, 255, 0.04);
-  --diagonal-line: rgba(255, 255, 255, 0.02);
+  --grid-dot: rgba(255, 255, 255, 0.08);
+  /* More visible dots */
+  --diagonal-line: rgba(255, 255, 255, 0.04);
   --pattern-foreground: var(--color-edge);
 
   /* Info accent for dark mode */
-  --info: #60a5fa;
+  --info: #3b82f6;
 
   /* Popover specific styling for dark mode */
-  --popover-border: rgba(255, 255, 255, 0.08);
+  --popover-border: rgba(255, 255, 255, 0.12);
 
-  --brand: #3b82f6;
+  --brand: #f97316;
 
   /* Code block styling for dark mode */
-  --code: #18181b;
+  --code: #121212;
   --code-foreground: #fafafa;
 
-  /* Shadow tokens for dark mode */
-  --shadow-xs: 0 1px 2px 0 rgb(0 0 0 / 0.3);
-  --shadow-sm: 0 1px 3px 0 rgb(0 0 0 / 0.3), 0 1px 2px -1px rgb(0 0 0 / 0.3);
-  --shadow-popover: 0 10px 15px -3px rgb(0 0 0 / 0.3), 0 4px 6px -4px rgb(0 0 0 / 0.3);
+  /* Shadow tokens for dark mode - Deeper shadows */
+  --shadow-xs: 0 1px 2px 0 rgb(0 0 0 / 0.5);
+  --shadow-sm: 0 1px 3px 0 rgb(0 0 0 / 0.5), 0 1px 2px -1px rgb(0 0 0 / 0.5);
+  --shadow-popover: 0 10px 15px -3px rgb(0 0 0 / 0.5), 0 4px 6px -4px rgb(0 0 0 / 0.5);
 }
 
 @layer base {
@@ -235,6 +251,7 @@
 
   /* Respect user's motion preferences */
   @media (prefers-reduced-motion: reduce) {
+
     *,
     *::before,
     *::after {
@@ -317,9 +334,12 @@
 
 /* Subtle animations */
 @keyframes float-subtle {
-  0%, 100% {
+
+  0%,
+  100% {
     transform: translateY(0px);
   }
+
   50% {
     transform: translateY(-2px);
   }
@@ -329,6 +349,7 @@
   from {
     opacity: 0;
   }
+
   to {
     opacity: 1;
   }

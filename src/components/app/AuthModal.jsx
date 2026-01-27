@@ -125,9 +125,9 @@ export const AuthModal = ({ isOpen, onClose, onSendOTP, onVerifyOTP }) => {
     if (!isOpen) return null;
 
     return (
-        <div className="modal-overlay" onClick={(e) => e.target === e.currentTarget && onClose()}>
+        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-background/80 backdrop-blur-sm" onClick={(e) => e.target === e.currentTarget && onClose()}>
             <div
-                className="modal bg-card shadow-xl"
+                className="w-full max-w-md bg-card shadow-2xl border border-edge/50 rounded-xl overflow-hidden animate-in fade-in zoom-in-95 duration-200"
                 role="dialog"
                 aria-modal="true"
                 aria-labelledby="auth-modal-title"
@@ -237,8 +237,9 @@ export const AuthModal = ({ isOpen, onClose, onSendOTP, onVerifyOTP }) => {
                                             value={digit}
                                             onChange={(e) => handleOtpChange(index, e.target.value)}
                                             onKeyDown={(e) => handleOtpKeyDown(index, e)}
-                                            className="w-11 h-13 text-center text-xl font-bold rounded-lg border-2 border-edge bg-card focus:border-brand focus:ring-2 focus:ring-brand/20 outline-none transition-all"
+                                            className="w-11 h-13 text-center text-xl font-bold rounded-lg border-2 border-edge bg-input/50 focus:border-brand focus:ring-2 focus:ring-brand/20 outline-none transition-all placeholder:text-muted-foreground/20"
                                             style={{ borderStyle: digit ? 'solid' : 'dotted' }}
+                                            aria-label={`Digit ${index + 1}`}
                                         />
                                     ))}
                                 </div>

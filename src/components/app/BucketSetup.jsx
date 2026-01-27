@@ -168,7 +168,7 @@ export const BucketSetup = ({ user, onComplete }) => {
                                                 name="region"
                                                 value={formData.region}
                                                 onChange={handleChange}
-                                                className="input appearance-none bg-background pr-10"
+                                                className="input appearance-none bg-background pr-10 border-input/50 focus:border-brand"
                                             >
                                                 {regions.map(r => (
                                                     <option key={r.value} value={r.value}>{r.label}</option>
@@ -182,7 +182,7 @@ export const BucketSetup = ({ user, onComplete }) => {
                                                 name="accessKeyId"
                                                 value={formData.accessKeyId}
                                                 onChange={handleChange}
-                                                className="input font-mono"
+                                                className="input font-mono bg-input/10 border-input/50 focus:border-brand placeholder:text-muted-foreground/30"
                                                 placeholder="AKIA..."
                                             />
                                         </div>
@@ -196,7 +196,7 @@ export const BucketSetup = ({ user, onComplete }) => {
                                         name="secretAccessKey"
                                         value={formData.secretAccessKey}
                                         onChange={handleChange}
-                                        className="input font-mono"
+                                        className="input font-mono bg-input/10 border-input/50 focus:border-brand placeholder:text-muted-foreground/30"
                                         placeholder="••••••••••••••••"
                                     />
                                 </div>
