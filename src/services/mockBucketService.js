@@ -3,7 +3,7 @@
  * Stores bucket configurations in localStorage
  */
 
-const STORAGE_KEY = 'cloudcore_buckets_local';
+const STORAGE_KEY = 'orbit_buckets_local';
 
 export const mockBucketService = {
     getBuckets: () => {

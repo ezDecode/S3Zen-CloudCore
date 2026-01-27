@@ -1,5 +1,5 @@
 /**
- * CloudCore - Simplified Application
+ * Orbit - Simplified Application
  * Neo-Brutalism UI with butter-smooth UX
  * 
  * Flow: Login → Connect Bucket → Upload → Get Links

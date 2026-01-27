@@ -47,8 +47,8 @@ const formatDate = (dateString) => {
     return date.toLocaleDateString();
 };
 
-const CACHE_KEY = 'cloudcore_files_cache';
-const CACHE_TIMESTAMP_KEY = 'cloudcore_files_cache_ts';
+const CACHE_KEY = 'orbit_files_cache';
+const CACHE_TIMESTAMP_KEY = 'orbit_files_cache_ts';
 const CACHE_TTL_MS = 30000; // 30 seconds
 
 const getLocalCache = () => {
@@ -261,7 +261,7 @@ export const Dashboard = ({ user, bucket, onLogout, onManageBucket }) => {
                                 <Cloud className="w-5 h-5 text-brand" />
                             </div>
                             <div className="flex flex-col">
-                                <span className="text-base leading-none font-semibold font-mono">CloudCore</span>
+                                <span className="text-base leading-none font-semibold font-mono">Orbit</span>
                                 <span className="text-[11px] text-muted-foreground mt-1 font-medium">
                                     {bucket?.bucket_name || bucket?.bucketName || 'No Bucket Connected'}
                                 </span>
@@ -457,7 +457,7 @@ export const Dashboard = ({ user, bucket, onLogout, onManageBucket }) => {
                             <span className="text-xs font-medium tracking-tight">Channel Secure</span>
                         </div>
                         <div className="text-xs text-muted-foreground font-medium">
-                            © {new Date().getFullYear()} CloudCore Lab
+                            © {new Date().getFullYear()} Orbit Lab
                         </div>
                     </div>
                 </footer>

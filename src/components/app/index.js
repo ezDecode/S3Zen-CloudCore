@@ -1,6 +1,6 @@
 /**
  * Modern UI Components Index
- * Simplified CloudCore UI Components
+ * Simplified Orbit UI Components
  */
 
 export { LandingPage } from './LandingPage';

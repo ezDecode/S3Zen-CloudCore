@@ -47,11 +47,11 @@ import {
 export { isCryptoInitialized };
 
 const STORAGE_KEYS = {
-    ENCRYPTED_CREDENTIALS: 'cc_enc_creds', // Encrypted credentials
-    SESSION_TOKEN: 'cc_session_token', // Session identifier
-    TOKEN_SIGNATURE: 'cc_token_sig', // HMAC signature for token integrity
-    SESSION_TIMESTAMP: 'cc_session_ts',
-    BUCKET_INFO: 'cc_bucket_info', // Non-sensitive bucket metadata
+    ENCRYPTED_CREDENTIALS: 'orb_enc_creds', // Encrypted credentials
+    SESSION_TOKEN: 'orb_session_token', // Session identifier
+    TOKEN_SIGNATURE: 'orb_token_sig', // HMAC signature for token integrity
+    SESSION_TIMESTAMP: 'orb_session_ts',
+    BUCKET_INFO: 'orb_bucket_info', // Non-sensitive bucket metadata
 };
 
 const SESSION_TIMEOUT_MS = 24 * 60 * 60 * 1000; // 24 hours for better security
@@ -159,7 +159,7 @@ export const saveCredentials = async (credentials) => {
  */
 const generateTokenSignature = async (token) => {
     if (!token) return '';
-    
+
     try {
         const encoder = new TextEncoder();
         const data = encoder.encode(token);
@@ -177,7 +177,7 @@ const generateTokenSignature = async (token) => {
  */
 const verifyTokenSignature = async (token, storedSignature) => {
     if (!token || !storedSignature) return false;
-    
+
     const currentSignature = await generateTokenSignature(token);
     return currentSignature === storedSignature;
 };
@@ -283,12 +283,17 @@ export const clearAuth = () => {
             'cloudcore_aws_credentials',
             'cloudcore_session_timestamp',
             'cloudcore_bucket_name',
-            'cloudcore_region'
+            'cloudcore_region',
+            'cc_enc_creds',
+            'cc_session_token',
+            'cc_token_sig',
+            'cc_session_ts',
+            'cc_bucket_info'
         ];
         legacyKeys.forEach(key => localStorage.removeItem(key));
 
         // Clear current bucket selection
-        localStorage.removeItem('cloudcore_current_bucket');
+        localStorage.removeItem('orbit_current_bucket');
 
         sessionToken = null;
 

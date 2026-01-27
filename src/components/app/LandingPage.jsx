@@ -28,7 +28,7 @@ export const LandingPage = ({ onGetStarted }) => {
                     <div className="screen-line-after px-4 py-4 flex items-center justify-between">
                         <div className="flex items-center gap-2.5 cursor-pointer">
                             <Cloud className="w-5 h-5 text-brand" />
-                            <span className="text-base tracking-tight font-medium font-mono">CloudCore</span>
+                            <span className="text-base tracking-tight font-medium font-mono">Orbit</span>
                         </div>
 
                         <div className="flex items-center gap-8">
@@ -147,7 +147,7 @@ export const LandingPage = ({ onGetStarted }) => {
 
                     {/* why cloudcore section */}
                     <div className="screen-line-after p-4 py-2">
-                        <span className="text-xs tracking-widest text-muted-foreground tracking-tighter font-medium">Why CloudCore</span>
+                        <span className="text-xs tracking-widest text-muted-foreground tracking-tighter font-medium">Why Orbit</span>
                     </div>
 
                     <div className="p-6">
@@ -193,7 +193,7 @@ export const LandingPage = ({ onGetStarted }) => {
                     <div className="px-4 py-6 flex items-center justify-between">
                         <div className="flex items-center gap-2.5">
                             <Cloud className="w-4 h-4 text-brand" />
-                            <span className="text-sm font-medium">CloudCore</span>
+                            <span className="text-sm font-medium">Orbit</span>
                         </div>
                         <div className="flex items-center gap-8 text-xs text-muted-foreground font-medium">
                             <a href="https://github.com/ezDecode" target="_blank" rel="noopener noreferrer" className="hover:text-foreground transition-colors">ezDecode Lab</a>

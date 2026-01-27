@@ -240,7 +240,7 @@ export const BucketSetup = ({ user, onComplete }) => {
                             <Shield className="w-3.5 h-3.5" />
                             <span className="text-xs tracking-widest uppercase font-medium">Encrypted Handshake Protocol</span>
                         </div>
-                        <span className="text-xs font-medium">© {new Date().getFullYear()} CloudCore Lab</span>
+                        <span className="text-xs font-medium">© {new Date().getFullYear()} Orbit Lab</span>
                     </div>
                 </footer>
 

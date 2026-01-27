@@ -1,6 +1,6 @@
 {
-    "name": "CloudCore - AWS S3 File Manager",
-    "short_name": "CloudCore",
+    "name": "Orbit - AWS S3 File Manager",
+    "short_name": "Orbit",
     "description": "Free, open-source AWS S3 file manager. Upload, download, organize, and share files directly from your browser with no backend required. Enterprise-grade security with your own AWS credentials.",
     "start_url": "/",
     "scope": "/",

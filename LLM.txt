@@ -1,11 +1,11 @@
-# CloudCore - LLM Context Document
-> A comprehensive reference for AI systems to understand the CloudCore project
+# Orbit - LLM Context Document
+> A comprehensive reference for AI systems to understand the Orbit project
 
 ================================================================================
 ## PROJECT OVERVIEW
 ================================================================================
 
-CloudCore is a modern, full-stack cloud storage management application that allows
+Orbit is a modern, full-stack cloud storage management application that allows
 users to connect their own AWS S3 buckets and manage files with features like:
 - Email-based OTP authentication via Supabase
 - Multi-bucket support with encrypted credential storage
@@ -15,7 +15,7 @@ users to connect their own AWS S3 buckets and manage files with features like:
 - Real-time file management (upload, delete, rename, move, folder creation)
 
 The project follows a "bring your own storage" philosophy - users connect their
-own S3 buckets rather than using CloudCore's storage.
+own S3 buckets rather than using Orbit's storage.
 
 ================================================================================
 ## TECH STACK
@@ -50,7 +50,7 @@ own S3 buckets rather than using CloudCore's storage.
 ================================================================================
 
 ```
-CloudCore/
+Orbit/
 ├── src/                          # Frontend React application
 │   ├── App.tsx                   # Main app entry - routing between views
 │   ├── main.tsx                  # React DOM render entry

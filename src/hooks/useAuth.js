@@ -22,7 +22,7 @@ export const useAuth = () => {
             try {
                 // Get current session
                 const { data: { session }, error } = await supabaseAuth.getSession();
-                
+
                 if (!mounted) return;
 
                 if (error) {
@@ -38,7 +38,7 @@ export const useAuth = () => {
                 } else {
                     console.log('[Auth] No active session');
                 }
-                
+
                 setIsLoading(false);
             } catch (error) {
                 console.error('[Auth] Initialization error:', error);
@@ -55,7 +55,7 @@ export const useAuth = () => {
             if (!mounted) return;
 
             console.log('[Auth] State changed:', event, session ? 'with session' : 'no session');
-            
+
             // Handle auth events by type to prevent oscillation
             if (event === 'SIGNED_IN') {
                 // User signed in - always set session
@@ -122,7 +122,7 @@ export const useAuth = () => {
             const { data: { session: existingSession } } = await supabaseAuth.getSession();
             if (existingSession?.user) {
                 console.log('[Auth] Session already exists, skipping OTP verification');
-                toast.success('Welcome back to CloudCore!');
+                toast.success('Welcome back to Orbit!');
                 setShowAuthModal(false);
                 return { success: true, session: existingSession };
             }
@@ -136,7 +136,7 @@ export const useAuth = () => {
             if (error) throw error;
 
             if (data?.session) {
-                toast.success('Welcome to CloudCore!');
+                toast.success('Welcome to Orbit!');
                 setShowAuthModal(false);
                 return { success: true, session: data.session };
             }
@@ -153,7 +153,7 @@ export const useAuth = () => {
         try {
             const { error } = await supabaseAuth.signOut();
             if (error) throw error;
-            
+
             setUser(null);
             setIsLoggedIn(false);
             toast.info('Logged out successfully');
