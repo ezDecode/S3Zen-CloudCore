@@ -285,7 +285,7 @@ const Dashboard = ({ user, bucket, onLogout, onAddBucket, onRemoveBucket }) => {
 
     return (
         <div className="flex min-h-screen items-center justify-center bg-background w-full">
-            <main className="flex min-h-screen flex-col w-full">
+            <main className="flex min-h-screen flex-col w-full max-w-[1400px] 2xl:max-w-[60vw] mx-auto">
                 <div className="flex-1 w-full flex flex-col">
                     {/* Header */}
                     <Header
@@ -381,11 +381,13 @@ const Dashboard = ({ user, bucket, onLogout, onAddBucket, onRemoveBucket }) => {
                             </div>
 
                             {recentFiles.length === 0 ? (
-                                <div className="py-20 text-center flex flex-col items-center justify-center">
-                                    <img src="/logos/orbit-black.svg" alt="Empty" className="w-24 h-24 object-contain opacity-50 block dark:hidden" />
-                                    <img src="/logos/orbit-white.svg" alt="Empty" className="w-24 h-24 object-contain opacity-50 hidden dark:block" />
-                                    <h3 className="font-semibold text-lg">No assets found</h3>
-                                    <p className="text-muted-foreground">Upload your first file to see it here</p>
+                                <div className="py-20 text-center flex flex-col items-center justify-center gap-4">
+                                    <img src="/logos/orbit-black.svg" alt="Empty" className="h-8 object-contain opacity-50 block dark:hidden" />
+                                    <img src="/logos/orbit-white.svg" alt="Empty" className="h-8 object-contain opacity-50 hidden dark:block" />
+                                    <div className="flex flex-col">
+                                        <h3 className="font-semibold text-lg">No assets found</h3>
+                                        <p className="text-muted-foreground">Upload your first file to see it here</p>
+                                    </div>
                                 </div>
                             ) : (
                                 <div className="divide-y divide-dotted divide-border/50">

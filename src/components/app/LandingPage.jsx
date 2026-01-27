@@ -8,7 +8,7 @@ import { Footer } from '../layout/Footer';
 export const LandingPage = ({ onGetStarted }) => {
     return (
         <div className="flex min-h-screen items-center justify-center bg-background w-full">
-            <main className="flex min-h-screen flex-col justify-between md:p-16 p-8 gap-8 w-full">
+            <main className="flex min-h-screen flex-col justify-between md:p-16 p-8 gap-8 w-full max-w-[1200px] xl:max-w-[60vw] mx-auto">
                 <div className="justify-between flex-1 w-full gap-20 flex flex-col">
                     {/* Header */}
                     <Header variant="landing" />
