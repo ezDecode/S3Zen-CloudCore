@@ -63,9 +63,11 @@ class BucketManagerService {
                 error.message.includes('Failed to fetch') ||
                 error.message.includes('Network error') ||
                 error.message.includes('initialized') ||
-                error.message.includes('configurations')
+                error.message.includes('configurations') ||
+                error.code === 'DB_NOT_INITIALIZED' ||
+                error.status === 503
             ) {
-                console.log('[BucketService] Backend issue or uninitialized DB, switching to LocalStorage Mock Service');
+                console.info('[BucketService] Backend issue or uninitialized DB, switching to LocalStorage Mock Service');
                 this.useMock = true;
                 throw new Error('SWITCH_TO_MOCK');
             }

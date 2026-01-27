@@ -4,8 +4,11 @@
  */
 
 import { useState, useEffect, useRef } from 'react';
-import { X, Mail, ArrowRight, Loader2, CheckCircle, Cloud } from 'lucide-react';
+import { Icon } from '@iconify/react';
 import { Button } from '../ui/button';
+import { Input } from '../ui/input';
+
+
 
 export const AuthModal = ({ isOpen, onClose, onSendOTP, onVerifyOTP }) => {
     const [step, setStep] = useState('email'); // 'email' | 'otp' | 'success'
@@ -48,10 +51,13 @@ export const AuthModal = ({ isOpen, onClose, onSendOTP, onVerifyOTP }) => {
                 setStep('otp');
                 setTimeout(() => otpRefs.current[0]?.focus(), 100);
             } else {
-                setError(result?.error || 'Failed to send code');
+                const errMsg = result?.error || 'Failed to send code';
+                setError(errMsg);
+                throw new Error(errMsg);
             }
         } catch (err) {
             setError('Failed to send code. Please try again.');
+            throw err;
         } finally {
             setLoading(false);
         }
@@ -92,14 +98,18 @@ export const AuthModal = ({ isOpen, onClose, onSendOTP, onVerifyOTP }) => {
                 setStep('success');
                 setTimeout(() => onClose(), 1500);
             } else {
-                setError(result?.error || 'Invalid code');
+                const errMsg = result?.error || 'Invalid code';
+                setError(errMsg);
                 setOtp(['', '', '', '', '', '']);
                 otpRefs.current[0]?.focus();
+                throw new Error(errMsg);
             }
         } catch (err) {
-            setError(err?.message || 'Verification failed');
+            const errMsg = err?.message || 'Verification failed';
+            setError(errMsg);
             setOtp(['', '', '', '', '', '']);
             otpRefs.current[0]?.focus();
+            throw new Error(errMsg);
         } finally {
             setLoading(false);
         }
@@ -109,77 +119,77 @@ export const AuthModal = ({ isOpen, onClose, onSendOTP, onVerifyOTP }) => {
 
     return (
         <div className="fixed inset-0 z-[100] flex items-center justify-center bg-background/80 backdrop-blur-md" onClick={(e) => e.target === e.currentTarget && onClose()}>
-            <div className="w-full max-w-lg bg-card shadow-2xl border border-border/50 rounded-3xl overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+            <div className="w-full max-w-md bg-card shadow-2xl border border-border/50 rounded-3xl overflow-hidden animate-in fade-in zoom-in-95 duration-200">
                 {/* Header */}
-                <div className="px-8 py-6 flex items-center justify-between border-b border-dotted border-border/50">
+                <div className="px-6 py-4 flex items-center justify-between border-b border-dotted border-border/50">
                     <div className="flex items-center gap-4">
-                        <img src="/logos/logo-black.svg" alt="Orbit" className="h-10 block dark:hidden" />
-                        <img src="/logos/logo-white.svg" alt="Orbit" className="h-10 hidden dark:block" />
-                        <div className="h-8 w-px bg-border/50" />
+                        <img src="/logos/logo-black.svg" alt="Orbit" className="h-8 block dark:hidden" />
+                        <img src="/logos/logo-white.svg" alt="Orbit" className="h-8 hidden dark:block" />
+                        <div className="h-6 w-px bg-border/50" />
                         <div>
-                            <h2 className="font-display font-medium text-xl tracking-tight">
+                            <h2 className="font-display font-medium text-lg tracking-tight">
                                 {step === 'email' && 'Authenticate'}
                                 {step === 'otp' && 'Verify Session'}
                                 {step === 'success' && 'Authenticated'}
                             </h2>
-                            {/* <p className="text-xs text-muted-foreground uppercase tracking-widest font-medium">Secure Access</p> */}
                         </div>
                     </div>
                     <Button
                         onClick={onClose}
                         variant="ghost"
-                        size="icon"
+                        size="icon-sm"
+                        className="text-muted-foreground hover:text-foreground"
                     >
-                        <X className="w-5 h-5" />
+                        <Icon icon="solar:close-circle-linear" className="w-5 h-5" />
                     </Button>
                 </div>
 
                 {/* Body */}
-                <div className="p-8">
+                <div className="p-6">
                     {step === 'email' && (
-                        <form onSubmit={handleSendOTP} className="space-y-8">
-                            <p className="text-base text-muted-foreground leading-relaxed">
+                        <form onSubmit={handleSendOTP} className="space-y-6">
+                            <p className="text-sm text-muted-foreground leading-relaxed">
                                 Enter your email for a zero-knowledge handshake. We'll send a one-time secure code.
                             </p>
 
-                            <div className="space-y-3">
-                                <label className="text-xs tracking-widest text-muted-foreground uppercase font-medium px-1">Email Address</label>
+                            <div className="space-y-2">
+                                <label className="text-[10px] tracking-widest text-muted-foreground uppercase font-semibold px-1">Email Address</label>
                                 <div className="relative">
-                                    <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
-                                    <input
+                                    <Icon icon="solar:letter-linear" className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                                    <Input
                                         ref={emailInputRef}
                                         type="email"
                                         value={email}
                                         onChange={(e) => setEmail(e.target.value)}
                                         placeholder="user@orbit.xyz"
-                                        className="input h-14 pl-12 rounded-xl text-base"
+                                        className="h-10 pl-10 rounded-xl text-sm"
                                         required
                                     />
                                 </div>
                             </div>
 
-                            {error && <div className="p-4 rounded-xl bg-destructive/5 border border-destructive/20 text-destructive text-sm">{error}</div>}
+                            {error && <div className="p-3 rounded-lg bg-destructive/5 border border-destructive/20 text-destructive text-xs">{error}</div>}
 
                             <Button
                                 type="submit"
+                                onClick={handleSendOTP}
                                 disabled={loading || !email}
-                                size="lg"
-                                className="w-full"
+                                className="w-full bg-brand hover:bg-brand/90 hover:ring-brand"
                             >
-                                {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : <>Generate Code <ArrowRight className="w-5 h-5 ml-2" /></>}
+                                Generate Code
                             </Button>
                         </form>
                     )}
 
                     {step === 'otp' && (
-                        <div className="space-y-8 text-center">
+                        <div className="space-y-6 text-center">
                             <div>
-                                <p className="text-muted-foreground mb-1">Code sent to</p>
-                                <p className="font-medium text-lg text-foreground">{email}</p>
+                                <p className="text-sm text-muted-foreground mb-1">Code sent to</p>
+                                <p className="font-medium text-base text-foreground">{email}</p>
                             </div>
 
                             <div className="space-y-4">
-                                <div className="flex gap-3 justify-center" onPaste={handleOtpPaste}>
+                                <div className="flex gap-2 justify-center" onPaste={handleOtpPaste}>
                                     {otp.map((digit, index) => (
                                         <input
                                             key={index}
@@ -190,29 +200,29 @@ export const AuthModal = ({ isOpen, onClose, onSendOTP, onVerifyOTP }) => {
                                             value={digit}
                                             onChange={(e) => handleOtpChange(index, e.target.value)}
                                             onKeyDown={(e) => handleOtpKeyDown(index, e)}
-                                            className="w-12 h-16 text-center text-2xl font-mono font-medium rounded-xl border-2 border-dotted border-border focus:border-brand focus:border-solid focus:ring-4 focus:ring-brand/10 outline-none transition-all"
+                                            className="w-10 h-14 text-center text-xl font-mono font-medium rounded-xl border-2 border-dotted border-border focus:border-brand focus:border-solid focus:ring-4 focus:ring-brand/10 outline-none transition-all"
                                             style={{ borderColor: digit ? 'var(--brand)' : '', borderStyle: digit ? 'solid' : 'dotted' }}
                                         />
                                     ))}
                                 </div>
                             </div>
 
-                            {error && <div className="p-4 rounded-xl bg-destructive/5 border border-destructive/20 text-destructive text-sm">{error}</div>}
+                            {error && <div className="p-3 rounded-lg bg-destructive/5 border border-destructive/20 text-destructive text-xs">{error}</div>}
 
-                            <div className="flex flex-col gap-4">
-                                <Button variant="link" size="sm" onClick={() => setStep('email')}>Use different email</Button>
-                                <Button variant="ghost" size="sm" className="text-brand hover:text-brand/80" onClick={() => handleSendOTP({ preventDefault: () => { } })} disabled={loading}>Resend code</Button>
+                            <div className="flex flex-col gap-2">
+                                <Button variant="link" size="sm" className="h-auto p-0" onClick={() => setStep('email')}>Use different email</Button>
+                                <Button variant="ghost" size="sm" className="h-auto p-0 text-brand hover:text-brand/80" onClick={() => handleSendOTP({ preventDefault: () => { } })} disabled={loading}>Resend code</Button>
                             </div>
                         </div>
                     )}
 
                     {step === 'success' && (
-                        <div className="text-center py-10">
-                            <div className="w-20 h-20 bg-brand/10 rounded-3xl flex items-center justify-center mx-auto mb-6">
-                                <CheckCircle className="w-10 h-10 text-brand" />
+                        <div className="text-center py-6">
+                            <div className="w-16 h-16 bg-brand/10 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                                <Icon icon="solar:check-circle-linear" className="w-8 h-8 text-brand" />
                             </div>
-                            <h3 className="text-2xl font-display font-bold mb-2 uppercase tracking-tight">Access Granted</h3>
-                            <p className="text-muted-foreground">Synchronizing your S3 environment...</p>
+                            <h3 className="text-xl font-display font-bold mb-1 uppercase tracking-tight">Access Granted</h3>
+                            <p className="text-sm text-muted-foreground">Synchronizing your environment...</p>
                         </div>
                     )}
                 </div>

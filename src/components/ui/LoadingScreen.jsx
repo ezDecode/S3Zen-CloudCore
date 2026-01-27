@@ -3,11 +3,11 @@
  * Unified loading state display for consistent UX
  */
 
-import { Cloud } from 'lucide-react';
+import { Icon } from '@iconify/react';
 
 export const LoadingScreen = ({ message = 'loading...' }) => {
     return (
-        <div className="min-h-screen bg-background flex items-center justify-center relative overflow-hidden">
+        <div className="min-h-screen w-full bg-background flex items-center justify-center relative overflow-hidden">
             {/* Subtle background pattern */}
             <div
                 className="absolute inset-0 opacity-30"
@@ -22,7 +22,7 @@ export const LoadingScreen = ({ message = 'loading...' }) => {
                 <div className="relative mx-auto mb-6 w-16 h-16">
                     <div className="absolute inset-0 rounded-2xl bg-brand/10 animate-pulse" />
                     <div className="absolute inset-0 flex items-center justify-center">
-                        <Cloud className="w-8 h-8 text-brand animate-float-subtle" />
+                        <Icon icon="solar:cloud-linear" className="w-8 h-8 text-brand animate-float-subtle" />
                     </div>
                 </div>
 

@@ -64,7 +64,7 @@ router.post('/upload', requireAuth(), upload.single('file'), async (req, res) =>
     try {
         const { id: userId } = req.user;
         const { file } = req;
-        const { bucketId, makePublic, path: targetPath } = req.body;
+        const { bucketId, makePublic, path: targetPath, skipCompression } = req.body;
 
         if (!file) return err(res, 400, 'NO_FILE', 'No file provided');
 
@@ -73,8 +73,15 @@ router.post('/upload', requireAuth(), upload.single('file'), async (req, res) =>
 
         // Process image if applicable
         let processed = { buffer: file.buffer, mimeType: file.mimetype, size: file.size, wasProcessed: false };
-        if (isImageType(file.mimetype)) {
+
+        if (isImageType(file.mimetype) && skipCompression !== 'true') {
             processed = await processBuffer(file.buffer, file.mimetype);
+
+            // If processing failed (and we didn't explicitly skip it), fail the upload
+            if (processed.error) {
+                console.warn('[Files/Upload] Compression failed:', processed.error);
+                return err(res, 422, 'COMPRESSION_FAILED', processed.error);
+            }
         }
 
         const s3 = createS3Client(creds, creds.region);

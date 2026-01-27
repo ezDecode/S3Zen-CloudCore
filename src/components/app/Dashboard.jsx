@@ -5,15 +5,16 @@
  */
 
 import { useState, useCallback, useRef, useEffect, memo } from 'react';
-import {
-    Cloud, Upload, Trash2, LogOut, Settings, FileIcon, Image, FileCode, FileText,
-    Loader2, RefreshCw, ExternalLink, HardDrive, TrendingUp, Clock, Shield,
-    Sun, Moon, Twitter, Github, Linkedin
-} from 'lucide-react';
+import { Icon } from '@iconify/react';
 import { files as filesApi } from '../../services/api/files';
 import { toast } from 'sonner';
 import { DiagonalSeparator as Separator } from '../ui/DiagonalSeparator';
 import { Button } from '../ui/button';
+import { Badge } from '../ui/badge';
+import { Card } from '../ui/card';
+import { Header } from '../layout/Header';
+import { Footer } from '../layout/Footer';
+
 
 import { formatBytes as formatSize, formatDate } from '../../lib/utils';
 
@@ -43,48 +44,58 @@ const isCacheFresh = () => {
 };
 
 const getFileIcon = (type, name) => {
-    if (!type) return FileIcon;
-    if (type.startsWith('image/')) return Image;
-    if (type.includes('json') || type.includes('javascript') || type.includes('html') || type.includes('css')) return FileCode;
-    if (type.startsWith('text/')) return FileText;
-    return FileIcon;
+    if (!type) return 'solar:file-linear';
+    if (type.startsWith('image/')) return 'solar:gallery-linear';
+    if (type.includes('json') || type.includes('javascript') || type.includes('html') || type.includes('css')) return 'solar:code-circle-linear';
+    if (type.startsWith('text/')) return 'solar:document-text-linear';
+    return 'solar:file-linear';
 };
 
 const FileItem = memo(({ file, copiedUrl, deleting, onCopy, onDelete }) => {
-    const Icon = getFileIcon(file.type, file.name);
+    const iconString = getFileIcon(file.type, file.name);
+    const isCopied = copiedUrl === file.key;
+
     return (
-        <div className="file-item group">
+        <div className="py-5 flex items-center gap-5 transition-colors border-b border-dotted border-border/50 last:border-0 group">
             <div className="w-11 h-11 bg-secondary rounded-lg flex items-center justify-center transition-colors group-hover:bg-brand/10">
-                <Icon className="w-5 h-5 text-muted-foreground group-hover:text-brand transition-colors" />
+                <Icon icon={iconString} className="w-5 h-5 text-muted-foreground group-hover:text-brand transition-colors" />
             </div>
 
             <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-3">
                     <span className="text-sm truncate font-medium max-w-[150px] sm:max-w-none">{file.name}</span>
                     {file.compressed && (
-                        <span className="badge badge-brand">Compressed</span>
+                        <Badge variant="brand">Compressed</Badge>
                     )}
                 </div>
                 <div className="flex items-center gap-3 text-[11px] text-muted-foreground mt-1">
                     <span className="flex items-center gap-1">
-                        <HardDrive className="w-3 h-3" />
+                        <Icon icon="solar:ssd-linear" className="w-3 h-3" />
                         {formatSize(file.size)}
                     </span>
                     <span className="w-1 h-1 rounded-full bg-muted-foreground/50" />
                     <span className="flex items-center gap-1">
-                        <Clock className="w-3 h-3" />
+                        <Icon icon="solar:clock-circle-linear" className="w-3 h-3" />
                         {formatDate(file.uploadedAt)}
                     </span>
                 </div>
             </div>
 
-            <div className="flex items-center gap-2 opacity-100 md:opacity-0 group-hover:opacity-100 transition-opacity">
+            <div className="flex items-center gap-2">
                 <Button
                     onClick={() => onCopy(file.url, file.key)}
-                    variant={copiedUrl === file.key ? "default" : "secondary"}
+                    variant={isCopied ? "default" : "secondary"}
                     size="sm"
+                    className="min-w-[100px] transition-all duration-300"
                 >
-                    {copiedUrl === file.key ? 'Copied!' : 'Copy Link'}
+                    {isCopied ? (
+                        <>
+                            <Icon icon="solar:check-circle-linear" className="w-4 h-4" />
+                            Copied
+                        </>
+                    ) : (
+                        'Copy Link'
+                    )}
                 </Button>
                 <Button
                     variant="ghost"
@@ -98,7 +109,7 @@ const FileItem = memo(({ file, copiedUrl, deleting, onCopy, onDelete }) => {
                         title="Open File"
                         aria-label={`Open ${file.name}`}
                     >
-                        <ExternalLink className="w-4 h-4" />
+                        <Icon icon="solar:link-circle-linear" className="w-4 h-4" />
                     </a>
                 </Button>
                 <Button
@@ -111,9 +122,9 @@ const FileItem = memo(({ file, copiedUrl, deleting, onCopy, onDelete }) => {
                     aria-label={`Delete ${file.name}`}
                 >
                     {deleting === file.key ? (
-                        <Loader2 className="w-4 h-4 animate-spin" />
+                        <Icon icon="solar:refresh-circle-linear" className="w-4 h-4 animate-spin" />
                     ) : (
-                        <Trash2 className="w-4 h-4" />
+                        <Icon icon="solar:trash-bin-trash-linear" className="w-4 h-4" />
                     )}
                 </Button>
             </div>
@@ -121,7 +132,41 @@ const FileItem = memo(({ file, copiedUrl, deleting, onCopy, onDelete }) => {
     );
 });
 
-export const Dashboard = ({ user, bucket, onLogout, onManageBucket }) => {
+const UploadItem = memo(({ upload }) => {
+    const isCompressing = upload.progress === 100 && upload.status === 'uploading';
+
+    return (
+        <div className="py-4 flex items-center gap-4 border-b border-dotted border-border/50 last:border-0 animate-in fade-in slide-in-from-top-2 duration-300">
+            <div className="w-10 h-10 bg-secondary rounded-lg flex items-center justify-center shrink-0">
+                {upload.status === 'error' ? (
+                    <Icon icon="solar:danger-triangle-linear" className="w-5 h-5 text-destructive" />
+                ) : isCompressing ? (
+                    <Icon icon="solar:minimize-square-3-linear" className="w-5 h-5 text-brand animate-pulse-subtle" />
+                ) : (
+                    <Icon icon="solar:cloud-upload-linear" className="w-5 h-5 text-brand animate-bounce" />
+                )}
+            </div>
+
+            <div className="flex-1 min-w-0 space-y-2">
+                <div className="flex items-center justify-between text-sm">
+                    <span className="font-medium truncate pr-4">{upload.name}</span>
+                    <span className="text-muted-foreground text-xs whitespace-nowrap font-mono feature-settings-tnum">
+                        {upload.status === 'error' ? 'Failed' : isCompressing ? 'Compressing Image...' : `Uploading... ${upload.progress}%`}
+                    </span>
+                </div>
+
+                <div className="h-1.5 w-full bg-secondary rounded-full overflow-hidden">
+                    <div
+                        className={`h-full transition-all duration-300 ease-out rounded-full ${upload.status === 'error' ? 'bg-destructive' : 'bg-brand'}`}
+                        style={{ width: `${Math.max(5, upload.progress)}%` }}
+                    />
+                </div>
+            </div>
+        </div>
+    );
+});
+
+const Dashboard = ({ user, bucket, onLogout, onAddBucket, onRemoveBucket }) => {
     const [isDragging, setIsDragging] = useState(false);
     const [uploads, setUploads] = useState([]);
     const [recentFiles, setRecentFiles] = useState(getLocalCache());
@@ -156,13 +201,14 @@ export const Dashboard = ({ user, bucket, onLogout, onManageBucket }) => {
         syncHistory();
     }, []);
 
-    const uploadFile = useCallback(async (file) => {
+    const uploadFile = useCallback(async (file, options = {}) => {
         const uploadId = Date.now() + '-' + file.name;
         setUploads(prev => [...prev, { id: uploadId, name: file.name, progress: 0, status: 'uploading' }]);
 
         try {
             const result = await filesApi.upload(file, {
                 bucketId: bucket?.id,
+                skipCompression: options.skipCompression,
                 onProgress: (progress) => {
                     const percent = typeof progress === 'object' ? Math.round(progress.percentage || 0) : progress;
                     setUploads(prev => prev.map(u => u.id === uploadId ? { ...u, progress: percent } : u));
@@ -179,10 +225,24 @@ export const Dashboard = ({ user, bucket, onLogout, onManageBucket }) => {
                 toast.success(`${file.name} uploaded`);
                 setTimeout(() => setUploads(prev => prev.filter(u => u.id !== uploadId)), 2000);
             } else {
+                // Check for compression failure
+                if (result.error && (result.error.includes('COMPRESSION_FAILED') || result.error.includes('backend connection'))) {
+                    // Remove the failed upload from list immediately to avoid confusion during prompt
+                    setUploads(prev => prev.filter(u => u.id !== uploadId));
+
+                    const shouldUploadOriginal = window.confirm(
+                        `Image compression failed for ${file.name}. Do you want to upload the original file (${formatSize(file.size)}) instead?`
+                    );
+
+                    if (shouldUploadOriginal) {
+                        return uploadFile(file, { skipCompression: true });
+                    }
+                }
+
                 setUploads(prev => prev.map(u => u.id === uploadId ? { ...u, status: 'error' } : u));
                 toast.error(`Error: ${file.name}`);
             }
-        } catch {
+        } catch (e) {
             setUploads(prev => prev.map(u => u.id === uploadId ? { ...u, status: 'error' } : u));
         }
     }, [bucket]);
@@ -194,13 +254,17 @@ export const Dashboard = ({ user, bucket, onLogout, onManageBucket }) => {
         files.forEach(file => uploadFile(file));
     }, [uploadFile]);
 
+
     const copyUrl = async (url, key) => {
         try {
+            setCopiedUrl(key); // Start "Copying" state (visualized as checked immediately for better ux, or we could add a spinner)
             await navigator.clipboard.writeText(url);
-            setCopiedUrl(key);
-            toast.success('Link copied to clipboard');
+            // toast.success('Link copied to clipboard'); // Removed sonner
             setTimeout(() => setCopiedUrl(null), 2000);
-        } catch { toast.error('Failed to copy'); }
+        } catch {
+            toast.error('Failed to copy');
+            setCopiedUrl(null);
+        }
     };
 
     const handleDelete = async (file) => {
@@ -224,69 +288,39 @@ export const Dashboard = ({ user, bucket, onLogout, onManageBucket }) => {
             <main className="flex min-h-screen flex-col bg-background border-x max-w-[70rem] w-full">
                 <div className="flex-1 w-full flex flex-col">
                     {/* Header */}
-                    <header className="flex items-center justify-between w-full md:p-16 p-8 pb-4 md:pb-8">
-                        <div className="flex items-center gap-4">
-                            <img src="/logos/logo-black.svg" alt="Orbit" className="h-10 block dark:hidden" />
-                            <img src="/logos/logo-white.svg" alt="Orbit" className="h-10 hidden dark:block" />
-                            <div className="h-8 w-px bg-border/50" />
-                            <div className="flex flex-col">
-                                <span className="text-xs text-muted-foreground font-medium">
-                                    {bucket?.bucket_name || bucket?.bucketName || 'No Bucket Connected'}
-                                </span>
-                            </div>
-                        </div>
-
-                        <div className="flex items-center gap-4">
-                            <Button
-                                onClick={onManageBucket}
-                                variant="ghost"
-                                size="icon"
-                            >
-                                <Settings className="w-5 h-5" />
-                            </Button>
-                            <Button
-                                variant="ghost"
-                                size="icon"
-                                onClick={() => document.documentElement.classList.toggle('dark')}
-                            >
-                                <Sun className="h-[1.2rem] w-[1.2rem] scale-100 rotate-0 transition-all dark:scale-0 dark:-rotate-90" />
-                                <Moon className="absolute h-[1.2rem] w-[1.2rem] scale-0 rotate-90 transition-all dark:scale-100 dark:rotate-0" />
-                            </Button>
-                            <Button
-                                onClick={onLogout}
-                                variant="ghost"
-                                size="icon"
-                                className="hover:text-destructive hover:bg-destructive/10"
-                            >
-                                <LogOut className="w-5 h-5" />
-                            </Button>
-                        </div>
-                    </header>
+                    <Header
+                        variant="dashboard"
+                        bucketName={bucket?.bucket_name || bucket?.bucketName}
+                        onLogout={onLogout}
+                        onAddBucket={onAddBucket}
+                        onRemoveBucket={onRemoveBucket}
+                        className="md:p-16 p-8 pb-4 md:pb-8"
+                    />
 
                     <div className="md:px-16 px-8 flex-1 flex flex-col gap-8 pb-16">
                         {/* Stats Section */}
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                            <div className="card p-6 flex items-center gap-4 bg-secondary/20">
-                                <HardDrive className="w-6 h-6 text-brand" />
+                            <Card className="p-6 flex flex-row items-center gap-4 bg-secondary/20">
+                                <Icon icon="solar:ssd-linear" className="w-6 h-6 text-brand" />
                                 <div>
                                     <div className="text-lg font-display font-bold">{totalFiles}</div>
                                     <div className="text-xs text-muted-foreground uppercase tracking-wider">Files Stored</div>
                                 </div>
-                            </div>
-                            <div className="card p-6 flex items-center gap-4 bg-secondary/20">
-                                <TrendingUp className="w-6 h-6 text-brand" />
+                            </Card>
+                            <Card className="p-6 flex flex-row items-center gap-4 bg-secondary/20">
+                                <Icon icon="solar:graph-new-up-linear" className="w-6 h-6 text-brand" />
                                 <div>
                                     <div className="text-lg font-display font-bold">{formatSize(totalSize)}</div>
                                     <div className="text-xs text-muted-foreground uppercase tracking-wider">Total Storage</div>
                                 </div>
-                            </div>
-                            <div className="card p-6 flex items-center gap-4 bg-secondary/20">
-                                <Shield className="w-6 h-6 text-brand" />
+                            </Card>
+                            <Card className="p-6 flex flex-row items-center gap-4 bg-secondary/20">
+                                <Icon icon="solar:shield-linear" className="w-6 h-6 text-brand" />
                                 <div>
                                     <div className="text-lg font-display font-bold">{formatSize(totalSaved)}</div>
                                     <div className="text-xs text-muted-foreground uppercase tracking-wider">Space Saved</div>
                                 </div>
-                            </div>
+                            </Card>
                         </div>
 
                         {/* Upload Zone */}
@@ -297,11 +331,11 @@ export const Dashboard = ({ user, bucket, onLogout, onManageBucket }) => {
                             onDragOver={(e) => e.preventDefault()}
                             onDrop={handleDrop}
                             onClick={() => fileInputRef.current?.click()}
-                            className={`upload-zone min-h-[200px] flex flex-col items-center justify-center gap-4 border-2 border-dotted transition-all cursor-pointer rounded-2xl ${isDragging ? 'bg-brand/5 border-brand ring-4 ring-brand/10' : 'bg-secondary/10 border-border hover:bg-secondary/20 hover:border-brand/50'}`}
+                            className={`min-h-[200px] flex flex-col items-center justify-center gap-4 border-2 border-dotted transition-all cursor-pointer rounded-2xl p-16 bg-background ${isDragging ? 'bg-brand/5 border-brand ring-4 ring-brand/10' : 'bg-secondary/10 border-border hover:bg-secondary/20 hover:border-brand/50'}`}
                         >
                             <input ref={fileInputRef} type="file" multiple onChange={(e) => { Array.from(e.target.files).forEach(f => uploadFile(f)); e.target.value = ''; }} className="hidden" />
                             <div className="w-16 h-16 rounded-2xl bg-brand/10 flex items-center justify-center">
-                                <Upload className={`w-8 h-8 transition-colors ${isDragging ? 'text-brand' : 'text-muted-foreground'}`} />
+                                <Icon icon="solar:cloud-upload-linear" className={`w-8 h-8 transition-colors ${isDragging ? 'text-brand' : 'text-muted-foreground'}`} />
                             </div>
                             <div className="text-center">
                                 <h3 className="text-lg font-medium">{isDragging ? 'Drop to Upload' : 'Secure Upload Interface'}</h3>
@@ -309,25 +343,47 @@ export const Dashboard = ({ user, bucket, onLogout, onManageBucket }) => {
                             </div>
                         </div>
 
+                        {/* Active Uploads */}
+                        {uploads.length > 0 && (
+                            <div className="flex flex-col gap-4">
+                                <h2 className="text-sm font-display font-bold uppercase tracking-widest text-muted-foreground">Uploading</h2>
+                                <div className="divide-y divide-dotted divide-border/50">
+                                    {uploads.map(upload => (
+                                        <UploadItem key={upload.id} upload={upload} />
+                                    ))}
+                                </div>
+                            </div>
+                        )}
+
                         {/* File Inventory */}
                         <div className="flex flex-col gap-4">
                             <div className="flex items-center justify-between border-b border-dotted border-border/50 pb-2">
                                 <h2 className="text-sm font-display font-bold uppercase tracking-widest text-muted-foreground">Recent Assets</h2>
                                 <Button
                                     onClick={() => syncHistory(true)}
-                                    variant="ghost"
+                                    variant={isSyncing ? "secondary" : "ghost"}
                                     size="sm"
+                                    disabled={isSyncing}
+                                    className="transition-all"
                                 >
-                                    <RefreshCw className={`w-3 h-3 ${isSyncing ? 'animate-spin' : ''}`} />
-                                    {isSyncing ? 'Syncing...' : 'Refresh'}
+                                    {isSyncing ? (
+                                        <>
+                                            <Icon icon="solar:refresh-circle-linear" className="w-4 h-4 animate-spin" />
+                                            Syncing...
+                                        </>
+                                    ) : (
+                                        <>
+                                            <Icon icon="solar:refresh-linear" className="w-4 h-4" />
+                                            Refresh
+                                        </>
+                                    )}
                                 </Button>
                             </div>
 
                             {recentFiles.length === 0 ? (
-                                <div className="py-20 text-center">
-                                    <div className="w-16 h-16 rounded-2xl bg-secondary/30 flex items-center justify-center mx-auto mb-4 p-4">
-                                        <img src="/icon-512.svg" alt="Empty" className="w-full h-full object-contain opacity-50" />
-                                    </div>
+                                <div className="py-20 text-center flex flex-col items-center justify-center">
+                                    <img src="/logos/orbit-black.svg" alt="Empty" className="w-24 h-24 object-contain opacity-50 block dark:hidden" />
+                                    <img src="/logos/orbit-white.svg" alt="Empty" className="w-24 h-24 object-contain opacity-50 hidden dark:block" />
                                     <h3 className="font-medium">No assets found</h3>
                                     <p className="text-sm text-muted-foreground">Upload your first file to see it here</p>
                                 </div>
@@ -342,17 +398,7 @@ export const Dashboard = ({ user, bucket, onLogout, onManageBucket }) => {
                     </div>
 
                     {/* Footer */}
-                    <footer className="w-full flex items-center justify-between md:p-16 p-8 pt-8 border-t border-dotted border-border/50 mt-auto">
-                        <div>
-                            <p className="text-sm text-muted-foreground">
-                                Built with ❤️ by Orbit Team
-                            </p>
-                        </div>
-                        <ul className="flex items-center gap-6">
-                            <li><a href="https://twitter.com/ezdecode" className="text-muted-foreground hover:text-brand transition-all block"><Twitter className="size-5" /></a></li>
-                            <li><a href="https://github.com/ezDecode" className="text-muted-foreground hover:text-brand transition-all block"><Github className="size-5" /></a></li>
-                        </ul>
-                    </footer>
+                    <Footer className="md:p-16 p-8 pt-8 mt-auto" />
                 </div>
             </main>
         </div>

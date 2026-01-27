@@ -12,13 +12,14 @@ export const files = {
             return mockFileService.upload(file, options);
         }
 
-        const { bucketId, makePublic, path, onProgress } = options;
+        const { bucketId, makePublic, path, onProgress, skipCompression } = options;
 
         const formData = new FormData();
         formData.append('file', file);
         if (bucketId) formData.append('bucketId', bucketId);
         if (makePublic) formData.append('makePublic', 'true');
         if (path) formData.append('path', path);
+        if (skipCompression) formData.append('skipCompression', 'true');
 
         try {
             const result = await apiUpload('/api/files/upload', formData, onProgress);

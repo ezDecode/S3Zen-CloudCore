@@ -215,11 +215,12 @@ router.get('/', requireAuth(), async (req, res) => {
         const result = await bucketService.getBuckets(userId);
 
         if (!result.success) {
-            return res.status(500).json({
+            const status = result.code === 'DB_NOT_INITIALIZED' ? 503 : 500;
+            return res.status(status).json({
                 error: {
-                    code: 'FETCH_FAILED',
+                    code: result.code || 'FETCH_FAILED',
                     message: result.error,
-                    status: 500
+                    status
                 }
             });
         }

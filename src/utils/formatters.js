@@ -3,17 +3,7 @@
  * Helper functions for formatting file sizes, dates, and getting file icons
  */
 
-import {
-    File02Icon,
-    FileValidationIcon,
-    Image02Icon,
-    Video02Icon,
-    MusicNote01Icon,
-    FileZipIcon,
-    FileScriptIcon,
-    CodeIcon,
-    Folder02Icon
-} from 'hugeicons-react';
+// Icons will be handled as strings for Iconify
 
 /**
  * Format bytes to human-readable size
@@ -175,27 +165,27 @@ export const getFileType = (filename) => {
  * Get icon component for file type
  */
 export const getFileIcon = (filename, isFolder = false) => {
-    if (isFolder) return Folder02Icon;
+    if (isFolder) return 'solar:folder-2-linear';
 
     const type = getFileType(filename);
 
     switch (type) {
         case 'image':
-            return Image02Icon;
+            return 'solar:gallery-linear';
         case 'video':
-            return Video02Icon;
+            return 'solar:videocamera-record-linear';
         case 'audio':
-            return MusicNote01Icon;
+            return 'solar:music-note-linear';
         case 'document':
-            return FileValidationIcon;
+            return 'solar:document-text-linear';
         case 'spreadsheet':
-            return FileScriptIcon;
+            return 'solar:file-text-linear';
         case 'archive':
-            return FileZipIcon;
+            return 'solar:zip-file-linear';
         case 'code':
-            return CodeIcon;
+            return 'solar:code-circle-linear';
         default:
-            return File02Icon;
+            return 'solar:file-linear';
     }
 };
 

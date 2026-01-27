@@ -1,18 +1,18 @@
 /**
  * Bucket Setup
- * ncdai design system implementation
- * AWS configuration with grid lines and screen-line separators
+ * Modal-style configuration with stateful interactions
  */
 
 import { useState } from 'react';
 import bucketManagerService from '../../services/bucketManagerService';
 import { toast } from 'sonner';
-import { Shield, Database, ArrowRight, CheckCircle, Loader2, Sun, Moon, Twitter, Github, Linkedin, Cloud } from 'lucide-react';
-import { DiagonalSeparator as Separator } from '../ui/DiagonalSeparator';
+import { Icon } from '@iconify/react';
 import { Button } from '../ui/button';
+import { Input } from '../ui/input';
 
-export const BucketSetup = ({ user, onComplete }) => {
-    // ... state and handlers remain the same ...
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
+
+export const BucketSetup = ({ user, onComplete, onBack }) => {
     const [formData, setFormData] = useState({
         bucketName: '',
         region: 'eu-north-1',
@@ -21,9 +21,7 @@ export const BucketSetup = ({ user, onComplete }) => {
         endpoint: ''
     });
 
-    const [loading, setLoading] = useState(false);
-    const [connectionStatus, setConnectionStatus] = useState('idle');
-    const [error, setError] = useState(null);
+    const [buttonState, setButtonState] = useState('idle'); // idle, loading, success
 
     const regions = [
         { value: 'us-east-1', label: 'US East (N. Virginia)' },
@@ -52,7 +50,6 @@ export const BucketSetup = ({ user, onComplete }) => {
     const handleChange = (e) => {
         const { name, value } = e.target;
         setFormData(prev => ({ ...prev, [name]: value }));
-        if (error) setError(null);
     };
 
     const validate = () => {
@@ -63,169 +60,159 @@ export const BucketSetup = ({ user, onComplete }) => {
     };
 
     const handleSubmit = async (e) => {
-        e.preventDefault();
+        e?.preventDefault();
         const validationError = validate();
-        if (validationError) { toast.error(validationError); return; }
+        if (validationError) {
+            toast.error(validationError);
+            throw new Error(validationError); // interrupt stateful button
+        }
 
-        setLoading(true);
-        setConnectionStatus('testing');
-        setError(null);
+        setButtonState('loading');
 
         try {
-            const verifyResult = await bucketManagerService.validateBucket(formData);
+            const payload = {
+                ...formData,
+                displayName: formData.bucketName
+            };
+
+            // Small delay to let "establishing" text be seen if it was very fast
+            await new Promise(r => setTimeout(r, 500));
+
+            const verifyResult = await bucketManagerService.validateBucket(payload);
             if (!verifyResult.success) throw new Error(verifyResult.error || 'Connection failed');
-            toast.success('Connection verified');
-            const saveResult = await bucketManagerService.addBucket(formData);
+
+            const saveResult = await bucketManagerService.addBucket(payload);
             if (!saveResult.success && saveResult.error) throw new Error(saveResult.error);
-            setConnectionStatus('success');
+
+            setButtonState('success');
             const bucket = saveResult.bucket || saveResult;
+
+            // Wait for success animation
+            await new Promise(r => setTimeout(r, 1000));
+
             setFormData(prev => ({ ...prev, accessKeyId: '', secretAccessKey: '' }));
-            setTimeout(() => onComplete(bucket), 1000);
+            onComplete(bucket);
+
         } catch (err) {
+            setButtonState('idle');
+            // Check for mock mode fallback
             if (bucketManagerService.useMock) {
-                setConnectionStatus('success');
+                setButtonState('success');
+                await new Promise(r => setTimeout(r, 1000));
                 const bucketData = { bucketName: formData.bucketName, region: formData.region, id: 'mock-' + Date.now() };
                 onComplete(bucketData);
                 return;
             }
-            setConnectionStatus('error');
-            setError(err.message || 'Failed to connect to cluster');
-        } finally { setLoading(false); }
+
+            toast.error(err.message || 'Failed to connect to cluster');
+            throw err; // Re-throw to stop button success state if not mock
+        }
     };
 
     return (
-        <div className="flex min-h-screen items-center justify-center bg-muted/50 w-full">
-            <main className="flex min-h-screen flex-col bg-background border-x max-w-[70rem] w-full">
-                <div className="flex-1 w-full flex flex-col">
-                    {/* Header */}
-                    <header className="flex items-center justify-between w-full md:p-16 p-8 pb-4 md:pb-8">
-                        <div className="flex items-center gap-4">
-                            <img src="/logos/logo-black.svg" alt="Orbit" className="h-10 block dark:hidden" />
-                            <img src="/logos/logo-white.svg" alt="Orbit" className="h-10 hidden dark:block" />
-                            <div className="h-8 w-px bg-border/50" />
-                            <div className="flex flex-col">
-                                <span className="text-xs text-muted-foreground font-medium uppercase tracking-widest">Setup Phase</span>
-                            </div>
-                        </div>
-
-                        <div className="flex items-center gap-4">
-                            <Button
-                                variant="ghost"
-                                size="icon"
-                                onClick={() => document.documentElement.classList.toggle('dark')}
-                            >
-                                <Sun className="h-[1.2rem] w-[1.2rem] scale-100 rotate-0 transition-all dark:scale-0 dark:-rotate-90" />
-                                <Moon className="absolute h-[1.2rem] w-[1.2rem] scale-0 rotate-90 transition-all dark:scale-100 dark:rotate-0" />
-                            </Button>
-                        </div>
-                    </header>
-
-                    <div className="md:px-16 px-8 flex-1 flex flex-col items-center justify-center py-10">
-                        <div className="w-full max-w-2xl space-y-12">
-                            <div className="space-y-6">
-                                <h1 className="text-4xl font-display font-bold tracking-tight text-foreground uppercase">
-                                    Connect Storage <span className="text-brand">Cluster.</span>
-                                </h1>
-                                <p className="text-lg text-muted-foreground leading-relaxed">
-                                    Link your AWS S3 bucket. Credentials are processed in-memory and never stored on our servers. Zero logging, full transparency.
-                                </p>
-                            </div>
-
-                            <form onSubmit={handleSubmit} className="space-y-8 bg-secondary/5 p-8 rounded-3xl border border-border/50">
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                                    <div className="space-y-3 md:col-span-2">
-                                        <label className="text-xs tracking-widest uppercase font-medium text-muted-foreground px-1">Bucket Name</label>
-                                        <input
-                                            type="text"
-                                            name="bucketName"
-                                            value={formData.bucketName}
-                                            onChange={handleChange}
-                                            className="input h-14 text-base rounded-xl"
-                                            placeholder="production-assets-s3"
-                                        />
-                                    </div>
-
-                                    <div className="space-y-3">
-                                        <label className="text-xs tracking-widest uppercase font-medium text-muted-foreground px-1">Data Region</label>
-                                        <select
-                                            name="region"
-                                            value={formData.region}
-                                            onChange={handleChange}
-                                            className="input h-14 text-base rounded-xl appearance-none bg-background pr-10"
-                                        >
-                                            {regions.map(r => (
-                                                <option key={r.value} value={r.value}>{r.label}</option>
-                                            ))}
-                                        </select>
-                                    </div>
-
-                                    <div className="space-y-3">
-                                        <label className="text-xs tracking-widest uppercase font-medium text-muted-foreground px-1">Access Key ID</label>
-                                        <input
-                                            type="text"
-                                            name="accessKeyId"
-                                            value={formData.accessKeyId}
-                                            onChange={handleChange}
-                                            className="input h-14 text-base rounded-xl font-mono"
-                                            placeholder="AKIA..."
-                                        />
-                                    </div>
-
-                                    <div className="space-y-3 md:col-span-2">
-                                        <label className="text-xs tracking-widest uppercase font-medium text-muted-foreground px-1">Secret Access Key</label>
-                                        <input
-                                            type="password"
-                                            name="secretAccessKey"
-                                            value={formData.secretAccessKey}
-                                            onChange={handleChange}
-                                            className="input h-14 text-base rounded-xl font-mono"
-                                            placeholder="••••••••••••••••••••••••••••"
-                                        />
-                                    </div>
-                                </div>
-
-                                {error && (
-                                    <div className="p-4 rounded-xl bg-destructive/5 border border-destructive/20 text-destructive text-sm">
-                                        {error}
-                                    </div>
-                                )}
-
-                                <Button
-                                    type="submit"
-                                    disabled={loading || connectionStatus === 'success'}
-                                    size="lg"
-                                    className="w-full"
-                                >
-                                    {loading ? (
-                                        <Loader2 className="w-5 h-5 animate-spin" />
-                                    ) : connectionStatus === 'success' ? (
-                                        <CheckCircle className="w-5 h-5" />
-                                    ) : (
-                                        <>
-                                            Establish Connection
-                                            <ArrowRight className="w-5 h-5 ml-2" />
-                                        </>
-                                    )}
-                                </Button>
-                            </form>
+        <div className="fixed inset-0 z-[50] flex items-center justify-center bg-background/80 backdrop-blur-md p-4">
+            <div className="w-full max-w-md bg-card shadow-2xl border border-border/50 rounded-3xl overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+                {/* Header */}
+                <div className="px-6 py-4 flex items-center justify-between border-b border-dotted border-border/50">
+                    <div className="flex items-center gap-4">
+                        <img src="/logos/logo-black.svg" alt="Orbit" className="h-8 block dark:hidden" />
+                        <img src="/logos/logo-white.svg" alt="Orbit" className="h-8 hidden dark:block" />
+                        <div className="h-6 w-px bg-border/50" />
+                        <div>
+                            <h2 className="font-display font-medium text-lg tracking-tight">
+                                Storage Setup
+                            </h2>
                         </div>
                     </div>
 
-                    {/* Footer */}
-                    <footer className="w-full flex items-center justify-between md:p-16 p-8 pt-8 border-t border-dotted border-border/50 mt-auto">
-                        <div className="flex items-center gap-3">
-                            <Shield className="w-4 h-4 text-brand" />
-                            <span className="text-xs tracking-widest uppercase font-medium opacity-60">Encrypted Handshake Protocol</span>
-                        </div>
-                        <div className="flex items-center gap-6">
-                            <ul className="flex items-center gap-6">
-                                <li><a href="https://twitter.com/ezdecode" className="text-muted-foreground hover:text-brand transition-all block"><Twitter className="size-5" /></a></li>
-                                <li><a href="https://github.com/ezDecode" className="text-muted-foreground hover:text-brand transition-all block"><Github className="size-5" /></a></li>
-                            </ul>
-                        </div>
-                    </footer>
+                    {onBack && (
+                        <Button
+                            onClick={onBack}
+                            variant="ghost"
+                            size="icon-sm"
+                            className="text-muted-foreground hover:text-foreground"
+                        >
+                            <Icon icon="solar:close-circle-linear" className="w-5 h-5" />
+                        </Button>
+                    )}
                 </div>
-            </main>
+
+                {/* Body */}
+                <div className="p-6">
+                    <form className="space-y-5">
+                        <div className="space-y-4">
+                            <div className="grid grid-cols-1 gap-4">
+                                <div className="space-y-1.5">
+                                    <label className="text-[10px] tracking-widest uppercase font-semibold text-muted-foreground px-1">Bucket Name</label>
+                                    <Input
+                                        type="text"
+                                        name="bucketName"
+                                        value={formData.bucketName}
+                                        onChange={handleChange}
+                                        className="h-10 text-sm rounded-xl bg-background"
+                                        placeholder="production-assets-s3"
+                                    />
+                                </div>
+
+                                <div className="space-y-1.5">
+                                    <label className="text-[10px] tracking-widest uppercase font-semibold text-muted-foreground px-1">Region</label>
+                                    <Select
+                                        name="region"
+                                        value={formData.region}
+                                        onValueChange={(value) => setFormData(prev => ({ ...prev, region: value }))}
+                                    >
+                                        <SelectTrigger className="h-10 w-full text-sm rounded-xl bg-background">
+                                            <SelectValue placeholder="Select a region" />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                            {regions.map(r => (
+                                                <SelectItem key={r.value} value={r.value}>{r.label}</SelectItem>
+                                            ))}
+                                        </SelectContent>
+                                    </Select>
+                                </div>
+                            </div>
+
+                            <div className="space-y-1.5">
+                                <label className="text-[10px] tracking-widest uppercase font-semibold text-muted-foreground px-1">Access Key ID</label>
+                                <Input
+                                    type="text"
+                                    name="accessKeyId"
+                                    value={formData.accessKeyId}
+                                    onChange={handleChange}
+                                    className="h-10 text-sm rounded-xl font-mono bg-background"
+                                    placeholder="AKIA..."
+                                />
+                            </div>
+
+                            <div className="space-y-1.5">
+                                <label className="text-[10px] tracking-widest uppercase font-semibold text-muted-foreground px-1">Secret Access Key</label>
+                                <Input
+                                    type="password"
+                                    name="secretAccessKey"
+                                    value={formData.secretAccessKey}
+                                    onChange={handleChange}
+                                    className="h-10 text-sm rounded-xl font-mono bg-background"
+                                    placeholder="••••••••••••••••••••••••••••"
+                                />
+                            </div>
+                        </div>
+
+                        <div className="pt-4">
+                            <Button
+                                type="button"
+                                onClick={handleSubmit}
+                                disabled={buttonState !== 'idle'}
+                                className="w-full bg-brand hover:bg-brand/90 hover:ring-brand"
+                            >
+                                {buttonState === 'idle' && 'Establish Connection'}
+                                {buttonState === 'loading' && 'Establishing...'}
+                                {buttonState === 'success' && 'Successfully Established!'}
+                            </Button>
+                        </div>
+                    </form>
+                </div>
+            </div>
         </div>
     );
 };
